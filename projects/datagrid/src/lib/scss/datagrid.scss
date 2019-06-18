@@ -1,0 +1,188 @@
+
+&-datagrid {
+ 
+    border: 1px solid $border-color;
+    position: relative;
+    overflow: hidden;
+    font-size: 14px;
+    
+    &-header {
+        z-index: 2;
+        position: relative;
+    }
+
+    &-row-header {
+        height: $header-cell-height;
+        background: $header-bgcolor;
+        
+        .xui-table-cell-group-left-shadow, .xui-table-cell-group-right-shadow {
+            height:$header-cell-height;
+        }
+    }
+
+    & &-row-header &-cell{
+        background: $header-bgcolor;
+    }   
+
+
+    &-body {
+        position: relative;
+        overflow: hidden;
+        z-index: 0;
+        &-wheel-area {
+            overflow:hidden; 
+            position: absolute;
+        }
+
+        &-fixed-left {
+            position: absolute;
+            z-index: 1;
+        }
+
+        &-row {
+            overflow: hidden;
+            position: absolute;
+            height: $cell-height;
+            width: 100%;
+            top: 0;
+            border-bottom: 1px solid $border-color;
+            background-color: #fff;
+        }
+
+    }
+    &-row {
+        overflow: hidden;
+        position: absolute;
+        height: $cell-height;
+        width: 100%;
+        top: 0;
+        border-bottom: 1px solid $border-color;
+        background-color: #fff;
+
+        &-body {
+            .xui-table-cell-group-left-shadow, .xui-table-cell-group-right-shadow {
+                height:$cell-height;
+            }
+        }
+
+        &-hover:not(.xui-table-row-selected) {
+            cursor: pointer;
+            background: $row-hover-bgcolor!important;
+            color: $row-hover-color;
+
+            .xui-table-cell {
+                background: transparent;
+            }
+        }
+
+        &-selected {
+            background-color: $selected-row-bgcolor;
+            color: $selected-row-color;
+    
+            .xui-table-cell {
+                background-color: transparent;
+            }
+        }
+    }
+
+    &-row.virtualized{
+        pointer-events: none;
+        background-color: transparent!important;
+    }
+
+    &-strip {
+        .xui-table-body {
+            .xui-table-row-selected {
+                background-color: $selected-row-bgcolor!important;
+                color: $selected-row-color;
+            }
+
+            .xui-table-row-odd {
+                background-color: $row-odd-bgcolor;
+                .xui-table-cell {
+                    background-color: transparent;
+                }
+            }
+            .xui-table-row-even {
+                background-color: $row-even-bgcolor;
+                .xui-table-cell {
+                    background-color: transparent;
+                }
+            }
+        }
+    }
+
+
+    &-cell-group-fixed {
+        &-left {
+            position: absolute;
+            z-index: 4;
+            background: #fff;
+        }
+
+        &-right {
+            position: absolute;
+            z-index: 4;
+            background: #fff;
+            margin-left: 10px;
+        }
+    }
+
+    &-fixed-left-shadow {
+        box-shadow: 3px 0px 5px rgba(9, 9, 9, 0.16);
+    }
+
+    &-fixed-right-shadow {
+        box-shadow: -3px 0px 5px rgba(9, 9, 9, 0.16);
+    }
+
+    &-rownumber-cell {
+        background-color: $row-number-bgcolor!important;
+        color: #000!important;
+        .xui-table-cell-content {
+            text-align: center;
+        }
+    }
+
+    &-cell {
+        height: $cell-height;
+        border-style: solid;
+        border-width: 0;
+        border-color: $border-color;
+        display: block;
+        overflow: hidden;
+        position: absolute;
+        white-space: normal;
+
+        &-edit {
+            .f-datagrid-cell-content {
+                padding: 0;
+            }
+        }
+
+        &-content {
+            padding: 8px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+    }
+
+    &-bordered &-cell {
+        border-width: 0 1px 0 0;
+    }
+
+
+    .ps--active-x > .ps__rail-x, .ps--active-y > .ps__rail-y {
+        z-index: 999;
+    }
+    
+    .xui-table-body-fixed-left {
+        >.ps__rail-x, >.ps__rail-y {
+            display: none !important;
+        }
+    }
+}
+ 
+

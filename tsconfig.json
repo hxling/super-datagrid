@@ -17,6 +17,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "datagrid": [
+        "dist/datagrid"
+      ],
+      "datagrid/*": [
+        "dist/datagrid/*"
+      ]
+    }
   }
 }

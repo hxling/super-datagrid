@@ -1,0 +1,12 @@
+<!--表头-->
+<div class="f-datagrid-header" >
+    <div class="f-datagrid-row f-datagrid-row-header" [style.min-width.px]="columnGroup.minWidth">
+        <div class="f-datagrid-cell-group" #headerContainer>
+            <div class="f-datagrid-cell-header" *ngFor="let col of columnGroup.normalColumns">
+                <datagrid-header-cell [width]="col.width" [left]="col.left" [height]="height">
+                    {{col.title}}
+                </datagrid-header-cell>
+            </div>
+        </div>
+    </div>
+</div>

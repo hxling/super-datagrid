@@ -2,7 +2,12 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "../out-tsc/app",
-    "types": []
+    "types": [],
+    "paths": {
+      "@farris/ui-datagrid": [
+        "projects/datagrid/src/public-api.ts"
+      ]
+    }
   },
   "exclude": [
     "test.ts",
