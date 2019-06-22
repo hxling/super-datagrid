@@ -1,11 +1,10 @@
-import { EditInfo } from './../../services/state';
-import { Component, OnInit, Input, Output, EventEmitter, ContentChild, HostListener, ViewChild, TemplateRef, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { DataColumn } from '../../types';
-import { DatagridCellEditDirective } from '../columns';
-import { DatagridFacadeService } from '../../services/datagrid-facade.service';
-import { map, skip, filter } from 'rxjs/operators';
-import { DatagridComponent } from '../../datagrid.component';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener, ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonUtils } from '@farris/ui-common';
+import { EditInfo } from './../../services/state';
+import { DataColumn } from '../../types';
+import { DatagridFacadeService } from '../../services/datagrid-facade.service';
+import { map, filter } from 'rxjs/operators';
+import { DatagridComponent } from '../../datagrid.component';
 
 @Component({
     selector: 'datagrid-body-cell',
@@ -80,7 +79,6 @@ export class DatagridBodyCellComponent implements OnInit {
             if (state) {
                 setTimeout(() => {
                     this.focus();
-                    this.cellClick.emit({originalEvent: event});
                     this.datagrid.beginEdit.emit({ rowIndex: this.rowIndex, rowData: this.rowData, value: this.value });
                 });
             } else {
@@ -100,6 +98,7 @@ export class DatagridBodyCellComponent implements OnInit {
         if (!this.isEditing) {
             this.dfs.endEditCell();
             this.dfs.editCell( {rowIndex: this.rowIndex, cellRef: this, field: this.column.field, rowData: this.rowData, isEditing: true});
+            this.cellClick.emit({originalEvent: event });
         }
     }
 

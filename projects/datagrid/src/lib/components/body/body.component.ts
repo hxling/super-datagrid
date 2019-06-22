@@ -2,12 +2,13 @@ import { Component, OnInit, Input, ViewChild, Renderer2, ElementRef, ViewChildre
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { PerfectScrollbarDirective } from '../../perfect-scrollbar/perfect-scrollbar.directive';
 import { ColumnGroup } from '../../types';
-import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION, FIXED_LEFT_SHADOW_CLS, RowEventParam, ROW_HOVER_CLS } from '../../types/constant';
+import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION, FIXED_LEFT_SHADOW_CLS, ROW_HOVER_CLS } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridBodyFixedRowComponent } from './body-fixed-row.component';
 import { DatagridBodyRowComponent } from './body-row.component';
 import { Subscription } from 'rxjs';
+import { RowHoverEventParam } from '../../types/event-params';
 
 @Component({
     selector: 'datagrid-body',
@@ -81,10 +82,23 @@ export class DatagridBodyComponent implements OnInit, OnDestroy {
     }
 
     private listenRowHoverEvent() {
-        this.rowHoverSubscription = this.dgSer.rowHover$.subscribe( (e: RowEventParam) => {
+        this.rowHoverSubscription = this.dgSer.rowHover$.subscribe( (e: RowHoverEventParam) => {
             this.updateHoverCls(e, this.fixedRowsRef);
             this.updateHoverCls(e, this.rowsRef);
         });
+    }
+
+    private updateHoverCls(e: RowHoverEventParam, rowsRef: QueryList<DatagridBodyRowComponent>) {
+        if (rowsRef && rowsRef.length) {
+            const rowCmp = this.getHoverRowComponent(rowsRef, e.index);
+            if (rowCmp) {
+                if (e.mouseenter && this.datagrid.rowHover) {
+                    this.render.addClass(rowCmp.rowEl.nativeElement, ROW_HOVER_CLS);
+                } else {
+                    this.render.removeClass(rowCmp.rowEl.nativeElement, ROW_HOVER_CLS);
+                }
+            }
+        }
     }
 
     private getHoverRowComponent(rowsRef: QueryList<DatagridBodyRowComponent>, index: number): DatagridBodyRowComponent {
@@ -98,18 +112,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy {
         return null;
     }
 
-    private updateHoverCls(e: RowEventParam, rowsRef: QueryList<DatagridBodyRowComponent>) {
-        if (rowsRef && rowsRef.length) {
-            const rowCmp = this.getHoverRowComponent(rowsRef, e.index);
-            if (rowCmp) {
-                if (e.mouseenter && this.datagrid.rowHover) {
-                    this.render.addClass(rowCmp.rowEl.nativeElement, ROW_HOVER_CLS);
-                } else {
-                    this.render.removeClass(rowCmp.rowEl.nativeElement, ROW_HOVER_CLS);
-                }
-            }
-        }
-    }
 
     onLeftScrollToY($event: any) {
         const y = $event.target.scrollTop;

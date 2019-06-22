@@ -25,6 +25,11 @@ export class DatagridFacadeService {
         distinctUntilChanged()
     );
 
+    readonly currentRow$ = this.state$.pipe(
+        map( (state: FarrisDatagridState) => state.currentRow),
+        distinctUntilChanged()
+    );
+
     constructor() {
         this._state = initDataGridState
     }
@@ -57,6 +62,15 @@ export class DatagridFacadeService {
         }
     }
 
+    selectRow(rowIndex: number, rowData: any) {
+        const id = this.primaryId(rowData);
+        this.updateState({ currentRow: { id, data: rowData, index: rowIndex } })
+    }
+
+    primaryId(data: any) {
+        return  data[this._state.idField];
+    }
+
     editCell(editInfo: EditInfo) {
         if (this._state.currentEditInfo) {
             if(this._state.currentEditInfo.rowIndex !== editInfo.rowIndex || this._state.currentEditInfo.field !== editInfo.field) {
@@ -78,7 +92,7 @@ export class DatagridFacadeService {
         }
     }
     
-    protected updateState(state: any) {
+    protected updateState(state: Partial<FarrisDatagridState>) {
         const newState = {...this._state, ...state};
 
         this.store.next(this._state = newState);
@@ -112,5 +126,4 @@ export class DatagridFacadeService {
             colgroup.minWidth = minWidth;
         }
     }
-
 }

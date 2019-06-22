@@ -1,13 +1,16 @@
+import { filter } from 'rxjs/operators';
 import { Component, OnInit, Input, ViewChild, ElementRef, NgZone, Renderer2, AfterViewInit } from '@angular/core';
 import { DataColumn } from '../../types';
 import { DatagridComponent } from '../../datagrid.component';
 import { isPlainObject } from 'lodash-es';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridService } from '../../services/datagrid.service';
+import { RowClickEventParam } from '../../types/event-params';
+import { SelectedRow } from '../../services/state';
 @Component({
     selector: 'datagrid-row',
     template: `
-    <div #rowEl class="f-datagrid-body-row" [ngStyle]="rowStyle" [ngClass]="cls">
+    <div #rowEl class="f-datagrid-body-row" [ngStyle]="rowStyle" [ngClass]="cls" [class.f-datagrid-row-selected]="isSelected">
         <div class="f-datagrid-cell-group">
             <datagrid-body-cell *ngFor="let col of columns;trackBy:trackByColumns; let i = index;"
                 (cellClick)="onCellClick($event, data[col.field], data, i)"
@@ -29,10 +32,13 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
     @Input() minWidth: number;
     @Input() index: number;
     @Input() columns: DataColumn[];
-    @Input() isSelected = false;
-
-
+    
     @ViewChild('rowEl') rowEl: ElementRef;
+
+    isSelected = false;
+
+    selectedRow$ = this.dfs.currentRow$;
+
     constructor(public datagrid: DatagridComponent, 
         private dfs: DatagridFacadeService,
         private dgSer: DatagridService,
@@ -44,14 +50,22 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
         this.rowStyle = this.initStyle();
         this.cls  = {
             'f-datagrid-row-odd': this.odd && this.datagrid.striped,
-            'f-datagrid-row-even': !this.odd && this.datagrid.striped,
-            'f-datagrid-row-selected': this.isSelected
+            'f-datagrid-row-even': !this.odd && this.datagrid.striped
         }
+
+        this.selectedRow$.subscribe( (row: SelectedRow) => {
+            if (row) {
+                this.isSelected = row.index === this.index;
+            } else {
+                this.isSelected = false;
+            }
+        })
     }
 
     ngAfterViewInit() {
         this.registerMouseEvents();
     }
+
 
     trackByColumns(index: number, column: DataColumn): string { return column.field; }
 
@@ -94,6 +108,6 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
     }
 
     onCellClick(event: any, val, rowData, index) {
-        
+        this.dfs.selectRow(this.index, rowData);
     }
 }

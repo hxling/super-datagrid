@@ -1,10 +1,5 @@
 
 
-export interface RowEventParam  {
-    index: number;
-    data: any;
-    mouseenter: boolean;
-}
 
 
 export const SCROLL_Y_ACTION = 'psScrollY';

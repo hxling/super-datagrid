@@ -12,8 +12,8 @@ import { DatagridColumnDirective } from './components/columns';
     [class.f-datagrid-bordered]="showBorder"
     [class.f-datagrid-strip]="striped"
     [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
-      <datagrid-header [columnGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
-      <datagrid-body [data]="data$ | async"></datagrid-body>
+        <datagrid-header [columnGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
+        <datagrid-body [data]="data$ | async"></datagrid-body>
     </div>
     `,
     providers: [

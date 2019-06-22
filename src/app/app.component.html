@@ -1,7 +1,7 @@
 
 
 
-<div class="container">
+<div class="container-fluid">
 
     <div class="row" style="padding: 10px 0px;" >
         <div class="col-12">
@@ -36,10 +36,10 @@
             </ng-template>
 
             <ng-template #maray let-row='rowData' let-field="field">
-            <div class="custom-control custom-checkbox">
-                <input type="checkbox"  [(ngModel)]="row[field]" class="custom-control-input" id="edit-cell-customCheck1">
-                <label class="custom-control-label" for="edit-cell-customCheck1"></label>
-            </div>
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox"  [(ngModel)]="row[field]" class="custom-control-input" id="edit-cell-customCheck1">
+                    <label class="custom-control-label" for="edit-cell-customCheck1">&nbsp;</label>
+                </div>
             </ng-template>
 
         </div>

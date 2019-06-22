@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { RowEventParam } from '../types/constant';
+import { RowEventParam, RowHoverEventParam } from '../types/event-params';
 
 export type ScrollAction =
     | 'psScrollY'
@@ -17,8 +17,8 @@ export type ScrollAction =
 @Injectable()
 export class DatagridService {
     private scorllSubject = new Subject();
-    private rowHoverSubject = new Subject<RowEventParam>();
-    private rowSelectSubject = new Subject<Partial<RowEventParam>>();
+    private rowHoverSubject = new Subject<RowHoverEventParam>();
+    private rowSelectSubject = new Subject<Partial<RowHoverEventParam>>();
   
     public scorll$ = this.scorllSubject.asObservable();
     public rowHover$ = this.rowHoverSubject.asObservable();
