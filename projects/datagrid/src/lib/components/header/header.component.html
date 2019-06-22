@@ -1,6 +1,30 @@
 <!--表头-->
 <div class="f-datagrid-header" >
     <div class="f-datagrid-row f-datagrid-row-header" [style.min-width.px]="columnGroup.minWidth">
+
+        <!--左侧固定列-->
+        <ng-container *ngIf="columnGroup.leftFixedCols && columnGroup.leftFixedCols.length  || datagrid.rowNumber || datagrid.showCheckbox ">
+            <div #fixedLeft class="f-datagrid-cell-group f-datagrid-cell-group-fixed-left" [style.width.px]="columnGroup.leftColsWidth" [style.height.px]="height">
+                <!-- 行号 -->
+                <div class="f-datagrid-cell-header" *ngIf="datagrid.showRowNumber">
+                    <datagrid-header-cell [width]="datagrid.rowNumberWidth" [height]="height"></datagrid-header-cell>
+                </div>
+                <!-- 全选checkbox -->
+                <!-- <div class="f-datagrid-cell-header" *ngIf="datagrid.showCheckbox && datagrid.multiSelect">
+                    <xui-datagrid-cell [width]="36" [height]="36">
+                        <xui-checkbox [color]="'p-success'"></xui-checkbox>
+                    </xui-datagrid-cell>
+                </div>
+
+
+                <div class="f-datagrid-cell-header" *ngFor="let col of leftFixedCols">
+                    <xui-datagrid-cell [width]="col.width" [left]="col.left" [height]="height">
+                        {{col.title}}
+                    </xui-datagrid-cell>
+                </div> -->
+            </div>
+        </ng-container>
+
         <div class="f-datagrid-cell-group" #headerContainer>
             <div class="f-datagrid-cell-header" *ngFor="let col of columnGroup.normalColumns">
                 <datagrid-header-cell [width]="col.width" [left]="col.left" [height]="height">

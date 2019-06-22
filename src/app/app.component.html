@@ -1,31 +1,51 @@
 
 
-<farris-datagrid [columns]="columns" [data]="dataSource"
-    (beginEdit)="onBeginEdit($event)"
-    (endEdit)="onEndEdit($event)"
-></farris-datagrid>
 
-<ng-template #name let-row='rowData' let-field="field">
-    <input autofocus type="text" [(ngModel)]="row[field]" style="width: 100%; height: 35px;">
-</ng-template>
+<div class="container">
 
-<ng-template #sex let-row='rowData' let-field="field" >
-    <select name="sex" [(ngModel)]="row[field]" style="width: 100%; height: 35px;">
-        <option value="男">男</option>
-        <option value="女">女</option>
-    </select>
-</ng-template>
-
-<ng-template #birthday let-row='rowData' let-field="field">
-    <farris-datepicker name="birthday" [(ngModel)]="row[field]"></farris-datepicker>
-</ng-template>
-
-<ng-template #maray let-row='rowData' let-field="field">
-    <div class="custom-control custom-checkbox">
-        <input type="checkbox"  [(ngModel)]="row[field]" class="custom-control-input" id="edit-cell-customCheck1">
-        <label class="custom-control-label" for="edit-cell-customCheck1"></label>
+    <div class="row" style="padding: 10px 0px;" >
+        <div class="col-12">
+            <button class="btn btn-primary" (click)="changeDataItems(100)">100条</button>
+            <button class="btn btn-primary"  (click)="changeDataItems(200)">200条</button>
+            <button class="btn btn-primary" (click)="changeDataItems(1000)">1000条</button>
+        </div>
     </div>
-</ng-template>
+    <div class="row">
+        <div class="col-12">
+                        
+            <farris-datagrid [columns]="columns" [data]="dataSource"
+            (beginEdit)="onBeginEdit($event)"
+            (endEdit)="onEndEdit($event)"
+            [showRowNumber] ="true"
+            [striped]="true"
+            ></farris-datagrid>
+
+            <ng-template #name let-row='rowData' let-field="field">
+            <input autofocus type="text" [(ngModel)]="row[field]" style="width: 100%; height: 35px;">
+            </ng-template>
+
+            <ng-template #sex let-row='rowData' let-field="field" >
+            <select name="sex" [(ngModel)]="row[field]" style="width: 100%; height: 35px;">
+                <option value="男">男</option>
+                <option value="女">女</option>
+            </select>
+            </ng-template>
+
+            <ng-template #birthday let-row='rowData' let-field="field">
+            <farris-datepicker name="birthday" [(ngModel)]="row[field]"></farris-datepicker>
+            </ng-template>
+
+            <ng-template #maray let-row='rowData' let-field="field">
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox"  [(ngModel)]="row[field]" class="custom-control-input" id="edit-cell-customCheck1">
+                <label class="custom-control-label" for="edit-cell-customCheck1"></label>
+            </div>
+            </ng-template>
+
+        </div>
+    </div>
+
+</div>
 
 
 <router-outlet></router-outlet>

@@ -1,5 +1,5 @@
 import { DatagridService } from './services/datagrid.service';
-import { Component, OnInit, HostBinding, Input, ViewEncapsulation, ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy } from '@angular/core';
+import { Component, OnInit, HostBinding, Input, ViewEncapsulation, ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { DataColumn, ColumnGroup } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -10,7 +10,7 @@ import { DatagridColumnDirective } from './components/columns';
     template: `
     <div class="f-datagrid"
     [class.f-datagrid-bordered]="showBorder"
-    [class.f-datagrid-strip]="useStriped"
+    [class.f-datagrid-strip]="striped"
     [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
       <datagrid-header [columnGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
       <datagrid-body [data]="data$ | async"></datagrid-body>
@@ -25,7 +25,7 @@ import { DatagridColumnDirective } from './components/columns';
     ],
     encapsulation: ViewEncapsulation.None
 })
-export class DatagridComponent implements OnInit, OnDestroy {
+export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     /** 显示边框 */
     @Input() showBorder = true;
     /** 启用斑马线  */
@@ -89,6 +89,12 @@ export class DatagridComponent implements OnInit, OnDestroy {
         this.initState();
 
         this.registerDocumentEvent();
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.data && !changes.data.isFirstChange()) {
+            this.dfs.loadData(changes.data.currentValue);
+        }
     }
 
     ngOnDestroy() {

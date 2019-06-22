@@ -19,8 +19,8 @@ export const SCROLL_X_REACH_END_ACTION = 'psXReachEnd';
 export const SCROLL_X_REACH_START_ACTION = 'psXReachStart';
 
 /** 左侧固定列阴影样式名称 */
-export const FIXED_LEFT_SHADOW_CLS = 'xui-table-fixed-left-shadow';
+export const FIXED_LEFT_SHADOW_CLS = 'f-datagrid-fixed-left-shadow';
 
-export const ROW_HOVER_CLS = 'xui-table-row-hover';
+export const ROW_HOVER_CLS = 'f-datagrid-row-hover';
 
-export const ROW_SELECTED_CLS = 'xui-table-row-selected';
+export const ROW_SELECTED_CLS = 'f-datagrid-row-selected';

@@ -33,6 +33,10 @@ export class DatagridFacadeService {
         this.updateState(state);
     }
 
+    loadData(data: any) {
+        this.updateState({data});
+    }
+
     initColumns() {
         const columns = this._state.columns;
         if (columns && columns.length) {

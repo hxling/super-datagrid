@@ -1,17 +1,18 @@
 <div  class="f-datagrid-body" [ngStyle]="bodyStyle" [style.top.px]="top">
-<!-- 
-    <div #fixedLeft class="xui-table-body-fixed-left" #psFixedLeft="ngxPerfectScrollbar"
-        [perfectScrollbar]="psConfigLeft" [style.width.px]="fixedColsWidth" [style.height.px]="height"
-        (psScrollY)="onLeftScrollToY($event)">
 
-        <div [style.width.px]="fixedColsWidth" [style.height.px]="data.length * rowHeight">
+    <div #fixedLeft class="f-datagrid-body-fixed-left" #psFixedLeft="ngxPerfectScrollbar"
+        *ngIf="leftFixedCols && leftFixedCols.length  || datagrid.rowNumber || datagrid.showCheckbox "
+        [perfectScrollbar]="psConfigLeft" [style.width.px]="leftFixedWidth" [style.height.px]="height"
+        (psScrollY)="onLeftScrollToY($event)">
+        <div [style.width.px]="leftFixedWidth" [style.height.px]="data.length * rowHeight">
             <datagrid-fixed-row
                 *ngFor="let row of data; let i = index; odd as odd"
-                [minWidth]="fixedColsWidth" [isSelected]="datagrid.currentRow?.index === i"
+                [leftFixedWidth]="leftFixedWidth"  [rowHeight]="rowHeight"
+                [minWidth]="leftFixedWidth" [isSelected]="datagrid.currentRow?.index === i"
                 [odd]="odd"  [top]="i * rowHeight"  [index]="i"  [data]="row">
             </datagrid-fixed-row>
         </div>
-    </div> -->
+    </div>
 
     <div [perfectScrollbar]="psConfig" class="f-datagrid-body-wheel-area" [ngStyle]="bodyStyle" #ps="ngxPerfectScrollbar"
         (psScrollY)="onScrollToY($event)" (psScrollX)="onScrollToX($event)" (psXReachStart)="onPsXReachStart($event)">

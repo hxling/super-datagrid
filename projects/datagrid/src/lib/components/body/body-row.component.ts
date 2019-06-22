@@ -1,12 +1,13 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, NgZone, Renderer2, AfterViewInit } from '@angular/core';
 import { DataColumn } from '../../types';
 import { DatagridComponent } from '../../datagrid.component';
 import { isPlainObject } from 'lodash-es';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
+import { DatagridService } from '../../services/datagrid.service';
 @Component({
     selector: 'datagrid-row',
     template: `
-    <div #rowEl class="f-datagrid-body-row" [ngStyle]="rowStyle" [ngClass]="cls" [class.f-datagrid-row-selected]="isSelected">
+    <div #rowEl class="f-datagrid-body-row" [ngStyle]="rowStyle" [ngClass]="cls">
         <div class="f-datagrid-cell-group">
             <datagrid-body-cell *ngFor="let col of columns;trackBy:trackByColumns; let i = index;"
                 (cellClick)="onCellClick($event, data[col.field], data, i)"
@@ -16,7 +17,7 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
     </div>
     `,
 })
-export class DatagridBodyRowComponent implements OnInit {
+export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
 
     rowStyle: any;
     cls: any;
@@ -29,13 +30,15 @@ export class DatagridBodyRowComponent implements OnInit {
     @Input() index: number;
     @Input() columns: DataColumn[];
     @Input() isSelected = false;
-    @Input() leftFixedCols: DataColumn[];
-    @Input() rightFixedCols: DataColumn[];
-    @Input() leftColsWidth: number;
-    @Input() rightColsWidth: number;
+
 
     @ViewChild('rowEl') rowEl: ElementRef;
-    constructor(public datagrid: DatagridComponent, private dfs: DatagridFacadeService) { }
+    constructor(public datagrid: DatagridComponent, 
+        private dfs: DatagridFacadeService,
+        private dgSer: DatagridService,
+        private el: ElementRef,
+        private zone: NgZone,
+        private render: Renderer2) { }
 
     ngOnInit(): void {
         this.rowStyle = this.initStyle();
@@ -44,6 +47,10 @@ export class DatagridBodyRowComponent implements OnInit {
             'f-datagrid-row-even': !this.odd && this.datagrid.striped,
             'f-datagrid-row-selected': this.isSelected
         }
+    }
+
+    ngAfterViewInit() {
+        this.registerMouseEvents();
     }
 
     trackByColumns(index: number, column: DataColumn): string { return column.field; }
@@ -69,6 +76,22 @@ export class DatagridBodyRowComponent implements OnInit {
         return css;
     }
 
+    private registerMouseEvents() {
+        this.zone.runOutsideAngular(() => {
+            this.render.listen(this.el.nativeElement, 'mouseenter', () => {
+                this.dgSer.onRowHover(this.index, this.data, true);
+            });
+            this.render.listen(this.el.nativeElement, 'mouseleave', () => {
+                this.dgSer.onRowHover(this.index, this.data, false);
+            });
+
+            // this.render.listen(this.el.nativeElement, 'click', () => {
+                // this.dgSer.onRowClick(this.index, this.data);
+                // this.store.dispatch({type: 'CLICK_ROW', payload: { index: this.index, data: this.data }});
+                // this.store.dispatch(new ClickDataGridRow({ id: this.data[this.datagrid.idField], index: this.index, data: this.data }));
+            // });
+        });
+    }
 
     onCellClick(event: any, val, rowData, index) {
         

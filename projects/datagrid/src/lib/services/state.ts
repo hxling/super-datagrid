@@ -3,6 +3,7 @@ import { ColumnGroup, DataColumn } from './../types';
 export interface FarrisDatagridState {
     [key: string]: any,
     idField: string;
+    data?: any;
     columns: DataColumn[],
     showRowNumber?: boolean;
     showCheckbox?: boolean;

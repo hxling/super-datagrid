@@ -31,7 +31,11 @@ export class AppComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位', editor: this.textbox  }
         ];
 
-        this.dataSource = this.initData(150);
+        this.dataSource = this.initData(10);
+    }
+
+    changeDataItems(n =  20) {
+        this.dataSource = this.initData(n);
     }
 
     private initData(len: number) {

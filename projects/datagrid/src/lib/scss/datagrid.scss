@@ -15,7 +15,7 @@
         height: $header-cell-height;
         background: $header-bgcolor;
         
-        .xui-table-cell-group-left-shadow, .xui-table-cell-group-right-shadow {
+        .f-datagrid-cell-group-left-shadow, .f-datagrid-cell-group-right-shadow {
             height:$header-cell-height;
         }
     }
@@ -60,17 +60,17 @@
         background-color: #fff;
 
         &-body {
-            .xui-table-cell-group-left-shadow, .xui-table-cell-group-right-shadow {
+            .f-datagrid-cell-group-left-shadow, .f-datagrid-cell-group-right-shadow {
                 height:$cell-height;
             }
         }
 
-        &-hover:not(.xui-table-row-selected) {
+        &-hover:not(.f-datagrid-row-selected) {
             cursor: pointer;
             background: $row-hover-bgcolor!important;
             color: $row-hover-color;
 
-            .xui-table-cell {
+            .f-datagrid-cell {
                 background: transparent;
             }
         }
@@ -79,7 +79,7 @@
             background-color: $selected-row-bgcolor;
             color: $selected-row-color;
     
-            .xui-table-cell {
+            .f-datagrid-cell {
                 background-color: transparent;
             }
         }
@@ -91,21 +91,21 @@
     }
 
     &-strip {
-        .xui-table-body {
-            .xui-table-row-selected {
+        .f-datagrid-body {
+            .f-datagrid-row-selected {
                 background-color: $selected-row-bgcolor!important;
                 color: $selected-row-color;
             }
 
-            .xui-table-row-odd {
+            .f-datagrid-row-odd {
                 background-color: $row-odd-bgcolor;
-                .xui-table-cell {
+                .f-datagrid-cell {
                     background-color: transparent;
                 }
             }
-            .xui-table-row-even {
+            .f-datagrid-row-even {
                 background-color: $row-even-bgcolor;
-                .xui-table-cell {
+                .f-datagrid-cell {
                     background-color: transparent;
                 }
             }
@@ -136,14 +136,7 @@
         box-shadow: -3px 0px 5px rgba(9, 9, 9, 0.16);
     }
 
-    &-rownumber-cell {
-        background-color: $row-number-bgcolor!important;
-        color: #000!important;
-        .xui-table-cell-content {
-            text-align: center;
-        }
-    }
-
+    
     &-cell {
         height: $cell-height;
         border-style: solid;
@@ -167,6 +160,16 @@
             text-overflow: ellipsis;
             width: 100%;
         }
+
+        &-rownumber {
+            background-color: $row-number-bgcolor!important;
+            color: #000!important;
+            .f-datagrid-cell-content {
+                padding: 0;
+                text-align: center;
+            }
+        }
+    
     }
 
     &-bordered &-cell {
@@ -178,7 +181,7 @@
         z-index: 999;
     }
     
-    .xui-table-body-fixed-left {
+    &-body-fixed-left {
         >.ps__rail-x, >.ps__rail-y {
             display: none !important;
         }
