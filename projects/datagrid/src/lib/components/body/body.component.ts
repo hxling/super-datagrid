@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { PerfectScrollbarDirective } from '../../perfect-scrollbar/perfect-scrollbar.directive';
 import { ColumnGroup } from '../../types';
@@ -7,7 +8,6 @@ import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridBodyFixedRowComponent } from './body-fixed-row.component';
 import { DatagridBodyRowComponent } from './body-row.component';
-import { Subscription } from 'rxjs';
 import { RowHoverEventParam } from '../../types/event-params';
 
 @Component({

@@ -14,25 +14,23 @@
         <div class="col-12">
                         
             <farris-datagrid [columns]="columns" [data]="dataSource"
-            (beginEdit)="onBeginEdit($event)"
-            (endEdit)="onEndEdit($event)"
-            [showRowNumber] ="true"
-            [striped]="true"
+                [showRowNumber] ="true" [striped]="true"
+                (beginEdit)="onBeginEdit($event)" (endEdit)="onEndEdit($event)"
             ></farris-datagrid>
 
             <ng-template #name let-row='rowData' let-field="field">
-            <input autofocus type="text" [(ngModel)]="row[field]" style="width: 100%; height: 35px;">
+                <input autofocus type="text" [(ngModel)]="row[field]" style="width: 100%; height: 35px;">
             </ng-template>
 
             <ng-template #sex let-row='rowData' let-field="field" >
-            <select name="sex" [(ngModel)]="row[field]" style="width: 100%; height: 35px;">
-                <option value="男">男</option>
-                <option value="女">女</option>
-            </select>
+                <select name="sex" [(ngModel)]="row[field]" style="width: 100%; height: 35px;">
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
             </ng-template>
 
             <ng-template #birthday let-row='rowData' let-field="field">
-            <farris-datepicker name="birthday" [(ngModel)]="row[field]"></farris-datepicker>
+                <farris-datepicker name="birthday" [(ngModel)]="row[field]"></farris-datepicker>
             </ng-template>
 
             <ng-template #maray let-row='rowData' let-field="field">
