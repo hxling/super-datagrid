@@ -14,7 +14,7 @@ import { DatagridService } from '../../services/datagrid.service';
             <!--行号-->
             <div class="f-datagrid-cell f-datagrid-cell-rownumber" 
             (click)="onCellClick($event, index + 1, data, -1)"
-            *ngIf="datagrid.showRowNumber" [class.f-datagrid-row-selected]="isSelected"
+            *ngIf="datagrid.showRowNumber" [class.rownumber-selected]="isSelected"
             [ngStyle]="{'width': datagrid.rowNumberWidth + 'px', 'height': rowHeight +'px', 'line-height': rowHeight + 'px'}">
 
                 <div class="f-datagrid-cell-content" [style.height.px]="rowHeight" #cellContainer>

@@ -1,5 +1,6 @@
+import { DatagridHeaderComponent } from './components/header/header.component';
 import { DatagridService } from './services/datagrid.service';
-import { Component, OnInit, HostBinding, Input, ViewEncapsulation, ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, HostBinding, Input, ViewEncapsulation, ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { DataColumn, ColumnGroup } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -12,7 +13,7 @@ import { DatagridColumnDirective } from './components/columns';
     [class.f-datagrid-bordered]="showBorder"
     [class.f-datagrid-strip]="striped"
     [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
-        <datagrid-header [columnGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
+        <datagrid-header #header [columnGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
         <datagrid-body [data]="data$ | async"></datagrid-body>
     </div>
     `,
@@ -70,6 +71,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     @Input() emptyMsg = '';
     /** 列集合 */
     @Input() columns: DataColumn[];
+
+    /** 虚拟加载 */
+    @Input() virtualized = false;
 
     @Input() rowStyler: () => void;
 
