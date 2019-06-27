@@ -16,8 +16,8 @@ import { RowHoverEventParam } from '../../types/event-params';
 })
 export class DatagridBodyComponent implements OnInit, OnDestroy {
 
-    psConfig = {swipeEasing: true};
-    psConfigLeft = {suppressScrollX: true, suppressScrollY: false};
+    psConfig = { swipeEasing: true };
+    psConfigLeft = { suppressScrollX: true, suppressScrollY: false };
 
     top: number;
     height: number;
@@ -39,12 +39,13 @@ export class DatagridBodyComponent implements OnInit, OnDestroy {
     @ViewChildren(DatagridBodyRowComponent) rowsRef: QueryList<DatagridBodyRowComponent>;
 
     private rowHoverSubscription: Subscription;
-    
-    constructor(private dfs: DatagridFacadeService, public datagrid: DatagridComponent,
+
+    constructor(
+        private dfs: DatagridFacadeService, public datagrid: DatagridComponent,
         private render: Renderer2, private dgSer: DatagridService) {
 
-            // console.log(this.datagrid);
-       
+        // console.log(this.datagrid);
+
     }
 
     ngOnInit(): void {
@@ -57,7 +58,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy {
                 this.columnsGroup = state.columnsGroup;
                 this.colsWidth = state.columnsGroup.minWidth;
                 this.leftFixedWidth = state.columnsGroup.leftFixedWidth;
-    
+
                 this.bodyStyle = this.getBodyStyle();
             }
         });
@@ -82,7 +83,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy {
     }
 
     private listenRowHoverEvent() {
-        this.rowHoverSubscription = this.dgSer.rowHover$.subscribe( (e: RowHoverEventParam) => {
+        this.rowHoverSubscription = this.dgSer.rowHover$.subscribe((e: RowHoverEventParam) => {
             this.updateHoverCls(e, this.fixedRowsRef);
             this.updateHoverCls(e, this.rowsRef);
         });

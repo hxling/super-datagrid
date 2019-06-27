@@ -7,7 +7,7 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
 @Injectable()
 export class DatagridFacadeService {
     protected _state: FarrisDatagridState;
-    readonly store  = new BehaviorSubject<FarrisDatagridState>(this._state);
+    readonly store = new BehaviorSubject<FarrisDatagridState>(this._state);
     readonly state$ = this.store.asObservable();
 
     readonly columnGroup$ = this.state$.pipe(
@@ -16,22 +16,22 @@ export class DatagridFacadeService {
     );
 
     readonly data$ = this.state$.pipe(
-        map( (state: FarrisDatagridState) => state.data || []),
+        map((state: FarrisDatagridState) => state.data || []),
         distinctUntilChanged()
     );
 
     readonly currentEdit$ = this.state$.pipe(
-        map ((state: FarrisDatagridState) => state.currentEditInfo),
+        map((state: FarrisDatagridState) => state.currentEditInfo),
         distinctUntilChanged()
     );
 
     readonly currentRow$ = this.state$.pipe(
-        map( (state: FarrisDatagridState) => state.currentRow),
+        map((state: FarrisDatagridState) => state.currentRow),
         distinctUntilChanged()
     );
 
     constructor() {
-        this._state = initDataGridState
+        this._state = initDataGridState;
     }
 
     initState(state: any) {
@@ -39,7 +39,7 @@ export class DatagridFacadeService {
     }
 
     loadData(data: any) {
-        this.updateState({data});
+        this.updateState({ data });
     }
 
     initColumns() {
@@ -68,32 +68,32 @@ export class DatagridFacadeService {
     }
 
     primaryId(data: any) {
-        return  data[this._state.idField];
+        return data[this._state.idField];
     }
 
     editCell(editInfo: EditInfo) {
         if (this._state.currentEditInfo) {
-            if(this._state.currentEditInfo.rowIndex !== editInfo.rowIndex || this._state.currentEditInfo.field !== editInfo.field) {
-                this.updateState({currentEditInfo: editInfo});
+            if (this._state.currentEditInfo.rowIndex !== editInfo.rowIndex || this._state.currentEditInfo.field !== editInfo.field) {
+                this.updateState({ currentEditInfo: editInfo });
             }
         } else {
-            this.updateState({currentEditInfo: editInfo});
+            this.updateState({ currentEditInfo: editInfo });
         }
     }
 
     endEditCell() {
         if (this._state.currentEditInfo) {
             if (this._state.currentEditInfo.isEditing) {
-                const cei = {...this._state.currentEditInfo, isEditing: false};
-                this.updateState({currentEditInfo: cei});
+                const cei = { ...this._state.currentEditInfo, isEditing: false };
+                this.updateState({ currentEditInfo: cei });
             } else {
                 this._state.currentEditInfo = null;
             }
         }
     }
-    
+
     protected updateState(state: Partial<FarrisDatagridState>) {
-        const newState = {...this._state, ...state};
+        const newState = { ...this._state, ...state };
 
         this.store.next(this._state = newState);
     }
@@ -105,10 +105,10 @@ export class DatagridFacadeService {
 
     private initColumnsWidth(colgroup: ColumnGroup) {
         let offset = 0;
-        offset = this._state.showRowNumber ? offset +  this._state.rowNumberWidth : offset;
+        offset = this._state.showRowNumber ? offset + this._state.rowNumberWidth : offset;
 
-        offset = ( this._state.multiSelect &&  this._state.showCheckbox) ?
-            offset + 36  : offset;
+        offset = (this._state.multiSelect && this._state.showCheckbox) ?
+            offset + 36 : offset;
 
         const leftColsWidth = colgroup.leftFixed.reduce((r, c) => {
             c.left = r;
@@ -117,7 +117,7 @@ export class DatagridFacadeService {
 
         colgroup.leftFixedWidth = leftColsWidth;
 
-        if ( this._state.columns &&  this._state.columns.length) {
+        if (this._state.columns && this._state.columns.length) {
             const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
                 col.left = totalWidth;
                 return totalWidth += col.width;
