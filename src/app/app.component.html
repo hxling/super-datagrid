@@ -12,9 +12,18 @@
     </div>
     <div class="row">
         <div class="col-12">
+            <label for="virthualRows">
+                <input type=checkbox [(ngModel)]="enabelVirthualRows">启用虚拟加载
+            </label>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
                         
             <farris-datagrid [columns]="columns" [data]="dataSource"
-                [showRowNumber] ="true" [striped]="true"
+                [showRowNumber] ="false" [striped]="true"
+                [virtualized]="enabelVirthualRows"
                 (beginEdit)="onBeginEdit($event)" (endEdit)="onEndEdit($event)"
             ></farris-datagrid>
 

@@ -1,14 +1,18 @@
+import { VirtualizedLoaderService } from './virtualized-loader.service';
 import { FarrisDatagridState, initDataGridState, EditInfo } from './state';
 import { BehaviorSubject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { DataColumn, ColumnGroup } from '../types';
-import { map, distinctUntilChanged } from 'rxjs/operators';
+import { map, distinctUntilChanged, filter } from 'rxjs/operators';
 
 @Injectable()
 export class DatagridFacadeService {
     protected _state: FarrisDatagridState;
+    public virtualizedService: VirtualizedLoaderService;
     readonly store = new BehaviorSubject<FarrisDatagridState>(this._state);
-    readonly state$ = this.store.asObservable();
+    readonly state$ = this.store.asObservable().pipe(
+        filter( (state: any) => state)
+    );
 
     readonly columnGroup$ = this.state$.pipe(
         map((state: FarrisDatagridState) => state.columnsGroup),
@@ -16,7 +20,17 @@ export class DatagridFacadeService {
     );
 
     readonly data$ = this.state$.pipe(
-        map((state: FarrisDatagridState) => state.data || []),
+        map((state: FarrisDatagridState) => {
+            if (state.virtual && state.virtualized) {
+                return {
+                    rows: state.virtual.virtualRows,
+                    top: state.virtual.topHideHeight || 0,
+                    bottom: state.virtual.bottomHideHeight || 0
+                };
+            } else {
+                return { rows: state.data || [] , top: 0, bottom: 0};
+            }
+        }),
         distinctUntilChanged()
     );
 
@@ -32,14 +46,26 @@ export class DatagridFacadeService {
 
     constructor() {
         this._state = initDataGridState;
+        this.virtualizedService = new VirtualizedLoaderService();
     }
 
-    initState(state: any) {
+    updateVirthualRows(scrolltop: number) {
+        this.virtualizedService.state = this._state;
+        const virtual = { ...this._state.virtual, ...this.virtualizedService.getRows(scrolltop) };
+        this.updateState({virtual});
+    }
+
+    initState(state: Partial<FarrisDatagridState>) {
         this.updateState(state);
+        if (state.virtualized && state.data && state.data.length) {
+            this.updateVirthualRows(0);
+        }
+
     }
 
     loadData(data: any) {
         this.updateState({ data });
+        this.updateVirthualRows(0);
     }
 
     initColumns() {

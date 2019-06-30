@@ -1,24 +1,24 @@
-import { DatagridComponent } from '../datagrid.component';
+import { FarrisDatagridState } from './state';
 
 export class VirtualizedLoaderService {
-    constructor(private dg: DatagridComponent) {}
+    state: Partial<FarrisDatagridState>;
 
     getTableHeight() {
-        return this.dg.height;
+        return this.state.height;
     }
     getTableHeaderHeight() {
         // return this.dg.headerCmp.height;
         return 36;
     }
     getTableBodyHeight() {
-        return this.dg.height - this.getTableHeaderHeight();
+        return this.getTableHeight() - this.getTableHeaderHeight();
     }
     getTableWidth() {
-        return this.dg.width;
+        return this.state.width;
     }
 
     getRowHeight() {
-        return this.dg.rowHeight;
+        return this.state.rowHeight;
     }
 
     getRows(scrollTop: number) {
@@ -30,15 +30,14 @@ export class VirtualizedLoaderService {
         let topHideHeight = 0;
         let bottomHideHeight = 0;
 
-        const data = this.dg.data;
+        const data = this.state.data;
         const rowHeight = this.getRowHeight();
 
         console.time('循环所有节点');
-        for (let i = 0; i < data.length; i++) {
-            const n = data[i];
-            if ( !n.visible) {
-                continue;
-            }
+        for (const n of data) {
+            // if ( !n.visible) {
+            //     continue;
+            // }
             top += rowHeight;
             if (top + rowHeight < minTop) {
                 topHideHeight += rowHeight;
@@ -55,7 +54,7 @@ export class VirtualizedLoaderService {
         console.timeEnd('循环所有节点');
 
         return {
-            data: rows,
+            virtualRows: rows,
             topHideHeight,
             bottomHideHeight
         };

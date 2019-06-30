@@ -45,7 +45,7 @@ export class DatagridBodyCellComponent implements OnInit {
     value: any;
     isEditing = false;
 
-    isEditing$ = this.dfs.currentEdit$.pipe( 
+    isEditing$ = this.dfs.currentEdit$.pipe(
         filter((ei: EditInfo, index) => {
             if (ei && ei.field === this.column.field && ei.rowIndex === this.rowIndex && this.column.editor) {
                 return true;
@@ -84,12 +84,11 @@ export class DatagridBodyCellComponent implements OnInit {
             } else {
                 // end editing
                 this.updateValue();
-               
                 this.datagrid.endEdit.emit({ rowIndex: this.rowIndex, rowData: this.rowData, value: this.value });
             }
 
             this.cd.detectChanges();
-        })
+        });
     }
 
     @HostListener('click', ['$event'])

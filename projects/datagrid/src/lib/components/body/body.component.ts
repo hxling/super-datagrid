@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Renderer2, ElementRef, ViewChildren, QueryList, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { PerfectScrollbarDirective } from '../../perfect-scrollbar/perfect-scrollbar.directive';
@@ -9,6 +9,8 @@ import { DatagridComponent } from '../../datagrid.component';
 import { DatagridBodyFixedRowComponent } from './body-fixed-row.component';
 import { DatagridBodyRowComponent } from './body-row.component';
 import { RowHoverEventParam } from '../../types/event-params';
+import { VirtualizedState } from '../../services/state';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'datagrid-body',
@@ -29,6 +31,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy {
     rowHeight: number;
     bodyStyle: any;
 
+    // 虚拟加载
+    @Input() topHideHeight = 0;
+    @Input() bottomHideHeight = 0;
+
     @Input() data: any;
 
     @ViewChild('ps') ps?: PerfectScrollbarDirective;
@@ -41,11 +47,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy {
     private rowHoverSubscription: Subscription;
 
     constructor(
+        private cd: ChangeDetectorRef,
         private dfs: DatagridFacadeService, public datagrid: DatagridComponent,
         private render: Renderer2, private dgSer: DatagridService) {
-
-        // console.log(this.datagrid);
-
     }
 
     ngOnInit(): void {
@@ -128,6 +132,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy {
     onScrollToY($event: any) {
         const y = $event.target.scrollTop;
         this.psFixedLeft.scrollToY(y);
+        if (this.datagrid.virtualized) {
+            this.dfs.updateVirthualRows(y);
+        }
         this.dgSer.onScrollMove(y, SCROLL_Y_ACTION);
     }
 

@@ -1,17 +1,25 @@
 import { ColumnGroup, DataColumn } from './../types';
 
 export interface FarrisDatagridState {
-    [key: string]: any,
+    [key: string]: any;
     idField: string;
     data?: any;
-    columns: DataColumn[],
+    columns: DataColumn[];
     showRowNumber?: boolean;
     showCheckbox?: boolean;
     multiSelect?: boolean;
     selections: SelectedRow[];
     currentRow: SelectedRow;
     columnsGroup: ColumnGroup;
-    currentEditInfo?: EditInfo
+    currentEditInfo?: EditInfo;
+    virtualized?: boolean;
+    virtual?: VirtualizedState;
+}
+
+export interface VirtualizedState {
+    virtualRows?: any;
+    topHideHeight?: number;
+    bottomHideHeight?: number;
 }
 
 export interface SelectedRow {
@@ -26,7 +34,11 @@ export const initDataGridState: FarrisDatagridState = {
     selections: [],
     currentRow: null,
     columnsGroup: null,
-    columns: []
+    columns: [],
+    virtual: {
+        topHideHeight: 0,
+        bottomHideHeight: 0
+    }
 };
 
 export interface EditInfo {

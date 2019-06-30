@@ -5,6 +5,7 @@ import { DataColumn, ColumnGroup } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DatagridColumnDirective } from './components/columns';
+import { SCROLL_Y_ACTION } from './types/constant';
 
 @Component({
     selector: 'farris-datagrid',
@@ -14,7 +15,8 @@ import { DatagridColumnDirective } from './components/columns';
     [class.f-datagrid-strip]="striped"
     [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
         <datagrid-header #header [columnGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
-        <datagrid-body [data]="data$ | async"></datagrid-body>
+        <datagrid-body [data]="state.rows"
+        [topHideHeight]="state.top" [bottomHideHeight]="state.bottom"></datagrid-body>
     </div>
     `,
     providers: [
@@ -65,7 +67,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     @Input() idField = 'id';
     /** 请求数据源的URL */
     @Input() url: string;
-    /** 数据列表 */
+    /** 数据源 */
     @Input() data: any[];
     /** 数据为空时显示的信息 */
     @Input() emptyMsg = '';
@@ -73,7 +75,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     @Input() columns: DataColumn[];
 
     /** 虚拟加载 */
-    @Input() virtualized = false;
+    @Input() virtualized = true;
 
     @Input() rowStyler: () => void;
 
@@ -84,10 +86,24 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
     colGroup$ = this.dfs.columnGroup$;
     data$ = this.dfs.data$;
-    
-    docuemntEvents: any;
 
-    constructor(private dfs: DatagridFacadeService, protected domSanitizer: DomSanitizer, private render2: Renderer2) { }
+    docuemntEvents: any;
+    state = {
+        rows: [],
+        top : 0,
+        bottom : 0
+    };
+
+    constructor(private dfs: DatagridFacadeService,
+                private dgs: DatagridService,
+                protected domSanitizer: DomSanitizer, private render2: Renderer2) {
+        this.data$.subscribe(data => {
+            if(data) {
+                this.state = {...data};
+                console.log(data);
+            }
+        });
+    }
 
     ngOnInit() {
         this.initState();

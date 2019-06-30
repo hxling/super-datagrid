@@ -8,6 +8,7 @@ import { Component, OnInit, ViewEncapsulation, ViewChild, TemplateRef } from '@a
 })
 export class AppComponent implements OnInit {
     dataSource = [];
+    enabelVirthualRows = true;
     title = 'farris-datagrid';
 
     @ViewChild('name') textbox: TemplateRef<any>;

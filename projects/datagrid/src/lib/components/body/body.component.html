@@ -16,12 +16,12 @@
 
     <div [perfectScrollbar]="psConfig" class="f-datagrid-body-wheel-area" [ngStyle]="bodyStyle" #ps="ngxPerfectScrollbar"
         (psScrollY)="onScrollToY($event)" (psScrollX)="onScrollToX($event)" (psXReachStart)="onPsXReachStart($event)">
-        <!-- <div *ngIf="topHideHeight && virtualized" [style.height]="topHideHeight + 'px'"> </div> -->
+        <div *ngIf="topHideHeight && datagrid.virtualized" [style.height.px]="topHideHeight"> </div>
         <div [style.width.px]="colsWidth" [style.height.px]="data.length * rowHeight">
             <datagrid-row *ngFor="let row of data; trackBy: trackByRows; let i = index; odd as odd" [rowHeight]="rowHeight"
                 [minWidth]="colsWidth" [columns]="columnsGroup?.normalColumns"
                 [odd]="odd"  [top]="i * rowHeight" [index]="i" [data]="row"></datagrid-row>
         </div>
-        <!-- <div *ngIf="bottomHideHeight && virtualized" [style.height]="bottomHideHeight + 'px'"> </div> -->
+        <div *ngIf="bottomHideHeight && datagrid.virtualized" [style.height.px]="bottomHideHeight"> </div>
     </div>
 </div>
