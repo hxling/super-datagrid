@@ -41,7 +41,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     @ViewChild('ps') ps?: PerfectScrollbarDirective;
     @ViewChild('psFixedLeft') psFixedLeft?: PerfectScrollbarDirective;
-    @ViewChild('fixedLeft') fixedLeftElref: ElementRef;
+    @ViewChild('fixedLeft') fixedLeftElRef: ElementRef;
 
     @ViewChildren(DatagridBodyFixedRowComponent) fixedRowsRef: QueryList<DatagridBodyFixedRowComponent>;
     @ViewChildren(DatagridBodyRowComponent) rowsRef: QueryList<DatagridBodyRowComponent>;
@@ -89,8 +89,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     private getBodyStyle() {
         return {
-            width: `${this.width}px`,
-            height: `${this.height}px`,
+            width: `${this.width - 2}px`,
+            height: `${this.height - 2}px`,
         };
     }
 
@@ -133,7 +133,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     onScrollToX($event: any) {
         const x = $event.target.scrollLeft;
-        this.render.addClass(this.fixedLeftElref.nativeElement, FIXED_LEFT_SHADOW_CLS);
+        if (this.fixedLeftElRef) {
+            this.render.addClass(this.fixedLeftElRef.nativeElement, FIXED_LEFT_SHADOW_CLS);
+        }
         this.dgSer.onScrollMove(x, SCROLL_X_ACTION);
     }
 
@@ -151,7 +153,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     onPsXReachStart($event: any) {
         const x = $event.target.scrollLeft;
-        this.render.removeClass(this.fixedLeftElref.nativeElement, FIXED_LEFT_SHADOW_CLS);
+        if (this.fixedLeftElRef) {
+            this.render.removeClass(this.fixedLeftElRef.nativeElement, FIXED_LEFT_SHADOW_CLS);
+        }
         this.dgSer.onScrollMove(x, SCROLL_X_REACH_START_ACTION);
     }
 }

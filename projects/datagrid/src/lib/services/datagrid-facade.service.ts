@@ -62,7 +62,7 @@ export class DatagridFacadeService {
     }
 
     loadData(data: any) {
-        this.updateState({ data });
+        this.updateState({ data }, false);
         this.updateVirthualRows(0);
     }
 

@@ -22,7 +22,7 @@
         <div class="col-12">
                         
             <farris-datagrid [columns]="columns" [data]="dataSource"
-                [showRowNumber] ="false" [striped]="true"
+                [showRowNumber] ="false" [striped]="true" [showCheckbox]="false"
                 [virtualized]="enabelVirthualRows"
                 (beginEdit)="onBeginEdit($event)" (endEdit)="onEndEdit($event)"
             ></farris-datagrid>
