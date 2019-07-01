@@ -14,7 +14,7 @@ export class DatagridHeaderComponent implements OnInit {
 
     @ViewChild('headerContainer') headerContainer: ElementRef;
     @ViewChild('fixedLeft') fixedLeft: ElementRef;
-    
+
     constructor(  private dgSer: DatagridService, private render2: Renderer2, public datagrid: DatagridComponent) {
         this.dgSer.scorll$.subscribe((d: any) => {
             if (d.type === SCROLL_X_ACTION) {

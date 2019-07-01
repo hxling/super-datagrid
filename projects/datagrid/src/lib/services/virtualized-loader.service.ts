@@ -7,8 +7,7 @@ export class VirtualizedLoaderService {
         return this.state.height;
     }
     getTableHeaderHeight() {
-        // return this.dg.headerCmp.height;
-        return 36;
+        return this.state.headerHeight;
     }
     getTableBodyHeight() {
         return this.getTableHeight() - this.getTableHeaderHeight();
@@ -22,7 +21,7 @@ export class VirtualizedLoaderService {
     }
 
     getRows(scrollTop: number) {
-        const minTop = scrollTop;
+        const minTop =  Math.abs(scrollTop);
         const maxTop = minTop + this.getTableHeight();
 
         let top = 0;

@@ -24,7 +24,7 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
 
     rowStyle: any;
     cls: any;
-    
+
     @Input() rowHeight: number;
     @Input() odd = false;
     @Input() data: any;
@@ -32,14 +32,15 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
     @Input() minWidth: number;
     @Input() index: number;
     @Input() columns: DataColumn[];
-    
+
     @ViewChild('rowEl') rowEl: ElementRef;
 
     isSelected = false;
 
     selectedRow$ = this.dfs.currentRow$;
 
-    constructor(public datagrid: DatagridComponent, 
+    constructor(
+        public datagrid: DatagridComponent,
         private dfs: DatagridFacadeService,
         private dgSer: DatagridService,
         private el: ElementRef,
@@ -51,7 +52,7 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
         this.cls  = {
             'f-datagrid-row-odd': this.odd && this.datagrid.striped,
             'f-datagrid-row-even': !this.odd && this.datagrid.striped
-        }
+        };
 
         this.selectedRow$.subscribe( (row: SelectedRow) => {
             if (row) {
@@ -59,7 +60,7 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
             } else {
                 this.isSelected = false;
             }
-        })
+        });
     }
 
     ngAfterViewInit() {

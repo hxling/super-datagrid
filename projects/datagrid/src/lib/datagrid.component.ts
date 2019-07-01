@@ -1,22 +1,21 @@
-import { DatagridHeaderComponent } from './components/header/header.component';
 import { DatagridService } from './services/datagrid.service';
-import { Component, OnInit, HostBinding, Input, ViewEncapsulation, ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation,
+    ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
+    SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { DataColumn, ColumnGroup } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DatagridColumnDirective } from './components/columns';
-import { SCROLL_Y_ACTION } from './types/constant';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
     selector: 'farris-datagrid',
     template: `
-    <div class="f-datagrid"
-    [class.f-datagrid-bordered]="showBorder"
-    [class.f-datagrid-strip]="striped"
-    [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
+    <div class="f-datagrid" [class.f-datagrid-bordered]="showBorder"
+    [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
         <datagrid-header #header [columnGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
-        <datagrid-body [data]="state.rows"
-        [topHideHeight]="state.top" [bottomHideHeight]="state.bottom"></datagrid-body>
+        <datagrid-body [data]="ds.rows"
+        [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
     </div>
     `,
     providers: [
@@ -24,9 +23,10 @@ import { SCROLL_Y_ACTION } from './types/constant';
         DatagridService
     ],
     styleUrls: [
-        "./scss/index.scss"
+        './scss/index.scss'
     ],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     /** 显示边框 */
@@ -88,7 +88,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     data$ = this.dfs.data$;
 
     docuemntEvents: any;
-    state = {
+    ds = {
         rows: [],
         top : 0,
         bottom : 0
@@ -96,12 +96,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
     constructor(private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
+                private cd: ChangeDetectorRef,
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
-        this.data$.subscribe(data => {
-            if(data) {
-                this.state = {...data};
-                console.log(data);
-            }
+
+        this.data$.subscribe( (dataSource: any) => {
+            this.ds = {...dataSource};
+            console.log(this.ds);
+            this.cd.detectChanges();
         });
     }
 
@@ -122,9 +123,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     private initState() {
-        // const { columns, idField, multiSelect, showCheckbox, showRowNumber } = {...this};
         this.dfs.initState({...this});
-        this.dfs.initColumns();
     }
 
     private registerDocumentEvent() {

@@ -19,10 +19,9 @@ import {
 @Component({
     selector: 'perfect-scrollbar',
     exportAs: 'ngxPerfectScrollbar',
-    templateUrl: '../../dist/lib/perfect-scrollbar.component.html',
+    templateUrl: './perfect-scrollbar.component.html',
     styleUrls: [
-        '../../dist/lib/perfect-scrollbar.component.css',
-        '../../node_modules/perfect-scrollbar/css/perfect-scrollbar.css'
+        './perfect-scrollbar.component.css'
     ],
     encapsulation: ViewEncapsulation.None
 })

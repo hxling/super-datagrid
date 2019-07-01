@@ -9,6 +9,7 @@ import { DatagridComponent } from './datagrid.component';
 import { DatagridHeaderCellComponent, DatagridHeaderComponent } from './components/header';
 import { DatagridBodyCellComponent, DatagridBodyRowComponent, DatagridBodyComponent } from './components/body';
 import { DatagridBodyFixedRowComponent } from './components/body/body-fixed-row.component';
+import { PerfectScrollbarComponent } from './perfect-scrollbar/perfect-scrollbar.component';
 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -18,6 +19,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 @NgModule({
     declarations: [
         PerfectScrollbarDirective,
+        PerfectScrollbarComponent,
 
         DatagridHeaderCellComponent,
         DatagridHeaderComponent,

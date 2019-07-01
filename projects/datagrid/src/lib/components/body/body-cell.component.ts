@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener, ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener,
+    ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonUtils } from '@farris/ui-common';
 import { EditInfo } from './../../services/state';
 import { DataColumn } from '../../types';
@@ -14,14 +15,14 @@ import { DatagridComponent } from '../../datagrid.component';
 
         <div class="f-datagrid-cell-content" [style.height.px]="height" #cellContainer>
             <span *ngIf="!isEditing">{{ value }}</span>
-            <ng-template #editorTemplate *ngIf="isEditing" 
+            <ng-template #editorTemplate *ngIf="isEditing"
                 [ngTemplateOutlet]="column.editor" [ngTemplateOutletContext]="cellContext">
             </ng-template>
         </div>
 
     </div>
     `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DatagridBodyCellComponent implements OnInit {
     @Input() width: number;
@@ -29,7 +30,7 @@ export class DatagridBodyCellComponent implements OnInit {
     @Input() height: number;
     @Input() cls = '';
     @Input() column: DataColumn;
-    @Input() rowData: any
+    @Input() rowData: any;
     @Input() rowIndex: number;
 
     private _editorTemplate: any;
@@ -40,8 +41,8 @@ export class DatagridBodyCellComponent implements OnInit {
     @ViewChild('cellContainer') cellContainer: ElementRef;
 
     @Output() cellClick = new EventEmitter();
-    
-    cellContext: any = {}
+
+    cellContext: any = {};
     value: any;
     isEditing = false;
 
@@ -60,7 +61,8 @@ export class DatagridBodyCellComponent implements OnInit {
         })
     );
 
-    constructor(private dfs: DatagridFacadeService,
+    constructor(
+        private dfs: DatagridFacadeService,
         private render2: Renderer2, private utils: CommonUtils,
         private datagrid: DatagridComponent,
         private cd: ChangeDetectorRef) { }
@@ -75,7 +77,7 @@ export class DatagridBodyCellComponent implements OnInit {
         this.updateValue();
 
         this.isEditing$.subscribe( (state: boolean) => {
-            this.isEditing = state
+            this.isEditing = state;
             if (state) {
                 setTimeout(() => {
                     this.focus();

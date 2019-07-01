@@ -56,11 +56,9 @@ export class DatagridFacadeService {
     }
 
     initState(state: Partial<FarrisDatagridState>) {
-        this.updateState(state);
-        if (state.virtualized && state.data && state.data.length) {
-            this.updateVirthualRows(0);
-        }
-
+        this.updateState(state, false);
+        this.initColumns();
+        this.updateVirthualRows(0);
     }
 
     loadData(data: any) {
@@ -84,13 +82,13 @@ export class DatagridFacadeService {
 
             this.initColumnsWidth(colgroup);
 
-            this.updateState({ columnsGroup: colgroup });
+            this.updateState({ columnsGroup: colgroup }, false);
         }
     }
 
     selectRow(rowIndex: number, rowData: any) {
         const id = this.primaryId(rowData);
-        this.updateState({ currentRow: { id, data: rowData, index: rowIndex } })
+        this.updateState({ currentRow: { id, data: rowData, index: rowIndex } });
     }
 
     primaryId(data: any) {
@@ -118,10 +116,12 @@ export class DatagridFacadeService {
         }
     }
 
-    protected updateState(state: Partial<FarrisDatagridState>) {
+    protected updateState(state: Partial<FarrisDatagridState>, emit = true) {
         const newState = { ...this._state, ...state };
-
-        this.store.next(this._state = newState);
+        this._state = newState;
+        if (emit) {
+            this.store.next(this._state);
+        }
     }
 
 
