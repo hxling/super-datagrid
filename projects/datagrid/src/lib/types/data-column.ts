@@ -34,3 +34,16 @@ export interface ColumnGroup {
     /** 最小宽度 */
     minWidth?: number;
 }
+
+export interface PaginationInfo {
+    enable?: boolean;
+    pageList?: number[];
+    pageSize?: number;
+    pageIndex?: number;
+    total?: number;
+}
+
+
+export const defaultPaginationInfo: PaginationInfo = {
+    enable: true
+};

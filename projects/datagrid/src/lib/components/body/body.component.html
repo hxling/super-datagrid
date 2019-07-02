@@ -18,7 +18,7 @@
         (psScrollY)="onScrollToY($event)" (psScrollX)="onScrollToX($event)" (psXReachStart)="onPsXReachStart($event)">
             <div [style.width.px]="colsWidth" [style.height.px]="datagrid.data.length * rowHeight">
                 <div class="f-datagrid-row virtualized" *ngIf="topHideHeight && datagrid.virtualized" [style.height.px]="topHideHeight"></div>
-                <datagrid-row *ngFor="let row of data; trackBy: trackByRows; let i = index; odd as odd" [rowHeight]="rowHeight"
+                <datagrid-row *ngFor="let row of data | paginate: { itemsPerPage: 10, currentPage: 1 }; trackBy: trackByRows; let i = index; odd as odd" [rowHeight]="rowHeight"
                     [minWidth]="colsWidth" [columns]="columnsGroup?.normalColumns"
                     [odd]="odd"  [top]="i * rowHeight + topHideHeight" [index]="i" [data]="row"></datagrid-row>
                 <div  class="f-datagrid-row virtualized" *ngIf="bottomHideHeight && datagrid.virtualized" [style.height.px]="bottomHideHeight" ></div>

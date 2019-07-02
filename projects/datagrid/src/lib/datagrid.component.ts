@@ -2,7 +2,7 @@ import { DatagridService } from './services/datagrid.service';
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
     SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { DataColumn, ColumnGroup } from './types/data-column';
+import { DataColumn, ColumnGroup, PaginationInfo, defaultPaginationInfo } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DatagridColumnDirective } from './components/columns';
@@ -14,8 +14,8 @@ import { debounceTime } from 'rxjs/operators';
     <div class="f-datagrid" [class.f-datagrid-bordered]="showBorder"
     [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
         <datagrid-header #header [columnGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
-        <datagrid-body [data]="ds.rows"
-        [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
+        <datagrid-body [data]="ds.rows" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
+        <datagrid-pager *ngIf="pagination.enable" [id]="pagerId"></datagrid-pager>
     </div>
     `,
     providers: [
@@ -29,6 +29,9 @@ import { debounceTime } from 'rxjs/operators';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
+    @Input() auther = `Lucas Huang - QQ:1055818239`;
+    @Input() version = '0.0.1';
+    @Input() id = '';
     /** 显示边框 */
     @Input() showBorder = true;
     /** 启用斑马线  */
@@ -55,6 +58,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     @Input() rowNumberWidth = 36;
     /** 鼠标滑过效果开关，默认开启 */
     @Input() rowHover = true;
+    /** 分页信息 */
+    @Input() pagination: PaginationInfo = defaultPaginationInfo;
 
     /** 启用单击行 */
     @Input() enableClickRow = true;
@@ -69,6 +74,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     @Input() url: string;
     /** 数据源 */
     @Input() data: any[];
+
     /** 数据为空时显示的信息 */
     @Input() emptyMsg = '';
     /** 列集合 */
@@ -94,6 +100,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
         bottom : 0
     };
 
+    pagerId = '';
+
     constructor(private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
                 private cd: ChangeDetectorRef,
@@ -108,6 +116,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     ngOnInit() {
         this.initState();
         this.registerDocumentEvent();
+
+        this.pagerId = this.id ? this.id + 'farris-datagrid-pager' : 'farris-datagrid-pager' + new Date().getTime();
     }
 
     ngOnChanges(changes: SimpleChanges) {
