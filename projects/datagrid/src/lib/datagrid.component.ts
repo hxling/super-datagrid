@@ -14,8 +14,9 @@ import { debounceTime } from 'rxjs/operators';
     <div class="f-datagrid" [class.f-datagrid-bordered]="showBorder"
     [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
         <datagrid-header #header [columnGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
-        <datagrid-body [data]="ds.rows" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
-        <datagrid-pager *ngIf="pagination.enable" [id]="pagerId"></datagrid-pager>
+        <datagrid-body [data]="ds.rows | paginate: pagerOpts"
+        [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
+        <datagrid-pager *ngIf="pagination.enable" [id]="pagerOpts.id" (pageChange)="pagination.pageIndex = $event"></datagrid-pager>
     </div>
     `,
     providers: [
@@ -100,7 +101,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
         bottom : 0
     };
 
-    pagerId = '';
+    pagerOpts = {
+        id:  this.id ? this.id + '-pager' :  'farris-datagrid-pager_' + new Date().getTime(),
+        itemsPerPage: this.pagination.pageSize,
+        currentPage: this.pagination.pageIndex
+    }
 
     constructor(private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
@@ -116,8 +121,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     ngOnInit() {
         this.initState();
         this.registerDocumentEvent();
-
-        this.pagerId = this.id ? this.id + 'farris-datagrid-pager' : 'farris-datagrid-pager' + new Date().getTime();
     }
 
     ngOnChanges(changes: SimpleChanges) {

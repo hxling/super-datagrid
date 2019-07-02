@@ -58,7 +58,13 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.dfs.state$.subscribe(state => {
             if (state) {
                 this.top = state.headerHeight;
-                this.height = state.height - this.top;
+                let pagerHeight = 0;
+                if (this.datagrid.pagination.enable) {
+                    pagerHeight = 40;
+                }
+
+                this.height = state.height - this.top - pagerHeight;
+
                 this.width = state.width;
                 this.rowHeight = state.rowHeight;
                 this.columnsGroup = state.columnsGroup;

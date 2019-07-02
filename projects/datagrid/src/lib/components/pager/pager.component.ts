@@ -1,9 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, SkipSelf } from '@angular/core';
+import { DatagridComponent } from '../../datagrid.component';
 
 @Component({
     selector: 'datagrid-pager',
     template: `
-    <div class="farris-datagrid-pager">
+    <div class="f-datagrid-pager">
         <pagination-controls #pager [id]="id" [maxSize]="maxSize" [directionLinks]="directionLinks"
             [autoHide]="autoHide" [responsive]="responsive" [previousLabel]="previousLabel" [nextLabel]="nextLabel"
             (pageChange)="onPageChange($event)"
@@ -13,7 +14,7 @@ import { Component, OnInit, Input } from '@angular/core';
     `
 })
 export class DatagridPagerComponent implements OnInit {
-    id = 'Farris-DataGrid-Pagination';
+    @Input() id = 'farris-datagrid-pager';
     /** 显示页码的数量 */
     @Input() maxSize = 7;
     /** 是否显示页码 */
@@ -23,13 +24,15 @@ export class DatagridPagerComponent implements OnInit {
 
     @Input() responsive = false;
     /** 上页标签 */
-    @Input() previousLabel = '';
+    @Input() previousLabel = '上页';
     /** 下页标签 */
-    @Input() nextLabel = '';
+    @Input() nextLabel = '下页';
 
-    constructor() { }
+    constructor(@SkipSelf() private datagrid: DatagridComponent) {}
 
-    ngOnInit(): void { }
+    ngOnInit(): void {
+       
+    }
 
     onPageChange() {}
 

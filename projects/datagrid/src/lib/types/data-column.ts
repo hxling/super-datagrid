@@ -45,5 +45,7 @@ export interface PaginationInfo {
 
 
 export const defaultPaginationInfo: PaginationInfo = {
-    enable: true
+    enable: true,
+    pageIndex: 1,
+    pageSize: 10
 };

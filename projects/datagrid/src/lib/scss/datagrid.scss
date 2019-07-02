@@ -180,6 +180,11 @@
         border-width: 0 1px 0 0;
     }
 
+    &-pager {
+        position: absolute;
+        bottom: 0;
+    }
+
 
     .ps--active-x > .ps__rail-x, .ps--active-y > .ps__rail-y {
         z-index: 999;

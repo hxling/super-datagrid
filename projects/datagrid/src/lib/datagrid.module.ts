@@ -19,6 +19,11 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 };
 
 @NgModule({
+    imports: [
+        CommonModule,
+        NgxPaginationModule,
+        FarrisCommonModule.forRoot()
+    ],
     declarations: [
         PerfectScrollbarDirective,
         PerfectScrollbarComponent,
@@ -31,11 +36,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         DatagridBodyFixedRowComponent,
         DatagridComponent,
         DatagridPagerComponent
-    ],
-    imports: [
-        CommonModule,
-        NgxPaginationModule,
-        FarrisCommonModule.forRoot()
     ],
     providers: [
         {
