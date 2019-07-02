@@ -51,7 +51,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     constructor(
         private cd: ChangeDetectorRef,
         private dfs: DatagridFacadeService, public datagrid: DatagridComponent,
-        private render: Renderer2, private dgSer: DatagridService) {
+        private render: Renderer2, private dgs: DatagridService) {
     }
 
     ngOnInit(): void {
@@ -67,6 +67,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
                 this.bodyStyle = this.getBodyStyle();
             }
+        });
+
+        this.dgs.onDataSourceChange.subscribe(() => {
+            this.ps.scrollToTop();
         });
 
         this.listenRowHoverEvent();
@@ -95,7 +99,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     private listenRowHoverEvent() {
-        this.rowHoverSubscription = this.dgSer.rowHover$.subscribe((e: RowHoverEventParam) => {
+        this.rowHoverSubscription = this.dgs.rowHover$.subscribe((e: RowHoverEventParam) => {
             this.updateHoverCls(e, this.fixedRowsRef);
             this.updateHoverCls(e, this.rowsRef);
         });
@@ -136,7 +140,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         if (this.fixedLeftElRef) {
             this.render.addClass(this.fixedLeftElRef.nativeElement, FIXED_LEFT_SHADOW_CLS);
         }
-        this.dgSer.onScrollMove(x, SCROLL_X_ACTION);
+        this.dgs.onScrollMove(x, SCROLL_X_ACTION);
     }
 
     onScrollToY($event: any) {
@@ -148,7 +152,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         if (this.datagrid.virtualized) {
             this.dfs.updateVirthualRows(y);
         }
-        this.dgSer.onScrollMove(y, SCROLL_Y_ACTION);
+        this.dgs.onScrollMove(y, SCROLL_Y_ACTION);
     }
 
     onPsXReachStart($event: any) {
@@ -156,6 +160,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         if (this.fixedLeftElRef) {
             this.render.removeClass(this.fixedLeftElRef.nativeElement, FIXED_LEFT_SHADOW_CLS);
         }
-        this.dgSer.onScrollMove(x, SCROLL_X_REACH_START_ACTION);
+        this.dgs.onScrollMove(x, SCROLL_X_REACH_START_ACTION);
     }
 }

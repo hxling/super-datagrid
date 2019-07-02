@@ -1,5 +1,5 @@
 import { filter } from 'rxjs/operators';
-import { Component, OnInit, Input, ViewChild, ElementRef, NgZone, Renderer2, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, NgZone, Renderer2, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { DataColumn } from '../../types';
 import { DatagridComponent } from '../../datagrid.component';
 import { isPlainObject } from 'lodash-es';
@@ -7,6 +7,7 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridService } from '../../services/datagrid.service';
 import { RowClickEventParam } from '../../types/event-params';
 import { SelectedRow } from '../../services/state';
+import { ROW_HOVER_CLS } from '../../types/constant';
 @Component({
     selector: 'datagrid-row',
     template: `
@@ -19,6 +20,7 @@ import { SelectedRow } from '../../services/state';
         </div>
     </div>
     `,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
 
@@ -94,10 +96,12 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
     private registerMouseEvents() {
         this.zone.runOutsideAngular(() => {
             this.render.listen(this.el.nativeElement, 'mouseenter', () => {
-                this.dgSer.onRowHover(this.index, this.data, true);
+                // this.dgSer.onRowHover(this.index, this.data, true);
+                this.render.addClass(this.rowEl.nativeElement, ROW_HOVER_CLS);
             });
             this.render.listen(this.el.nativeElement, 'mouseleave', () => {
-                this.dgSer.onRowHover(this.index, this.data, false);
+                // this.dgSer.onRowHover(this.index, this.data, false);
+                this.render.removeClass(this.rowEl.nativeElement, ROW_HOVER_CLS);
             });
 
             // this.render.listen(this.el.nativeElement, 'click', () => {

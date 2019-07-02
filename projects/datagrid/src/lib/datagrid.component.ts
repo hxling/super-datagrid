@@ -101,20 +101,19 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
         this.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
-            console.log(this.ds);
             this.cd.detectChanges();
         });
     }
 
     ngOnInit() {
         this.initState();
-
         this.registerDocumentEvent();
     }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
             this.dfs.loadData(changes.data.currentValue);
+            this.dgs.dataSourceChanged();
         }
     }
 

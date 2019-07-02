@@ -22,7 +22,7 @@ export class VirtualizedLoaderService {
 
     getRows(scrollTop: number) {
         const minTop =  Math.abs(scrollTop);
-        const maxTop = minTop + this.getTableHeight();
+        const maxTop = minTop + this.getTableHeight() + 150;
 
         let top = 0;
         const rows = [];
@@ -32,7 +32,7 @@ export class VirtualizedLoaderService {
         const data = this.state.data;
         const rowHeight = this.getRowHeight();
 
-        console.time('循环所有节点');
+        // console.time('循环所有节点');
         for (const n of data) {
             // if ( !n.visible) {
             //     continue;
@@ -50,7 +50,7 @@ export class VirtualizedLoaderService {
 
             rows.push(n);
         }
-        console.timeEnd('循环所有节点');
+        // console.timeEnd('循环所有节点');
 
         return {
             virtualRows: rows,
