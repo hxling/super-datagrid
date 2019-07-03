@@ -1,13 +1,22 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild, TemplateRef } from '@angular/core';
+import { DemoDataService } from './demo-data.service';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    providers: [
+        DemoDataService
+    ]
 })
 export class AppComponent implements OnInit {
-    dataSource = [];
+    showLoading = false;
+    private  allDataSource = [];
+    items = [];
+    total = 0;
+    pageSize = 500;
+
     enabelVirthualRows = true;
     title = 'farris-datagrid';
 
@@ -17,6 +26,8 @@ export class AppComponent implements OnInit {
     @ViewChild('maray') marayEditor: TemplateRef<any>;
 
     columns = [];
+
+    constructor(private dds: DemoDataService) {}
 
     ngOnInit() {
 
@@ -32,30 +43,26 @@ export class AppComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位', editor: this.textbox  }
         ];
 
-        this.dataSource = this.initData(50);
+        this.allDataSource = this.dds.createData(100000);
+        this.showLoading = true;
+        this.dds.serverCall(this.allDataSource, 1, this.pageSize).subscribe( res => {
+            this.items = res.items;
+            this.total = res.total;
+            this.showLoading = false;
+        });
     }
 
     changeDataItems(n =  20) {
-        this.dataSource = this.initData(n);
+        this.allDataSource = this.dds.createData(n);
     }
 
-    private initData(len: number) {
-        const arr = [];
-        for (let i = 0; i < len; i++) {
-            const k = i + 1;
-            arr.push({
-                id: k,
-                name: '姓名' + k,
-                sex: '男',
-                birthday: (2000 + i) + '-01-01',
-                maray: true,
-                addr: `天齐大道${7000 + i}号`,
-                company: `inspur`,
-                nianxin: Math.round(Math.random() * 10000) * 12,
-                zhiwei: 'CEO&CPU'
-            });
-        }
-        return arr;
+    changePageIndex(idx: number) {
+        this.showLoading = true;
+        this.dds.serverCall(this.allDataSource, idx, this.pageSize).subscribe( res => {
+            this.items = res.items;
+            this.total = res.total;
+            this.showLoading = false;
+        });
     }
 
 

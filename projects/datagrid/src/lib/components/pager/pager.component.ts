@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SkipSelf } from '@angular/core';
+import { Component, OnInit, Input, SkipSelf, Output, EventEmitter } from '@angular/core';
 import { DatagridComponent } from '../../datagrid.component';
 
 @Component({
@@ -28,13 +28,16 @@ export class DatagridPagerComponent implements OnInit {
     /** 下页标签 */
     @Input() nextLabel = '下页';
 
+    @Output() pageChange = new EventEmitter();
+
     constructor(@SkipSelf() private datagrid: DatagridComponent) {}
 
     ngOnInit(): void {
-       
     }
 
-    onPageChange() {}
+    onPageChange(pageIdx: number) {
+        this.pageChange.emit(pageIdx);
+    }
 
     onPageSizeChange() {}
 }

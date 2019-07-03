@@ -1,9 +1,11 @@
+import { PaginationInfo } from './../types/data-column';
 import { ColumnGroup, DataColumn } from './../types';
 
 export interface FarrisDatagridState {
     [key: string]: any;
     idField: string;
     data?: any;
+    pagerInfo?: PaginationInfo;
     columns: DataColumn[];
     showRowNumber?: boolean;
     showCheckbox?: boolean;

@@ -16,7 +16,7 @@ import { debounceTime } from 'rxjs/operators';
         <datagrid-header #header [columnGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
         <datagrid-body [data]="ds.rows | paginate: pagerOpts"
         [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
-        <datagrid-pager *ngIf="pagination.enable" [id]="pagerOpts.id" (pageChange)="pagination.pageIndex = $event"></datagrid-pager>
+        <datagrid-pager *ngIf="pagination" [id]="pagerOpts.id" (pageChange)="onPageChange($event)"></datagrid-pager>
     </div>
     `,
     providers: [
@@ -59,8 +59,24 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     @Input() rowNumberWidth = 36;
     /** 鼠标滑过效果开关，默认开启 */
     @Input() rowHover = true;
+
     /** 分页信息 */
-    @Input() pagination: PaginationInfo = defaultPaginationInfo;
+    @Input() pagination = true;
+    /** 当前页码 */
+    @Input() pageIndex = 1;
+    /** 每页记录数 */
+    @Input() pageSize = 20;
+    /** 总记录数 */
+    private _total = 0;
+    get total() {
+        return this._total;
+    }
+
+    @Input() set total(val: number) {
+        this._total = val;
+        console.log(val);
+        this.pagerOpts.totalItems = val;
+    }
 
     /** 启用单击行 */
     @Input() enableClickRow = true;
@@ -89,6 +105,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     @Output() beginEdit = new EventEmitter();
     @Output() endEdit = new EventEmitter();
 
+    @Output() pageChanged = new EventEmitter();
+
     @ContentChildren(DatagridColumnDirective) dgColumns: QueryList<DatagridColumnDirective>;
 
     colGroup$ = this.dfs.columnGroup$;
@@ -101,11 +119,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
         bottom : 0
     };
 
-    pagerOpts = {
-        id:  this.id ? this.id + '-pager' :  'farris-datagrid-pager_' + new Date().getTime(),
-        itemsPerPage: this.pagination.pageSize,
-        currentPage: this.pagination.pageIndex
-    }
+    pagerOpts: any = { };
 
     constructor(private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
@@ -119,6 +133,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnInit() {
+        this.pagerOpts = {
+            id:  this.id ? this.id + '-pager' :  'farris-datagrid-pager_' + new Date().getTime(),
+            itemsPerPage: this.pageSize,
+            currentPage: this.pageIndex,
+            totalItems: this.total
+        };
         this.initState();
         this.registerDocumentEvent();
     }
@@ -132,6 +152,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
     ngOnDestroy() {
         this.docuemntEvents();
+    }
+
+    onPageChange(pageIndex: number) {
+        this.pageIndex = pageIndex;
+        this.pagerOpts.currentPage = pageIndex;
+        this.pageChanged.emit(pageIndex);
     }
 
     private initState() {

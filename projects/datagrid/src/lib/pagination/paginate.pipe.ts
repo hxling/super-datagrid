@@ -40,7 +40,7 @@ export class PaginatePipe implements PipeTransform {
         // use the cached data from the `state` object to prevent the NgFor
         // from flashing empty until the real values arrive.
         if (!(collection instanceof Array)) {
-            let _id = args.id || this.service.defaultId();
+            const _id = args.id || this.service.defaultId();
             if (this.state[_id]) {
                 return this.state[_id].slice as U;
             } else {
@@ -48,10 +48,11 @@ export class PaginatePipe implements PipeTransform {
             }
         }
 
-        let serverSideMode = args.totalItems && args.totalItems !== collection.length;
-        let instance = this.createInstance(collection, args);
-        let id = instance.id;
-        let start, end;
+        const serverSideMode = args.totalItems && args.totalItems !== collection.length;
+        const instance = this.createInstance(collection, args);
+        const id = instance.id;
+        let start: number;
+        let end: number;
         let perPage = instance.itemsPerPage;
 
         this.service.register(instance);
@@ -61,11 +62,11 @@ export class PaginatePipe implements PipeTransform {
             start = (instance.currentPage - 1) * perPage;
             end = start + perPage;
 
-            let isIdentical = this.stateIsIdentical(id, collection, start, end);
+            const isIdentical = this.stateIsIdentical(id, collection, start, end);
             if (isIdentical) {
                 return this.state[id].slice as U;
             } else {
-                let slice = collection.slice(start, end);
+                const slice = collection.slice(start, end);
                 this.saveState(id, collection, slice, start, end);
                 this.service.change.emit(id);
                 return slice as U;

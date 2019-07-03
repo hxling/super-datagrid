@@ -59,7 +59,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             if (state) {
                 this.top = state.headerHeight;
                 let pagerHeight = 0;
-                if (this.datagrid.pagination.enable) {
+                if (this.datagrid.pagination) {
                     pagerHeight = 40;
                 }
 
