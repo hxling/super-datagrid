@@ -74,7 +74,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
     @Input() set total(val: number) {
         this._total = val;
-        console.log(val);
         this.pagerOpts.totalItems = val;
     }
 

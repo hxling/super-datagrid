@@ -52,8 +52,9 @@ export const DEFAULT_TEMPLATE = `
 
 export const DEFAULT_STYLES = `
 .ngx-pagination {
-  margin-left: 0;
-  margin-bottom: 1rem; }
+  margin: 0;
+  padding: 0;
+  margin-top: 7px; }
   .ngx-pagination::before, .ngx-pagination::after {
     content: ' ';
     display: table; }
