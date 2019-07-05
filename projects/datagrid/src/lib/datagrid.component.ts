@@ -66,6 +66,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     @Input() pageIndex = 1;
     /** 每页记录数 */
     @Input() pageSize = 20;
+    @Input() pagerHeight = 40;
     /** 总记录数 */
     private _total = 0;
     get total() {
@@ -75,6 +76,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     @Input() set total(val: number) {
         this._total = val;
         this.pagerOpts.totalItems = val;
+        this.dfs.setTotal(val);
     }
 
     /** 启用单击行 */
@@ -104,6 +106,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     @Output() beginEdit = new EventEmitter();
     @Output() endEdit = new EventEmitter();
 
+    @Output() scrollY = new EventEmitter();
     @Output() pageChanged = new EventEmitter();
 
     @ContentChildren(DatagridColumnDirective) dgColumns: QueryList<DatagridColumnDirective>;
@@ -138,6 +141,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
             currentPage: this.pageIndex,
             totalItems: this.total
         };
+
+        if (!this.pagination) {
+            this.pagerHeight = 0;
+        }
+
         this.initState();
         this.registerDocumentEvent();
     }

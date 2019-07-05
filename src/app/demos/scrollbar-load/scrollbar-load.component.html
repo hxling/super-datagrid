@@ -1,0 +1,11 @@
+        
+<div class="row" style="padding: 20px 0;">        
+
+<farris-datagrid [columns]="columns" [data]="items"
+    [showRowNumber] ="false" [striped]="false" [showCheckbox]="false"
+    [virtualized]="true"
+    [pagination]="false" [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
+    (scrollY)="onScrollY($event)"
+></farris-datagrid>
+
+</div>

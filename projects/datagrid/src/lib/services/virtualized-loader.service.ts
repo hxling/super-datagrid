@@ -30,6 +30,8 @@ export class VirtualizedLoaderService {
         let bottomHideHeight = 0;
 
         const data = this.state.data;
+        const total = this.state.total;
+        console.log(total);
         const rowHeight = this.getRowHeight();
 
         // console.time('循环所有节点');
@@ -51,7 +53,9 @@ export class VirtualizedLoaderService {
             rows.push(n);
         }
         // console.timeEnd('循环所有节点');
-
+        if (!this.state.pagination) {
+            bottomHideHeight = this.state.total * rowHeight - (this.state.height - this.state.headerHeight);
+        }
         return {
             virtualRows: rows,
             topHideHeight,

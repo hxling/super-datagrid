@@ -58,10 +58,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.dfs.state$.subscribe(state => {
             if (state) {
                 this.top = state.headerHeight;
-                let pagerHeight = 0;
-                if (this.datagrid.pagination) {
-                    pagerHeight = 40;
-                }
+                const pagerHeight = state.pagerHeight;
 
                 this.height = state.height - this.top - pagerHeight;
 
@@ -158,6 +155,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         if (this.datagrid.virtualized) {
             this.dfs.updateVirthualRows(y);
         }
+
+        this.datagrid.scrollY.emit(y);
         this.dgs.onScrollMove(y, SCROLL_Y_ACTION);
     }
 

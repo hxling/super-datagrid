@@ -2,7 +2,6 @@ import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 
-
 interface IServerResponse {
     items: string[];
     total: number;
@@ -32,10 +31,10 @@ export class DemoDataService {
         const perPage = pageSize;
         const start = (pageIdx - 1) * perPage;
         const end = start + perPage;
-
+        const total = data.length;
         return of({
             items: data.slice(start, end),
-            total: data.length
+            total
         }).pipe(delay(1000));
     }
 }

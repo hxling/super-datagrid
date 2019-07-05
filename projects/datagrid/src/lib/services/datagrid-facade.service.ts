@@ -66,6 +66,10 @@ export class DatagridFacadeService {
         this.updateVirthualRows(0);
     }
 
+    setTotal(total: number) {
+        this.updateState( {total}, false );
+    }
+
     initColumns() {
         const columns = this._state.columns;
         if (columns && columns.length) {

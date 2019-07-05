@@ -5,12 +5,19 @@ import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+
 import { DatagridModule } from '@farris/ui-datagrid';
+
 import { FarrisDatePickerModule } from '@farris/ui-datepicker';
+import { ScrollBarLoadComponent } from './demos/scrollbar-load/scrollbar-load.component';
+import { PageScrollComponent } from './demos/page-scroll/page-scroll.component';
+
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ScrollBarLoadComponent,
+    PageScrollComponent
   ],
   imports: [
     BrowserModule,
