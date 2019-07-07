@@ -14,7 +14,7 @@ export class ScrollBarLoadComponent implements OnInit {
     columns = [];
     items = [];
     total = 0;
-    pageSize = 50;
+    pageSize = 20;
 
     private  allDataSource = [];
     constructor(private dds: DemoDataService) {}
@@ -33,7 +33,7 @@ export class ScrollBarLoadComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位' }
         ];
 
-        this.allDataSource = this.dds.createData(100000);
+        this.allDataSource = this.dds.createData(100);
         this.showLoading = true;
         this.dds.serverCall(this.allDataSource, 1, this.pageSize).subscribe( res => {
             this.items = res.items;
