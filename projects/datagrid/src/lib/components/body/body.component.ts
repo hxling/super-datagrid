@@ -43,13 +43,16 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @ViewChild('psFixedLeft') psFixedLeft?: PerfectScrollbarDirective;
     @ViewChild('fixedLeft') fixedLeftElRef: ElementRef;
 
+    @ViewChild('topDiv') topDiv: ElementRef;
+    @ViewChild('bottomDiv') bottomDiv: ElementRef;
+
     @ViewChildren(DatagridBodyFixedRowComponent) fixedRowsRef: QueryList<DatagridBodyFixedRowComponent>;
     @ViewChildren(DatagridBodyRowComponent) rowsRef: QueryList<DatagridBodyRowComponent>;
 
     private rowHoverSubscription: Subscription;
 
     constructor(
-        private cd: ChangeDetectorRef,
+        private cd: ChangeDetectorRef, private el: ElementRef,
         private dfs: DatagridFacadeService, public datagrid: DatagridComponent,
         private render: Renderer2, private dgs: DatagridService) {
     }
@@ -152,8 +155,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         if (this.psFixedLeft) {
             this.psFixedLeft.scrollToY(y);
         }
-        if (this.datagrid.virtualized) {
-            this.dfs.updateVirthualRows(y);
+        if (this.datagrid.virtualized && !this.datagrid.pagination) {
+            this.scrolling();
+        } else {
+            this.dfs.updateVirthualRows(this.scrollTop);
         }
 
         this.datagrid.scrollY.emit(y);
@@ -166,5 +171,38 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.render.removeClass(this.fixedLeftElRef.nativeElement, FIXED_LEFT_SHADOW_CLS);
         }
         this.dgs.onScrollMove(x, SCROLL_X_REACH_START_ACTION);
+    }
+
+    private scrolling() {
+        const headerHeight = this.top;
+        if (!this.topDiv || !this.bottomDiv) {return; }
+        const bodyRect = this.getBoundingClientRect(this.el);
+        const topDivRect = this.getBoundingClientRect(this.topDiv);
+        const bottomDivRect = this.getBoundingClientRect(this.bottomDiv);
+
+        const topDivHeight = 0;
+        const bottomDivHeight = bottomDivRect.top - bodyRect.top - headerHeight;
+        const _top = Math.floor(topDivHeight);
+        const _bottom = Math.floor(bottomDivHeight);
+
+        const vs = this.dfs.getVirtualState();
+        const pi = this.dfs.getPageInfo();
+
+        if (_bottom < 0) {
+            // 重新计算取数
+        } else {
+            if (_bottom < this.height) {
+                var page = Math.floor(vs.rowIndex / pi.pageSize) + 2;
+                this.dfs.fetchData(this.datagrid.url).subscribe(  );
+                // loadData
+            } else {
+                this.dfs.updateVirthualRows(this.scrollTop);
+            }
+        }
+
+    }
+
+    private getBoundingClientRect(el: ElementRef) {
+        return el.nativeElement.getBoundingClientRect();
     }
 }

@@ -5,7 +5,10 @@ export interface FarrisDatagridState {
     [key: string]: any;
     idField: string;
     data?: any;
-    pagerInfo?: PaginationInfo;
+    pageIndex?: number;
+    pageSize?: number;
+    pagerHeight?: number;
+    pagination?: boolean;
     columns: DataColumn[];
     showRowNumber?: boolean;
     showCheckbox?: boolean;
@@ -19,6 +22,8 @@ export interface FarrisDatagridState {
 }
 
 export interface VirtualizedState {
+    /** 虚拟加载且不显示分页条时，记录加载新记录时的索引值 */
+    rowIndex: number;
     virtualRows?: any;
     topHideHeight?: number;
     bottomHideHeight?: number;
@@ -37,7 +42,12 @@ export const initDataGridState: FarrisDatagridState = {
     currentRow: null,
     columnsGroup: null,
     columns: [],
+    pageIndex: 1,
+    pageSize: 20,
+    pagerHeight: 40,
+    pagination: false,
     virtual: {
+        rowIndex: 0,
         topHideHeight: 0,
         bottomHideHeight: 0
     }
@@ -49,4 +59,11 @@ export interface EditInfo {
     rowIndex: number;
     field: string;
     cellRef: any;
+}
+
+export interface DataResult {
+    itmes: any[],
+    total?: number,
+    pageIndex?: number,
+    pageSize?: number
 }

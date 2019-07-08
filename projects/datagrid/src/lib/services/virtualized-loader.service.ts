@@ -2,7 +2,7 @@ import { FarrisDatagridState } from './state';
 
 export class VirtualizedLoaderService {
     state: Partial<FarrisDatagridState>;
-
+  
     getTableHeight() {
         return this.state.height;
     }
@@ -25,20 +25,20 @@ export class VirtualizedLoaderService {
         const maxTop = minTop + this.getTableHeight() + 100;
 
         let top = 0;
-        const rows = [];
+        let rows = [];
         let topHideHeight = 0;
         let bottomHideHeight = 0;
 
         const data = this.state.data;
         const total = this.state.total;
-        console.log(total);
+        // console.log(total);
         const rowHeight = this.getRowHeight();
+
+        this.state.virtual.rowIndex = (this.state.pageIndex - 1) * this.state.pageSize;
+
 
         // console.time('循环所有节点');
         for (const n of data) {
-            // if ( !n.visible) {
-            //     continue;
-            // }
             top += rowHeight;
             if (top + rowHeight < minTop) {
                 topHideHeight += rowHeight;
@@ -52,10 +52,12 @@ export class VirtualizedLoaderService {
 
             rows.push(n);
         }
-        // console.timeEnd('循环所有节点');
+        // // console.timeEnd('循环所有节点');
         if (!this.state.pagination) {
-            bottomHideHeight = this.state.total * rowHeight - (this.state.height - this.state.headerHeight);
+            bottomHideHeight = total * rowHeight - rows.length * rowHeight - topHideHeight;
         }
+
+
         return {
             virtualRows: rows,
             topHideHeight,

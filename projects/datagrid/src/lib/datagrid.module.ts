@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { FarrisCommonModule } from '@farris/ui-common';
 
 import { PerfectScrollbarDirective } from './perfect-scrollbar/perfect-scrollbar.directive';
@@ -21,6 +22,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 @NgModule({
     imports: [
         CommonModule,
+        HttpClientModule,
         NgxPaginationModule,
         FarrisCommonModule.forRoot()
     ],

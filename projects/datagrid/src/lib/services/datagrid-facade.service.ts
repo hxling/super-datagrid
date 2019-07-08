@@ -1,9 +1,10 @@
 import { VirtualizedLoaderService } from './virtualized-loader.service';
-import { FarrisDatagridState, initDataGridState, EditInfo } from './state';
-import { BehaviorSubject } from 'rxjs';
+import { FarrisDatagridState, initDataGridState, EditInfo, DataResult } from './state';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { DataColumn, ColumnGroup } from '../types';
 import { map, distinctUntilChanged, filter } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class DatagridFacadeService {
@@ -44,7 +45,7 @@ export class DatagridFacadeService {
         distinctUntilChanged()
     );
 
-    constructor() {
+    constructor(private http: HttpClient) {
         this._state = initDataGridState;
         this.virtualizedService = new VirtualizedLoaderService();
     }
@@ -55,15 +56,36 @@ export class DatagridFacadeService {
         this.updateState({virtual});
     }
 
+    getState() {
+        return this._state;
+    }
+
+    getVirtualState() {
+        return this._state.virtual;
+    }
+
+    getPageInfo() {
+        const { pageIndex, pageSize } = {...this._state};
+        return { pageIndex, pageSize };
+
+    }
+
     initState(state: Partial<FarrisDatagridState>) {
         this.updateState(state, false);
         this.initColumns();
+
         this.updateVirthualRows(0);
     }
 
     loadData(data: any) {
         this.updateState({ data }, false);
         this.updateVirthualRows(0);
+    }
+
+    fetchData(url: string): Observable<DataResult> {
+        return this.http.get(url).pipe(
+            map( r => r as DataResult )
+        );
     }
 
     setTotal(total: number) {
