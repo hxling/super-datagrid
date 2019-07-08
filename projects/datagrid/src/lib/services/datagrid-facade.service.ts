@@ -79,7 +79,7 @@ export class DatagridFacadeService {
 
     loadData(data: any) {
         this.updateState({ data }, false);
-        this.updateVirthualRows(0);
+        this.updateVirthualRows(this._state.virtual.scrollTop);
     }
 
     fetchData(url: string): Observable<DataResult> {
@@ -90,6 +90,15 @@ export class DatagridFacadeService {
 
     setTotal(total: number) {
         this.updateState( {total}, false );
+    }
+
+    setPagination(pageIndex: number, pageSize: number, total: number) {
+        this.updateState( { pageIndex, pageSize, total }, false);
+    }
+
+    setScrollTop(scrollTop: number) {
+        const virtual = { ...this._state.virtual, scrollTop};
+        this.updateState({virtual}, false);
     }
 
     initColumns() {

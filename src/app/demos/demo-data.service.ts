@@ -1,13 +1,35 @@
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
+import { RestService } from 'projects/datagrid/src/lib/services/rest.service';
+import { DataResult } from 'projects/datagrid/src/lib/services/state';
 
 interface IServerResponse {
     items: string[];
     total: number;
 }
 @Injectable()
-export class DemoDataService {
+export class DemoDataService implements RestService {
+
+    data: any[];
+
+    constructor() {
+        this.data = this.createData(10000);
+    }
+
+    getData(url: string, param?: any): Observable<DataResult> {
+        const pageSize = param.pageSize;
+        const start = (param.pageIndex - 1) * pageSize;
+        const end = start + pageSize;
+        const total = this.data.length;
+        return of({
+            items: this.data.slice(start, end),
+            total,
+            pageSize,
+            pageIndex: param.pageIndex
+        }).pipe(delay(1000));
+    }
+
     createData(len: number) {
         const arr = [];
         for (let i = 0; i < len; i++) {

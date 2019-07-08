@@ -24,6 +24,7 @@ export interface FarrisDatagridState {
 export interface VirtualizedState {
     /** 虚拟加载且不显示分页条时，记录加载新记录时的索引值 */
     rowIndex: number;
+    scrollTop?: number;
     virtualRows?: any;
     topHideHeight?: number;
     bottomHideHeight?: number;
@@ -48,6 +49,7 @@ export const initDataGridState: FarrisDatagridState = {
     pagination: false,
     virtual: {
         rowIndex: 0,
+        scrollTop: 0,
         topHideHeight: 0,
         bottomHideHeight: 0
     }
@@ -62,8 +64,9 @@ export interface EditInfo {
 }
 
 export interface DataResult {
-    itmes: any[],
-    total?: number,
-    pageIndex?: number,
-    pageSize?: number
+    items: any[];
+    total?: number;
+    pageIndex?: number;
+    pageSize?: number;
 }
+

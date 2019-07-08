@@ -1,9 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { DataResult } from './state';
 import { Observable } from 'rxjs';
+import { InjectionToken } from '@angular/core';
 
-export interface RestService {
-    getData(url: string, param?: any): Observable<DataResult>
+export const REST_SERVICEE = new InjectionToken<RestService>('DataGrid Request Data Service.');
+
+export abstract class RestService {
+    abstract getData(url: string, param?: any): Observable<DataResult>;
 }
 
 export class DefaultRestService implements RestService {

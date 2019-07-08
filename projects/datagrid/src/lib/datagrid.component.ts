@@ -1,12 +1,14 @@
+import { RestService, REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
-    SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+    SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
 import { DataColumn, ColumnGroup, PaginationInfo, defaultPaginationInfo } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DatagridColumnDirective } from './components/columns';
 import { debounceTime } from 'rxjs/operators';
+import { DataResult } from './services/state';
 
 @Component({
     selector: 'farris-datagrid',
@@ -122,11 +124,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     };
 
     pagerOpts: any = { };
-
+    restService: RestService;
     constructor(private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
                 private cd: ChangeDetectorRef,
+                private inject: Injector,
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
+
+        this.restService = this.inject.get<RestService>(REST_SERVICEE);
 
         this.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
@@ -165,6 +170,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
         this.pageIndex = pageIndex;
         this.pagerOpts.currentPage = pageIndex;
         this.pageChanged.emit(pageIndex);
+    }
+
+    reaload(_pageIndex = 1) {
+        return this.restService.getData(this.url, { pageIndex: _pageIndex, pageSize: this.pageSize });
     }
 
     private initState() {

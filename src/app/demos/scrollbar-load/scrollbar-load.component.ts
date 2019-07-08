@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
+import { REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
 
 @Component({
     selector: 'scroll-load-async',
     templateUrl: './scrollbar-load.component.html',
     providers: [
-        DemoDataService
+        DemoDataService,
+        {provide: REST_SERVICEE, useClass: DemoDataService}
     ]
 })
 export class ScrollBarLoadComponent implements OnInit {
@@ -33,7 +35,7 @@ export class ScrollBarLoadComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位' }
         ];
 
-        this.allDataSource = this.dds.createData(100);
+        this.allDataSource = this.dds.createData(10000);
         this.showLoading = true;
         this.dds.serverCall(this.allDataSource, 1, this.pageSize).subscribe( res => {
             this.items = res.items;
