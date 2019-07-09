@@ -23,7 +23,7 @@ export class VirtualizedLoaderService {
     reload() {
         const rowHeight = this.getRowHeight();
         const res = this.getRows(0);
-        res.topHideHeight = this.state.virtual.rowIndex * rowHeight;
+        res.topHideHeight = this.state.virtual.rowIndex * rowHeight + 100;
         res.bottomHideHeight = this.state.total * rowHeight - res.virtualRows.length * rowHeight - res.topHideHeight;
         return res;
     }

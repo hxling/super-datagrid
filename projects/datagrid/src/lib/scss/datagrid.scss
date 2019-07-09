@@ -31,7 +31,7 @@
         z-index: 0;
         &-wheel-area {
             overflow:hidden; 
-            position: absolute;
+            position: relative;
         }
 
         &-fixed-left {

@@ -231,7 +231,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private reload() {
         const _pageSize = this.datagrid.pageSize;
         const rowHeight = this.datagrid.rowHeight;
-        const top  = this.scrollTop + 100;
+        const top  = this.scrollTop;
         const index = Math.floor(top / rowHeight);
         const page = Math.floor(index / _pageSize) + 1;
 
@@ -240,7 +240,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.dfs.setPagination(pageIndex, pageSize, total);
             this.dfs.getVirtualState().rowIndex = (page - 1) * pageSize;
             this.dfs.loadDataForVirtual(items);
-            console.log(this.scrollTop);
         });
     }
 
