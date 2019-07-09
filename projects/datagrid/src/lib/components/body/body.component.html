@@ -19,6 +19,16 @@
             <div [style.width.px]="colsWidth" [style.height.px]="datagrid.total * rowHeight">
 
                 <div #topDiv class="f-datagrid-row body-top virtualized" *ngIf="datagrid.virtualized" [style.height.px]="topHideHeight"></div>
+
+                <!-- <table [style.width.px]="colsWidth" >
+                    <tr [style.height.px]="rowHeight" *ngFor="let row of data ; trackBy: trackByRows; let i = index; odd as odd">
+                        <td [style.width.px]="col.width" *ngFor="let col of columnsGroup?.normalColumns; let ci = index;">
+                            {{row[col.field]}}
+                        </td>
+                    </tr>    
+                </table> -->
+
+
                 <datagrid-row *ngFor="let row of data ; trackBy: trackByRows; let i = index; odd as odd" [rowHeight]="rowHeight"
                 [minWidth]="colsWidth" [columns]="columnsGroup?.normalColumns"
                 [odd]="odd"  [top]="i * rowHeight + topHideHeight" [index]="i" [data]="row"></datagrid-row>

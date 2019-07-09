@@ -2,7 +2,7 @@ import { FarrisDatagridState } from './state';
 
 export class VirtualizedLoaderService {
     state: Partial<FarrisDatagridState>;
-  
+
     getTableHeight() {
         return this.state.height;
     }
