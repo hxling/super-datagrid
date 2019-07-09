@@ -153,6 +153,18 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
         this.initState();
         this.registerDocumentEvent();
+        this.loadData();
+    }
+
+    private loadData() {
+        if (!this.data || !this.data.length) {
+            this.fetchData().subscribe((res: DataResult) => {
+                const { items, pageIndex, pageSize, total } = {...res};
+                this.total = total;
+                this.dfs.setPagination(pageIndex, pageSize, total);
+                this.dfs.loadData(items);
+            });
+        }
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -172,7 +184,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
         this.pageChanged.emit(pageIndex);
     }
 
-    reaload(_pageIndex = 1) {
+    fetchData(_pageIndex = 1) {
         return this.restService.getData(this.url, { pageIndex: _pageIndex, pageSize: this.pageSize });
     }
 

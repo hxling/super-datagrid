@@ -63,6 +63,8 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
                 this.isSelected = false;
             }
         });
+
+        // console.log(this.index);
     }
 
     ngAfterViewInit() {

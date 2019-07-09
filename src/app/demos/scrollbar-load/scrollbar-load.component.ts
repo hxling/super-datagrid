@@ -17,6 +17,7 @@ export class ScrollBarLoadComponent implements OnInit {
     items = [];
     total = 0;
     pageSize = 20;
+    pageIndex = 1;
 
     private  allDataSource = [];
     constructor(private dds: DemoDataService) {}
@@ -35,13 +36,13 @@ export class ScrollBarLoadComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位' }
         ];
 
-        this.allDataSource = this.dds.createData(10000);
-        this.showLoading = true;
-        this.dds.serverCall(this.allDataSource, 1, this.pageSize).subscribe( res => {
-            this.items = res.items;
-            this.total = res.total;
-            this.showLoading = false;
-        });
+        // this.allDataSource = this.dds.createData(100);
+        // this.showLoading = true;
+        // this.dds.serverCall(this.allDataSource, 1, this.pageSize).subscribe( res => {
+        //     this.items = res.items;
+        //     this.total = res.total;
+        //     this.showLoading = false;
+        // });
     }
 
 

@@ -56,6 +56,10 @@ export class DatagridFacadeService {
         this.updateState({virtual});
     }
 
+    getData() {
+        return this._state.data || [];
+    }
+
     getState() {
         return this._state;
     }
@@ -63,6 +67,7 @@ export class DatagridFacadeService {
     getVirtualState() {
         return this._state.virtual;
     }
+
 
     getPageInfo() {
         const { pageIndex, pageSize } = {...this._state};
@@ -80,6 +85,13 @@ export class DatagridFacadeService {
     loadData(data: any) {
         this.updateState({ data }, false);
         this.updateVirthualRows(this._state.virtual.scrollTop);
+    }
+
+    loadDataForVirtual(data: any) {
+        this.updateState({ data }, false);
+        this.virtualizedService.state = this._state;
+        const virtual = { ...this._state.virtual, ...this.virtualizedService.reload() };
+        this.updateState({virtual});
     }
 
     fetchData(url: string): Observable<DataResult> {

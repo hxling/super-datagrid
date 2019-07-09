@@ -20,12 +20,21 @@ export class VirtualizedLoaderService {
         return this.state.rowHeight;
     }
 
+    reload() {
+        const rowHeight = this.getRowHeight();
+        const res = this.getRows(0);
+        res.topHideHeight = this.state.virtual.rowIndex * rowHeight;
+        res.bottomHideHeight = this.state.total * rowHeight - res.virtualRows.length * rowHeight - res.topHideHeight;
+        return res;
+    }
+
     getRows(scrollTop: number) {
         const minTop =  Math.abs(scrollTop);
         const maxTop = minTop + this.getTableHeight() + 100;
-
+        // this.state.virtual.topHideHeight
         let top = 0;
-        let rows = [];
+
+        const rows = [];
         let topHideHeight = 0;
         let bottomHideHeight = 0;
 

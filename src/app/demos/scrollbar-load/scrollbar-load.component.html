@@ -4,7 +4,7 @@
 <farris-datagrid [columns]="columns" [data]="items"
     [showRowNumber] ="false" [striped]="false" [showCheckbox]="false"
     [virtualized]="true"
-    [pagination]="false" [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
+    [pagination]="false" [pageSize]= "pageSize" [pageIndex]="pageIndex"  [total]="total"
     (scrollY)="onScrollY($event)"
 ></farris-datagrid>
 
