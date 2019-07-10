@@ -157,6 +157,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     onScrollToY($event: any) {
         const y = $event.target.scrollTop;
+
         this.scrollTop = y;
         if (this.psFixedLeft) {
             this.psFixedLeft.scrollToY(y);
