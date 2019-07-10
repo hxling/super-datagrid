@@ -2,7 +2,7 @@ import { RestService, REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
-    SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector } from '@angular/core';
+    SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding } from '@angular/core';
 import { DataColumn, ColumnGroup, PaginationInfo, defaultPaginationInfo } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -20,6 +20,7 @@ import { DataResult } from './services/state';
         [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
         <datagrid-pager *ngIf="pagination" [id]="pagerOpts.id" (pageChange)="onPageChange($event)"></datagrid-pager>
     </div>
+    <datagrid-loading *ngIf="loading"></datagrid-loading>
     `,
     providers: [
         DatagridFacadeService,
@@ -28,12 +29,16 @@ import { DataResult } from './services/state';
     styleUrls: [
         './scss/index.scss'
     ],
+    exportAs: 'datagrid',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     @Input() auther = `Lucas Huang - QQ:1055818239`;
     @Input() version = '0.0.1';
+
+    @HostBinding('style.position') dgCls = 'relative';
+
     @Input() id = '';
     /** 显示边框 */
     @Input() showBorder = true;
@@ -116,6 +121,15 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     colGroup$ = this.dfs.columnGroup$;
     data$ = this.dfs.data$;
 
+    private _loading = false;
+    get loading() {
+        return this._loading;
+    }
+    set loading(val: boolean) {
+        this._loading = val;
+        this.cd.detectChanges();
+    }
+
     docuemntEvents: any;
     ds = {
         rows: [],
@@ -196,6 +210,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
         this.docuemntEvents = this.render2.listen(document, 'click', () => {
             this.dfs.endEditCell();
         });
+    }
+
+    showLoading() {
+        this.loading = true;
+        this.cd.detectChanges();
+    }
+
+    closeLoading() {
+        this.loading = false;
+        this.cd.detectChanges();
     }
 
 }

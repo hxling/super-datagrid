@@ -91,7 +91,7 @@ export class PerfectScrollbarDirective implements OnInit, OnDestroy, DoCheck, On
 
                     fromEvent<Event>(this.elementRef.nativeElement, eventType)
                         .pipe(
-                            // auditTime(20),
+                            // auditTime(20),  // auditTime 静默指定的时间，在此时间内忽略所有发出的值，时间过后，发出最新的值
                             takeUntil(this.ngDestroy)
                         )
                         .subscribe((event: Event) => {

@@ -22,29 +22,29 @@ export class VirtualizedLoaderService {
 
     reload() {
         const rowHeight = this.getRowHeight();
-        const res = this.getRows(0);
-        res.topHideHeight = this.state.virtual.rowIndex * rowHeight + 100;
+        // const res = this.getRows(0);
+        const scroTop = this.state.virtual.scrollTop;
+        const res = this.getRows(scroTop);
+        res.topHideHeight = scroTop; // this.state.virtual.rowIndex * rowHeight;
         res.bottomHideHeight = this.state.total * rowHeight - res.virtualRows.length * rowHeight - res.topHideHeight;
         return res;
     }
 
     getRows(scrollTop: number) {
         const minTop =  Math.abs(scrollTop);
-        const maxTop = minTop + this.getTableHeight() + 100;
+        const rowHeight = this.getRowHeight();
+        const maxTop = minTop + this.getTableHeight();
         // this.state.virtual.topHideHeight
-        let top = 0;
+        let top = this.state.virtual.rowIndex * rowHeight ;
+        // let top = 0;
 
         const rows = [];
         let topHideHeight = 0;
         let bottomHideHeight = 0;
 
-        const data = this.state.data;
+        const data: any[] = this.state.data;
         const total = this.state.total;
         // console.log(total);
-        const rowHeight = this.getRowHeight();
-
-        this.state.virtual.rowIndex = (this.state.pageIndex - 1) * this.state.pageSize;
-
 
         // console.time('循环所有节点');
         for (const n of data) {
@@ -63,9 +63,14 @@ export class VirtualizedLoaderService {
         }
         // // console.timeEnd('循环所有节点');
         if (!this.state.pagination) {
+            // topHideHeight = this.state.virtual.topHideHeight + topHideHeight;
             bottomHideHeight = total * rowHeight - rows.length * rowHeight - topHideHeight;
         }
 
+        // const idfield = this.state.idField;
+        // if (rows.length) {
+        //     this.state.virtual.rowIndex = this.state.virtual.rowIndex + data.findIndex( (n, index) => n[idfield] === rows[0][idfield]);
+        // }
 
         return {
             virtualRows: rows,

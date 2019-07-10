@@ -55,6 +55,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     private scrollTimer: any = null;
 
+    private _index = 0;
+
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
         private dfs: DatagridFacadeService, public datagrid: DatagridComponent,
@@ -161,13 +163,17 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         }
         if (this.datagrid.virtualized && !this.datagrid.pagination) {
             this.dfs.setScrollTop(y);
+            // 滚动后如果无需进行服务器端取数，则不执行 scrolling 方法
 
-            if (this.scrollTimer) {
-                clearTimeout(this.scrollTimer);
+            this.dfs.updateVirthualRows(this.scrollTop);
+            if (this.needFetchData()) {
+                if (this.scrollTimer) {
+                    clearTimeout(this.scrollTimer);
+                }
+                this.scrollTimer = setTimeout(() => {
+                    this.scrolling();
+                }, 100);
             }
-            this.scrollTimer = setTimeout(() => {
-                this.scrolling();
-            }, 50);
         } else {
             this.dfs.updateVirthualRows(this.scrollTop);
         }
@@ -184,48 +190,86 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.dgs.onScrollMove(x, SCROLL_X_REACH_START_ACTION);
     }
 
-    private scrolling() {
+    private needFetchData() {
+        const virtualRowPos = this.getVirtualRowPosition();
+        if (!virtualRowPos) { return false; }
 
-        this.dfs.updateVirthualRows(this.scrollTop);
-        // this.cd.detectChanges();
+        const { top, bottom } = { ...virtualRowPos };
+
+        if (top < 0  && bottom > this.height) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private getVirtualRowPosition() {
+        if (!this.topDiv || !this.bottomDiv) {return false; }
+        const vs = this.dfs.getVirtualState();
         const headerHeight = this.top;
-        if (!this.topDiv || !this.bottomDiv) {return; }
         const bodyRect = this.getBoundingClientRect(this.el);
         const topDivRect = this.getBoundingClientRect(this.topDiv);
         const bottomDivRect = this.getBoundingClientRect(this.bottomDiv);
 
+        console.log(`topHieght: ${topDivRect.height}, ${vs.rowIndex * 36}`);
+
+
         const topDivHeight = topDivRect.top - bodyRect.top + topDivRect.height - headerHeight;
         const bottomDivHeight = bottomDivRect.top - bodyRect.top - headerHeight;
-        const _top = Math.floor(topDivHeight);
-        const _bottom = Math.floor(bottomDivHeight);
+        const top = Math.floor(topDivHeight);
+        const bottom = Math.floor(bottomDivHeight);
+        console.log(top, bottom);
+        return { top, bottom };
+    }
+
+    private scrolling() {
+
+        const virtualRowPos = this.getVirtualRowPosition();
+        if (!virtualRowPos) { return; }
+
+        const { top, bottom } = { ...virtualRowPos };
 
         const vs = this.dfs.getVirtualState();
         const pi = this.dfs.getPageInfo();
 
-        if (_bottom < 0 || _top > this.height) {
+        if (bottom < 0 || top > this.height) {
             // 重新计算位置并取数
+            console.log('reload');
             this.reload();
-        } else if (_top > 0) {
+        } else if (top > 0) {
             // 向上连续滚动
-        } else if (_bottom < this.height) {
+            console.log('_top');
+            console.log('fetchData - ↑');
+            const prevPager = Math.floor(vs.rowIndex / pi.pageSize);
+
+
+        } else if (bottom < this.height) {
                 // 向下连续滚动
             const allItems = this.dfs.getData();
-            if (allItems.length === this.datagrid.total) {
+            if (this.data.length + vs.rowIndex >= this.datagrid.total || allItems.length === this.datagrid.total) {
                 return;
             }
 
-            const newPager = Math.floor(vs.rowIndex / pi.pageSize) + 2;
+            const newPager = Math.floor(this._index / pi.pageSize) + 2;
+            // if (this.data && this.data.length) {
+            //     newPager++;
+            // }
+
+            this.datagrid.loading = true;
+            console.log('fetchData - ↓');
             this.datagrid.fetchData(newPager).subscribe( (r: DataResult) => {
+                this.datagrid.loading = false;
                 const { items, pageIndex, pageSize, total } = {...r};
                 this.dfs.setPagination(pageIndex, pageSize, total);
                 // const newData = this.data.concat(items);
                 const newData = allItems.concat(items);
+                // this.dfs.getVirtualState().rowIndex += pageSize;
+                this._index += pageSize;
                 this.dfs.loadData(newData);
 
                 // this.ps.scrollToY(this.scrollTop - 100);
             });
         }
-
     }
 
     private reload() {
@@ -234,8 +278,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const top  = this.scrollTop;
         const index = Math.floor(top / rowHeight);
         const page = Math.floor(index / _pageSize) + 1;
-
+        this.datagrid.loading = true;
         this.datagrid.fetchData(page).subscribe( (res: DataResult) => {
+            this.datagrid.loading = false;
             const { items, pageIndex, pageSize, total } = {...res};
             this.dfs.setPagination(pageIndex, pageSize, total);
             this.dfs.getVirtualState().rowIndex = (page - 1) * pageSize;
