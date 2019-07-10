@@ -267,7 +267,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 // this.dfs.getVirtualState().rowIndex += pageSize;
                 this._index += pageSize;
                 this.dfs.loadData(newData);
-
+                const deltaTopHeight = this.scrollTop - vs.topHideHeight;
+                if (deltaTopHeight > 0) {
+                    this.ps.scrollToY(this.scrollTop - (this.scrollTop - vs.topHideHeight));
+                }
                 // this.ps.scrollToY(this.scrollTop - 100);
             });
         }
@@ -284,7 +287,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.datagrid.loading = false;
             const { items, pageIndex, pageSize, total } = {...res};
             this.dfs.setPagination(pageIndex, pageSize, total);
-            this.dfs.getVirtualState().rowIndex = (page - 1) * pageSize;
+            const idx = (page - 1) * pageSize;
+            this.dfs.getVirtualState().rowIndex = idx;
+            this._index = idx;
             this.dfs.loadDataForVirtual(items);
         });
     }

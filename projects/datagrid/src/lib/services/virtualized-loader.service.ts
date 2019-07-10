@@ -63,8 +63,10 @@ export class VirtualizedLoaderService {
         }
         // // console.timeEnd('循环所有节点');
         if (!this.state.pagination) {
-            // topHideHeight = this.state.virtual.topHideHeight + topHideHeight;
+            topHideHeight = this.state.virtual.rowIndex * rowHeight  + topHideHeight;
             bottomHideHeight = total * rowHeight - rows.length * rowHeight - topHideHeight;
+
+            console.log(scrollTop - topHideHeight);
         }
 
         // const idfield = this.state.idField;
