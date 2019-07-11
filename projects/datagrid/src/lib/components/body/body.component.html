@@ -17,7 +17,7 @@
     <div [perfectScrollbar]="psConfig" class="f-datagrid-body-wheel-area" [ngStyle]="bodyStyle" #ps="ngxPerfectScrollbar"
         (psScrollY)="onScrollToY($event)" (psScrollUp)="onScrollUp($event)" (psScrollDown)="onScrollDown($event)"
         (psScrollX)="onScrollToX($event)" (psXReachStart)="onPsXReachStart($event)">
-            <div [style.width.px]="colsWidth" [style.height.px]="datagrid.total * rowHeight">
+            <div [style.width.px]="colsWidth" [style.height.px]="whellHeight">
 
                 <div #topDiv class="f-datagrid-row body-top virtualized" *ngIf="datagrid.virtualized" 
                 [style.height.px]="topHideHeight" style="transform: translate3d(0px, 0px, 0px)"></div>

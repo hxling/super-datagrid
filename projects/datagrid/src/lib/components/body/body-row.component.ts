@@ -70,8 +70,6 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.top) {
             this.rowStyle = this.initStyle();
-
-            // console.log('curr', changes.top.currentValue, 'prev:' + changes.top.previousValue, this.rowStyle);
         }
     }
 

@@ -1,11 +1,13 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
+import { REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
 
 @Component({
     selector: 'page-scroll',
     templateUrl: './page-scroll.component.html',
     providers: [
-        DemoDataService
+        DemoDataService,
+        {provide: REST_SERVICEE, useClass: DemoDataService}
     ]
 })
 export class PageScrollComponent implements OnInit {
@@ -41,13 +43,13 @@ export class PageScrollComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位', editor: this.textbox  }
         ];
 
-        this.allDataSource = this.dds.createData(100000);
-        this.showLoading = true;
-        this.dds.serverCall(this.allDataSource, 1, this.pageSize).subscribe( res => {
-            this.items = res.items;
-            this.total = res.total;
-            this.showLoading = false;
-        });
+        // this.allDataSource = this.dds.createData(100000);
+        // this.showLoading = true;
+        // this.dds.serverCall(this.allDataSource, 1, this.pageSize).subscribe( res => {
+        //     this.items = res.items;
+        //     this.total = res.total;
+        //     this.showLoading = false;
+        // });
     }
 
     changeDataItems(n =  20) {

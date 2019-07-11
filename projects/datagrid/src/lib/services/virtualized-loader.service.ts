@@ -39,7 +39,7 @@ export class VirtualizedLoaderService {
         const rowHeight = this.getRowHeight();
         const maxTop = minTop + this.getTableHeight();
         // this.state.virtual.topHideHeight
-        let top = this.state.virtual.rowIndex * rowHeight ;
+        let top = this.state.pagination ? 0 : this.state.virtual.rowIndex * rowHeight ;
         // let top = 0;
 
         const rows = [];

@@ -35,6 +35,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     bodyStyle: any;
     scrollTop = 0;
     deltaTopHeight = 0;
+    whellHeight = 0;
     // 虚拟加载
     @Input() topHideHeight = 0;
     @Input() bottomHideHeight = 0;
@@ -80,6 +81,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.bodyStyle = this.getBodyStyle();
             }
         });
+
+        this.whellHeight = this.datagrid.pagination ?
+                            this.datagrid.pageSize * this.rowHeight : this.datagrid.total *  this.rowHeight;
 
         this.dgs.onDataSourceChange.subscribe(() => {
             this.ps.scrollToTop();
@@ -208,6 +212,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         if (!virtualRowPos) { return false; }
 
         const { top, bottom } = { ...virtualRowPos };
+
+        if (this.bottomHideHeight === 0) {
+            return false;
+        }
 
         if (top < 0  && bottom > this.height) {
             return false;
