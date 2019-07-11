@@ -1,5 +1,5 @@
-import { filter } from 'rxjs/operators';
-import { Component, OnInit, Input, ViewChild, ElementRef, NgZone, Renderer2, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, NgZone, Renderer2, 
+    AfterViewInit, ChangeDetectionStrategy, SimpleChanges, OnChanges } from '@angular/core';
 import { DataColumn } from '../../types';
 import { DatagridComponent } from '../../datagrid.component';
 import { isPlainObject } from 'lodash-es';
@@ -22,7 +22,7 @@ import { ROW_HOVER_CLS } from '../../types/constant';
     `,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
+export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChanges {
 
     rowStyle: any;
     cls: any;
@@ -65,6 +65,14 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit {
         });
 
         // console.log(this.index);
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.top) {
+            this.rowStyle = this.initStyle();
+
+            // console.log('curr', changes.top.currentValue, 'prev:' + changes.top.previousValue, this.rowStyle);
+        }
     }
 
     ngAfterViewInit() {

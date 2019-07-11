@@ -34,7 +34,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     rowHeight: number;
     bodyStyle: any;
     scrollTop = 0;
-
+    deltaTopHeight = 0;
     // 虚拟加载
     @Input() topHideHeight = 0;
     @Input() bottomHideHeight = 0;
@@ -155,28 +155,21 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.dgs.onScrollMove(x, SCROLL_X_ACTION);
     }
 
+    onScrollUp($event: any) {
+        const y = $event.target.scrollTop;
+        this.scrollYMove(y, true);
+    }
+    onScrollDown($event: any) {
+        const y = $event.target.scrollTop;
+        this.scrollYMove(y , false);
+    }
+
     onScrollToY($event: any) {
         const y = $event.target.scrollTop;
 
         this.scrollTop = y;
         if (this.psFixedLeft) {
             this.psFixedLeft.scrollToY(y);
-        }
-        if (this.datagrid.virtualized && !this.datagrid.pagination) {
-            this.dfs.setScrollTop(y);
-            // 滚动后如果无需进行服务器端取数，则不执行 scrolling 方法
-
-            this.dfs.updateVirthualRows(this.scrollTop);
-            if (this.needFetchData()) {
-                if (this.scrollTimer) {
-                    clearTimeout(this.scrollTimer);
-                }
-                this.scrollTimer = setTimeout(() => {
-                    this.scrolling();
-                }, 100);
-            }
-        } else {
-            this.dfs.updateVirthualRows(this.scrollTop);
         }
 
         this.datagrid.scrollY.emit(y);
@@ -191,6 +184,25 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.dgs.onScrollMove(x, SCROLL_X_REACH_START_ACTION);
     }
 
+    private scrollYMove(y: number, isUp: boolean) {
+        if (this.datagrid.virtualized && !this.datagrid.pagination) {
+            this.dfs.setScrollTop(y);
+            // 滚动后如果无需进行服务器端取数，则不执行 scrolling 方法
+            this.dfs.updateVirthualRows(this.scrollTop);
+
+            if (this.needFetchData()) {
+                if (this.scrollTimer) {
+                    clearTimeout(this.scrollTimer);
+                }
+                this.scrollTimer = setTimeout(() => {
+                    this.scrolling(isUp);
+                }, 100);
+            }
+        } else {
+            this.dfs.updateVirthualRows(this.scrollTop);
+        }
+    }
+
     private needFetchData() {
         const virtualRowPos = this.getVirtualRowPosition();
         if (!virtualRowPos) { return false; }
@@ -200,30 +212,29 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         if (top < 0  && bottom > this.height) {
             return false;
         }
-
         return true;
     }
 
-    private getVirtualRowPosition() {
-        if (!this.topDiv || !this.bottomDiv) {return false; }
+    private getVirtualRowPosition(): {top: number, bottom: number} {
+        if (!this.topDiv || !this.bottomDiv) { return; }
         const vs = this.dfs.getVirtualState();
         const headerHeight = this.top;
         const bodyRect = this.getBoundingClientRect(this.el);
         const topDivRect = this.getBoundingClientRect(this.topDiv);
         const bottomDivRect = this.getBoundingClientRect(this.bottomDiv);
 
-        console.log(`topHieght: ${topDivRect.height}, ${vs.rowIndex * 36}`);
+        // console.log(`topHieght: ${topDivRect.height}, ${vs.rowIndex * 36}`);
 
 
         const topDivHeight = topDivRect.top - bodyRect.top + topDivRect.height - headerHeight;
         const bottomDivHeight = bottomDivRect.top - bodyRect.top - headerHeight;
         const top = Math.floor(topDivHeight);
         const bottom = Math.floor(bottomDivHeight);
-        console.log(top, bottom);
+        // console.log(top, bottom);
         return { top, bottom };
     }
 
-    private scrolling() {
+    private scrolling(isUp: boolean) {
 
         const virtualRowPos = this.getVirtualRowPosition();
         if (!virtualRowPos) { return; }
@@ -232,65 +243,87 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
         const vs = this.dfs.getVirtualState();
         const pi = this.dfs.getPageInfo();
+        const allItems = this.dfs.getData();
 
         if (bottom < 0 || top > this.height) {
             // 重新计算位置并取数
             console.log('reload');
-            this.reload();
+            this.reload(isUp);
         } else if (top > 0) {
             // 向上连续滚动
-            console.log('_top');
             console.log('fetchData - ↑');
             const prevPager = Math.floor(vs.rowIndex / pi.pageSize);
+            this.datagrid.loading = true;
+            this.datagrid.fetchData(prevPager).subscribe( (r: DataResult) => {
+                this.datagrid.loading = false;
+                const { items, pageIndex, pageSize, total } = {...r};
+                this.dfs.setPagination(pageIndex, pageSize, total);
+                const newData = items.concat(allItems);
+                this._index = pageSize;
 
+                const idx = (prevPager - 1) * pageSize;
+                this.dfs.getVirtualState().rowIndex = idx;
+                this._index = idx;
 
+                this.dfs.loadData(newData);
+            });
         } else if (bottom < this.height) {
-                // 向下连续滚动
-            const allItems = this.dfs.getData();
+            // 向下连续滚动
             if (this.data.length + vs.rowIndex >= this.datagrid.total || allItems.length === this.datagrid.total) {
                 return;
             }
 
-            const newPager = Math.floor(this._index / pi.pageSize) + 2;
-            // if (this.data && this.data.length) {
-            //     newPager++;
-            // }
+            const nextPager = Math.floor(this._index / pi.pageSize) + 2;
 
             this.datagrid.loading = true;
-            console.log('fetchData - ↓');
-            this.datagrid.fetchData(newPager).subscribe( (r: DataResult) => {
+            console.log('fetchData - ↓', this._index);
+
+            this.datagrid.fetchData(nextPager).subscribe( (r: DataResult) => {
                 this.datagrid.loading = false;
                 const { items, pageIndex, pageSize, total } = {...r};
                 this.dfs.setPagination(pageIndex, pageSize, total);
-                // const newData = this.data.concat(items);
                 const newData = allItems.concat(items);
-                // this.dfs.getVirtualState().rowIndex += pageSize;
                 this._index += pageSize;
                 this.dfs.loadData(newData);
-                const deltaTopHeight = this.scrollTop - vs.topHideHeight;
-                if (deltaTopHeight > 0) {
-                    this.ps.scrollToY(this.scrollTop - (this.scrollTop - vs.topHideHeight));
-                }
-                // this.ps.scrollToY(this.scrollTop - 100);
             });
         }
     }
 
-    private reload() {
+    private reload(isUp: boolean) {
         const _pageSize = this.datagrid.pageSize;
         const rowHeight = this.datagrid.rowHeight;
         const top  = this.scrollTop;
         const index = Math.floor(top / rowHeight);
         const page = Math.floor(index / _pageSize) + 1;
         this.datagrid.loading = true;
+
         this.datagrid.fetchData(page).subscribe( (res: DataResult) => {
             this.datagrid.loading = false;
             const { items, pageIndex, pageSize, total } = {...res};
             this.dfs.setPagination(pageIndex, pageSize, total);
-            const idx = (page - 1) * pageSize;
+
+            const idx = (page - 1) * _pageSize;
             this.dfs.getVirtualState().rowIndex = idx;
             this._index = idx;
+
             this.dfs.loadDataForVirtual(items);
+
+            this.deltaTopHeight = this.dfs.getDeltaTopHeight(this.scrollTop, idx);
+
+            const virtualRowPos = this.getVirtualRowPosition();
+            const { top: _top, bottom: _bottom } = { ...virtualRowPos };
+            if (this.deltaTopHeight !== 0) {
+                console.log('取数前检查：✔', this.deltaTopHeight,  _top, _bottom);
+                if (_top > 0) {
+                    this.deltaTopHeight = +this.deltaTopHeight;
+                } else {
+                    if (_bottom <  this.height) {
+                        this.deltaTopHeight = -this.deltaTopHeight;
+                    }
+                }
+                this.scrollTop = this.scrollTop + this.deltaTopHeight;
+                this.ps.scrollToTop(this.scrollTop);
+            }
         });
     }
 

@@ -16,7 +16,7 @@ export class ScrollBarLoadComponent implements OnInit {
     columns = [];
     items = [];
     total = 0;
-    pageSize = 20;
+    pageSize = 200;
     pageIndex = 1;
 
     private  allDataSource = [];
@@ -47,6 +47,6 @@ export class ScrollBarLoadComponent implements OnInit {
 
 
     onScrollY(y: number) {
-        console.log(y);
+        // console.log(y);
     }
 }

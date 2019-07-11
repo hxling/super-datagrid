@@ -20,6 +20,10 @@ export class VirtualizedLoaderService {
         return this.state.rowHeight;
     }
 
+    displayRowsCount() {
+        return Math.floor(this.getTableHeight() / this.getRowHeight());
+    }
+
     reload() {
         const rowHeight = this.getRowHeight();
         // const res = this.getRows(0);
@@ -65,8 +69,6 @@ export class VirtualizedLoaderService {
         if (!this.state.pagination) {
             topHideHeight = this.state.virtual.rowIndex * rowHeight  + topHideHeight;
             bottomHideHeight = total * rowHeight - rows.length * rowHeight - topHideHeight;
-
-            console.log(scrollTop - topHideHeight);
         }
 
         // const idfield = this.state.idField;
@@ -75,9 +77,36 @@ export class VirtualizedLoaderService {
         // }
 
         return {
-            virtualRows: rows,
+            virtualRows: [...rows],
             topHideHeight,
             bottomHideHeight
         };
+    }
+
+    getRowsCount(scrollTop, itemsCount, firstRowIndex) {
+        const rowHeight = this.getRowHeight();
+        const total = this.state.total;
+        const maxTop = scrollTop + this.getTableBodyHeight();
+        let top = firstRowIndex * rowHeight;
+        let rowsLength = 0;
+        let topHideHeight = 0;
+        let bottomHideHeight = 0;
+
+        for (let i = 0; i < itemsCount; i++ ) {
+            top += rowHeight;
+            if (top + rowHeight < scrollTop) {
+                topHideHeight += rowHeight;
+                continue;
+            } else {
+                if (top > maxTop) {
+                    continue;
+                }
+            }
+
+            rowsLength++;
+        }
+
+        bottomHideHeight = total * rowHeight - rowsLength * rowHeight - topHideHeight;
+        return {rowsLength, top: topHideHeight, bottom: bottomHideHeight};
     }
 }
