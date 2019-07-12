@@ -8,7 +8,6 @@ import { DatagridColumnDirective } from './components/columns';
 import { DataResult } from './services/state';
 import { RestService, REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
-import { auditTime } from 'rxjs/operators';
 
 @Component({
     selector: 'farris-datagrid',
@@ -149,11 +148,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
         this.restService = this.inject.get<RestService>(REST_SERVICEE);
 
-        this.data$.pipe(
-            auditTime(20)
-        ).subscribe( (dataSource: any) => {
+        this.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
-            // console.log(this.ds);
             this.cd.detectChanges();
         });
     }

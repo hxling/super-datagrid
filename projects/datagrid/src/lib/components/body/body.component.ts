@@ -56,6 +56,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private rowHoverSubscription: Subscription;
 
     private scrollTimer: any = null;
+    private clientVirtualLoadTimer = null;
 
     private _index = 0;
 
@@ -212,24 +213,23 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private scrollYMove(y: number, isUp: boolean) {
         this.dfs.setScrollTop(y);
         // 滚动后如果无需进行服务器端取数，则不执行 scrolling 方法
-        if (this.scrollTimer) {
-            clearTimeout(this.scrollTimer);
+        if (this.clientVirtualLoadTimer) {
+            clearTimeout(this.clientVirtualLoadTimer);
         }
-        this.scrollTimer = setTimeout(() => {
+        this.clientVirtualLoadTimer = setTimeout(() => {
             this.dfs.updateVirthualRows(this.scrollTop);
-        }, 50);
+            if (this.datagrid.virtualized && this.datagrid.virtualizedLoadType === 'remote') {
 
-        if (this.datagrid.virtualized && this.datagrid.virtualizedLoadType === 'remote') {
-
-            if (this.needFetchData()) {
-                if (this.scrollTimer) {
-                    clearTimeout(this.scrollTimer);
+                if (this.needFetchData()) {
+                    if (this.scrollTimer) {
+                        clearTimeout(this.scrollTimer);
+                    }
+                    this.scrollTimer = setTimeout(() => {
+                        this.scrolling(isUp);
+                    }, 100);
                 }
-                this.scrollTimer = setTimeout(() => {
-                    this.scrolling(isUp);
-                }, 100);
             }
-        }
+        }, 20);
     }
 
     private needFetchData() {
