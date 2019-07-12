@@ -8,6 +8,7 @@ import { DatagridColumnDirective } from './components/columns';
 import { DataResult } from './services/state';
 import { RestService, REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
+import { auditTime } from 'rxjs/operators';
 
 @Component({
     selector: 'farris-datagrid',
@@ -106,6 +107,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
     /** 虚拟加载 */
     @Input() virtualized = true;
+    /** 虚拟加载数据的方式： client(客户端)、remote(远程) */
+    @Input() virtualizedLoadType = 'client';
 
     @Input() rowStyler: () => void;
 
@@ -146,7 +149,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
         this.restService = this.inject.get<RestService>(REST_SERVICEE);
 
-        this.data$.subscribe( (dataSource: any) => {
+        this.data$.pipe(
+            auditTime(20)
+        ).subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
             // console.log(this.ds);
             this.cd.detectChanges();

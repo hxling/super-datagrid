@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, NgZone, Renderer2,
-    AfterViewInit, ChangeDetectionStrategy, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, NgZone, Renderer2, EventEmitter,
+    AfterViewInit, ChangeDetectionStrategy, SimpleChanges, OnChanges, Output, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { DataColumn } from '../../types';
 import { DatagridComponent } from '../../datagrid.component';
 import { isPlainObject } from 'lodash-es';
@@ -8,10 +8,13 @@ import { DatagridService } from '../../services/datagrid.service';
 import { RowClickEventParam } from '../../types/event-params';
 import { SelectedRow } from '../../services/state';
 import { ROW_HOVER_CLS } from '../../types/constant';
+import { map } from 'rxjs/operators';
+
 @Component({
     selector: 'datagrid-row',
     template: `
-    <div #rowEl class="f-datagrid-body-row" [ngStyle]="rowStyle" [ngClass]="cls" [class.f-datagrid-row-selected]="isSelected">
+    <div #rowEl class="f-datagrid-body-row"
+     [ngStyle]="rowStyle" [ngClass]="cls" [class.f-datagrid-row-selected]="isSelected">
         <div class="f-datagrid-cell-group">
             <datagrid-body-cell *ngFor="let col of columns;trackBy:trackByColumns; let i = index;"
                 (cellClick)="onCellClick($event, data[col.field], data, i)"
@@ -22,7 +25,7 @@ import { ROW_HOVER_CLS } from '../../types/constant';
     `,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChanges {
+export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
     rowStyle: any;
     cls: any;
@@ -34,12 +37,11 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
     @Input() minWidth: number;
     @Input() index: number;
     @Input() columns: DataColumn[];
+    @Input() isSelected = false;
 
     @ViewChild('rowEl') rowEl: ElementRef;
 
-    isSelected = false;
-
-    selectedRow$ = this.dfs.currentRow$;
+    @Output() rowClick = new EventEmitter<any>();
 
     constructor(
         public datagrid: DatagridComponent,
@@ -47,6 +49,7 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
         private dgSer: DatagridService,
         private el: ElementRef,
         private zone: NgZone,
+        private cd: ChangeDetectorRef,
         private render: Renderer2) { }
 
     ngOnInit(): void {
@@ -55,28 +58,26 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
             'f-datagrid-row-odd': this.odd && this.datagrid.striped,
             'f-datagrid-row-even': !this.odd && this.datagrid.striped
         };
-
-        this.selectedRow$.subscribe( (row: SelectedRow) => {
-            if (row) {
-                this.isSelected = row.index === this.index;
-            } else {
-                this.isSelected = false;
-            }
-        });
-
-        // console.log(this.index);
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.top) {
             this.rowStyle = this.initStyle();
         }
+
+        // if (changes.isSelected !== undefined) {
+        //     if (changes.isSelected.previousValue !== changes.isSelected.currentValue) {
+        //         this.cd.detectChanges();
+        //     }
+        // }
     }
 
     ngAfterViewInit() {
         this.registerMouseEvents();
     }
 
+    ngOnDestroy() {
+    }
 
     trackByColumns(index: number, column: DataColumn): string { return column.field; }
 
@@ -104,23 +105,25 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
     private registerMouseEvents() {
         this.zone.runOutsideAngular(() => {
             this.render.listen(this.el.nativeElement, 'mouseenter', () => {
-                // this.dgSer.onRowHover(this.index, this.data, true);
                 this.render.addClass(this.rowEl.nativeElement, ROW_HOVER_CLS);
             });
             this.render.listen(this.el.nativeElement, 'mouseleave', () => {
-                // this.dgSer.onRowHover(this.index, this.data, false);
                 this.render.removeClass(this.rowEl.nativeElement, ROW_HOVER_CLS);
             });
 
-            // this.render.listen(this.el.nativeElement, 'click', () => {
-                // this.dgSer.onRowClick(this.index, this.data);
-                // this.store.dispatch({type: 'CLICK_ROW', payload: { index: this.index, data: this.data }});
-                // this.store.dispatch(new ClickDataGridRow({ id: this.data[this.datagrid.idField], index: this.index, data: this.data }));
+            // this.render.listen(this.el.nativeElement, 'click', (event: any) => {
+            //     this.onRowClick(event);
+            //     this.dgSer.onRowClick(this.index, this.data);
             // });
         });
     }
 
-    onCellClick(event: any, val, rowData, index) {
+    onCellClick(event: any, val, rowData, cellIndex) {
         this.dfs.selectRow(this.index, rowData);
+    }
+
+    onRowClick(event: any) {
+        this.dfs.selectRow(this.index, this.data);
+        this.rowClick.emit({data: this.data, index: this.index});
     }
 }

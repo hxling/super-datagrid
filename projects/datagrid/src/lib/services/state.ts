@@ -18,6 +18,8 @@ export interface FarrisDatagridState {
     columnsGroup: ColumnGroup;
     currentEditInfo?: EditInfo;
     virtualized?: boolean;
+    /** 虚拟加载数据的方式：client, remote, 默认值为 client */
+    virtualizedLoadType?: string;
     virtual?: VirtualizedState;
 }
 

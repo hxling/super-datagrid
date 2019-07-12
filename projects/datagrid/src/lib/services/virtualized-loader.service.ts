@@ -41,7 +41,7 @@ export class VirtualizedLoaderService {
         const rowHeight = this.getRowHeight();
         const maxTop = minTop + this.getTableHeight();
         // this.state.virtual.topHideHeight
-        let top = this.state.pagination ? 0 : this.state.virtual.rowIndex * rowHeight ;
+        let top = (this.state.virtualizedLoadType === 'client') ? 0 : this.state.virtual.rowIndex * rowHeight ;
         // let top = 0;
 
         const rows = [];
@@ -68,7 +68,7 @@ export class VirtualizedLoaderService {
             rows.push(n);
         }
         // // console.timeEnd('循环所有节点');
-        if (!this.state.pagination) {
+        if (this.state.virtualizedLoadType === 'remote') {
             topHideHeight = this.state.virtual.rowIndex * rowHeight  + topHideHeight;
             bottomHideHeight = total * rowHeight - rows.length * rowHeight - topHideHeight;
         }

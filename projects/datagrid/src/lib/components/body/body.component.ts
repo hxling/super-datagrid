@@ -1,3 +1,4 @@
+import { SelectedRow } from './../../services/state';
 import { Component, OnInit, Input, ViewChild, Renderer2,
     ElementRef, ViewChildren, QueryList, OnDestroy, ChangeDetectorRef,
     OnChanges, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
@@ -12,6 +13,7 @@ import { DatagridBodyFixedRowComponent } from './body-fixed-row.component';
 import { DatagridBodyRowComponent } from './body-row.component';
 import { RowHoverEventParam } from '../../types/event-params';
 import { DataResult } from '../../services/state';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'datagrid-body',
@@ -57,6 +59,17 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     private _index = 0;
 
+    currentRowId =  undefined;
+
+    selectedRowId$ = this.dfs.currentRow$.pipe(
+        map( (row: SelectedRow) => {
+            if (row) {
+                return row.id;
+            }
+            return undefined;
+        })
+    );
+
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
         private dfs: DatagridFacadeService, public datagrid: DatagridComponent,
@@ -88,6 +101,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         });
 
         this.listenRowHoverEvent();
+
+        this.selectedRowId$.subscribe(id => {
+            this.currentRowId = id;
+            this.cd.detectChanges();
+        });
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -192,10 +210,16 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     private scrollYMove(y: number, isUp: boolean) {
-        if (this.datagrid.virtualized && !this.datagrid.pagination) {
-            this.dfs.setScrollTop(y);
-            // 滚动后如果无需进行服务器端取数，则不执行 scrolling 方法
+        this.dfs.setScrollTop(y);
+        // 滚动后如果无需进行服务器端取数，则不执行 scrolling 方法
+        if (this.scrollTimer) {
+            clearTimeout(this.scrollTimer);
+        }
+        this.scrollTimer = setTimeout(() => {
             this.dfs.updateVirthualRows(this.scrollTop);
+        }, 50);
+
+        if (this.datagrid.virtualized && this.datagrid.virtualizedLoadType === 'remote') {
 
             if (this.needFetchData()) {
                 if (this.scrollTimer) {
@@ -205,8 +229,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                     this.scrolling(isUp);
                 }, 100);
             }
-        } else {
-            this.dfs.updateVirthualRows(this.scrollTop);
         }
     }
 
@@ -341,4 +363,5 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private getBoundingClientRect(el: ElementRef) {
         return el.nativeElement.getBoundingClientRect();
     }
+
 }

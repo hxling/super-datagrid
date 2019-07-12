@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, NgZone, Renderer2 } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, NgZone, Renderer2, ChangeDetectorRef } from '@angular/core';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridBodyRowComponent } from './body-row.component';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
@@ -12,7 +12,7 @@ import { DatagridService } from '../../services/datagrid.service';
 
         <div class="f-datagrid-cell-group " #leftFixedContainer [style.width.px]="leftFixedWidth" [style.height.px]="rowHeight">
             <!--行号-->
-            <div class="f-datagrid-cell f-datagrid-cell-rownumber" 
+            <div class="f-datagrid-cell f-datagrid-cell-rownumber"
             (click)="onCellClick($event, index + 1, data, -1)"
             *ngIf="datagrid.showRowNumber" [class.rownumber-selected]="isSelected"
             [ngStyle]="{'width': datagrid.rowNumberWidth + 'px', 'height': rowHeight +'px', 'line-height': rowHeight + 'px'}">
@@ -23,7 +23,7 @@ import { DatagridService } from '../../services/datagrid.service';
 
             </div>
 
-            <!-- 全选checkbox 
+            <!-- 全选checkbox
             <div class="f-datagrid-cell-header" *ngIf="datagrid.showCheckbox && datagrid.multiSelect">
                 <xui-datagrid-cell [width]="36"  [height]="36">
                     <xui-checkbox [color]="'p-success'"></xui-checkbox>
@@ -46,13 +46,15 @@ export class DatagridBodyFixedRowComponent extends DatagridBodyRowComponent {
     @Input() leftFixedWidth: number;
     @Input() rightFixedWidth: number;
 
-    constructor(public datagrid: DatagridComponent,
+    constructor(
+        public datagrid: DatagridComponent,
         dfs: DatagridFacadeService,
         dgSer: DatagridService,
         el: ElementRef,
         zone: NgZone,
+        cd: ChangeDetectorRef,
         render: Renderer2) {
-        super(datagrid, dfs, dgSer, el, zone, render);
+        super(datagrid, dfs, dgSer, el, zone, cd, render);
     }
 
 }
