@@ -30,7 +30,9 @@ export class VirtualizedLoaderService {
         const scroTop = this.state.virtual.scrollTop;
         const res = this.getRows(scroTop);
         res.topHideHeight = scroTop; // this.state.virtual.rowIndex * rowHeight;
-        res.bottomHideHeight = this.state.total * rowHeight - res.virtualRows.length * rowHeight - res.topHideHeight;
+        if (res.bottomHideHeight !== 0) {
+            res.bottomHideHeight = this.state.total * rowHeight - res.virtualRows.length * rowHeight - res.topHideHeight;
+        }
         return res;
     }
 

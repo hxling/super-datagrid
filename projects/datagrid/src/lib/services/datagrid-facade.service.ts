@@ -64,16 +64,6 @@ export class DatagridFacadeService {
             deltaTopHeight = (gridContainerRowsCount - viewRowsCount) * this._state.rowHeight - this._state.headerHeight;
         }
 
-        // if (top > this._state.height) {
-        //     console.log('top', deltaTopHeight);
-        //     deltaTopHeight = +deltaTopHeight;
-        // } else {
-        //     if (bottom <  this._state.height) {
-        //         console.log('bottom', deltaTopHeight);
-        //         deltaTopHeight = -deltaTopHeight;
-        //     }
-        // }
-
         return deltaTopHeight;
     }
 
@@ -112,10 +102,7 @@ export class DatagridFacadeService {
         this.updateState({ data }, false);
         this.virtualizedService.state = this._state;
         const virtual = { ...this._state.virtual, ...this.virtualizedService.reload() };
-        // const deltaTopHeight = this.getDeltaTopHeight(virtual.scrollTop);
-        // if (deltaTopHeight) {
-        //     virtual.topHideHeight -= deltaTopHeight;
-        // }
+        console.log(virtual);
         this.updateState({virtual});
     }
 

@@ -43,7 +43,7 @@ export class PageScrollComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位', editor: this.textbox  }
         ];
 
-        // this.allDataSource = this.dds.createData(100000);
+        this.allDataSource = this.dds.createData(100000);
         // this.showLoading = true;
         // this.dds.serverCall(this.allDataSource, 1, this.pageSize).subscribe( res => {
         //     this.items = res.items;

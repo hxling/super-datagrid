@@ -12,7 +12,6 @@ import { DatagridBodyFixedRowComponent } from './body-fixed-row.component';
 import { DatagridBodyRowComponent } from './body-row.component';
 import { RowHoverEventParam } from '../../types/event-params';
 import { DataResult } from '../../services/state';
-import { visitSiblingRenderNodes } from '@angular/core/src/view/util';
 
 @Component({
     selector: 'datagrid-body',
@@ -82,8 +81,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             }
         });
 
-        this.whellHeight = this.datagrid.pagination ?
-                            this.datagrid.pageSize * this.rowHeight : this.datagrid.total *  this.rowHeight;
+        this.setWheelHeight();
 
         this.dgs.onDataSourceChange.subscribe(() => {
             this.ps.scrollToTop();
@@ -94,7 +92,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
-        //    this.cd.detectChanges();
+            this.setWheelHeight();
         }
     }
 
@@ -105,6 +103,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     trackByRows = (index: number, row: any) => {
         return row[this.datagrid.idField];
+    }
+
+    private setWheelHeight() {
+        this.whellHeight = this.datagrid.pagination ?
+            this.datagrid.pageSize * this.rowHeight : this.datagrid.total *  this.rowHeight;
     }
 
     private getBodyStyle() {

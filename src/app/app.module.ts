@@ -11,13 +11,15 @@ import { DatagridModule } from '@farris/ui-datagrid';
 import { FarrisDatePickerModule } from '@farris/ui-datepicker';
 import { ScrollBarLoadComponent } from './demos/scrollbar-load/scrollbar-load.component';
 import { PageScrollComponent } from './demos/page-scroll/page-scroll.component';
+import { AllDataLoadOnceComponent } from './demos/alldata-load-once/alldata-load-once.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     ScrollBarLoadComponent,
-    PageScrollComponent
+    PageScrollComponent,
+    AllDataLoadOnceComponent
   ],
   imports: [
     BrowserModule,

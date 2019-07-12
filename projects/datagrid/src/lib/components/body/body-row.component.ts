@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, NgZone, Renderer2, 
+import { Component, OnInit, Input, ViewChild, ElementRef, NgZone, Renderer2,
     AfterViewInit, ChangeDetectionStrategy, SimpleChanges, OnChanges } from '@angular/core';
 import { DataColumn } from '../../types';
 import { DatagridComponent } from '../../datagrid.component';

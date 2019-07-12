@@ -1,14 +1,13 @@
-import { RestService, REST_SERVICEE } from './services/rest.service';
-import { DatagridService } from './services/datagrid.service';
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
     SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding } from '@angular/core';
-import { DataColumn, ColumnGroup, PaginationInfo, defaultPaginationInfo } from './types/data-column';
+import { DataColumn } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DatagridColumnDirective } from './components/columns';
-import { debounceTime } from 'rxjs/operators';
 import { DataResult } from './services/state';
+import { RestService, REST_SERVICEE } from './services/rest.service';
+import { DatagridService } from './services/datagrid.service';
 
 @Component({
     selector: 'farris-datagrid',
@@ -149,6 +148,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
         this.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
+            // console.log(this.ds);
             this.cd.detectChanges();
         });
     }
