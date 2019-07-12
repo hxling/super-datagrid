@@ -3,7 +3,7 @@
 
 <farris-datagrid [columns]="columns" [data]="items" #dg="datagrid"
     [showRowNumber] ="false" [striped]="false" [showCheckbox]="false"
-    [virtualized]="true" [virtualizedLoadType]="'remote'"
+    [virtualized]="true" [virtualizedAsyncLoad]="true"
     [pagination]="false" [pageSize]= "pageSize" [pageIndex]="pageIndex"  [total]="total"
     (scrollY)="onScrollY($event)"
 ></farris-datagrid>

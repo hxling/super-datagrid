@@ -107,7 +107,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     /** 虚拟加载 */
     @Input() virtualized = true;
     /** 虚拟加载数据的方式： client(客户端)、remote(远程) */
-    @Input() virtualizedLoadType = 'client';
+    @Input() virtualizedAsyncLoad = false;
 
     @Input() rowStyler: () => void;
 

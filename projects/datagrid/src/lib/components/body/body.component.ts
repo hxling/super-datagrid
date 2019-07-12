@@ -218,7 +218,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         }
         this.clientVirtualLoadTimer = setTimeout(() => {
             this.dfs.updateVirthualRows(this.scrollTop);
-            if (this.datagrid.virtualized && this.datagrid.virtualizedLoadType === 'remote') {
+            if (this.datagrid.virtualized && this.datagrid.virtualizedAsyncLoad) {
 
                 if (this.needFetchData()) {
                     if (this.scrollTimer) {
