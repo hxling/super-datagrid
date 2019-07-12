@@ -1,11 +1,14 @@
-import { SelectedRow } from './../../services/state';
 import { Component, OnInit, Input, ViewChild, Renderer2,
     ElementRef, ViewChildren, QueryList, OnDestroy, ChangeDetectorRef,
     OnChanges, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
+
 import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { PerfectScrollbarDirective } from '../../perfect-scrollbar/perfect-scrollbar.directive';
 import { ColumnGroup } from '../../types';
+import { SelectedRow } from './../../services/state';
 import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION, FIXED_LEFT_SHADOW_CLS, ROW_HOVER_CLS } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
@@ -13,7 +16,6 @@ import { DatagridBodyFixedRowComponent } from './body-fixed-row.component';
 import { DatagridBodyRowComponent } from './body-row.component';
 import { RowHoverEventParam } from '../../types/event-params';
 import { DataResult } from '../../services/state';
-import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'datagrid-body',
@@ -280,11 +282,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
         if (bottom < 0 || top > this.height) {
             // 重新计算位置并取数
-            console.log('reload');
+            // console.log('reload');
             this.reload(isUp);
         } else if (top > 0) {
             // 向上连续滚动
-            console.log('fetchData - ↑');
+            // console.log('fetchData - ↑');
             const prevPager = Math.floor(vs.rowIndex / pi.pageSize);
             this.datagrid.loading = true;
             this.datagrid.fetchData(prevPager).subscribe( (r: DataResult) => {
@@ -309,7 +311,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             const nextPager = Math.floor(this._index / pi.pageSize) + 2;
 
             this.datagrid.loading = true;
-            console.log('fetchData - ↓', this._index);
+            // console.log('fetchData - ↓', this._index);
 
             this.datagrid.fetchData(nextPager).subscribe( (r: DataResult) => {
                 this.datagrid.loading = false;
@@ -346,7 +348,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             const virtualRowPos = this.getVirtualRowPosition();
             const { top: _top, bottom: _bottom } = { ...virtualRowPos };
             if (this.deltaTopHeight !== 0) {
-                console.log('取数前检查：✔', this.deltaTopHeight,  _top, _bottom);
+                // console.log('取数前检查：✔', this.deltaTopHeight,  _top, _bottom);
                 if (_top > 0) {
                     this.deltaTopHeight = +this.deltaTopHeight;
                 } else {
