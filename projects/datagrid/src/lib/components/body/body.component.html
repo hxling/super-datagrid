@@ -15,6 +15,7 @@
     </div>
 
     <div [perfectScrollbar]="psConfig" class="f-datagrid-body-wheel-area" [ngStyle]="bodyStyle" #ps="ngxPerfectScrollbar"
+<<<<<<< HEAD
         (psScrollY)="onScrollToY($event)" (psScrollUp)="onScrollUp($event)" (psScrollDown)="onScrollDown($event)"
         (psScrollX)="onScrollToX($event)" (psXReachStart)="onPsXReachStart($event)">
             <div [style.width.px]="colsWidth" [style.height.px]="whellHeight">
@@ -40,6 +41,17 @@
                     *ngIf="datagrid.virtualized" [style.height.px]="bottomHideHeight" ></div>
 
             </div>
+=======
+        (psScrollY)="onScrollToY($event)" (psScrollX)="onScrollToX($event)" (psXReachStart)="onPsXReachStart($event)">
+        <div [style.width.px]="colsWidth" [style.height.px]="datagrid.total * rowHeight">
+            <div class="f-datagrid-row body-top virtualized" *ngIf="topHideHeight && datagrid.virtualized" [style.height.px]="topHideHeight"></div>
+            <datagrid-row *ngFor="let row of data ; trackBy: trackByRows; let i = index; odd as odd" [rowHeight]="rowHeight"
+            [minWidth]="colsWidth" [columns]="columnsGroup?.normalColumns"
+            [odd]="odd"  [top]="i * rowHeight + topHideHeight" [index]="i" [data]="row"></datagrid-row>
+            <div class="f-datagrid-row body-bottom virtualized" *ngIf="bottomHideHeight && datagrid.virtualized" 
+            [style.height.px]="bottomHideHeight" [style.transform]=" 'translate3d(0px,'+ (datagrid.data.length * rowHeight) +'px, 0px)'"></div>
+        </div>
+>>>>>>> 2a73c24701082095737b6731cfa9b1c7fffe1f38
 
     </div>
 </div>
