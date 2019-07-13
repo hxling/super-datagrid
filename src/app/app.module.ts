@@ -12,6 +12,8 @@ import { FarrisDatePickerModule } from '@farris/ui-datepicker';
 import { ScrollBarLoadComponent } from './demos/scrollbar-load/scrollbar-load.component';
 import { PageScrollComponent } from './demos/page-scroll/page-scroll.component';
 import { AllDataLoadOnceComponent } from './demos/alldata-load-once/alldata-load-once.component';
+import { ShowRowNumberComponent } from './demos/row-number/show-row-number.component';
+import { NormalDatagridComponent } from './demos/normal-grid/normal-grid.component';
 
 
 @NgModule({
@@ -19,7 +21,9 @@ import { AllDataLoadOnceComponent } from './demos/alldata-load-once/alldata-load
     AppComponent,
     ScrollBarLoadComponent,
     PageScrollComponent,
-    AllDataLoadOnceComponent
+    AllDataLoadOnceComponent,
+    ShowRowNumberComponent,
+    NormalDatagridComponent
   ],
   imports: [
     BrowserModule,

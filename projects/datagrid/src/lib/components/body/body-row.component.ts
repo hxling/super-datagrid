@@ -9,27 +9,18 @@ import { RowClickEventParam } from '../../types/event-params';
 import { SelectedRow } from '../../services/state';
 import { ROW_HOVER_CLS } from '../../types/constant';
 import { map } from 'rxjs/operators';
+import { DatagridBodyComponent } from './body.component';
 
 @Component({
     selector: 'datagrid-row',
-    template: `
-    <div #rowEl class="f-datagrid-body-row"
-     [ngStyle]="rowStyle" [ngClass]="cls" [class.f-datagrid-row-selected]="isSelected">
-        <div class="f-datagrid-cell-group">
-
-            <datagrid-body-cell *ngFor="let col of columns;trackBy:trackByColumns; let i = index;"
-                (cellClick)="onCellClick($event, data[col.field], data, i)"
-                [width]="col.width" [left]="col.left" [height]="rowHeight" [column]="col" [rowData]="data" [rowIndex]="index">
-            </datagrid-body-cell>
-        </div>
-    </div>
-    `,
+    templateUrl: './body-row.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
     rowStyle: any;
     cls: any;
+    fixedLeftStyle = {};
 
     @Input() rowHeight: number;
     @Input() odd = false;
@@ -39,15 +30,18 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
     @Input() index: number;
     @Input() columns: DataColumn[];
     @Input() isSelected = false;
+    @Input() scrollLeft = 0;
 
     @ViewChild('rowEl') rowEl: ElementRef;
+    @ViewChild('fixedLeftCellGroup') fixedLeft: ElementRef;
 
     @Output() rowClick = new EventEmitter<any>();
 
     constructor(
         public datagrid: DatagridComponent,
+        public databody: DatagridBodyComponent,
         private dfs: DatagridFacadeService,
-        private dgSer: DatagridService,
+        private dgs: DatagridService,
         private el: ElementRef,
         private zone: NgZone,
         private cd: ChangeDetectorRef,
@@ -66,6 +60,9 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
             this.rowStyle = this.initStyle();
         }
 
+        if (changes.scrollLeft !== undefined) {
+            this.setFixedLeftStyle();
+        }
         // if (changes.isSelected !== undefined) {
         //     if (changes.isSelected.previousValue !== changes.isSelected.currentValue) {
         //         this.cd.detectChanges();
@@ -81,6 +78,14 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
     }
 
     trackByColumns(index: number, column: DataColumn): string { return column.field; }
+
+    private setFixedLeftStyle() {
+        this.fixedLeftStyle = {
+            transform: `translate3d(${this.scrollLeft}px, 0px, 0px)`,
+            height: `${this.rowHeight}px`,
+            width: `${this.databody.leftFixedWidth}px`
+        };
+    }
 
     private initStyle() {
         let css = {};
