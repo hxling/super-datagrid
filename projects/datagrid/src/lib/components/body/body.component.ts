@@ -134,6 +134,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     onScrollToX($event: any) {
         const x = $event.target.scrollLeft;
         this.scrollLeft = x;
+        this.cd.detectChanges();
         this.dgs.onScrollMove(x, SCROLL_X_ACTION);
     }
 
