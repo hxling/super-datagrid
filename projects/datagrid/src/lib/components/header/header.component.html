@@ -3,7 +3,7 @@
     <div class="f-datagrid-row f-datagrid-row-header" [style.min-width.px]="columnGroup.minWidth">
 
         <!--左侧固定列-->
-        <ng-container *ngIf="columnGroup.leftFixedCols && columnGroup.leftFixedCols.length  || datagrid.showRowNumber || datagrid.showCheckbox ">
+        <ng-container *ngIf="columnGroup.leftFixed && columnGroup.leftFixed.length  || datagrid.showRowNumber || datagrid.showCheckbox ">
             <div #fixedLeft class="f-datagrid-cell-group f-datagrid-cell-group-fixed-left" [style.width.px]="columnGroup.leftFixedWidth" [style.height.px]="height">
                 <!-- 行号 -->
                 <div class="f-datagrid-cell-header" *ngIf="datagrid.showRowNumber">

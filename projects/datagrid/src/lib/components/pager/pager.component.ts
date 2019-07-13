@@ -39,5 +39,5 @@ export class DatagridPagerComponent implements OnInit {
         this.pageChange.emit(pageIdx);
     }
 
-    onPageSizeChange() {}
+    onPageSizeChange(event: any) {}
 }

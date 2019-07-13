@@ -13,6 +13,7 @@ import { PerfectScrollbarComponent } from './perfect-scrollbar/perfect-scrollbar
 import { DatagridPagerComponent } from './components/pager/pager.component';
 import { NgxPaginationModule } from './pagination/ngx-pagination.module';
 import { DataGridLoadingComponent } from './components/loading.component';
+import { DatagridCellEditDirective, DatagridColumnDirective } from './components/columns';
 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -37,6 +38,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         DatagridBodyComponent,
         DatagridComponent,
         DatagridPagerComponent,
+        DatagridCellEditDirective,
+        DatagridColumnDirective,
         DataGridLoadingComponent
     ],
     providers: [

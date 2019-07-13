@@ -4,5 +4,5 @@ import { Directive, TemplateRef } from '@angular/core';
     selector: '[datagrid-cell-edit-template]',
 })
 export class DatagridCellEditDirective {
-    constructor(public template: TemplateRef<any>){}
+    constructor(public template: TemplateRef<any>) {}
 }

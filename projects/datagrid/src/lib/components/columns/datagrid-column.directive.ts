@@ -14,7 +14,7 @@ export class DatagridColumnDirective implements OnInit {
     @Input() formatter: (value, rowData, rowIndex) => any;
     @Input() readonly = true;
 
-    @ContentChild(DatagridCellEditDirective) editor: DatagridCellEditDirective
+    @ContentChild(DatagridCellEditDirective) editor: DatagridCellEditDirective;
 
     constructor() { }
 
