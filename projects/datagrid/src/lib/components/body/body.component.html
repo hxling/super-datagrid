@@ -1,7 +1,7 @@
 <div  class="f-datagrid-body" [ngStyle]="bodyStyle" [style.top.px]="top">
 
-    <div #fixedLeft class="f-datagrid-body-fixed-left" #psFixedLeft="ngxPerfectScrollbar"
-        *ngIf="leftFixedCols && leftFixedCols.length  || datagrid.rowNumber || datagrid.showCheckbox "
+    <!-- <div #fixedLeft class="f-datagrid-body-fixed-left" #psFixedLeft="ngxPerfectScrollbar"
+        *ngIf="leftFixedCols && leftFixedCols.length  || datagrid.showRowNumber || datagrid.showCheckbox "
         [perfectScrollbar]="psConfigLeft" [style.width.px]="leftFixedWidth" [style.height.px]="height"
         (psScrollY)="onLeftScrollToY($event)">
         <div [style.width.px]="leftFixedWidth" [style.height.px]="data.length * rowHeight">
@@ -9,10 +9,10 @@
                 *ngFor="let row of data; let i = index; odd as odd"
                 [leftFixedWidth]="leftFixedWidth"  [rowHeight]="rowHeight"
                 [minWidth]="leftFixedWidth"
-                [odd]="odd"  [top]="i * rowHeight"  [index]="i"  [data]="row">
+                [odd]="odd"  [top]="i * rowHeight"  [index]="i + _index"  [data]="row">
             </datagrid-fixed-row>
         </div>
-    </div>
+    </div> -->
 
     <div [perfectScrollbar]="psConfig" class="f-datagrid-body-wheel-area" [ngStyle]="bodyStyle" #ps="ngxPerfectScrollbar"
 <<<<<<< HEAD
@@ -31,10 +31,11 @@
                     </tr>    
                 </table> -->
 
-
-                <datagrid-row [attr.toph]="topHideHeight" *ngFor="let row of data ; trackBy: trackByRows; let i = index; odd as odd" [rowHeight]="rowHeight"
-                [minWidth]="colsWidth" [columns]="columnsGroup?.normalColumns"
-                [odd]="odd"  [top]="i * rowHeight + topHideHeight" [index]="i" [data]="row"></datagrid-row>
+                <datagrid-row *ngFor="let row of data; trackBy: trackByRows; let i = index; odd as odd"
+                    [rowHeight]="rowHeight" [isSelected]="currentRowId === row[datagrid.idField]"
+                    [minWidth]="colsWidth" [columns]="columnsGroup?.normalColumns" [scrollLeft]="scrollLeft"
+                    [odd]="odd" [top]="i * rowHeight + topHideHeight" [index]="i + ( topHideHeight / rowHeight) " [data]="row">
+                </datagrid-row>
 
                 <div #bottomDiv class="f-datagrid-row body-bottom virtualized" 
                     [style.transform]="'translate3d(0px,'+ (data.length * rowHeight + topHideHeight) +'px, 0px)'"

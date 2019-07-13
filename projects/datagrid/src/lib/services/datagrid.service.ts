@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { RowEventParam, RowHoverEventParam } from '../types/event-params';
 
 export type ScrollAction =
@@ -17,11 +17,15 @@ export type ScrollAction =
 @Injectable()
 export class DatagridService {
     private scorllSubject = new Subject();
+    private scrollX = new BehaviorSubject(0);
+
     private rowHoverSubject = new Subject<RowHoverEventParam>();
     private rowSelectSubject = new Subject<Partial<RowHoverEventParam>>();
+
     private dataSourceChangedSubject = new Subject();
 
     public scorll$ = this.scorllSubject.asObservable();
+    public scrollX$ = this.scrollX.asObservable();
     public rowHover$ = this.rowHoverSubject.asObservable();
     public rowClick$ = this.rowSelectSubject.asObservable();
     public onDataSourceChange = this.dataSourceChangedSubject.asObservable();
@@ -30,6 +34,10 @@ export class DatagridService {
 
     onScrollMove(x: number, action: ScrollAction) {
         this.scorllSubject.next({ x, type: action });
+    }
+
+    onScrollX(x: number) {
+        this.scrollX.next(x);
     }
 
     dataSourceChanged() {

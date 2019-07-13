@@ -47,6 +47,7 @@
             top: 0;
             border-bottom: 1px solid $border-color;
             background-color: #fff;
+            transition: all .15s ease
         }
 
     }
@@ -58,7 +59,7 @@
         top: 0;
         border-bottom: 1px solid $border-color;
         background-color: #fff;
-
+        transition: all .15s ease;
         &-body {
             .f-datagrid-cell-group-left-shadow, .f-datagrid-cell-group-right-shadow {
                 height:$cell-height;
@@ -112,7 +113,6 @@
             }
         }
     }
-
 
     &-cell-group-fixed {
         &-left {

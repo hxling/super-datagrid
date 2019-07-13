@@ -18,6 +18,8 @@ export interface FarrisDatagridState {
     columnsGroup: ColumnGroup;
     currentEditInfo?: EditInfo;
     virtualized?: boolean;
+    /** 是否启用异步虚拟加载数据: false - 客户端内存中取数；true - 远端服务器加载数据, 默认值为 false */
+    virtualizedAsyncLoad?: boolean;
     virtual?: VirtualizedState;
 }
 

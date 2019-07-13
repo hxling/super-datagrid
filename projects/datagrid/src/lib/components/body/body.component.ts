@@ -1,14 +1,17 @@
 import { Component, OnInit, Input, ViewChild, Renderer2,
     ElementRef, ViewChildren, QueryList, OnDestroy, ChangeDetectorRef,
     OnChanges, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
+
 import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { PerfectScrollbarDirective } from '../../perfect-scrollbar/perfect-scrollbar.directive';
 import { ColumnGroup } from '../../types';
+import { SelectedRow } from './../../services/state';
 import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION, FIXED_LEFT_SHADOW_CLS, ROW_HOVER_CLS } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
-import { DatagridBodyFixedRowComponent } from './body-fixed-row.component';
 import { DatagridBodyRowComponent } from './body-row.component';
 import { RowHoverEventParam } from '../../types/event-params';
 import { DataResult } from '../../services/state';
@@ -33,6 +36,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     rowHeight: number;
     bodyStyle: any;
     scrollTop = 0;
+    scrollLeft = 0;
     deltaTopHeight = 0;
     whellHeight = 0;
     // 虚拟加载
@@ -42,20 +46,25 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @Input() data: any;
 
     @ViewChild('ps') ps?: PerfectScrollbarDirective;
-    @ViewChild('psFixedLeft') psFixedLeft?: PerfectScrollbarDirective;
-    @ViewChild('fixedLeft') fixedLeftElRef: ElementRef;
-
     @ViewChild('topDiv') topDiv: ElementRef;
     @ViewChild('bottomDiv') bottomDiv: ElementRef;
-
-    @ViewChildren(DatagridBodyFixedRowComponent) fixedRowsRef: QueryList<DatagridBodyFixedRowComponent>;
-    @ViewChildren(DatagridBodyRowComponent) rowsRef: QueryList<DatagridBodyRowComponent>;
 
     private rowHoverSubscription: Subscription;
 
     private scrollTimer: any = null;
+    private clientVirtualLoadTimer = null;
+    _index = 0;
 
-    private _index = 0;
+    currentRowId =  undefined;
+
+    selectedRowId$ = this.dfs.currentRow$.pipe(
+        map( (row: SelectedRow) => {
+            if (row) {
+                return row.id;
+            }
+            return undefined;
+        })
+    );
 
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
@@ -87,7 +96,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.ps.scrollToTop();
         });
 
-        this.listenRowHoverEvent();
+        this.selectedRowId$.subscribe(id => {
+            this.currentRowId = id;
+            this.cd.detectChanges();
+        });
+
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -117,48 +130,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         };
     }
 
-    private listenRowHoverEvent() {
-        this.rowHoverSubscription = this.dgs.rowHover$.subscribe((e: RowHoverEventParam) => {
-            this.updateHoverCls(e, this.fixedRowsRef);
-            this.updateHoverCls(e, this.rowsRef);
-        });
-    }
-
-    private updateHoverCls(e: RowHoverEventParam, rowsRef: QueryList<DatagridBodyRowComponent>) {
-        if (rowsRef && rowsRef.length) {
-            const rowCmp = this.getHoverRowComponent(rowsRef, e.index);
-            if (rowCmp) {
-                if (e.mouseenter && this.datagrid.rowHover) {
-                    this.render.addClass(rowCmp.rowEl.nativeElement, ROW_HOVER_CLS);
-                } else {
-                    this.render.removeClass(rowCmp.rowEl.nativeElement, ROW_HOVER_CLS);
-                }
-            }
-        }
-    }
-
-    private getHoverRowComponent(rowsRef: QueryList<DatagridBodyRowComponent>, index: number): DatagridBodyRowComponent {
-        if (rowsRef && rowsRef.length) {
-            const arr = rowsRef.filter(n => n.index === index);
-            if (arr.length) {
-                return arr[0];
-            }
-            return null;
-        }
-        return null;
-    }
-
-
-    onLeftScrollToY($event: any) {
-        const y = $event.target.scrollTop;
-        this.ps.scrollToY(y);
-    }
 
     onScrollToX($event: any) {
         const x = $event.target.scrollLeft;
-        if (this.fixedLeftElRef) {
-            this.render.addClass(this.fixedLeftElRef.nativeElement, FIXED_LEFT_SHADOW_CLS);
-        }
+        this.scrollLeft = x;
         this.dgs.onScrollMove(x, SCROLL_X_ACTION);
     }
 
@@ -175,39 +150,40 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const y = $event.target.scrollTop;
 
         this.scrollTop = y;
-        if (this.psFixedLeft) {
-            this.psFixedLeft.scrollToY(y);
-        }
-
         this.datagrid.scrollY.emit(y);
         this.dgs.onScrollMove(y, SCROLL_Y_ACTION);
     }
 
     onPsXReachStart($event: any) {
         const x = $event.target.scrollLeft;
-        if (this.fixedLeftElRef) {
-            this.render.removeClass(this.fixedLeftElRef.nativeElement, FIXED_LEFT_SHADOW_CLS);
-        }
         this.dgs.onScrollMove(x, SCROLL_X_REACH_START_ACTION);
     }
 
     private scrollYMove(y: number, isUp: boolean) {
-        if (this.datagrid.virtualized && !this.datagrid.pagination) {
-            this.dfs.setScrollTop(y);
-            // 滚动后如果无需进行服务器端取数，则不执行 scrolling 方法
-            this.dfs.updateVirthualRows(this.scrollTop);
+        this.dfs.setScrollTop(y);
 
-            if (this.needFetchData()) {
-                if (this.scrollTimer) {
-                    clearTimeout(this.scrollTimer);
-                }
-                this.scrollTimer = setTimeout(() => {
-                    this.scrolling(isUp);
-                }, 100);
-            }
-        } else {
-            this.dfs.updateVirthualRows(this.scrollTop);
+        if (!this.datagrid.virtualized) {
+            return;
         }
+
+        // 滚动后如果无需进行服务器端取数，则不执行 scrolling 方法
+        if (this.clientVirtualLoadTimer) {
+            clearTimeout(this.clientVirtualLoadTimer);
+        }
+        this.clientVirtualLoadTimer = setTimeout(() => {
+            this.dfs.updateVirthualRows(this.scrollTop);
+            if (this.datagrid.virtualized && this.datagrid.virtualizedAsyncLoad) {
+
+                if (this.needFetchData()) {
+                    if (this.scrollTimer) {
+                        clearTimeout(this.scrollTimer);
+                    }
+                    this.scrollTimer = setTimeout(() => {
+                        this.scrolling(isUp);
+                    }, 100);
+                }
+            }
+        }, 20);
     }
 
     private needFetchData() {
@@ -234,14 +210,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const topDivRect = this.getBoundingClientRect(this.topDiv);
         const bottomDivRect = this.getBoundingClientRect(this.bottomDiv);
 
-        // console.log(`topHieght: ${topDivRect.height}, ${vs.rowIndex * 36}`);
-
-
         const topDivHeight = topDivRect.top - bodyRect.top + topDivRect.height - headerHeight;
         const bottomDivHeight = bottomDivRect.top - bodyRect.top - headerHeight;
         const top = Math.floor(topDivHeight);
         const bottom = Math.floor(bottomDivHeight);
-        // console.log(top, bottom);
+
         return { top, bottom };
     }
 
@@ -258,11 +231,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
         if (bottom < 0 || top > this.height) {
             // 重新计算位置并取数
-            console.log('reload');
+            // console.log('reload');
             this.reload(isUp);
         } else if (top > 0) {
             // 向上连续滚动
-            console.log('fetchData - ↑');
+            // console.log('fetchData - ↑');
             const prevPager = Math.floor(vs.rowIndex / pi.pageSize);
             this.datagrid.loading = true;
             this.datagrid.fetchData(prevPager).subscribe( (r: DataResult) => {
@@ -287,7 +260,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             const nextPager = Math.floor(this._index / pi.pageSize) + 2;
 
             this.datagrid.loading = true;
-            console.log('fetchData - ↓', this._index);
+            // console.log('fetchData - ↓', this._index);
 
             this.datagrid.fetchData(nextPager).subscribe( (r: DataResult) => {
                 this.datagrid.loading = false;
@@ -324,7 +297,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             const virtualRowPos = this.getVirtualRowPosition();
             const { top: _top, bottom: _bottom } = { ...virtualRowPos };
             if (this.deltaTopHeight !== 0) {
-                console.log('取数前检查：✔', this.deltaTopHeight,  _top, _bottom);
+                // console.log('取数前检查：✔', this.deltaTopHeight,  _top, _bottom);
                 if (_top > 0) {
                     this.deltaTopHeight = +this.deltaTopHeight;
                 } else {
@@ -341,4 +314,5 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private getBoundingClientRect(el: ElementRef) {
         return el.nativeElement.getBoundingClientRect();
     }
+
 }

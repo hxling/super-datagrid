@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener,
-    ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+    ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonUtils } from '@farris/ui-common';
 import { EditInfo } from './../../services/state';
 import { DataColumn } from '../../types';
@@ -10,7 +10,7 @@ import { DatagridComponent } from '../../datagrid.component';
 @Component({
     selector: 'datagrid-body-cell',
     template: `
-    <div class="f-datagrid-cell"  [ngClass]="{'f-datagrid-cell-edit': isEditing}" 
+    <div class="f-datagrid-cell"  [ngClass]="{'f-datagrid-cell-edit': isEditing}"
         [ngStyle]="{'width': width+ 'px', 'height': height+'px', 'left': left + 'px'}">
 
         <div class="f-datagrid-cell-content" [style.height.px]="height" #cellContainer>
@@ -24,7 +24,7 @@ import { DatagridComponent } from '../../datagrid.component';
     `,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DatagridBodyCellComponent implements OnInit {
+export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     @Input() width: number;
     @Input() left = 0;
     @Input() height: number;
@@ -93,14 +93,19 @@ export class DatagridBodyCellComponent implements OnInit {
         });
     }
 
+    ngOnDestroy() {
+        this.isEditing$ = null;
+    }
+
     @HostListener('click', ['$event'])
     onCellClick(event: MouseEvent) {
         event.stopPropagation();
-        if (!this.isEditing) {
-            this.dfs.endEditCell();
-            this.dfs.editCell( {rowIndex: this.rowIndex, cellRef: this, field: this.column.field, rowData: this.rowData, isEditing: true});
-            this.cellClick.emit({originalEvent: event });
-        }
+        this.cellClick.emit({originalEvent: event });
+        // if (!this.isEditing) {
+        //     this.dfs.endEditCell();
+        //     this.dfs.editCell( {rowIndex: this.rowIndex, cellRef: this, field: this.column.field, rowData: this.rowData, isEditing: true});
+        //     this.cellClick.emit({originalEvent: event });
+        // }
     }
 
     updateValue() {

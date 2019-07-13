@@ -15,8 +15,7 @@ import { DatagridService } from './services/datagrid.service';
     <div class="f-datagrid" [class.f-datagrid-bordered]="showBorder"
     [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
         <datagrid-header #header [columnGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
-        <datagrid-body [data]="ds.rows | paginate: pagerOpts"
-        [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
+        <datagrid-body [data]="ds.rows | paginate: pagerOpts" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
         <datagrid-pager *ngIf="pagination" [id]="pagerOpts.id" (pageChange)="onPageChange($event)"></datagrid-pager>
     </div>
     <datagrid-loading *ngIf="loading"></datagrid-loading>
@@ -106,6 +105,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
     /** 虚拟加载 */
     @Input() virtualized = true;
+    /** 虚拟加载数据的方式： client(客户端)、remote(远程) */
+    @Input() virtualizedAsyncLoad = false;
 
     @Input() rowStyler: () => void;
 
@@ -144,11 +145,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
                 private inject: Injector,
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
 
-        this.restService = this.inject.get<RestService>(REST_SERVICEE);
+        this.restService = this.inject.get<RestService>(REST_SERVICEE, null);
 
         this.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
-            // console.log(this.ds);
             this.cd.detectChanges();
         });
     }
@@ -156,7 +156,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     ngOnInit() {
         this.pagerOpts = {
             id:  this.id ? this.id + '-pager' :  'farris-datagrid-pager_' + new Date().getTime(),
-            itemsPerPage: this.pageSize,
+            itemsPerPage: this.pagination ? this.pageSize : this.total,
             currentPage: this.pageIndex,
             totalItems: this.total
         };
