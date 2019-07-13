@@ -48,6 +48,9 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
             useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
         }
     ],
-    exports: [DatagridComponent]
+    exports: [
+        DatagridComponent,
+        DatagridColumnDirective
+    ]
 })
 export class DatagridModule { }

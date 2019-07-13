@@ -8,6 +8,7 @@ import { DatagridColumnDirective } from './components/columns';
 import { DataResult } from './services/state';
 import { RestService, REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
+import { of } from 'rxjs';
 
 @Component({
     selector: 'farris-datagrid',
@@ -173,10 +174,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     private loadData() {
         if (!this.data || !this.data.length) {
             this.fetchData().subscribe((res: DataResult) => {
-                const { items, pageIndex, pageSize, total } = {...res};
-                this.total = total;
-                this.dfs.setPagination(pageIndex, pageSize, total);
-                this.dfs.loadData(items);
+                if (res) {
+                    const { items, pageIndex, pageSize, total } = {...res};
+                    this.total = total;
+                    this.dfs.setPagination(pageIndex, pageSize, total);
+                    this.dfs.loadData(items);
+                }
             });
         }
     }
@@ -199,7 +202,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     fetchData(_pageIndex = 1) {
-        return this.restService.getData(this.url, { pageIndex: _pageIndex, pageSize: this.pageSize });
+        if (this.restService) {
+            return this.restService.getData(this.url, { pageIndex: _pageIndex, pageSize: this.pageSize });
+        }
+        return of(undefined);
     }
 
     private initState() {

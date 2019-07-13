@@ -14,6 +14,7 @@ import { PageScrollComponent } from './demos/page-scroll/page-scroll.component';
 import { AllDataLoadOnceComponent } from './demos/alldata-load-once/alldata-load-once.component';
 import { ShowRowNumberComponent } from './demos/row-number/show-row-number.component';
 import { NormalDatagridComponent } from './demos/normal-grid/normal-grid.component';
+import { CellEditorComponent } from './demos/cell-editor/cell-editor.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { NormalDatagridComponent } from './demos/normal-grid/normal-grid.compone
     PageScrollComponent,
     AllDataLoadOnceComponent,
     ShowRowNumberComponent,
-    NormalDatagridComponent
+    NormalDatagridComponent,
+    CellEditorComponent
   ],
   imports: [
     BrowserModule,
