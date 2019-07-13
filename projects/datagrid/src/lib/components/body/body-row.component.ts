@@ -16,6 +16,7 @@ import { map } from 'rxjs/operators';
     <div #rowEl class="f-datagrid-body-row"
      [ngStyle]="rowStyle" [ngClass]="cls" [class.f-datagrid-row-selected]="isSelected">
         <div class="f-datagrid-cell-group">
+
             <datagrid-body-cell *ngFor="let col of columns;trackBy:trackByColumns; let i = index;"
                 (cellClick)="onCellClick($event, data[col.field], data, i)"
                 [width]="col.width" [left]="col.left" [height]="rowHeight" [column]="col" [rowData]="data" [rowIndex]="index">

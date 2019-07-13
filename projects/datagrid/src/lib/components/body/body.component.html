@@ -1,7 +1,7 @@
 <div  class="f-datagrid-body" [ngStyle]="bodyStyle" [style.top.px]="top">
 
     <div #fixedLeft class="f-datagrid-body-fixed-left" #psFixedLeft="ngxPerfectScrollbar"
-        *ngIf="leftFixedCols && leftFixedCols.length  || datagrid.rowNumber || datagrid.showCheckbox "
+        *ngIf="leftFixedCols && leftFixedCols.length  || datagrid.showRowNumber || datagrid.showCheckbox "
         [perfectScrollbar]="psConfigLeft" [style.width.px]="leftFixedWidth" [style.height.px]="height"
         (psScrollY)="onLeftScrollToY($event)">
         <div [style.width.px]="leftFixedWidth" [style.height.px]="data.length * rowHeight">
@@ -9,7 +9,7 @@
                 *ngFor="let row of data; let i = index; odd as odd"
                 [leftFixedWidth]="leftFixedWidth"  [rowHeight]="rowHeight"
                 [minWidth]="leftFixedWidth"
-                [odd]="odd"  [top]="i * rowHeight"  [index]="i"  [data]="row">
+                [odd]="odd"  [top]="i * rowHeight"  [index]="i + _index"  [data]="row">
             </datagrid-fixed-row>
         </div>
     </div>

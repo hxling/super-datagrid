@@ -60,7 +60,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private scrollTimer: any = null;
     private clientVirtualLoadTimer = null;
 
-    private _index = 0;
+    _index = 0;
 
     currentRowId =  undefined;
 
