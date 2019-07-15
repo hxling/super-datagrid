@@ -22,6 +22,7 @@
     "@farris/farris-theme-default": "0.0.29",
     "@farris/ui-common": "0.0.8",
     "@farris/ui-datepicker": "0.0.5",
+    "@farris/ui-input-group": "0.0.11",
     "core-js": "^2.5.4",
     "date-fns": "^1.30.1",
     "lodash-es": "^4.17.11",

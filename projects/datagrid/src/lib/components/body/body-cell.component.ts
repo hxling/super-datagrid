@@ -1,11 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener,
-    ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
+    ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef,
+    OnDestroy, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 import { CommonUtils } from '@farris/ui-common';
 import { EditInfo } from './../../services/state';
 import { DataColumn } from '../../types';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { map, filter } from 'rxjs/operators';
 import { DatagridComponent } from '../../datagrid.component';
+import { DatagridEditorDirective } from '../editors';
 
 @Component({
     selector: 'datagrid-body-cell',
@@ -15,9 +17,8 @@ import { DatagridComponent } from '../../datagrid.component';
 
         <div class="f-datagrid-cell-content" [style.height.px]="height" #cellContainer>
             <span *ngIf="!isEditing">{{ value }}</span>
-            <ng-template #editorTemplate *ngIf="isEditing"
-                [ngTemplateOutlet]="column.editor" [ngTemplateOutletContext]="cellContext">
-            </ng-template>
+            <ng-container #editorTemplate *ngIf="isEditing">
+            </ng-container>
         </div>
 
     </div>
@@ -33,8 +34,8 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     @Input() rowData: any;
     @Input() rowIndex: number;
 
-    private _editorTemplate: any;
-    @ViewChild('editorTemplate') set editorTemplate(editor: any) {
+    private _editorTemplate: ViewContainerRef;
+    @ViewChild('editorTemplate',  {read: ViewContainerRef}) set editorTemplate(editor: any) {
         this._editorTemplate = editor;
     }
 
@@ -64,7 +65,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     constructor(
         private dfs: DatagridFacadeService,
         private render2: Renderer2, private utils: CommonUtils,
-        private datagrid: DatagridComponent,
+        private datagrid: DatagridComponent, private cfr: ComponentFactoryResolver,
         private cd: ChangeDetectorRef) { }
 
     ngOnInit(): void {
@@ -101,15 +102,37 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     onCellClick(event: MouseEvent) {
         event.stopPropagation();
         this.cellClick.emit({originalEvent: event });
-        // if (!this.isEditing) {
-        //     this.dfs.endEditCell();
-        //     this.dfs.editCell( {rowIndex: this.rowIndex, cellRef: this, field: this.column.field, rowData: this.rowData, isEditing: true});
-        //     this.cellClick.emit({originalEvent: event });
-        // }
+
+        if (this.datagrid.editable && this.datagrid.editMode === 'cell') {
+            if (!this.isEditing) {
+                this.dfs.endEditCell();
+                this.dfs.editCell({rowIndex: this.rowIndex, cellRef: this, field: this.column.field, rowData: this.rowData, isEditing: true});
+            //     this.cellClick.emit({originalEvent: event });
+                this.createEditor();
+            }
+        }
     }
 
     updateValue() {
         this.value = this.utils.getValue(this.column.field, this.rowData);
+    }
+
+    private createEditor() {
+        const editors = this.datagrid.editors;
+        if (this.column.editor) {
+            const editor = editors.find(ed => ed.name === this.column.editor.type);
+            if (editor) {
+                setTimeout(() => {
+                    const compFactory = this.cfr.resolveComponentFactory(editor.value);
+                    const cmpRef = this._editorTemplate.createComponent(compFactory);
+                    if (this.column.editor.options) {
+                        Object.assign(cmpRef.instance, this.column.editor.options);
+                    }
+                    (cmpRef.instance as DatagridEditorDirective).bindingData = this.rowData[this.column.field];
+                    this.cd.detectChanges();
+                });
+            }
+        }
     }
 
     private focus() {

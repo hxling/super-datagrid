@@ -1,8 +1,8 @@
 import { Directive, TemplateRef } from '@angular/core';
 
 @Directive({
-    selector: '[datagrid-cell-edit-template]',
+    selector: '[grid-cell-editor]',
 })
-export class DatagridCellEditDirective {
+export class DatagridCellEditorDirective {
     constructor(public template: TemplateRef<any>) {}
 }

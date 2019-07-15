@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
-    SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding } from '@angular/core';
+    SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding, ViewChildren, AfterContentInit } from '@angular/core';
 import { DataColumn } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -9,6 +9,7 @@ import { DataResult } from './services/state';
 import { RestService, REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
 import { of } from 'rxjs';
+import { GRID_EDITORS } from './types';
 
 @Component({
     selector: 'farris-datagrid',
@@ -32,7 +33,7 @@ import { of } from 'rxjs';
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
+export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterContentInit {
     @Input() auther = `Lucas Huang - QQ:1055818239`;
     @Input() version = '0.0.1';
 
@@ -110,6 +111,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
     @Input() virtualizedAsyncLoad = false;
 
     @Input() rowStyler: () => void;
+    /** 编辑方式： row(整行编辑)、cell(单元格编辑)；默认为 row */
+    @Input() editMode: 'row'| 'cell' = 'row';
+    /** 编辑状态 */
+    @Input() editable = false;
 
     @Output() beginEdit = new EventEmitter();
     @Output() endEdit = new EventEmitter();
@@ -140,6 +145,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
     pagerOpts: any = { };
     restService: RestService;
+    editors: any[];
     constructor(private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
                 private cd: ChangeDetectorRef,
@@ -152,6 +158,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
             this.ds = {...dataSource};
             this.cd.detectChanges();
         });
+
+        this.editors = this.inject.get<any[]>(GRID_EDITORS, []);
+
+        console.log(this.editors);
     }
 
     ngOnInit() {
@@ -164,6 +174,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges {
 
         if (!this.pagination) {
             this.pagerHeight = 0;
+        }
+
+    }
+
+    ngAfterContentInit() {
+        console.log('afterContentInit');
+        if (this.dgColumns && this.dgColumns.length) {
+            this.columns = this.dgColumns.map(dgc => {
+                return {...dgc};
+            });
         }
 
         this.initState();

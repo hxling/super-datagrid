@@ -167,24 +167,36 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             return;
         }
 
-        // 滚动后如果无需进行服务器端取数，则不执行 scrolling 方法
-        if (this.clientVirtualLoadTimer) {
-            clearTimeout(this.clientVirtualLoadTimer);
-        }
-        this.clientVirtualLoadTimer = setTimeout(() => {
-            this.dfs.updateVirthualRows(this.scrollTop);
-            if (this.datagrid.virtualized && this.datagrid.virtualizedAsyncLoad) {
+        this.dfs.updateVirthualRows(this.scrollTop);
+        if (this.datagrid.virtualized && this.datagrid.virtualizedAsyncLoad) {
 
-                if (this.needFetchData()) {
-                    if (this.scrollTimer) {
-                        clearTimeout(this.scrollTimer);
-                    }
-                    this.scrollTimer = setTimeout(() => {
-                        this.scrolling(isUp);
-                    }, 100);
+            if (this.needFetchData()) {
+                if (this.scrollTimer) {
+                    clearTimeout(this.scrollTimer);
                 }
+                this.scrollTimer = setTimeout(() => {
+                    this.scrolling(isUp);
+                }, 100);
             }
-        }, 20);
+        }
+        // 滚动后如果无需进行服务器端取数，则不执行 scrolling 方法
+        // if (this.clientVirtualLoadTimer) {
+        //     clearTimeout(this.clientVirtualLoadTimer);
+        // }
+        // this.clientVirtualLoadTimer = setTimeout(() => {
+        //     this.dfs.updateVirthualRows(this.scrollTop);
+        //     if (this.datagrid.virtualized && this.datagrid.virtualizedAsyncLoad) {
+
+        //         if (this.needFetchData()) {
+        //             if (this.scrollTimer) {
+        //                 clearTimeout(this.scrollTimer);
+        //             }
+        //             this.scrollTimer = setTimeout(() => {
+        //                 this.scrolling(isUp);
+        //             }, 100);
+        //         }
+        //     }
+        // }, 0);
     }
 
     private needFetchData() {
@@ -280,10 +292,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const top  = this.scrollTop;
         const index = Math.floor(top / rowHeight);
         const page = Math.floor(index / _pageSize) + 1;
-        this.datagrid.loading = true;
+        this.datagrid.showLoading();
 
         this.datagrid.fetchData(page).subscribe( (res: DataResult) => {
-            this.datagrid.loading = false;
+            this.datagrid.closeLoading();
             const { items, pageIndex, pageSize, total } = {...res};
             this.dfs.setPagination(pageIndex, pageSize, total);
 
@@ -293,23 +305,27 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
             this.dfs.loadDataForVirtual(items);
 
-            this.deltaTopHeight = this.dfs.getDeltaTopHeight(this.scrollTop, idx);
+            this.changeScrollTop(idx);
+        });
+    }
 
+    private changeScrollTop(startRowIndex: number) {
+        this.deltaTopHeight = this.dfs.getDeltaTopHeight(this.scrollTop, startRowIndex);
+
+        if (this.deltaTopHeight !== 0) {
             const virtualRowPos = this.getVirtualRowPosition();
             const { top: _top, bottom: _bottom } = { ...virtualRowPos };
-            if (this.deltaTopHeight !== 0) {
-                // console.log('取数前检查：✔', this.deltaTopHeight,  _top, _bottom);
-                if (_top > 0) {
-                    this.deltaTopHeight = +this.deltaTopHeight;
-                } else {
-                    if (_bottom <  this.height) {
-                        this.deltaTopHeight = -this.deltaTopHeight;
-                    }
+            // console.log('取数前检查：✔', this.deltaTopHeight,  _top, _bottom);
+            if (_top > 0) {
+                this.deltaTopHeight = +this.deltaTopHeight;
+            } else {
+                if (_bottom <  this.height) {
+                    this.deltaTopHeight = -this.deltaTopHeight;
                 }
-                this.scrollTop = this.scrollTop + this.deltaTopHeight;
-                this.ps.scrollToTop(this.scrollTop);
             }
-        });
+            this.scrollTop = this.scrollTop + this.deltaTopHeight;
+            this.ps.scrollToTop(this.scrollTop);
+        }
     }
 
     private getBoundingClientRect(el: ElementRef) {

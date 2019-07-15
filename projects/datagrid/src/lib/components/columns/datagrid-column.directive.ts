@@ -1,10 +1,10 @@
-import { OnInit, Directive, Input, ContentChild } from '@angular/core';
-import { DatagridCellEditDirective } from './column-cell-edit.directive';
+import { OnInit, Directive, Input, ContentChild, TemplateRef, ContentChildren, AfterContentInit } from '@angular/core';
+import { DatagridCellEditorDirective } from './column-cell-edit.directive';
 
 @Directive({
     selector: 'farris-grid-column',
 })
-export class DatagridColumnDirective implements OnInit {
+export class DatagridColumnDirective implements OnInit, AfterContentInit {
 
     @Input() field: string;
     @Input() title: string;
@@ -15,9 +15,13 @@ export class DatagridColumnDirective implements OnInit {
     @Input() readonly = true;
     @Input() editable = false;
 
-    @ContentChild(DatagridCellEditDirective) editor: DatagridCellEditDirective;
+    @ContentChild(DatagridCellEditorDirective) editor: any;
 
     constructor() { }
 
     ngOnInit(): void { }
+
+    ngAfterContentInit() {
+        console.log(this.editor);
+    }
 }
