@@ -10,6 +10,7 @@ import { SelectedRow } from '../../services/state';
 import { ROW_HOVER_CLS } from '../../types/constant';
 import { map } from 'rxjs/operators';
 import { DatagridBodyComponent } from './body.component';
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
     selector: 'datagrid-row',
@@ -21,6 +22,8 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
     rowStyle: any;
     cls: any;
     fixedLeftStyle = {};
+
+    form: FormGroup;
 
     @Input() rowHeight: number;
     @Input() odd = false;
@@ -45,7 +48,8 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
         private el: ElementRef,
         private zone: NgZone,
         private cd: ChangeDetectorRef,
-        private render: Renderer2) { }
+        private render: Renderer2,
+        private fb: FormBuilder) { }
 
     ngOnInit(): void {
         this.rowStyle = this.initStyle();
@@ -53,6 +57,8 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
             'f-datagrid-row-odd': this.odd && this.datagrid.striped,
             'f-datagrid-row-even': !this.odd && this.datagrid.striped
         };
+
+        this.form = this.createControl();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -75,6 +81,19 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
     }
 
     ngOnDestroy() {
+    }
+
+    createControl() {
+        const group = this.fb.group({});
+        this.columns.forEach(col => {
+            if (!col.editor) {return; }
+            const control = this.fb.control(
+                this.data[col.field],
+                // this.bindValidations(field.validations || [])
+            );
+            group.addControl(col.field, control);
+        });
+        return group;
     }
 
     trackByColumns(index: number, column: DataColumn): string { return column.field; }

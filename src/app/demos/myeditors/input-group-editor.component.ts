@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { DatagridEditorDirective } from '@farris/ui-datagrid';
+import { DatagridEditorComponent } from '@farris/ui-datagrid';
 
 @Component({
     selector: 'grid-edtior-inputgroup',
     template: `
-        <input-group [(ngModel)]="bindingData" required></input-group>
+        <div [formGroup]="group">
+        <input-group [formControlName]="column.field" required></input-group>
+        </div>
     `,
 })
-export class MyCustomGridEditorComponent extends DatagridEditorDirective implements OnInit {
+export class MyCustomGridEditorComponent extends DatagridEditorComponent implements OnInit {
     constructor() {
         super();
     }

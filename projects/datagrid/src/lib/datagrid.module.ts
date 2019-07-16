@@ -17,8 +17,8 @@ import { DataGridLoadingComponent } from './components/loading.component';
 import { DatagridCellEditorDirective, DatagridColumnDirective } from './components/columns';
 import { ModuleWithProviders } from '@angular/compiler/src/core';
 import { GRID_EDITORS } from './types';
-import { FormsModule } from '@angular/forms';
-import { DatagridEditorDirective } from './components/editors/grid-editor.directive';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DatagridEditorComponent, GridCellEditorDirective } from './components/editors';
 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -29,6 +29,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     imports: [
         CommonModule,
         FormsModule,
+        ReactiveFormsModule,
         HttpClientModule,
         NgxPaginationModule,
         FarrisCommonModule.forRoot()
@@ -45,10 +46,10 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         DatagridComponent,
         DatagridPagerComponent,
         DatagridCellEditorDirective,
+        GridCellEditorDirective,
         DatagridColumnDirective,
         DataGridLoadingComponent,
-
-        DatagridEditorDirective,
+        DatagridEditorComponent,
         DatagridTextboxEditorComponent
     ],
     providers: [
@@ -63,8 +64,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     exports: [
         DatagridComponent,
         DatagridColumnDirective,
-        DatagridEditorDirective,
         DatagridCellEditorDirective,
+        DatagridEditorComponent,
         DatagridTextboxEditorComponent
     ],
     entryComponents: [

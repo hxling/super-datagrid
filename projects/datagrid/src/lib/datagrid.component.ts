@@ -145,7 +145,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     pagerOpts: any = { };
     restService: RestService;
-    editors: any[];
+    editors: {[key: string]: any} = {};
+
+    selectedRow: any;
+
     constructor(private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
                 private cd: ChangeDetectorRef,
@@ -159,8 +162,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.cd.detectChanges();
         });
 
-        this.editors = this.inject.get<any[]>(GRID_EDITORS, []);
-
+        const Editors = this.inject.get<any[]>(GRID_EDITORS, []);
+        if (Editors.length) {
+            Editors.forEach(ed => {
+                this.editors[ed.name] = ed.value;
+            });
+        }
         console.log(this.editors);
     }
 

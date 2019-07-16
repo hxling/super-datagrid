@@ -59,6 +59,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     selectedRowId$ = this.dfs.currentRow$.pipe(
         map( (row: SelectedRow) => {
+            this.datagrid.selectedRow = row;
             if (row) {
                 return row.id;
             }
@@ -179,24 +180,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 }, 100);
             }
         }
-        // 滚动后如果无需进行服务器端取数，则不执行 scrolling 方法
-        // if (this.clientVirtualLoadTimer) {
-        //     clearTimeout(this.clientVirtualLoadTimer);
-        // }
-        // this.clientVirtualLoadTimer = setTimeout(() => {
-        //     this.dfs.updateVirthualRows(this.scrollTop);
-        //     if (this.datagrid.virtualized && this.datagrid.virtualizedAsyncLoad) {
-
-        //         if (this.needFetchData()) {
-        //             if (this.scrollTimer) {
-        //                 clearTimeout(this.scrollTimer);
-        //             }
-        //             this.scrollTimer = setTimeout(() => {
-        //                 this.scrolling(isUp);
-        //             }, 100);
-        //         }
-        //     }
-        // }, 0);
     }
 
     private needFetchData() {
