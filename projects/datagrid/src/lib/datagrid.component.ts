@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
-    SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding, ViewChildren, AfterContentInit } from '@angular/core';
+    SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding, AfterContentInit, NgZone } from '@angular/core';
 import { DataColumn } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -8,7 +8,7 @@ import { DatagridColumnDirective } from './components/columns';
 import { DataResult } from './services/state';
 import { RestService, REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
-import { of } from 'rxjs';
+import { of, fromEvent } from 'rxjs';
 import { GRID_EDITORS } from './types';
 
 @Component({
@@ -148,11 +148,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     editors: {[key: string]: any} = {};
 
     selectedRow: any;
+    currentCell: any;
 
     constructor(private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
                 private cd: ChangeDetectorRef,
-                private inject: Injector,
+                private inject: Injector, private zone: NgZone,
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
 
         this.restService = this.inject.get<RestService>(REST_SERVICEE, null);
@@ -183,6 +184,56 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.pagerHeight = 0;
         }
 
+        const gridBody = document.querySelector('.f-datagrid-body');
+        this.zone.runOutsideAngular(() => {
+            // console.log(gridBody);
+            fromEvent<Event>(gridBody, 'keydown').subscribe((e: KeyboardEvent) => {
+                console.log(e);
+                e.stopPropagation();
+                const ccell = this.currentCell;
+                if (!ccell) {
+                    return;
+                }
+
+                const keyCode = e.keyCode;
+                switch (keyCode) {
+                    case 38: // ↑
+                        const prevIdx = ccell.rowIndex - 1;
+                        if (prevIdx < 0) {
+                            return;
+                        }
+                        this.dfs.setCurrentCell(prevIdx, this.data[prevIdx][this.idField], ccell.field);
+                        break;
+                    case 40: // ↓
+                        const nextIdx = ccell.rowIndex + 1;
+                        if (nextIdx > this.total) {
+                            return;
+                        }
+                        this.dfs.setCurrentCell(nextIdx, this.data[nextIdx][this.idField], ccell.field);
+                        break;
+                    case 37: // ←
+                        const prevColIdx = this.columns.findIndex((col, index) => {
+                            return ccell.field === col.field;
+                        });
+                        if (prevColIdx) {
+                            const prevCol = this.columns[prevColIdx - 1];
+                            this.dfs.setCurrentCell(ccell.rowIndex, ccell.rowId, prevCol.field);
+                        }
+                        break;
+                    case 39: // →
+                        const nextColIdx = this.columns.findIndex((col, index) => {
+                            return ccell.field === col.field;
+                        });
+                        if (nextColIdx < this.columns.length - 1) {
+                            const nextCol = this.columns[nextColIdx + 1];
+                            this.dfs.setCurrentCell(ccell.rowIndex, ccell.rowId, nextCol.field);
+                        }
+                        break;
+                }
+
+                this.cd.detectChanges();
+            });
+        });
     }
 
     ngAfterContentInit() {

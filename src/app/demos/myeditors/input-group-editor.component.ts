@@ -4,9 +4,9 @@ import { DatagridEditorComponent } from '@farris/ui-datagrid';
 @Component({
     selector: 'grid-edtior-inputgroup',
     template: `
-        <div [formGroup]="group">
+    <div [formGroup]="group">
         <input-group [formControlName]="column.field" required></input-group>
-        </div>
+    </div>
     `,
 })
 export class MyCustomGridEditorComponent extends DatagridEditorComponent implements OnInit {

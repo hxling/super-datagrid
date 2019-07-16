@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener,
     ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef,
-    OnDestroy, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
+    OnDestroy, ViewContainerRef, ComponentFactoryResolver, NgZone } from '@angular/core';
 import { CommonUtils } from '@farris/ui-common';
 import { EditInfo } from './../../services/state';
 import { DataColumn } from '../../types';
@@ -13,8 +13,8 @@ import { DatagridBodyRowComponent } from './body-row.component';
 @Component({
     selector: 'datagrid-body-cell',
     template: `
-    <div class="f-datagrid-cell"  [ngClass]="{'f-datagrid-cell-edit': isEditing}"
-        [ngStyle]="{'width': width+ 'px', 'height': height+'px', 'left': left + 'px'}">
+    <div class="f-datagrid-cell"  [ngClass]="{'f-datagrid-cell-edit': isEditing, 'f-datagrid-cell-selected': (cellSelected | async)}"
+        [ngStyle]="{'width': width+ 'px', 'height': (height-1) +'px', 'left': left + 'px'}">
 
         <div class="f-datagrid-cell-content" [style.height.px]="height" #cellContainer>
             <span *ngIf="!isEditing">{{ value }}</span>
@@ -35,10 +35,10 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     @Input() rowData: any;
     @Input() rowIndex: number;
 
-    private _editorTemplate: ViewContainerRef;
-    @ViewChild('editorTemplate',  {read: ViewContainerRef}) set editorTemplate(editor: any) {
-        this._editorTemplate = editor;
-    }
+    // private _editorTemplate: ViewContainerRef;
+    // @ViewChild('editorTemplate',  {read: ViewContainerRef}) set editorTemplate(editor: any) {
+    //     this._editorTemplate = editor;
+    // }
 
     @ViewChild('cellContainer') cellContainer: ElementRef;
 
@@ -63,11 +63,21 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
         })
     );
 
+    cellSelected = this.dfs.currentCell$.pipe(
+        map( cell => {
+            if (cell) {
+                this.datagrid.currentCell = cell;
+                return cell.rowId === this.rowData[this.datagrid.idField] && this.column.field === cell.field;
+            }
+            return false;
+        })
+    );
+
     constructor(
         private dfs: DatagridFacadeService, public dr: DatagridBodyRowComponent,
-        private render2: Renderer2, private utils: CommonUtils,
+        private render2: Renderer2, private utils: CommonUtils, private el: ElementRef,
         private datagrid: DatagridComponent, private cfr: ComponentFactoryResolver,
-        private cd: ChangeDetectorRef) { }
+        private cd: ChangeDetectorRef, private zone: NgZone) { }
 
     ngOnInit(): void {
         this.cellContext = {
@@ -98,6 +108,13 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
             // this.rowData = {...this.rowData, ...val};
             this.updateValue();
         });
+
+
+        // this.zone.runOutsideAngular(() => {
+        //     this.render2.listen(this.el.nativeElement, 'click', (e: MouseEvent) => {
+        //         this.onCellClick(e);
+        //     });
+        // });
     }
 
     ngOnDestroy() {
@@ -107,40 +124,32 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     @HostListener('click', ['$event'])
     onCellClick(event: MouseEvent) {
         event.stopPropagation();
-
-        if (this.datagrid.editable && this.datagrid.editMode === 'cell') {
-            if (!this.isEditing) {
-                this.dfs.endEditCell();
-                this.dfs.editCell({rowIndex: this.rowIndex, cellRef: this, field: this.column.field, rowData: this.rowData, isEditing: true});
-                this.cellClick.emit({originalEvent: event });
-            //     this.cellClick.emit({originalEvent: event });
-                // this.createEditor();
-            }
-        }
+        // const cellDiv = this.el.nativeElement.querySelector('.f-datagrid-cell');
+        // this.render2.addClass(cellDiv, 'f-datagrid-cell-selected');
+        this.dfs.setCurrentCell(this.rowIndex, this.rowData[this.datagrid.idField], this.column.field);
+        this.cd.detectChanges();
+        // if (this.datagrid.editable && this.datagrid.editMode === 'cell') {
+        //     if (!this.isEditing) {
+        //         this.dfs.endEditCell();
+        //         this.dfs.editCell({rowIndex: this.rowIndex, cellRef: this, field: this.column.field,
+        //                                                      rowData: this.rowData, isEditing: true});
+        //         this.cellClick.emit({originalEvent: event });
+        //     //     this.cellClick.emit({originalEvent: event });
+        //         // this.createEditor();
+        //     }
+        // }
     }
+
+
+    // @HostListener('document:keydown.arrowup', ['$event'])
+    // onArrowUp($event) {
+    //     console.log($event);
+    // }
 
     updateValue() {
         Object.assign(this.rowData, this.dr.form.value);
         this.value = this.utils.getValue(this.column.field, this.rowData);
     }
-
-    // private createEditor() {
-    //     const editors = this.datagrid.editors;
-    //     if (this.column.editor) {
-    //         const editor = editors[this.column.editor.type];
-    //         if (editor) {
-    //             setTimeout(() => {
-    //                 const compFactory = this.cfr.resolveComponentFactory(editor);
-    //                 const cmpRef = this._editorTemplate.createComponent(compFactory);
-    //                 if (this.column.editor.options) {
-    //                     Object.assign(cmpRef.instance, this.column.editor.options);
-    //                 }
-    //                 (cmpRef.instance as DatagridEditorComponent).bindingData = this.rowData[this.column.field];
-    //                 this.cd.detectChanges();
-    //             });
-    //         }
-    //     }
-    // }
 
     private focus() {
         const navEl = this.cellContainer.nativeElement;

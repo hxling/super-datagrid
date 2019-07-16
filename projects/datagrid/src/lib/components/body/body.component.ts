@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, ViewChild, Renderer2,
     ElementRef, ViewChildren, QueryList, OnDestroy, ChangeDetectorRef,
-    OnChanges, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
+    OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone } from '@angular/core';
 
-import { Subscription } from 'rxjs';
+import { Subscription, fromEvent } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
@@ -70,7 +70,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
         private dfs: DatagridFacadeService, public datagrid: DatagridComponent,
-        private render: Renderer2, private dgs: DatagridService) {
+        private render: Renderer2, private dgs: DatagridService, private zone: NgZone) {
     }
 
     ngOnInit(): void {
@@ -141,11 +141,15 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     onScrollUp($event: any) {
         const y = $event.target.scrollTop;
-        this.scrollYMove(y, true);
+        setTimeout(() => {
+            this.scrollYMove(y , true);
+        }, 20);
     }
     onScrollDown($event: any) {
         const y = $event.target.scrollTop;
-        this.scrollYMove(y , false);
+        setTimeout(() => {
+            this.scrollYMove(y , false);
+        }, 20);
     }
 
     onScrollToY($event: any) {

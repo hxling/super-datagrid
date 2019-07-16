@@ -148,6 +148,10 @@
         position: absolute;
         white-space: normal;
 
+        &-selected {
+            border: 1px solid $selected-cell-bgcolor!important;
+        }
+
         &-edit {
             .f-datagrid-cell-content {
                 padding: 0;

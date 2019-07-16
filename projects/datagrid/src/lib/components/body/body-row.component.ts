@@ -144,7 +144,7 @@ export class DatagridBodyRowComponent implements OnInit, AfterViewInit, OnChange
     }
 
     onCellClick(event: any, val, rowData, cellIndex) {
-        this.dfs.selectRow(this.index, rowData);
+        // this.dfs.selectRow(this.index, rowData);
     }
 
     onRowClick(event: any) {

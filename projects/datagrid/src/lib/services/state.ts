@@ -15,6 +15,7 @@ export interface FarrisDatagridState {
     multiSelect?: boolean;
     selections: SelectedRow[];
     currentRow: SelectedRow;
+    currentCell?: any;
     columnsGroup: ColumnGroup;
     currentEditInfo?: EditInfo;
     virtualized?: boolean;
