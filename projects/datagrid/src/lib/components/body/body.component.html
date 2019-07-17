@@ -5,10 +5,17 @@
     <div [perfectScrollbar]="psConfig" class="ps f-datagrid-body-wheel-area" [ngStyle]="bodyStyle" #ps="ngxPerfectScrollbar"
         (psScrollY)="onScrollToY($event)" (psScrollX)="onScrollToX($event)" (psXReachStart)="onPsXReachStart($event)">
 
-        <div #fixedLeft class="f-datagrid-body-fixed-left" *ngIf="datagrid.showRowNumber || datagrid.showCheckbox "
-                [style.width.px]="leftFixedWidth" [style.height.px]="height" >
-                
-                    <div [style.width.px]="leftFixedWidth" [style.height.px]="data.length * rowHeight">
+        <div #fixedLeft class="f-datagrid-body-fixed-left"  [class.f-datagrid-fixed-left-shadow]="!!scrollLeft"
+            *ngIf="datagrid.showRowNumber || datagrid.showCheckbox " [style.transform]="'translate3d('+ scrollLeft +'px, 0px, 0px)'"
+                [style.width.px]="leftFixedWidth" [style.height.px]="data.length * rowHeight" >
+                <table style="width: 100%" >
+                    <tr class="f-datagrid-body-row" [style.height.px]="rowHeight" *ngFor="let row of data ; trackBy: trackByRows; let i=index; odd as odd">
+                        <td class="f-datagrid-cell" [style.width.px]="leftFixedWidth">
+                            {{ i + 1 }}
+                        </td>
+                    </tr>    
+                </table>
+                    <!-- <div [style.width.px]="leftFixedWidth" > -->
                         <!-- <datagrid-fixed-row
                             *ngFor="let row of data; let i = index; odd as odd"
                             [leftFixedWidth]="leftFixedWidth"  [rowHeight]="rowHeight"
@@ -16,15 +23,9 @@
                             [odd]="odd"  [top]="i * rowHeight"  [index]="i + _index"  [data]="row">
                         </datagrid-fixed-row> -->
 
-                        <table style="width: 100%" >
-                            <tr class="f-datagrid-body-row" [style.height.px]="rowHeight" *ngFor="let row of data ; trackBy: trackByRows; let i=index; odd as odd">
-                                <td class="f-datagrid-cell" [style.width.px]="leftFixedWidth">
-                                    {{ i + 1 }}
-                                </td>
-                            </tr>    
-                        </table>
+                        
 
-                    </div>
+                    <!-- </div> -->
                 </div>
            
             <div [style.width.px]="colsWidth" style="position: relative;" [style.left.px]="leftFixedWidth">
@@ -50,6 +51,6 @@
                     [style.transform]="'translate3d(0px,'+ (data.length * rowHeight + topHideHeight) +'px, 0px)'"
                     *ngIf="datagrid.virtualized" [style.height.px]="bottomHideHeight" ></div>
 
-                </div>
+            </div>
     </div>
 </div>
