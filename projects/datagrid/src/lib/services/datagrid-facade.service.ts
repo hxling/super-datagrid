@@ -160,6 +160,10 @@ export class DatagridFacadeService {
         this.updateState({currentCell});
     }
 
+    cancalSelectCell() {
+        this.updateState({currentCell: null});
+    }
+
     primaryId(data: any) {
         return data[this._state.idField];
     }

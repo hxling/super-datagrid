@@ -60,10 +60,10 @@ export const initDataGridState: FarrisDatagridState = {
 
 export interface EditInfo {
     isEditing: boolean;
-    rowData: any;
+    rowData?: any;
     rowIndex: number;
     field: string;
-    cellRef: any;
+    cellRef?: any;
 }
 
 export interface DataResult {

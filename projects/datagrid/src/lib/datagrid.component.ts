@@ -8,7 +8,7 @@ import { DatagridColumnDirective } from './components/columns';
 import { DataResult } from './services/state';
 import { RestService, REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
-import { of, fromEvent } from 'rxjs';
+import { of, fromEvent, Subscription } from 'rxjs';
 import { GRID_EDITORS } from './types';
 
 @Component({
@@ -150,6 +150,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     selectedRow: any;
     currentCell: any;
 
+    private keyDownSub: Subscription = null;
+
     constructor(private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
                 private cd: ChangeDetectorRef,
@@ -184,55 +186,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.pagerHeight = 0;
         }
 
-        const gridBody = document.querySelector('.f-datagrid-body');
         this.zone.runOutsideAngular(() => {
-            // console.log(gridBody);
-            fromEvent<Event>(gridBody, 'keydown').subscribe((e: KeyboardEvent) => {
-                console.log(e);
-                e.stopPropagation();
-                const ccell = this.currentCell;
-                if (!ccell) {
-                    return;
-                }
-
-                const keyCode = e.keyCode;
-                switch (keyCode) {
-                    case 38: // ↑
-                        const prevIdx = ccell.rowIndex - 1;
-                        if (prevIdx < 0) {
-                            return;
-                        }
-                        this.dfs.setCurrentCell(prevIdx, this.data[prevIdx][this.idField], ccell.field);
-                        break;
-                    case 40: // ↓
-                        const nextIdx = ccell.rowIndex + 1;
-                        if (nextIdx > this.total) {
-                            return;
-                        }
-                        this.dfs.setCurrentCell(nextIdx, this.data[nextIdx][this.idField], ccell.field);
-                        break;
-                    case 37: // ←
-                        const prevColIdx = this.columns.findIndex((col, index) => {
-                            return ccell.field === col.field;
-                        });
-                        if (prevColIdx) {
-                            const prevCol = this.columns[prevColIdx - 1];
-                            this.dfs.setCurrentCell(ccell.rowIndex, ccell.rowId, prevCol.field);
-                        }
-                        break;
-                    case 39: // →
-                        const nextColIdx = this.columns.findIndex((col, index) => {
-                            return ccell.field === col.field;
-                        });
-                        if (nextColIdx < this.columns.length - 1) {
-                            const nextCol = this.columns[nextColIdx + 1];
-                            this.dfs.setCurrentCell(ccell.rowIndex, ccell.rowId, nextCol.field);
-                        }
-                        break;
-                }
-
-                this.cd.detectChanges();
-            });
+            this.onKeyboardDown();
         });
     }
 
@@ -247,6 +202,80 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.initState();
         this.registerDocumentEvent();
         this.loadData();
+    }
+
+    private onKeyboardDown() {
+        const gridBody = document.querySelector('.f-datagrid-body');
+        // gridBody.addEventListener('mouseenter', () => { this.subscribeEvents(); } );
+        gridBody.addEventListener('keydown', () => { this.subscribeEvents(); } );
+    }
+
+    private onKeyboardUp() {
+        if (!this.keyDownSub) {
+            return;
+        }
+        this.keyDownSub.unsubscribe();
+        this.keyDownSub = null;
+    }
+
+    private subscribeEvents() {
+        const el = document;
+        this.keyDownSub = fromEvent<Event>(el, 'keydown').subscribe((e: any) => {
+            // console.log(e);
+            e.stopPropagation();
+            const ccell = this.currentCell;
+            if (!ccell) {
+                return;
+            }
+
+            const keyCode = e.keyCode;
+            switch (keyCode) {
+                case 13: // ✔
+                    if (this.editable && this.editMode === 'cell') {
+                        this.dfs.endEditCell();
+                        this.dfs.editCell({rowIndex: ccell.rowIndex, field: ccell.field, isEditing: true});
+                    }
+                    break;
+                case 38: // ↑
+                    const prevIdx = ccell.rowIndex - 1;
+                    if (prevIdx < 0) {
+                        return;
+                    }
+                    this.dfs.setCurrentCell(prevIdx, this.data[prevIdx][this.idField], ccell.field);
+                    break;
+                case 40: // ↓
+                    const nextIdx = ccell.rowIndex + 1;
+                    if (nextIdx > this.total) {
+                        return;
+                    }
+                    this.dfs.setCurrentCell(nextIdx, this.data[nextIdx][this.idField], ccell.field);
+                    break;
+                case 37: // ←
+                    const prevColIdx = this.columns.findIndex((col, index) => {
+                        return ccell.field === col.field;
+                    });
+                    if (prevColIdx) {
+                        const prevCol = this.columns[prevColIdx - 1];
+                        this.dfs.setCurrentCell(ccell.rowIndex, ccell.rowId, prevCol.field);
+                    }
+                    break;
+                case 39: // →
+                    const nextColIdx = this.columns.findIndex((col, index) => {
+                        return ccell.field === col.field;
+                    });
+                    if (nextColIdx < this.columns.length - 1) {
+                        const nextCol = this.columns[nextColIdx + 1];
+                        this.dfs.setCurrentCell(ccell.rowIndex, ccell.rowId, nextCol.field);
+                    }
+                    break;
+            }
+
+            this.cd.detectChanges();
+        });
+
+        this.keyDownSub.add(fromEvent(el, 'keyup').subscribe( () => {
+            this.onKeyboardUp();
+        }));
     }
 
     private loadData() {
@@ -293,6 +322,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     private registerDocumentEvent() {
         this.docuemntEvents = this.render2.listen(document, 'click', () => {
             this.dfs.endEditCell();
+            this.dfs.cancalSelectCell();
         });
     }
 

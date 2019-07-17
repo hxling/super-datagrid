@@ -9,6 +9,7 @@ import { map, filter } from 'rxjs/operators';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridEditorComponent } from '../editors/grid-editor.component';
 import { DatagridBodyRowComponent } from './body-row.component';
+import { fromEvent } from 'rxjs';
 
 @Component({
     selector: 'datagrid-body-cell',
@@ -35,10 +36,6 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     @Input() rowData: any;
     @Input() rowIndex: number;
 
-    // private _editorTemplate: ViewContainerRef;
-    // @ViewChild('editorTemplate',  {read: ViewContainerRef}) set editorTemplate(editor: any) {
-    //     this._editorTemplate = editor;
-    // }
 
     @ViewChild('cellContainer') cellContainer: ElementRef;
 
@@ -105,46 +102,37 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
         });
 
         this.dr.form.valueChanges.subscribe( val => {
-            // this.rowData = {...this.rowData, ...val};
             this.updateValue();
         });
 
-
-        // this.zone.runOutsideAngular(() => {
-        //     this.render2.listen(this.el.nativeElement, 'click', (e: MouseEvent) => {
-        //         this.onCellClick(e);
-        //     });
-        // });
     }
 
     ngOnDestroy() {
         this.isEditing$ = null;
     }
 
-    @HostListener('click', ['$event'])
-    onCellClick(event: MouseEvent) {
+    @HostListener('dblclick', ['$event'])
+    onCellEnter(event: KeyboardEvent) {
         event.stopPropagation();
-        // const cellDiv = this.el.nativeElement.querySelector('.f-datagrid-cell');
-        // this.render2.addClass(cellDiv, 'f-datagrid-cell-selected');
-        this.dfs.setCurrentCell(this.rowIndex, this.rowData[this.datagrid.idField], this.column.field);
-        this.cd.detectChanges();
-        // if (this.datagrid.editable && this.datagrid.editMode === 'cell') {
-        //     if (!this.isEditing) {
-        //         this.dfs.endEditCell();
-        //         this.dfs.editCell({rowIndex: this.rowIndex, cellRef: this, field: this.column.field,
-        //                                                      rowData: this.rowData, isEditing: true});
-        //         this.cellClick.emit({originalEvent: event });
-        //     //     this.cellClick.emit({originalEvent: event });
-        //         // this.createEditor();
-        //     }
-        // }
+        console.log(event);
+        if (this.datagrid.editable && this.datagrid.editMode === 'cell') {
+            if (!this.isEditing) {
+                this.dfs.endEditCell();
+                this.dfs.editCell({rowIndex: this.rowIndex, cellRef: this, field: this.column.field,
+                                                             rowData: this.rowData, isEditing: true});
+                this.cellClick.emit({originalEvent: event });
+            }
+        }
     }
 
 
-    // @HostListener('document:keydown.arrowup', ['$event'])
-    // onArrowUp($event) {
-    //     console.log($event);
-    // }
+    @HostListener('click', ['$event'])
+    onCellClick(event: MouseEvent) {
+        event.stopPropagation();
+        this.dfs.setCurrentCell(this.rowIndex, this.rowData[this.datagrid.idField], this.column.field);
+        this.cd.detectChanges();
+        this.cellClick.emit({originalEvent: event });
+    }
 
     updateValue() {
         Object.assign(this.rowData, this.dr.form.value);

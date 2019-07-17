@@ -4,8 +4,8 @@ import { DatagridEditorComponent } from './grid-editor.component';
 @Component({
     selector: 'grid-editor-textbox',
     template: `
-    <div [formGroup]="group">
-    <input type="text" class="form-control" placeholder="Enter email" [formControlName]="column.field">
+    <div [formGroup]="group" class="f-datagrid-cell-formgroup">
+    <input type="text" class="f-datagrid-cell-editor" placeholder="Enter email" [formControlName]="column.field">
     </div>
     `,
 })

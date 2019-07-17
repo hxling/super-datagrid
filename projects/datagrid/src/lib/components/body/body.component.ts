@@ -15,6 +15,9 @@ import { DatagridComponent } from '../../datagrid.component';
 import { DatagridBodyRowComponent } from './body-row.component';
 import { RowHoverEventParam } from '../../types/event-params';
 import { DataResult } from '../../services/state';
+import { PerfectScrollbarComponent } from '../../perfect-scrollbar/perfect-scrollbar.component';
+
+import PerfectScrollbar from 'perfect-scrollbar';
 
 @Component({
     selector: 'datagrid-body',
@@ -23,7 +26,7 @@ import { DataResult } from '../../services/state';
 })
 export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
-    psConfig = { swipeEasing: true,  minScrollbarLength: 15 };
+    psConfig = { swipeEasing: true,  minScrollbarLength: 20, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
     psConfigLeft = { suppressScrollX: true, suppressScrollY: false };
 
     top: number;
@@ -38,7 +41,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     scrollTop = 0;
     scrollLeft = 0;
     deltaTopHeight = 0;
-    whellHeight = 0;
+    wheelHeight = 0;
     // 虚拟加载
     @Input() topHideHeight = 0;
     @Input() bottomHideHeight = 0;
@@ -46,6 +49,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @Input() data: any;
 
     @ViewChild('ps') ps?: PerfectScrollbarDirective;
+    // @ViewChild('psContainer') psc: ElementRef;
     @ViewChild('topDiv') topDiv: ElementRef;
     @ViewChild('bottomDiv') bottomDiv: ElementRef;
 
@@ -67,6 +71,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         })
     );
 
+    // ps: any;
+
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
         private dfs: DatagridFacadeService, public datagrid: DatagridComponent,
@@ -74,7 +80,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnInit(): void {
-        this.dfs.state$.subscribe(state => {
+
+        const initSubscrition = this.dfs.state$.subscribe(state => {
             if (state) {
                 this.top = state.headerHeight;
                 const pagerHeight = state.pagerHeight;
@@ -86,15 +93,13 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.columnsGroup = state.columnsGroup;
                 this.colsWidth = state.columnsGroup.minWidth;
                 this.leftFixedWidth = state.columnsGroup.leftFixedWidth;
-
+                this.setWheelHeight();
                 this.bodyStyle = this.getBodyStyle();
             }
         });
 
-        this.setWheelHeight();
-
         this.dgs.onDataSourceChange.subscribe(() => {
-            this.ps.scrollToTop();
+            // this.ps.scrollToTop();
         });
 
         this.selectedRowId$.subscribe(id => {
@@ -102,11 +107,15 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.cd.detectChanges();
         });
 
+        // this.ps = new PerfectScrollbar(this.psc.nativeElement, this.psConfig);
+
     }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
             this.setWheelHeight();
+            this.ps.update();
+            // setTimeout( () => this.ps.update());
         }
     }
 
@@ -120,7 +129,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     private setWheelHeight() {
-        this.whellHeight = this.datagrid.pagination ?
+        this.wheelHeight = this.datagrid.pagination ?
             this.datagrid.pageSize * this.rowHeight : this.datagrid.total *  this.rowHeight;
     }
 
@@ -128,6 +137,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         return {
             width: `${this.width - 2}px`,
             height: `${this.height - 2}px`,
+            maxHeight: `${this.wheelHeight}px`,
         };
     }
 
@@ -139,23 +149,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.dgs.onScrollMove(x, SCROLL_X_ACTION);
     }
 
-    onScrollUp($event: any) {
-        const y = $event.target.scrollTop;
-        setTimeout(() => {
-            this.scrollYMove(y , true);
-        }, 20);
-    }
-    onScrollDown($event: any) {
-        const y = $event.target.scrollTop;
-        setTimeout(() => {
-            this.scrollYMove(y , false);
-        }, 20);
-    }
-
     onScrollToY($event: any) {
         const y = $event.target.scrollTop;
-
-        this.scrollTop = y;
+        // console.log(y);
+        this.scrollYMove(y);
         this.datagrid.scrollY.emit(y);
         this.dgs.onScrollMove(y, SCROLL_Y_ACTION);
     }
@@ -165,9 +162,23 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.dgs.onScrollMove(x, SCROLL_X_REACH_START_ACTION);
     }
 
-    private scrollYMove(y: number, isUp: boolean) {
-        this.dfs.setScrollTop(y);
+    private scrollYMove(y: number, isUp: boolean = false) {
+        let scrollTop = y;
+        if (y > this.datagrid.total * this.rowHeight) {
+            // scrollTop = this.datagrid.total * this.rowHeight - this.height;
+            // this.ps.elementRef.nativeElement.scrollTop = scrollTop;
+            // this.ps.scrollToBottom(y - scrollTop  );
+            // this.ps.scrollToY(scrollTop);
+            console.log(scrollTop);
+            // setTimeout( () => {
+            //     // this.ps.scrollToBottom();
+            //     this.ps.update();
+            // });
+            return;
+        }
 
+        this.dfs.setScrollTop(scrollTop);
+        this.scrollTop = scrollTop;
         if (!this.datagrid.virtualized) {
             return;
         }
