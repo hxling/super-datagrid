@@ -31,13 +31,15 @@
             </div>
         </ng-container>
 
-        <div class="f-datagrid-cell-group" #headerContainer [style.left.px]="columnGroup.leftFixedWidth" style="position: absolute;">
+        <div class="f-datagrid-cell-group" #headerContainer [style.left.px]="columnGroup.leftFixedWidth"
+        [style.width.px]="columnsGroup.minWidth"
+        style="position: absolute;">
             <!-- <div class="f-datagrid-cell-header" *ngFor="let col of columnGroup.normalColumns">
                 <datagrid-header-cell [width]="col.width" [left]="col.left" [height]="height">
                     {{col.title}}
                 </datagrid-header-cell>
             </div> -->
-                <table class="f-datagrid-cell-header">
+                <table class="f-datagrid-cell-header" style="width:100%">
                     <thead>
                         <tr>
                             <td class="f-datagrid-cell" [style.width.px]="col.width" [style.height.px]="height" *ngFor="let col of columnGroup.normalColumns">
