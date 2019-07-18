@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, OnDestroy } from '@angular/core';
 import { DatagridEditorComponent } from './grid-editor.component';
 
 @Component({
@@ -9,12 +9,10 @@ import { DatagridEditorComponent } from './grid-editor.component';
     </div>
     `,
 })
-export class DatagridTextboxEditorComponent extends DatagridEditorComponent implements OnInit {
+export class DatagridTextboxEditorComponent extends DatagridEditorComponent implements OnInit, OnDestroy {
 
     constructor(render: Renderer2, el: ElementRef) {
         super(render, el);
     }
 
-    ngOnInit(): void {
-    }
 }

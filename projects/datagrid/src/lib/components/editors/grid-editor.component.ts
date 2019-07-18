@@ -14,6 +14,7 @@ export class DatagridEditorComponent implements OnInit, OnDestroy {
     column: DataColumn;
 
     clickEvent: any;
+    dblClickEvent: any;
 
     constructor(public render: Renderer2, public el: ElementRef) {}
 
@@ -22,11 +23,19 @@ export class DatagridEditorComponent implements OnInit, OnDestroy {
             e.stopPropagation();
             e.preventDefault();
         });
+
+        this.dblClickEvent = this.render.listen(this.el.nativeElement, 'dblclick', (e: MouseEvent) => {
+            e.stopPropagation();
+            e.preventDefault();
+        });
     }
 
     ngOnDestroy() {
         if (this.clickEvent) {
             this.clickEvent();
+        }
+        if (this.dblClickEvent) {
+            this.dblClickEvent();
         }
     }
 }

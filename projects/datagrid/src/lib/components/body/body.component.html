@@ -28,7 +28,7 @@
                         [class.f-datagrid-row-even]="!odd && datagrid.striped"
                         [class.f-datagrid-row-selected]="currentRowId === row[datagrid.idField]"
                         [style.height.px]="rowHeight" >
-                        <td class="f-datagrid-cell" [style.width.px]="col.width" *ngFor="let col of columnsGroup?.normalColumns; let ci = index;">
+                        <td cell-editable class="f-datagrid-cell" [style.width.px]="col.width" *ngFor="let col of columnsGroup?.normalColumns; let ci = index;">
                             <grid-body-cell [width]="col.width" [height]="rowHeight" [column]="col" [rowData]="row" [rowIndex]="i"></grid-body-cell>
                         </td>
                     </tr>    
