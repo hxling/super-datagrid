@@ -1,21 +1,18 @@
 import { Component, OnInit, Input, ViewChild, Renderer2,
-    ElementRef, ViewChildren, QueryList, OnDestroy, ChangeDetectorRef,
+    ElementRef, OnDestroy, ChangeDetectorRef,
     OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone } from '@angular/core';
 
-import { Subscription, fromEvent } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { PerfectScrollbarDirective } from '../../perfect-scrollbar/perfect-scrollbar.directive';
 import { ColumnGroup } from '../../types';
 import { SelectedRow } from './../../services/state';
-import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION, FIXED_LEFT_SHADOW_CLS, ROW_HOVER_CLS } from '../../types/constant';
+import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
-import { DatagridBodyRowComponent } from './body-row.component';
-import { RowHoverEventParam } from '../../types/event-params';
 import { DataResult } from '../../services/state';
-import { PerfectScrollbarComponent } from '../../perfect-scrollbar/perfect-scrollbar.component';
 
 
 @Component({
@@ -161,22 +158,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     private scrollYMove(y: number, isUp: boolean = false) {
-        let scrollTop = y;
-        if (y > this.datagrid.total * this.rowHeight) {
-            // scrollTop = this.datagrid.total * this.rowHeight - this.height;
-            // this.ps.elementRef.nativeElement.scrollTop = scrollTop;
-            // this.ps.scrollToBottom(y - scrollTop  );
-            // this.ps.scrollToY(scrollTop);
-            console.log(scrollTop);
-            // setTimeout( () => {
-            //     // this.ps.scrollToBottom();
-            //     this.ps.update();
-            // });
-            return;
-        }
-
-        this.dfs.setScrollTop(scrollTop);
-        this.scrollTop = scrollTop;
+        this.dfs.setScrollTop(y);
+        this.scrollTop = y;
         if (!this.datagrid.virtualized) {
             return;
         }

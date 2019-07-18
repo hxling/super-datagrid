@@ -8,34 +8,27 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { map, filter } from 'rxjs/operators';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridEditorComponent } from '../editors/grid-editor.component';
-import { DatagridBodyRowComponent } from './body-row.component';
-import { fromEvent } from 'rxjs';
+import { GridRowDirective } from './body-row.directive';
 
 @Component({
-    selector: 'datagrid-body-cell',
+    selector: 'grid-body-cell',
     template: `
-    <div class="f-datagrid-cell"  [ngClass]="{'f-datagrid-cell-edit': isEditing, 'f-datagrid-cell-selected': (cellSelected | async)}"
-        [ngStyle]="{'width': width+ 'px', 'height': (height-1) +'px', 'left': left + 'px'}">
-
-        <div class="f-datagrid-cell-content" [style.height.px]="height" #cellContainer>
-            <span *ngIf="!isEditing">{{ value }}</span>
-            <ng-container #editorTemplate *ngIf="isEditing" cell-editor [column]="column" [group]="dr.form" >
-            </ng-container>
-        </div>
-
+    <div class="f-datagrid-cell-content" #cellContainer
+     [ngClass]="{'f-datagrid-cell-edit': isEditing, 'f-datagrid-cell-selected': (cellSelected | async)}">
+        <span *ngIf="!isEditing">{{ value }}</span>
+        <ng-container #editorTemplate *ngIf="isEditing" cell-editor [column]="column" [group]="dr.form"></ng-container>
     </div>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     @Input() width: number;
-    @Input() left = 0;
     @Input() height: number;
     @Input() cls = '';
     @Input() column: DataColumn;
     @Input() rowData: any;
     @Input() rowIndex: number;
-
+    @Input() left = 0;
 
     @ViewChild('cellContainer') cellContainer: ElementRef;
 
@@ -71,7 +64,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     );
 
     constructor(
-        private dfs: DatagridFacadeService, public dr: DatagridBodyRowComponent,
+        private dfs: DatagridFacadeService, public dr: GridRowDirective,
         private render2: Renderer2, private utils: CommonUtils, private el: ElementRef,
         private datagrid: DatagridComponent, private cfr: ComponentFactoryResolver,
         private cd: ChangeDetectorRef, private zone: NgZone) { }
@@ -112,7 +105,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     }
 
     @HostListener('dblclick', ['$event'])
-    onCellEnter(event: KeyboardEvent) {
+    onCellDblClick(event: KeyboardEvent) {
         event.stopPropagation();
         console.log(event);
         if (this.datagrid.editable && this.datagrid.editMode === 'cell') {
@@ -135,8 +128,12 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     }
 
     updateValue() {
-        Object.assign(this.rowData, this.dr.form.value);
-        this.value = this.utils.getValue(this.column.field, this.rowData);
+        if (this.dr.form) {
+            Object.assign(this.rowData, this.dr.form.value);
+        }
+        if (this.rowData) {
+            this.value = this.utils.getValue(this.column.field, this.rowData);
+        }
     }
 
     private focus() {

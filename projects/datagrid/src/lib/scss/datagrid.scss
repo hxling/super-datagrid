@@ -154,7 +154,7 @@
         }
         &-editor{
             width: 100%;
-            height: 100%;
+            height: calc(#{$cell-height} - 3px);
             border:0;
         }
 
@@ -169,16 +169,23 @@
         }
 
         &-content {
-            padding: 8px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
             width: 100%;
+            margin: 0;
+            height: calc(#{$cell-height} - 3px);
+            line-height: calc(#{$cell-height} - 3px);
+
+            &>span {
+                padding: 5px;
+            }
         }
 
         &-rownumber {
             background-color: $row-number-bgcolor!important;
             color: #000!important;
+            text-align: center;
             .f-datagrid-cell-content {
                 padding: 0;
                 text-align: center;
