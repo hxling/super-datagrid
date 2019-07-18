@@ -1,4 +1,3 @@
-import { TemplateRef } from '@angular/core';
 export interface DataColumn {
     field: string;
     title: string;
@@ -9,15 +8,21 @@ export interface DataColumn {
     align?: 'left' | 'center' | 'right';
     /** 是否允许拖动列宽 */
     resizable?: string;
-    formatter?: (data) => void;
-    styler?: (data) => void;
+    formatter?: (value, rowData, rowIndex) => void;
+    styler?: (value, rowData, rowIndex) => void;
     left?: number;
     /** 是否固定 */
     fixed?: 'left' | 'right';
     /** 是否显示 */
     hidden?: boolean;
 
-    editor?: TemplateRef<any>;
+    editor?: GridEditor;
+}
+
+export interface GridEditor {
+    type: string;
+    bindField?: string;
+    options?: any;
 }
 
 export interface ColumnGroup {

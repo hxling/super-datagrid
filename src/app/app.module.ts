@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+
+import { InputGroupModule} from '@farris/ui-input-group';
 
 import { DatagridModule } from '@farris/ui-datagrid';
 
@@ -15,6 +17,8 @@ import { AllDataLoadOnceComponent } from './demos/alldata-load-once/alldata-load
 import { ShowRowNumberComponent } from './demos/row-number/show-row-number.component';
 import { NormalDatagridComponent } from './demos/normal-grid/normal-grid.component';
 import { CellEditorComponent } from './demos/cell-editor/cell-editor.component';
+import { MyCustomGridEditorComponent } from './demos/myeditors/input-group-editor.component';
+import { GRID_EDITORS } from 'projects/datagrid/src/lib/types';
 
 
 @NgModule({
@@ -25,17 +29,26 @@ import { CellEditorComponent } from './demos/cell-editor/cell-editor.component';
     AllDataLoadOnceComponent,
     ShowRowNumberComponent,
     NormalDatagridComponent,
-    CellEditorComponent
+    CellEditorComponent,
+    MyCustomGridEditorComponent
   ],
   imports: [
     BrowserModule,
     CommonModule,
     FormsModule,
-    DatagridModule,
+    ReactiveFormsModule,
+    DatagridModule.forRoot([
+      { provide: GRID_EDITORS, useValue: { name: 'input-group', value: MyCustomGridEditorComponent }, multi: true }
+    ]),
     FarrisDatePickerModule,
+    InputGroupModule,
     AppRoutingModule
   ],
-  providers: [],
+  entryComponents: [
+    MyCustomGridEditorComponent
+  ],
+  providers: [
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

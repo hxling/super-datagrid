@@ -26,12 +26,17 @@
 
 
     &-body {
-        position: relative;
+        position: absolute;
         overflow: hidden;
         z-index: 0;
         &-wheel-area {
             overflow:hidden; 
             position: relative;
+
+            background-color: #F5F5F5;
+            background-image: linear-gradient(#fff 50%, transparent 0);
+            background-origin: content-box;
+            background-size: 50% 72px;
         }
 
         &-fixed-left {
@@ -41,7 +46,6 @@
 
         &-row {
             overflow: hidden;
-            position: absolute;
             height: $cell-height;
             width: 100%;
             top: 0;
@@ -53,7 +57,6 @@
     }
     &-row {
         overflow: hidden;
-        position: absolute;
         height: $cell-height;
         width: 100%;
         top: 0;
@@ -66,7 +69,7 @@
             }
         }
 
-        &-hover:not(.f-datagrid-row-selected) {
+        &-hover tr:hover {
             cursor: pointer;
             background: $row-hover-bgcolor!important;
             color: $row-hover-color;
@@ -143,10 +146,21 @@
         border-style: solid;
         border-width: 0;
         border-color: $border-color;
-        display: block;
         overflow: hidden;
-        position: absolute;
         white-space: normal;
+
+        &-formgroup {
+            height: 100%;
+        }
+        &-editor{
+            width: 100%;
+            height: calc(#{$cell-height} - 3px);
+            border:0;
+        }
+
+        &-selected {
+            border: 1px solid $selected-cell-bgcolor!important;
+        }
 
         &-edit {
             .f-datagrid-cell-content {
@@ -155,16 +169,23 @@
         }
 
         &-content {
-            padding: 8px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
             width: 100%;
+            margin: 0;
+            height: calc(#{$cell-height} - 3px);
+            line-height: calc(#{$cell-height} - 3px);
+
+            &>span {
+                padding: 5px;
+            }
         }
 
         &-rownumber {
             background-color: $row-number-bgcolor!important;
             color: #000!important;
+            text-align: center;
             .f-datagrid-cell-content {
                 padding: 0;
                 text-align: center;

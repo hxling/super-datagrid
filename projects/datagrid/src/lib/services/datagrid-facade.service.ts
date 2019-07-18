@@ -45,6 +45,11 @@ export class DatagridFacadeService {
         distinctUntilChanged()
     );
 
+    readonly currentCell$ = this.state$.pipe(
+        map(state => state.currentCell),
+        distinctUntilChanged()
+    );
+
     constructor(private http: HttpClient) {
         this._state = initDataGridState;
         this.virtualizedService = new VirtualizedLoaderService();
@@ -148,6 +153,15 @@ export class DatagridFacadeService {
     selectRow(rowIndex: number, rowData: any) {
         const id = this.primaryId(rowData);
         this.updateState({ currentRow: { id, data: rowData, index: rowIndex } });
+    }
+
+    setCurrentCell(rowIndex: number, rowId: any, field: string ) {
+        const currentCell = {rowIndex, rowId, field };
+        this.updateState({currentCell});
+    }
+
+    cancalSelectCell() {
+        this.updateState({currentCell: null});
     }
 
     primaryId(data: any) {

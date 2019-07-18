@@ -15,6 +15,7 @@ export interface FarrisDatagridState {
     multiSelect?: boolean;
     selections: SelectedRow[];
     currentRow: SelectedRow;
+    currentCell?: any;
     columnsGroup: ColumnGroup;
     currentEditInfo?: EditInfo;
     virtualized?: boolean;
@@ -59,10 +60,10 @@ export const initDataGridState: FarrisDatagridState = {
 
 export interface EditInfo {
     isEditing: boolean;
-    rowData: any;
+    rowData?: any;
     rowIndex: number;
     field: string;
-    cellRef: any;
+    cellRef?: any;
 }
 
 export interface DataResult {
