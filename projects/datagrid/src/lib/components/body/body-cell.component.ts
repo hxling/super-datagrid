@@ -1,8 +1,8 @@
+import { CellInfo } from './../../services/state';
 import { Component, OnInit, Input, Output, EventEmitter, HostListener,
     ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef,
     OnDestroy, ViewContainerRef, ComponentFactoryResolver, NgZone } from '@angular/core';
 import { CommonUtils } from '@farris/ui-common';
-import { EditInfo } from './../../services/state';
 import { DataColumn } from '../../types';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { map, filter } from 'rxjs/operators';
@@ -39,7 +39,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     isEditing = false;
 
     isEditing$ = this.dfs.currentEdit$.pipe(
-        filter((ei: EditInfo, index) => {
+        filter((ei: CellInfo, index) => {
             if (ei && ei.field === this.column.field && ei.rowIndex === this.rowIndex && this.column.editor) {
                 return true;
             }
@@ -111,8 +111,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
         if (this.datagrid.editable && this.datagrid.editMode === 'cell') {
             if (!this.isEditing) {
                 this.dfs.endEditCell();
-                this.dfs.editCell({rowIndex: this.rowIndex, cellRef: this, field: this.column.field,
-                                                             rowData: this.rowData, isEditing: true});
+                this.dfs.editCell();
                 this.cellClick.emit({originalEvent: event });
             }
         }
@@ -122,7 +121,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     @HostListener('click', ['$event'])
     onCellClick(event: MouseEvent) {
         event.stopPropagation();
-        this.dfs.setCurrentCell(this.rowIndex, this.rowData[this.datagrid.idField], this.column.field);
+        this.dfs.setCurrentCell(this.rowIndex, this.rowData, this.column.field);
         this.cd.detectChanges();
         this.cellClick.emit({originalEvent: event });
     }

@@ -1,5 +1,5 @@
 import { VirtualizedLoaderService } from './virtualized-loader.service';
-import { FarrisDatagridState, initDataGridState, EditInfo, DataResult } from './state';
+import { FarrisDatagridState, initDataGridState, DataResult, CellInfo } from './state';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { DataColumn, ColumnGroup } from '../types';
@@ -36,7 +36,7 @@ export class DatagridFacadeService {
     );
 
     readonly currentEdit$ = this.state$.pipe(
-        map((state: FarrisDatagridState) => state.currentEditInfo),
+        map((state: FarrisDatagridState) => state.currentCell),
         distinctUntilChanged()
     );
 
@@ -155,12 +155,14 @@ export class DatagridFacadeService {
         this.updateState({ currentRow: { id, data: rowData, index: rowIndex } });
     }
 
-    setCurrentCell(rowIndex: number, rowId: any, field: string ) {
-        const currentCell = {rowIndex, rowId, field };
-        this.updateState({currentCell});
+    setCurrentCell(rowIndex: number, rowData: any, field: string ) {
+        if (!this.isCellSelected({rowIndex, field})) {
+            const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData), isEditing: false };
+            this.updateState({currentCell});
+        }
     }
 
-    cancalSelectCell() {
+    cancelSelectCell() {
         this.updateState({currentCell: null});
     }
 
@@ -168,24 +170,32 @@ export class DatagridFacadeService {
         return data[this._state.idField];
     }
 
-    editCell(editInfo: EditInfo) {
-        if (this._state.currentEditInfo) {
-            if (this._state.currentEditInfo.rowIndex !== editInfo.rowIndex || this._state.currentEditInfo.field !== editInfo.field) {
-                this.updateState({ currentEditInfo: editInfo });
+    editCell() {
+        if (this._state.currentCell) {
+            if (!this._state.currentCell.isEditing) {
+                const cei = { ...this._state.currentCell, isEditing: true };
+                this.updateState({ currentCell: cei });
             }
-        } else {
-            this.updateState({ currentEditInfo: editInfo });
         }
     }
 
     endEditCell() {
-        if (this._state.currentEditInfo) {
-            if (this._state.currentEditInfo.isEditing) {
-                const cei = { ...this._state.currentEditInfo, isEditing: false };
-                this.updateState({ currentEditInfo: cei });
-            } else {
-                this._state.currentEditInfo = null;
-            }
+        if (this._state.currentCell) {
+            const cei = { ...this._state.currentCell, isEditing: false };
+            this.updateState({ currentCell: cei });
+        }
+    }
+
+    getCurrentCellInfo() {
+        return this._state.currentCell;
+    }
+
+    isCellSelected(cellInfo: CellInfo) {
+        const cc = this.getCurrentCellInfo();
+        if (!cc) {
+            return false;
+        } else {
+            return cc.rowIndex === cellInfo.rowIndex && cc.field === cellInfo.field;
         }
     }
 

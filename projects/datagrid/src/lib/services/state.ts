@@ -15,9 +15,8 @@ export interface FarrisDatagridState {
     multiSelect?: boolean;
     selections: SelectedRow[];
     currentRow: SelectedRow;
-    currentCell?: any;
+    currentCell?: CellInfo;
     columnsGroup: ColumnGroup;
-    currentEditInfo?: EditInfo;
     virtualized?: boolean;
     /** 是否启用异步虚拟加载数据: false - 客户端内存中取数；true - 远端服务器加载数据, 默认值为 false */
     virtualizedAsyncLoad?: boolean;
@@ -58,9 +57,10 @@ export const initDataGridState: FarrisDatagridState = {
     }
 };
 
-export interface EditInfo {
-    isEditing: boolean;
+export interface CellInfo {
+    isEditing?: boolean;
     rowData?: any;
+    rowId?: any;
     rowIndex: number;
     field: string;
     cellRef?: any;

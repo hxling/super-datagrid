@@ -5,7 +5,7 @@ import { DataColumn } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DatagridColumnDirective } from './components/columns';
-import { DataResult } from './services/state';
+import { DataResult, CellInfo } from './services/state';
 import { RestService, REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
 import { of, fromEvent, Subscription } from 'rxjs';
@@ -148,7 +148,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     editors: {[key: string]: any} = {};
 
     selectedRow: any;
-    currentCell: any;
+    currentCell: CellInfo;
 
     private keyDownSub: Subscription = null;
 
@@ -221,7 +221,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     private subscribeEvents() {
         const el = document;
         this.keyDownSub = fromEvent<Event>(el, 'keydown').subscribe((e: any) => {
-            // console.log(e);
+            console.log(e);
             e.stopPropagation();
             const ccell = this.currentCell;
             if (!ccell) {
@@ -232,8 +232,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             switch (keyCode) {
                 case 13: // ✔
                     if (this.editable && this.editMode === 'cell') {
-                        this.dfs.endEditCell();
-                        this.dfs.editCell({rowIndex: ccell.rowIndex, field: ccell.field, isEditing: true});
+                        if (!this.currentCell || !this.currentCell.isEditing) {
+                            this.dfs.endEditCell();
+                            this.dfs.editCell();
+                        } else {
+                            this.dfs.endEditCell();
+                        }
                     }
                     break;
                 case 38: // ↑
@@ -241,14 +245,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                     if (prevIdx < 0) {
                         return;
                     }
-                    this.dfs.setCurrentCell(prevIdx, this.data[prevIdx][this.idField], ccell.field);
+                    this.dfs.setCurrentCell(prevIdx, this.data[prevIdx], ccell.field);
                     break;
                 case 40: // ↓
                     const nextIdx = ccell.rowIndex + 1;
                     if (nextIdx > this.total) {
                         return;
                     }
-                    this.dfs.setCurrentCell(nextIdx, this.data[nextIdx][this.idField], ccell.field);
+                    this.dfs.setCurrentCell(nextIdx, this.data[nextIdx], ccell.field);
                     break;
                 case 37: // ←
                     const prevColIdx = this.columns.findIndex((col, index) => {
@@ -256,7 +260,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                     });
                     if (prevColIdx) {
                         const prevCol = this.columns[prevColIdx - 1];
-                        this.dfs.setCurrentCell(ccell.rowIndex, ccell.rowId, prevCol.field);
+                        this.dfs.setCurrentCell(ccell.rowIndex, ccell.rowData, prevCol.field);
                     }
                     break;
                 case 39: // →
@@ -265,7 +269,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                     });
                     if (nextColIdx < this.columns.length - 1) {
                         const nextCol = this.columns[nextColIdx + 1];
-                        this.dfs.setCurrentCell(ccell.rowIndex, ccell.rowId, nextCol.field);
+                        this.dfs.setCurrentCell(ccell.rowIndex, ccell.rowData, nextCol.field);
                     }
                     break;
             }
@@ -322,7 +326,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     private registerDocumentEvent() {
         this.docuemntEvents = this.render2.listen(document, 'click', () => {
             this.dfs.endEditCell();
-            this.dfs.cancalSelectCell();
+            this.dfs.cancelSelectCell();
         });
     }
 
