@@ -17,7 +17,6 @@ import { RowHoverEventParam } from '../../types/event-params';
 import { DataResult } from '../../services/state';
 import { PerfectScrollbarComponent } from '../../perfect-scrollbar/perfect-scrollbar.component';
 
-import PerfectScrollbar from 'perfect-scrollbar';
 
 @Component({
     selector: 'datagrid-body',
@@ -114,7 +113,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
             this.setWheelHeight();
-            this.ps.update();
+            // this.ps.update();
             // setTimeout( () => this.ps.update());
         }
     }
@@ -136,8 +135,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private getBodyStyle() {
         return {
             width: `${this.width - 2}px`,
-            height: `${this.height - 2}px`,
-            maxHeight: `${this.wheelHeight}px`,
+            height: `${this.height - 2}px`
         };
     }
 
@@ -222,7 +220,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const bottomDivRect = this.getBoundingClientRect(this.bottomDiv);
 
         const topDivHeight = topDivRect.top - bodyRect.top + topDivRect.height - headerHeight;
-        const bottomDivHeight = bottomDivRect.top - bodyRect.top - headerHeight;
+        const bottomDivHeight = bottomDivRect.top - headerHeight;
         const top = Math.floor(topDivHeight);
         const bottom = Math.floor(bottomDivHeight);
 

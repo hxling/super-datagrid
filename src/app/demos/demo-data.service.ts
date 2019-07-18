@@ -27,7 +27,7 @@ export class DemoDataService implements RestService {
             total,
             pageSize,
             pageIndex: param.pageIndex
-        }).pipe(delay(500));
+        }).pipe(delay(1000));
     }
 
     createData(len: number) {

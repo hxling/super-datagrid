@@ -32,6 +32,11 @@
         &-wheel-area {
             overflow:hidden; 
             position: relative;
+
+            background-color: #F5F5F5;
+            background-image: linear-gradient(#fff 50%, transparent 0);
+            background-origin: content-box;
+            background-size: 50% 72px;
         }
 
         &-fixed-left {
@@ -64,7 +69,7 @@
             }
         }
 
-        &-hover:not(.f-datagrid-row-selected) {
+        &-hover tr:hover {
             cursor: pointer;
             background: $row-hover-bgcolor!important;
             color: $row-hover-color;
