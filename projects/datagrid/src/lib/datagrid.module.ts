@@ -65,7 +65,9 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         DatagridColumnDirective,
         DatagridCellEditorDirective,
         DatagridEditorComponent,
-        DatagridTextboxEditorComponent
+        DatagridTextboxEditorComponent,
+        PerfectScrollbarDirective,
+        PerfectScrollbarComponent
     ],
     entryComponents: [
         DatagridTextboxEditorComponent

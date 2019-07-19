@@ -1,9 +1,18 @@
 import { PaginationInfo } from './../types/data-column';
 import { ColumnGroup, DataColumn } from './../types';
 
+export interface Action {
+    type: string;
+    payload?: any;
+}
+
 export interface FarrisDatagridState {
     [key: string]: any;
-    idField: string;
+    headerHeight?: number;
+    width?: number;
+    height?: number;
+    rowHeight?: number;
+    idField?: string;
     data?: any;
     pageIndex?: number;
     pageSize?: number;

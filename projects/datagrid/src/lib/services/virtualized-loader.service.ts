@@ -37,8 +37,6 @@ export class VirtualizedLoaderService {
     }
 
     getRows(scrollTop: number) {
-
-
         const minTop =  Math.abs(scrollTop);
         const rowHeight = this.getRowHeight();
         const maxTop = minTop + this.getTableHeight();

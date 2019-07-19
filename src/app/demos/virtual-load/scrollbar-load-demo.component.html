@@ -1,0 +1,49 @@
+<div class="f-datagrid f-datagrid-bordered" style="width: 800px;height: 400px;">
+
+        <div class="f-datagrid-header" >
+            <div class="f-datagrid-row f-datagrid-row-header" style="width: 966px">
+        
+                <div class="f-datagrid-cell-group" #headerContainer [style.width.px]="966"  style="position: absolute;">
+                        <table class="f-datagrid-cell-header" style="width:100%">
+                            <thead>
+                                <tr class="f-datagrid-body-row">
+                                    <td class="f-datagrid-cell" [style.width.px]="col.width" [style.height.px]="36" *ngFor="let col of columns">
+                                        {{col.title}}
+                                    </td>
+                                </tr>
+                            </thead>
+                        </table>
+                </div>
+            </div>
+        </div>
+    
+    
+        <div  class="f-datagrid-body" [ngStyle]="bodyStyle" [style.top.px]="top" tabindex=1>
+    
+
+                <div #scrollbar class="f-datagrid-body-wheel-area" style="width: 800px; height: 362px;overflow: auto" >
+            
+                    <div [style.height.px]="wheelHeight">
+               
+                        <div [style.width.px]="966" style="position: relative;" [style.left.px]="0">
+            
+                            <div #topDiv class="f-datagrid-row body-top virtualized" 
+                                [style.height.px]="rows.topHideHeight" style="transform: translate3d(0px, 0px, 0px)"></div>
+            
+                            <table style="border:0; width: 100%" class="f-datagrid-row-hover" cellpadding="0" cellspacing="0">
+                                <tr class="f-datagrid-body-row" *ngFor="let row of rows.virtualRows; let i = index; odd as odd" [style.height.px]="36" >
+                                    <td class="f-datagrid-cell" [style.width.px]="col.width" *ngFor="let col of columns; let ci = index;">
+                                        {{ row[col.field] }}
+                                    </td>
+                                </tr>    
+                            </table>
+            
+                            <div #bottomDiv class="f-datagrid-row body-bottom virtualized" [style.height.px]="rows.bottomHideHeight" ></div>
+            
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+    
+    </div>

@@ -16,8 +16,9 @@ import { GRID_EDITORS } from './types';
     template: `
     <div class="f-datagrid" [class.f-datagrid-bordered]="showBorder"
     [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
-        <datagrid-header #header [columnGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
-        <datagrid-body [data]="ds.rows | paginate: pagerOpts" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
+        <datagrid-header #header [columnsGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
+        <datagrid-body [columnsGroup]="colGroup$ | async" [data]="ds.rows | paginate: pagerOpts"
+                            [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
         <datagrid-pager *ngIf="pagination" [id]="pagerOpts.id" (pageChange)="onPageChange($event)"></datagrid-pager>
     </div>
     <datagrid-loading *ngIf="loading"></datagrid-loading>
@@ -277,17 +278,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 }
                 break;
         }
+        this.cd.markForCheck();
         this.cd.detectChanges();
-    }
-
-    private subscribeEvents() {
-        const el = document;
-        this.keyDownSub = fromEvent<Event>(el, 'keydown').subscribe((e: any) => {
-        });
-
-        // this.keyDownSub.add(fromEvent(el, 'keyup').subscribe( () => {
-        //     this.onKeyboardUp();
-        // }));
     }
 
     private loadData() {
