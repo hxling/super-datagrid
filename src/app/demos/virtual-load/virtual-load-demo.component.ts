@@ -1,5 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { PerfectScrollbarDirective } from 'projects/datagrid/src/lib/perfect-scrollbar/perfect-scrollbar.directive';
+import { Component, OnInit, ChangeDetectorRef, Input, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
+import { viewClassName } from '@angular/compiler';
 
 @Component({
     selector: 'demo-virtual-load',
@@ -7,7 +9,8 @@ import { DemoDataService } from '../demo-data.service';
     styleUrls: ['./datagrid.css'],
     providers: [
         DemoDataService
-    ]
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VirtualLoadDemoComponent implements OnInit {
     psConfig = { swipeEasing: true,  minScrollbarLength: 20, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
@@ -25,21 +28,35 @@ export class VirtualLoadDemoComponent implements OnInit {
 
     data = [];
 
-    rows = {};
+    @Input() rows = {};
+    @ViewChild('ps') ps: PerfectScrollbarDirective;
+    private scrollTimer: any;
 
     constructor(private dds: DemoDataService, private cd: ChangeDetectorRef) {
-        this.data = this.dds.createData(1000);
+        this.data = this.dds.createData(100000);
     }
 
     ngOnInit(): void {
         this.rows = this.getRows(0);
     }
 
+    trackByRows = (index: number, row: any) => {
+        return row.id;
+    }
+
     onScrollToY($event: any) {
-        const y = $event.target.scrollTop;
-        this.rows = this.getRows(y);
-        this.cd.markForCheck();
-        this.cd.detectChanges();
+        if (this.scrollTimer) {
+            clearTimeout(this.scrollTimer);
+        }
+
+        setTimeout(() => {
+            const y = $event.target.scrollTop;
+            this.rows = Object.assign(this.rows, this.getRows(y));
+            // this.cd.markForCheck();
+            this.cd.detectChanges();
+            this.ps.update();
+            console.log('scroll Y');
+        }, 500);
     }
 
     onScrollToX(event: any) {}
@@ -82,7 +99,7 @@ export class VirtualLoadDemoComponent implements OnInit {
         // }
 
         return {
-            virtualRows: [...rows],
+            virtualRows: rows,
             topHideHeight,
             bottomHideHeight
         };
