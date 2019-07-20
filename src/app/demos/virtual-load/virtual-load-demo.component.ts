@@ -31,7 +31,7 @@ export class VirtualLoadDemoComponent implements OnInit {
     @Input() rows = {};
     @ViewChild('ps') ps: PerfectScrollbarDirective;
     private scrollTimer: any;
-
+    compareItems: (item1: any, item2: any) => boolean = (item1: any, item2: any) => item1 === item2;
     constructor(private dds: DemoDataService, private cd: ChangeDetectorRef) {
         this.data = this.dds.createData(100000);
     }
@@ -44,6 +44,7 @@ export class VirtualLoadDemoComponent implements OnInit {
         return row.id;
     }
 
+
     onScrollToY($event: any) {
         if (this.scrollTimer) {
             clearTimeout(this.scrollTimer);
@@ -51,7 +52,8 @@ export class VirtualLoadDemoComponent implements OnInit {
 
         setTimeout(() => {
             const y = $event.target.scrollTop;
-            this.rows = Object.assign(this.rows, this.getRows(y));
+            const _rows = this.getRows(y);
+
             // this.cd.markForCheck();
             this.cd.detectChanges();
             this.ps.update();
@@ -97,7 +99,6 @@ export class VirtualLoadDemoComponent implements OnInit {
         //     topHideHeight = this.state.virtual.rowIndex * rowHeight  + topHideHeight;
         //     bottomHideHeight = total * rowHeight - rows.length * rowHeight - topHideHeight;
         // }
-
         return {
             virtualRows: rows,
             topHideHeight,
