@@ -4,7 +4,11 @@ import { ColumnGroup, DataColumn } from './../types';
 export interface FarrisDatagridState {
     [key: string]: any;
     idField: string;
+    width?: number;
+    height?: number;
     data?: any;
+    headerHeight?: number;
+    rowHeight?: number;
     pageIndex?: number;
     pageSize?: number;
     pagerHeight?: number;

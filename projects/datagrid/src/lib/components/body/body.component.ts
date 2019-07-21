@@ -77,7 +77,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     ngOnInit(): void {
 
-        const initSubscrition = this.dfs.state$.subscribe(state => {
+        const initSubscrition = this.dfs.size$.subscribe(state => {
             if (state) {
                 this.top = state.headerHeight;
                 const pagerHeight = state.pagerHeight;

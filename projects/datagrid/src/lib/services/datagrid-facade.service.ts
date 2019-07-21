@@ -15,6 +15,16 @@ export class DatagridFacadeService {
         filter( (state: any) => state)
     );
 
+    size$ = this.state$.pipe(
+        map((state: FarrisDatagridState) => {
+            const { pagerHeight, headerHeight, rowHeight, width, height, columnsGroup } = { ...state};
+            return {
+                pagerHeight, headerHeight, rowHeight, width, height, columnsGroup
+            };
+        }),
+        distinctUntilChanged()
+    );
+
     readonly columnGroup$ = this.state$.pipe(
         map((state: FarrisDatagridState) => state.columnsGroup),
         distinctUntilChanged()
