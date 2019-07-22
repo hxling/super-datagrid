@@ -89,10 +89,12 @@
         }
     }
 
-    &-row.virtualized{
+    &-virtual-row{
+        overflow: hidden;
         pointer-events: none;
         background-color: transparent!important;
         border-width: 0;
+        width:1px;
     }
 
     &-strip {

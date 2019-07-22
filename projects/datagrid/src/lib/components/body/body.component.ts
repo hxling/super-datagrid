@@ -95,7 +95,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         });
 
         this.dgs.onDataSourceChange.subscribe(() => {
-            // this.ps.scrollToTop();
+            this.ps.scrollToTop();
         });
 
         this.selectedRowId$.subscribe(id => {
@@ -103,15 +103,12 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.cd.detectChanges();
         });
 
-        // this.ps = new PerfectScrollbar(this.psc.nativeElement, this.psConfig);
 
     }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
             this.setWheelHeight();
-            // this.ps.update();
-            // setTimeout( () => this.ps.update());
         }
     }
 

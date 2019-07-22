@@ -18,7 +18,7 @@
             
             <div [style.width.px]="colsWidth" style="position: relative;" [style.left.px]="leftFixedWidth">
 
-                <div #topDiv class="f-datagrid-row body-top virtualized" *ngIf="datagrid.virtualized" 
+                <div #topDiv class="f-datagrid-virtual-row body-top" *ngIf="datagrid.virtualized" 
                     [style.height.px]="topHideHeight" style="transform: translate3d(0px, 0px, 0px)"></div>
 
                 <table style="border:0; width: 100%" class="f-datagrid-row-hover" cellpadding=0 cellspacing="0">
@@ -34,7 +34,7 @@
                     </tr>    
                 </table>
 
-                <div #bottomDiv class="f-datagrid-row body-bottom virtualized" 
+                <div #bottomDiv class="f-datagrid-virtual-row body-bottom" 
                     *ngIf="datagrid.virtualized" [style.height.px]="bottomHideHeight" ></div>
 
             </div>
