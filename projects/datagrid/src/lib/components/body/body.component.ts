@@ -43,6 +43,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @Input() topHideHeight = 0;
     @Input() bottomHideHeight = 0;
 
+    @Input() startRowIndex = 0;
     @Input() data: any;
 
     @ViewChild('ps') ps?: PerfectScrollbarDirective;
@@ -53,8 +54,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private rowHoverSubscription: Subscription;
 
     private scrollTimer: any = null;
-    private clientVirtualLoadTimer = null;
-    _index = 0;
 
     currentRowId =  undefined;
     gridsize$ = this.dfs.gridSize$;
@@ -171,6 +170,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.scrollTimer = setTimeout(() => {
                     this.scrolling(isUp);
                 }, 100);
+            } else {
+                const vs = this.dfs.getVirtualState();
             }
         }
     }
@@ -193,7 +194,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     private getVirtualRowPosition(): {top: number, bottom: number} {
         if (!this.topDiv || !this.bottomDiv) { return; }
-        const vs = this.dfs.getVirtualState();
+
         const headerHeight = this.top;
         const bodyRect = this.getBoundingClientRect(this.el);
         const topDivRect = this.getBoundingClientRect(this.topDiv);
@@ -232,13 +233,12 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 const { items, pageIndex, pageSize, total } = {...r};
                 this.dfs.setPagination(pageIndex, pageSize, total);
                 const newData = items.concat(allItems);
-                this._index = pageSize;
+                // this.startRowIndex = pageSize;
 
                 const idx = (prevPager - 1) * pageSize;
                 this.dfs.getVirtualState().rowIndex = idx;
-                this._index = idx;
-
                 this.dfs.loadData(newData);
+                this.startRowIndex = idx;
             });
         } else if (bottom < this.height) {
             // 向下连续滚动
@@ -246,7 +246,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 return;
             }
 
-            const nextPager = Math.floor(this._index / pi.pageSize) + 2;
+            const nextPager = Math.floor(this.startRowIndex / pi.pageSize) + 2;
 
             this.datagrid.loading = true;
             // console.log('fetchData - ↓', this._index);
@@ -256,8 +256,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 const { items, pageIndex, pageSize, total } = {...r};
                 this.dfs.setPagination(pageIndex, pageSize, total);
                 const newData = allItems.concat(items);
-                this._index += pageSize;
                 this.dfs.loadData(newData);
+                this.startRowIndex += pageSize;
             });
         }
     }
@@ -277,10 +277,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
             const idx = (page - 1) * _pageSize;
             this.dfs.getVirtualState().rowIndex = idx;
-            this._index = idx;
-
             this.dfs.loadDataForVirtual(items);
-
+            this.startRowIndex = idx;
             this.changeScrollTop(idx);
         });
     }

@@ -3,7 +3,7 @@ import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, Virtualiz
 import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { DataColumn, ColumnGroup } from '../types';
-import { map, distinctUntilChanged, filter, switchMap } from 'rxjs/operators';
+import { map, distinctUntilChanged, filter, switchMap, auditTime } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable()
@@ -39,6 +39,7 @@ export class DatagridFacadeService {
         filter(vs => vs),
         map((vs: VirtualizedState) => {
             return {
+                index: vs.startIndex,
                 rows: vs.virtualRows,
                 top: vs.topHideHeight,
                 bottom: vs.bottomHideHeight

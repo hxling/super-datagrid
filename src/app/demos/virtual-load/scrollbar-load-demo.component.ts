@@ -24,7 +24,7 @@ export class ScrollbarLoadDemoComponent implements OnInit {
 
     data = [];
 
-    rows = {};
+    rows = undefined;
 
     private scrollTimer: any;
     @ViewChild('scrollbar') scrollbar: ElementRef;

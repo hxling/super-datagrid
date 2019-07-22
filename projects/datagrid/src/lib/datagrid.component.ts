@@ -18,7 +18,7 @@ import { GRID_EDITORS } from './types';
     [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
         <datagrid-header #header [columnsGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
         <datagrid-body [columnsGroup]="colGroup$ | async" [data]="ds.rows | paginate: pagerOpts"
-                            [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
+                [startRowIndex]="ds.index" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
         <datagrid-pager *ngIf="pagination" [id]="pagerOpts.id" (pageChange)="onPageChange($event)"></datagrid-pager>
     </div>
     <datagrid-loading *ngIf="loading"></datagrid-loading>
@@ -108,7 +108,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     /** 虚拟加载 */
     @Input() virtualized = true;
-    /** 虚拟加载数据的方式： client(客户端)、remote(远程) */
+    /** 是否启用异步加载数据 */
     @Input() virtualizedAsyncLoad = false;
 
     @Input() rowStyler: () => void;
@@ -139,6 +139,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     docuemntEvents: any;
     ds = {
+        index: 0,
         rows: [],
         top : 0,
         bottom : 0
@@ -207,7 +208,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     private onKeyboardDown() {
         const gridBody = document.querySelector('.f-datagrid-body');
-        // gridBody.addEventListener('mouseenter', () => { this.subscribeEvents(); } );
         gridBody.addEventListener('keydown', (e) => { this.onKeyDownEvent(e); }, { passive: false } );
     }
 

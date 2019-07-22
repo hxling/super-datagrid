@@ -28,20 +28,21 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     @Input() column: DataColumn;
     @Input() rowData: any;
     @Input() rowIndex: number;
-    @Input() left = 0;
+
+    @Input() isEditing = false;
+    @Input() isSelected = false;
 
     @ViewChild('cellContainer') cellContainer: ElementRef;
 
     @Output() cellClick = new EventEmitter();
+    @Output() cellDblClick = new EventEmitter();
 
     cellContext: any = {};
     value: any;
-    isEditing = false;
-    isSelected = false;
 
 
     currentCell = this.dfs.currentCell$;
-
+    canEdit = () => this.datagrid.editable && this.datagrid.editMode === 'cell' && this.column.editor;
     constructor(
         private dfs: DatagridFacadeService, public dr: GridRowDirective,
         private render2: Renderer2, private utils: CommonUtils, private el: ElementRef,
@@ -57,24 +58,24 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
 
         this.updateValue();
 
-        this.currentCell.subscribe((cell: CellInfo) => {
-            this.datagrid.currentCell = cell;
-            const { isEditing, isSelected } = {...this.getCellState(cell)};
-            this.isEditing = isEditing;
-            this.isSelected = isSelected;
-            if (isEditing) {
-                setTimeout(() => {
-                    this.focus();
-                    this.datagrid.beginEdit.emit({ rowIndex: this.rowIndex, rowData: this.rowData, value: this.value });
-                });
-            } else {
-                // end editing
-                this.updateValue();
-                this.datagrid.endEdit.emit({ rowIndex: this.rowIndex, rowData: this.rowData, value: this.value });
-            }
+        // this.currentCell.subscribe((cell: CellInfo) => {
+        //     this.datagrid.currentCell = cell;
+        //     const { isEditing, isSelected } = {...this.getCellState(cell)};
+        //     this.isEditing = isEditing;
+        //     this.isSelected = isSelected;
+        //     if (isEditing) {
+        //         setTimeout(() => {
+        //             this.focus();
+        //             this.datagrid.beginEdit.emit({ rowIndex: this.rowIndex, rowData: this.rowData, value: this.value });
+        //         });
+        //     } else {
+        //         // end editing
+        //         this.updateValue();
+        //         this.datagrid.endEdit.emit({ rowIndex: this.rowIndex, rowData: this.rowData, value: this.value });
+        //     }
 
-            this.cd.detectChanges();
-        });
+        //     this.cd.detectChanges();
+        // });
 
         this.dr.form.valueChanges.subscribe( val => {
             this.updateValue();
@@ -88,26 +89,28 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
 
     @HostListener('dblclick', ['$event'])
     onCellDblClick(event: KeyboardEvent) {
-        event.stopPropagation();
-        console.log(event);
-        if (this.datagrid.editable && this.datagrid.editMode === 'cell') {
-            if (!this.isEditing) {
-                this.dfs.endEditCell();
-                this.dfs.editCell();
-                this.cellClick.emit({originalEvent: event });
-            }
-        }
+        // event.stopPropagation();
+        // console.log(event);
+        // this.editCell(true);
+        this.cellDblClick.emit({originalEvent: event, column: this.column });
     }
 
 
     @HostListener('click', ['$event'])
     onCellClick(event: MouseEvent) {
-        event.stopPropagation();
-        this.dfs.endEditCell();
-        this.dfs.setCurrentCell(this.rowIndex, this.rowData, this.column.field);
-        this.cd.detectChanges();
-        this.cellClick.emit({originalEvent: event });
-    } 
+        // event.stopPropagation();
+        // this.dfs.endEditCell();
+        // this.dfs.setCurrentCell(this.rowIndex, this.rowData, this.column.field);
+        this.cellClick.emit({originalEvent: event, column: this.column });
+    }
+
+    // private editCell(editable = false) {
+    //     if (this.canEdit() && !this.isEditing) {
+    //         this.dfs.editCell();
+    //         this.cd.detectChanges();
+    //         this.cellClick.emit({originalEvent: event });
+    //     }
+    // }
 
     updateValue() {
         if (this.dr.form) {
