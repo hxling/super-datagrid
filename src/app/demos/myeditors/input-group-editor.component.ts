@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef } from '@angular/core';
 import { DatagridEditorComponent } from '@farris/ui-datagrid';
 
 @Component({
@@ -10,8 +10,8 @@ import { DatagridEditorComponent } from '@farris/ui-datagrid';
     `,
 })
 export class MyCustomGridEditorComponent extends DatagridEditorComponent implements OnInit {
-    constructor() {
-        super();
+    constructor(render: Renderer2, el: ElementRef) {
+        super(render, el);
     }
 
     ngOnInit(): void { }

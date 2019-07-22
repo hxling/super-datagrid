@@ -67,10 +67,10 @@ export class PageScrollComponent implements OnInit {
 
 
     onBeginEdit(e: any) {
-        console.log('进入编辑', e);
+        // console.log('进入编辑', e);
     }
 
     onEndEdit(e: any) {
-        console.log('停止编辑', e);
+        // console.log('停止编辑', e);
     }
 }

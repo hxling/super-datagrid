@@ -1,11 +1,11 @@
 <!--表头-->
 <div class="f-datagrid-header" >
-    <div class="f-datagrid-row f-datagrid-row-header" [style.min-width.px]="columnGroup?.minWidth">
+    <div class="f-datagrid-row f-datagrid-row-header" [style.min-width.px]="columnsGroup?.minWidth">
 
         <!--左侧固定列-->
-        <ng-container *ngIf="columnGroup.leftFixed && columnGroup.leftFixed.length  || datagrid.showRowNumber || datagrid.showCheckbox ">
+        <ng-container *ngIf="columnsGroup?.leftFixed && columnsGroup?.leftFixed.length  || datagrid.showRowNumber || datagrid.showCheckbox ">
             <div #fixedLeft class="f-datagrid-cell-group f-datagrid-cell-group-fixed-left" 
-            [style.width.px]="columnGroup.leftFixedWidth" [style.height.px]="height"> 
+            [style.width.px]="columnsGroup?.leftFixedWidth" [style.height.px]="height"> 
                 <!-- 行号 -->
                 <div class="f-datagrid-cell-header" *ngIf="datagrid.showRowNumber">
                     <table class="f-datagrid-cell-header">
@@ -32,9 +32,9 @@
             </div>
         </ng-container>
 
-        <div class="f-datagrid-cell-group" #headerContainer [style.left.px]="columnGroup.leftFixedWidth"
-        [style.width.px]="columnGroup?.minWidth"  style="position: absolute;">
-            <!-- <div class="f-datagrid-cell-header" *ngFor="let col of columnGroup.normalColumns">
+        <div class="f-datagrid-cell-group" #headerContainer [style.left.px]="columnsGroup?.leftFixedWidth"
+        [style.width.px]="columnsGroup?.minWidth"  style="position: absolute;">
+            <!-- <div class="f-datagrid-cell-header" *ngFor="let col of columnsGroup.normalColumns">
                 <datagrid-header-cell [width]="col.width" [left]="col.left" [height]="height">
                     {{col.title}}
                 </datagrid-header-cell>
@@ -42,7 +42,7 @@
                 <table class="f-datagrid-cell-header" style="width:100%">
                     <thead>
                         <tr class="f-datagrid-body-row">
-                            <td class="f-datagrid-cell" [style.width.px]="col.width" [style.height.px]="height" *ngFor="let col of columnGroup.normalColumns">
+                            <td class="f-datagrid-cell" [style.width.px]="col.width" [style.height.px]="height" *ngFor="let col of columnsGroup?.normalColumns">
                                 {{col.title}}
                             </td>
                         </tr>

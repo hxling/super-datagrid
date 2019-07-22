@@ -9,7 +9,7 @@
                     [style.width.px]="leftFixedWidth" [style.height.px]="data.length * rowHeight" >
                 <table style="width: 100%" >
                     <tr class="f-datagrid-body-row" [style.height.px]="rowHeight" *ngFor="let row of data ; trackBy: trackByRows; let i=index; odd as odd">
-                        <td class="f-datagrid-cell f-datagrid-cell-rownumber" [style.width.px]="leftFixedWidth">
+                        <td class="f-datagrid-cell f-datagrid-cell-rownumber" [style.width.px]="datagrid.rowNumberWidth">
                             {{ i + 1 }}
                         </td>
                     </tr>    
@@ -18,7 +18,7 @@
             
             <div [style.width.px]="colsWidth" style="position: relative;" [style.left.px]="leftFixedWidth">
 
-                <div #topDiv class="f-datagrid-row body-top virtualized" *ngIf="datagrid.virtualized" 
+                <div #topDiv class="f-datagrid-virtual-row body-top" *ngIf="datagrid.virtualized" 
                     [style.height.px]="topHideHeight" style="transform: translate3d(0px, 0px, 0px)"></div>
 
                 <table style="border:0; width: 100%" class="f-datagrid-row-hover" cellpadding=0 cellspacing="0">
@@ -28,13 +28,13 @@
                         [class.f-datagrid-row-even]="!odd && datagrid.striped"
                         [class.f-datagrid-row-selected]="currentRowId === row[datagrid.idField]"
                         [style.height.px]="rowHeight" >
-                        <td class="f-datagrid-cell" [style.width.px]="col.width" *ngFor="let col of columnsGroup?.normalColumns; let ci = index;">
+                        <td cell-editable class="f-datagrid-cell" [style.width.px]="col.width" *ngFor="let col of columnsGroup?.normalColumns; let ci = index;">
                             <grid-body-cell [width]="col.width" [height]="rowHeight" [column]="col" [rowData]="row" [rowIndex]="i"></grid-body-cell>
                         </td>
                     </tr>    
                 </table>
 
-                <div #bottomDiv class="f-datagrid-row body-bottom virtualized" 
+                <div #bottomDiv class="f-datagrid-virtual-row body-bottom" 
                     *ngIf="datagrid.virtualized" [style.height.px]="bottomHideHeight" ></div>
 
             </div>

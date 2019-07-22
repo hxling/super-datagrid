@@ -31,13 +31,14 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     colsWidth: number;
     leftFixedWidth: number;
     rightFixedWidth: number;
-    columnsGroup: ColumnGroup;
     rowHeight: number;
     bodyStyle: any;
     scrollTop = 0;
     scrollLeft = 0;
     deltaTopHeight = 0;
     wheelHeight = 0;
+
+    @Input() columnsGroup: ColumnGroup;
     // 虚拟加载
     @Input() topHideHeight = 0;
     @Input() bottomHideHeight = 0;
@@ -56,7 +57,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     _index = 0;
 
     currentRowId =  undefined;
-
+    gridsize$ = this.dfs.gridSize$;
     selectedRowId$ = this.dfs.currentRow$.pipe(
         map( (row: SelectedRow) => {
             this.datagrid.selectedRow = row;
@@ -77,25 +78,24 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     ngOnInit(): void {
 
-        const initSubscrition = this.dfs.state$.subscribe(state => {
+        const initSubscrition = this.gridsize$.subscribe(state => {
             if (state) {
                 this.top = state.headerHeight;
                 const pagerHeight = state.pagerHeight;
-
                 this.height = state.height - this.top - pagerHeight;
-
                 this.width = state.width;
                 this.rowHeight = state.rowHeight;
                 this.columnsGroup = state.columnsGroup;
-                this.colsWidth = state.columnsGroup.minWidth;
-                this.leftFixedWidth = state.columnsGroup.leftFixedWidth;
+                this.leftFixedWidth = this.columnsGroup.leftFixedWidth;
+                this.colsWidth = this.columnsGroup.minWidth;
                 this.setWheelHeight();
                 this.bodyStyle = this.getBodyStyle();
+                this.cd.detectChanges();
             }
         });
 
         this.dgs.onDataSourceChange.subscribe(() => {
-            // this.ps.scrollToTop();
+            this.ps.scrollToTop();
         });
 
         this.selectedRowId$.subscribe(id => {
@@ -103,15 +103,12 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.cd.detectChanges();
         });
 
-        // this.ps = new PerfectScrollbar(this.psc.nativeElement, this.psConfig);
 
     }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
             this.setWheelHeight();
-            // this.ps.update();
-            // setTimeout( () => this.ps.update());
         }
     }
 

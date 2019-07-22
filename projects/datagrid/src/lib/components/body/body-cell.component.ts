@@ -1,8 +1,8 @@
+import { CellInfo } from './../../services/state';
 import { Component, OnInit, Input, Output, EventEmitter, HostListener,
     ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef,
     OnDestroy, ViewContainerRef, ComponentFactoryResolver, NgZone } from '@angular/core';
 import { CommonUtils } from '@farris/ui-common';
-import { EditInfo } from './../../services/state';
 import { DataColumn } from '../../types';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { map, filter } from 'rxjs/operators';
@@ -14,7 +14,7 @@ import { GridRowDirective } from './body-row.directive';
     selector: 'grid-body-cell',
     template: `
     <div class="f-datagrid-cell-content" #cellContainer
-     [ngClass]="{'f-datagrid-cell-edit': isEditing, 'f-datagrid-cell-selected': (cellSelected | async)}">
+     [ngClass]="{'f-datagrid-cell-edit': isEditing, 'f-datagrid-cell-selected': isSelected}">
         <span *ngIf="!isEditing">{{ value }}</span>
         <ng-container #editorTemplate *ngIf="isEditing" cell-editor [column]="column" [group]="dr.form"></ng-container>
     </div>
@@ -37,31 +37,10 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     cellContext: any = {};
     value: any;
     isEditing = false;
+    isSelected = false;
 
-    isEditing$ = this.dfs.currentEdit$.pipe(
-        filter((ei: EditInfo, index) => {
-            if (ei && ei.field === this.column.field && ei.rowIndex === this.rowIndex && this.column.editor) {
-                return true;
-            }
-            return false;
-        }),
-        map((ei: any) => {
-            if (ei) {
-                return ei.isEditing;
-            }
-            return false;
-        })
-    );
 
-    cellSelected = this.dfs.currentCell$.pipe(
-        map( cell => {
-            if (cell) {
-                this.datagrid.currentCell = cell;
-                return cell.rowId === this.rowData[this.datagrid.idField] && this.column.field === cell.field;
-            }
-            return false;
-        })
-    );
+    currentCell = this.dfs.currentCell$;
 
     constructor(
         private dfs: DatagridFacadeService, public dr: GridRowDirective,
@@ -78,9 +57,12 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
 
         this.updateValue();
 
-        this.isEditing$.subscribe( (state: boolean) => {
-            this.isEditing = state;
-            if (state) {
+        this.currentCell.subscribe((cell: CellInfo) => {
+            this.datagrid.currentCell = cell;
+            const { isEditing, isSelected } = {...this.getCellState(cell)};
+            this.isEditing = isEditing;
+            this.isSelected = isSelected;
+            if (isEditing) {
                 setTimeout(() => {
                     this.focus();
                     this.datagrid.beginEdit.emit({ rowIndex: this.rowIndex, rowData: this.rowData, value: this.value });
@@ -101,7 +83,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.isEditing$ = null;
+        // this.isEditing$ = null;
     }
 
     @HostListener('dblclick', ['$event'])
@@ -111,8 +93,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
         if (this.datagrid.editable && this.datagrid.editMode === 'cell') {
             if (!this.isEditing) {
                 this.dfs.endEditCell();
-                this.dfs.editCell({rowIndex: this.rowIndex, cellRef: this, field: this.column.field,
-                                                             rowData: this.rowData, isEditing: true});
+                this.dfs.editCell();
                 this.cellClick.emit({originalEvent: event });
             }
         }
@@ -122,10 +103,11 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     @HostListener('click', ['$event'])
     onCellClick(event: MouseEvent) {
         event.stopPropagation();
-        this.dfs.setCurrentCell(this.rowIndex, this.rowData[this.datagrid.idField], this.column.field);
+        this.dfs.endEditCell();
+        this.dfs.setCurrentCell(this.rowIndex, this.rowData, this.column.field);
         this.cd.detectChanges();
         this.cellClick.emit({originalEvent: event });
-    }
+    } 
 
     updateValue() {
         if (this.dr.form) {
@@ -134,6 +116,21 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
         if (this.rowData) {
             this.value = this.utils.getValue(this.column.field, this.rowData);
         }
+    }
+
+    private getCellState(cell: CellInfo) {
+        let isEditing = false;
+        let isSelected = false;
+        if (cell ) {
+            if (cell.field === this.column.field && cell.rowIndex === this.rowIndex && this.column.editor) {
+                isEditing =  cell.isEditing;
+            }
+
+            if (this.column.field === cell.field && cell.rowId === this.rowData[this.datagrid.idField]) {
+                isSelected = true;
+            }
+        }
+        return { isEditing, isSelected };
     }
 
     private focus() {
