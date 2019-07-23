@@ -62,11 +62,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 可拖动列设置列宽 */
     @Input() resizeColumn = true;
     /** 显示行号 */
-    @Input() showRowNumber = false;
+    @Input() showLineNumber  = false;
     /** 行号宽度 */
-    @Input() rowNumberWidth = 36;
+    @Input() lineNumberWidth = 36;
     /** 鼠标滑过效果开关，默认开启 */
     @Input() rowHover = true;
+    /** 允许编辑时，单击进入编辑状态 */
+    @Input() clickToEdit = false;
 
     /** 分页信息 */
     @Input() pagination = true;

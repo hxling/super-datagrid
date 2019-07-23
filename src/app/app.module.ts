@@ -14,7 +14,7 @@ import { FarrisDatePickerModule } from '@farris/ui-datepicker';
 import { ScrollBarLoadComponent } from './demos/scrollbar-load/scrollbar-load.component';
 import { PageScrollComponent } from './demos/page-scroll/page-scroll.component';
 import { AllDataLoadOnceComponent } from './demos/alldata-load-once/alldata-load-once.component';
-import { ShowRowNumberComponent } from './demos/row-number/show-row-number.component';
+import { showLineNumberComponent } from './demos/row-number/show-row-number.component';
 import { NormalDatagridComponent } from './demos/normal-grid/normal-grid.component';
 import { CellEditorComponent } from './demos/cell-editor/cell-editor.component';
 import { MyCustomGridEditorComponent } from './demos/myeditors/input-group-editor.component';
@@ -30,7 +30,7 @@ import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-
     ScrollBarLoadComponent,
     PageScrollComponent,
     AllDataLoadOnceComponent,
-    ShowRowNumberComponent,
+    showLineNumberComponent,
     NormalDatagridComponent,
     CellEditorComponent,
     MyCustomGridEditorComponent,

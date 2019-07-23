@@ -8,7 +8,7 @@ import { DemoDataService } from '../demo-data.service';
         DemoDataService
     ]
 })
-export class ShowRowNumberComponent implements OnInit {
+export class showLineNumberComponent implements OnInit {
     showLoading = false;
     columns = [];
     items = [];

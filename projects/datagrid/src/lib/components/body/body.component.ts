@@ -22,7 +22,7 @@ import { DataResult } from '../../services/state';
 })
 export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
-    psConfig = { swipeEasing: true,  minScrollbarLength: 20, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
+    psConfig = { swipeEasing: true,  minScrollbarLength: 15, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
     psConfigLeft = { suppressScrollX: true, suppressScrollY: false };
 
     top: number;
@@ -48,8 +48,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     @ViewChild('ps') ps?: PerfectScrollbarDirective;
     // @ViewChild('psContainer') psc: ElementRef;
-    @ViewChild('topDiv') topDiv: ElementRef;
-    @ViewChild('bottomDiv') bottomDiv: ElementRef;
+    // @ViewChild('topDiv') topDiv: ElementRef;
+    // @ViewChild('bottomDiv') bottomDiv: ElementRef;
+    @ViewChild('datatable') datatableEl: ElementRef;
 
     private rowHoverSubscription: Subscription;
 
@@ -127,8 +128,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     private getBodyStyle() {
         return {
-            width: `${this.width - 2}px`,
-            height: `${this.height - 2}px`
+            width: `${this.width}px`,
+            height: `${this.height}px`
         };
     }
 
@@ -146,6 +147,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.scrollYMove(y);
         this.datagrid.scrollY.emit(y);
         this.dgs.onScrollMove(y, SCROLL_Y_ACTION);
+    }
+
+    onScrollYEnd($event: any) {
+        const y = $event.target.scrollTop;
+        console.log(y, 'Scroll Y End');
     }
 
     onPsXReachStart($event: any) {
@@ -180,32 +186,35 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const virtualRowPos = this.getVirtualRowPosition();
         if (!virtualRowPos) { return false; }
 
-        const { top, bottom } = { ...virtualRowPos };
+        const { top, bottom, containerBottom } = { ...virtualRowPos };
 
         if (this.bottomHideHeight === 0) {
             return false;
         }
 
-        if (top < 0  && bottom > this.height) {
+        if (top < 0  && bottom > containerBottom) {
             return false;
         }
         return true;
     }
 
-    private getVirtualRowPosition(): {top: number, bottom: number} {
-        if (!this.topDiv || !this.bottomDiv) { return; }
+    private getVirtualRowPosition(): {top: number, bottom: number, containerBottom: number} {
+        // if (!this.topDiv || !this.bottomDiv) { return; }
 
         const headerHeight = this.top;
         const bodyRect = this.getBoundingClientRect(this.el);
-        const topDivRect = this.getBoundingClientRect(this.topDiv);
-        const bottomDivRect = this.getBoundingClientRect(this.bottomDiv);
+        // const topDivRect = this.getBoundingClientRect(this.topDiv);
+        const datatableRect = this.getBoundingClientRect(this.datatableEl);
+        // const bottomDivRect = this.getBoundingClientRect(this.bottomDiv);
 
-        const topDivHeight = topDivRect.top - bodyRect.top + topDivRect.height - headerHeight;
-        const bottomDivHeight = bottomDivRect.top - headerHeight;
+        const topDivHeight = datatableRect.top - bodyRect.top - headerHeight;
+        // const bottomDivHeight = bottomDivRect.top - headerHeight;
+        const bottomDivHeight = datatableRect.bottom;
         const top = Math.floor(topDivHeight);
         const bottom = Math.floor(bottomDivHeight);
-
-        return { top, bottom };
+        // grid 容器距底部的尺寸
+        const containerBottom = this.getBoundingClientRect(this.ps.elementRef).bottom;
+        return { top, bottom, containerBottom };
     }
 
     private scrolling(isUp: boolean) {
@@ -213,7 +222,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const virtualRowPos = this.getVirtualRowPosition();
         if (!virtualRowPos) { return; }
 
-        const { top, bottom } = { ...virtualRowPos };
+        const { top, bottom, containerBottom } = { ...virtualRowPos };
 
         const vs = this.dfs.getVirtualState();
         const pi = this.dfs.getPageInfo();
@@ -240,7 +249,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.dfs.loadData(newData);
                 this.startRowIndex = idx;
             });
-        } else if (bottom < this.height) {
+        } else if (bottom < containerBottom) {
             // 向下连续滚动
             if (this.data.length + vs.rowIndex >= this.datagrid.total || allItems.length === this.datagrid.total) {
                 return;

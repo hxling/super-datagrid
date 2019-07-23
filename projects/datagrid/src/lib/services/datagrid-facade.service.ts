@@ -39,7 +39,7 @@ export class DatagridFacadeService {
         filter(vs => vs),
         map((vs: VirtualizedState) => {
             return {
-                index: vs.startIndex,
+                index: vs.startIndex || 0,
                 rows: vs.virtualRows,
                 top: vs.topHideHeight,
                 bottom: vs.bottomHideHeight
@@ -232,7 +232,7 @@ export class DatagridFacadeService {
 
     private initColumnsWidth(colgroup: ColumnGroup) {
         let offset = 0;
-        offset = this._state.showRowNumber ? offset + this._state.rowNumberWidth : offset;
+        offset = this._state.showLineNumber ? offset + this._state.lineNumberWidth : offset;
 
         offset = (this._state.multiSelect && this._state.showCheckbox) ?
             offset + 36 : offset;

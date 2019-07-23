@@ -3,15 +3,15 @@
     <div class="f-datagrid-row f-datagrid-row-header" [style.min-width.px]="columnsGroup?.minWidth">
 
         <!--左侧固定列-->
-        <ng-container *ngIf="columnsGroup?.leftFixed && columnsGroup?.leftFixed.length  || datagrid.showRowNumber || datagrid.showCheckbox ">
+        <ng-container *ngIf="columnsGroup?.leftFixed && columnsGroup?.leftFixed.length  || datagrid.showLineNumber || datagrid.showCheckbox ">
             <div #fixedLeft class="f-datagrid-cell-group f-datagrid-cell-group-fixed-left" 
             [style.width.px]="columnsGroup?.leftFixedWidth" [style.height.px]="height"> 
                 <!-- 行号 -->
-                <div class="f-datagrid-cell-header" *ngIf="datagrid.showRowNumber">
+                <div class="f-datagrid-cell-header" *ngIf="datagrid.showLineNumber">
                     <table class="f-datagrid-cell-header">
                         <thead>
                             <tr class="f-datagrid-body-row">
-                                <td class="f-datagrid-cell" [style.height.px]="height" [style.width.px]="datagrid.rowNumberWidth"> </td>
+                                <td class="f-datagrid-cell" [style.height.px]="height" [style.width.px]="datagrid.lineNumberWidth"> </td>
                             </tr>
                         </thead>
                     </table>

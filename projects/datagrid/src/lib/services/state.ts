@@ -19,7 +19,7 @@ export interface FarrisDatagridState {
     pagerHeight?: number;
     pagination?: boolean;
     columns: DataColumn[];
-    showRowNumber?: boolean;
+    showLineNumber?: boolean;
     showCheckbox?: boolean;
     multiSelect?: boolean;
     selections: SelectedRow[];
@@ -51,7 +51,7 @@ export interface SelectedRow {
 
 export const initDataGridState: FarrisDatagridState = {
     idField: 'id',
-    showRowNumber: false,
+    showLineNumber: false,
     selections: [],
     currentRow: null,
     columnsGroup: null,
