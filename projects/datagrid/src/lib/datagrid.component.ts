@@ -107,6 +107,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() emptyMsg = '';
     /** 列集合 */
     @Input() columns: DataColumn[];
+    @Input() fields: DataColumn[];
 
     /** 虚拟加载 */
     @Input() virtualized = true;
@@ -188,6 +189,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         if (!this.pagination) {
             this.pagerHeight = 0;
+        }
+
+        if (!this.columns) {
+            this.columns = this.fields;
         }
 
         this.zone.runOutsideAngular(() => {

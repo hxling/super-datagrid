@@ -68,8 +68,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         })
     );
 
-    // ps: any;
-
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
         private dfs: DatagridFacadeService, public datagrid: DatagridComponent,
