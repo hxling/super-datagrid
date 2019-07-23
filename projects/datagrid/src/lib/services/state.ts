@@ -19,7 +19,7 @@ export interface FarrisDatagridState {
     pagerHeight?: number;
     pagination?: boolean;
     columns: DataColumn[];
-    showRowNumber?: boolean;
+    showLineNumber?: boolean;
     showCheckbox?: boolean;
     multiSelect?: boolean;
     selections: SelectedRow[];
@@ -35,6 +35,8 @@ export interface FarrisDatagridState {
 export interface VirtualizedState {
     /** 虚拟加载且不显示分页条时，记录加载新记录时的索引值 */
     rowIndex: number;
+    /** 数据显示的索引值 */
+    startIndex?: number;
     scrollTop?: number;
     virtualRows?: any;
     topHideHeight?: number;
@@ -49,7 +51,7 @@ export interface SelectedRow {
 
 export const initDataGridState: FarrisDatagridState = {
     idField: 'id',
-    showRowNumber: false,
+    showLineNumber: false,
     selections: [],
     currentRow: null,
     columnsGroup: null,

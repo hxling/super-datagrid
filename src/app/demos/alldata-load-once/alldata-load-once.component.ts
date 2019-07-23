@@ -34,7 +34,7 @@ export class AllDataLoadOnceComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位' }
         ];
 
-        this.total = 100000;
-        this.items = this.dds.createData(100000);
+        this.total = 480000;
+        this.items = this.dds.createData(480000);
     }
 }

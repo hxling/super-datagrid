@@ -71,7 +71,12 @@ export class VirtualizedLoaderService {
             bottomHideHeight = total * rowHeight - rows.length * rowHeight - topHideHeight;
         }
 
+        let startIndex = this.state.virtual.rowIndex;
+        if (data && data.length && rows && rows.length) {
+            startIndex = this.state.virtual.rowIndex + data.findIndex(r => r[this.state.idField] === rows[0][this.state.idField]);
+        }
         return {
+            startIndex,
             virtualRows: [...rows],
             topHideHeight,
             bottomHideHeight

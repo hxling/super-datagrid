@@ -8,7 +8,7 @@ import { DemoDataService } from '../demo-data.service';
         DemoDataService
     ]
 })
-export class ShowRowNumberComponent implements OnInit {
+export class showLineNumberComponent implements OnInit {
     showLoading = false;
     columns = [];
     items = [];
@@ -32,7 +32,7 @@ export class ShowRowNumberComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位' }
         ];
 
-        this.total = 100;
-        this.items = this.dds.createData(100);
+        this.total = 1000;
+        this.items = this.dds.createData(1000);
     }
 }

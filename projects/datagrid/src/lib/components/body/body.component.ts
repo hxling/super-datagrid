@@ -22,7 +22,7 @@ import { DataResult } from '../../services/state';
 })
 export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
-    psConfig = { swipeEasing: true,  minScrollbarLength: 20, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
+    psConfig = { swipeEasing: true,  minScrollbarLength: 15, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
     psConfigLeft = { suppressScrollX: true, suppressScrollY: false };
 
     top: number;
@@ -43,18 +43,18 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @Input() topHideHeight = 0;
     @Input() bottomHideHeight = 0;
 
+    @Input() startRowIndex = 0;
     @Input() data: any;
 
     @ViewChild('ps') ps?: PerfectScrollbarDirective;
     // @ViewChild('psContainer') psc: ElementRef;
-    @ViewChild('topDiv') topDiv: ElementRef;
-    @ViewChild('bottomDiv') bottomDiv: ElementRef;
+    // @ViewChild('topDiv') topDiv: ElementRef;
+    // @ViewChild('bottomDiv') bottomDiv: ElementRef;
+    @ViewChild('datatable') datatableEl: ElementRef;
 
     private rowHoverSubscription: Subscription;
 
     private scrollTimer: any = null;
-    private clientVirtualLoadTimer = null;
-    _index = 0;
 
     currentRowId =  undefined;
     gridsize$ = this.dfs.gridSize$;
@@ -128,8 +128,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     private getBodyStyle() {
         return {
-            width: `${this.width - 2}px`,
-            height: `${this.height - 2}px`
+            width: `${this.width}px`,
+            height: `${this.height}px`
         };
     }
 
@@ -147,6 +147,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.scrollYMove(y);
         this.datagrid.scrollY.emit(y);
         this.dgs.onScrollMove(y, SCROLL_Y_ACTION);
+    }
+
+    onScrollYEnd($event: any) {
+        const y = $event.target.scrollTop;
+        console.log(y, 'Scroll Y End');
     }
 
     onPsXReachStart($event: any) {
@@ -171,6 +176,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.scrollTimer = setTimeout(() => {
                     this.scrolling(isUp);
                 }, 100);
+            } else {
+                const vs = this.dfs.getVirtualState();
             }
         }
     }
@@ -179,32 +186,35 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const virtualRowPos = this.getVirtualRowPosition();
         if (!virtualRowPos) { return false; }
 
-        const { top, bottom } = { ...virtualRowPos };
+        const { top, bottom, containerBottom } = { ...virtualRowPos };
 
         if (this.bottomHideHeight === 0) {
             return false;
         }
 
-        if (top < 0  && bottom > this.height) {
+        if (top < 0  && bottom > containerBottom) {
             return false;
         }
         return true;
     }
 
-    private getVirtualRowPosition(): {top: number, bottom: number} {
-        if (!this.topDiv || !this.bottomDiv) { return; }
-        const vs = this.dfs.getVirtualState();
+    private getVirtualRowPosition(): {top: number, bottom: number, containerBottom: number} {
+        // if (!this.topDiv || !this.bottomDiv) { return; }
+
         const headerHeight = this.top;
         const bodyRect = this.getBoundingClientRect(this.el);
-        const topDivRect = this.getBoundingClientRect(this.topDiv);
-        const bottomDivRect = this.getBoundingClientRect(this.bottomDiv);
+        // const topDivRect = this.getBoundingClientRect(this.topDiv);
+        const datatableRect = this.getBoundingClientRect(this.datatableEl);
+        // const bottomDivRect = this.getBoundingClientRect(this.bottomDiv);
 
-        const topDivHeight = topDivRect.top - bodyRect.top + topDivRect.height - headerHeight;
-        const bottomDivHeight = bottomDivRect.top - headerHeight;
+        const topDivHeight = datatableRect.top - bodyRect.top - headerHeight;
+        // const bottomDivHeight = bottomDivRect.top - headerHeight;
+        const bottomDivHeight = datatableRect.bottom;
         const top = Math.floor(topDivHeight);
         const bottom = Math.floor(bottomDivHeight);
-
-        return { top, bottom };
+        // grid 容器距底部的尺寸
+        const containerBottom = this.getBoundingClientRect(this.ps.elementRef).bottom;
+        return { top, bottom, containerBottom };
     }
 
     private scrolling(isUp: boolean) {
@@ -212,7 +222,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const virtualRowPos = this.getVirtualRowPosition();
         if (!virtualRowPos) { return; }
 
-        const { top, bottom } = { ...virtualRowPos };
+        const { top, bottom, containerBottom } = { ...virtualRowPos };
 
         const vs = this.dfs.getVirtualState();
         const pi = this.dfs.getPageInfo();
@@ -232,21 +242,20 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 const { items, pageIndex, pageSize, total } = {...r};
                 this.dfs.setPagination(pageIndex, pageSize, total);
                 const newData = items.concat(allItems);
-                this._index = pageSize;
+                // this.startRowIndex = pageSize;
 
                 const idx = (prevPager - 1) * pageSize;
                 this.dfs.getVirtualState().rowIndex = idx;
-                this._index = idx;
-
                 this.dfs.loadData(newData);
+                this.startRowIndex = idx;
             });
-        } else if (bottom < this.height) {
+        } else if (bottom < containerBottom) {
             // 向下连续滚动
             if (this.data.length + vs.rowIndex >= this.datagrid.total || allItems.length === this.datagrid.total) {
                 return;
             }
 
-            const nextPager = Math.floor(this._index / pi.pageSize) + 2;
+            const nextPager = Math.floor(this.startRowIndex / pi.pageSize) + 2;
 
             this.datagrid.loading = true;
             // console.log('fetchData - ↓', this._index);
@@ -256,8 +265,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 const { items, pageIndex, pageSize, total } = {...r};
                 this.dfs.setPagination(pageIndex, pageSize, total);
                 const newData = allItems.concat(items);
-                this._index += pageSize;
                 this.dfs.loadData(newData);
+                this.startRowIndex += pageSize;
             });
         }
     }
@@ -277,10 +286,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
             const idx = (page - 1) * _pageSize;
             this.dfs.getVirtualState().rowIndex = idx;
-            this._index = idx;
-
             this.dfs.loadDataForVirtual(items);
-
+            this.startRowIndex = idx;
             this.changeScrollTop(idx);
         });
     }
