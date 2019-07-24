@@ -1,4 +1,4 @@
-import { NgModule, InjectionToken } from '@angular/core';
+import { NgModule, InjectionToken, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FarrisCommonModule } from '@farris/ui-common';
@@ -14,7 +14,6 @@ import { DatagridPagerComponent } from './components/pager/pager.component';
 import { NgxPaginationModule } from './pagination/ngx-pagination.module';
 import { DataGridLoadingComponent } from './components/loading.component';
 import { DatagridCellEditorDirective, DatagridColumnDirective } from './components/columns';
-import { ModuleWithProviders } from '@angular/compiler/src/core';
 import { GRID_EDITORS } from './types';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DatagridEditorComponent, GridCellEditorDirective, TextboxEditorComponent } from './components/editors';
