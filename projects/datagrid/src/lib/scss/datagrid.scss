@@ -142,11 +142,11 @@
     }
 
     &-fixed-left-shadow {
-        box-shadow: 3px 0px 5px rgba(9, 9, 9, 0.16);
+        
     }
 
     &-fixed-right-shadow {
-        box-shadow: -5px 0px 5px rgba(9, 9, 9, 0.16);
+        border-left: 1px solid #b8b8b8;
     }
 
     
