@@ -1,4 +1,4 @@
-import { CellInfo } from './../../services/state';
+import { CellInfo } from '../../services/state';
 import { Component, OnInit, Input, Output, EventEmitter, HostListener,
     ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef,
     OnDestroy, ViewContainerRef, ComponentFactoryResolver, NgZone } from '@angular/core';
@@ -8,20 +8,21 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { map, filter } from 'rxjs/operators';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridEditorComponent } from '../editors/grid-editor.component';
-import { GridRowDirective } from './body-row.directive';
+import { DatagridRowDirective } from './datagrid-row.directive';
 
 @Component({
     selector: 'grid-body-cell',
     template: `
     <div class="f-datagrid-cell-content" #cellContainer
      [ngClass]="{'f-datagrid-cell-edit': isEditing, 'f-datagrid-cell-selected': isSelected}">
-        <span *ngIf="!isEditing">{{ value }}</span>
+        <span *ngIf="!isEditing && !column.template">{{ value }}</span>
+        <ng-container *ngIf="!isEditing && column.template" [ngTemplateOutlet]="column.template" [ngTemplateOutletContext]="{$implicit: cellContext}"></ng-container>
         <ng-container #editorTemplate *ngIf="isEditing" cell-editor [column]="column" [group]="dr.form"></ng-container>
     </div>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DatagridBodyCellComponent implements OnInit, OnDestroy {
+export class DatagridCellComponent implements OnInit, OnDestroy {
     @Input() width: number;
     @Input() height: number;
     @Input() cls = '';
@@ -40,13 +41,13 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     cellContext: any = {};
     value: any;
 
-
+    cellStyler: any = {};
     currentCell = this.dfs.currentCell$;
-    canEdit = () => this.datagrid.editable && this.datagrid.editMode === 'cell' && this.column.editor;
+    canEdit = () => this.dg.editable && this.dg.editMode === 'cell' && this.column.editor;
     constructor(
-        private dfs: DatagridFacadeService, public dr: GridRowDirective,
+        private dfs: DatagridFacadeService, public dr: DatagridRowDirective,
         private render2: Renderer2, private utils: CommonUtils, private el: ElementRef,
-        private datagrid: DatagridComponent, private cfr: ComponentFactoryResolver,
+        private dg: DatagridComponent, private cfr: ComponentFactoryResolver,
         private cd: ChangeDetectorRef, private zone: NgZone) { }
 
     ngOnInit(): void {
@@ -57,6 +58,8 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
         };
 
         this.updateValue();
+
+        this.buildCustomCellStyle();
 
         // this.currentCell.subscribe((cell: CellInfo) => {
         //     this.datagrid.currentCell = cell;
@@ -85,6 +88,16 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         // this.isEditing$ = null;
+    }
+
+    private buildCustomCellStyle() {
+        if (this.column.styler) {
+            const cs = this.column.styler(this.rowData[this.column.field], this.rowData, this.rowIndex);
+            if (cs && Object.keys(cs).length) {
+                const td = this.el.nativeElement.parentNode;
+                this.dg.renderCustomStyle(cs, td);
+            }
+        }
     }
 
     @HostListener('dblclick', ['$event'])
@@ -116,7 +129,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
         if (this.dr.form) {
             Object.assign(this.rowData, this.dr.form.value);
         }
-        if (this.rowData) {
+        if (this.rowData && this.column && this.column.field) {
             this.value = this.utils.getValue(this.column.field, this.rowData);
         }
     }
@@ -129,7 +142,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
                 isEditing =  cell.isEditing;
             }
 
-            if (this.column.field === cell.field && cell.rowId === this.rowData[this.datagrid.idField]) {
+            if (this.column.field === cell.field && cell.rowId === this.rowData[this.dg.idField]) {
                 isSelected = true;
             }
         }

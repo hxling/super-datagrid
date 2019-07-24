@@ -1,3 +1,4 @@
+import { AppHomeComponent } from './home.component';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -14,28 +15,31 @@ import { FarrisDatePickerModule } from '@farris/ui-datepicker';
 import { ScrollBarLoadComponent } from './demos/scrollbar-load/scrollbar-load.component';
 import { PageScrollComponent } from './demos/page-scroll/page-scroll.component';
 import { AllDataLoadOnceComponent } from './demos/alldata-load-once/alldata-load-once.component';
-import { showLineNumberComponent } from './demos/row-number/show-row-number.component';
+import { ShowLineNumberComponent } from './demos/row-number/show-row-number.component';
 import { NormalDatagridComponent } from './demos/normal-grid/normal-grid.component';
 import { CellEditorComponent } from './demos/cell-editor/cell-editor.component';
 import { MyCustomGridEditorComponent } from './demos/myeditors/input-group-editor.component';
 import { GRID_EDITORS } from 'projects/datagrid/src/lib/types';
 import { VirtualLoadDemoComponent } from './demos/virtual-load/virtual-load-demo.component';
 import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-demo.component';
+import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-template.component';
 
 
 @NgModule({
   declarations: [
 
     AppComponent,
+    AppHomeComponent,
     ScrollBarLoadComponent,
     PageScrollComponent,
     AllDataLoadOnceComponent,
-    showLineNumberComponent,
+    ShowLineNumberComponent,
     NormalDatagridComponent,
     CellEditorComponent,
     MyCustomGridEditorComponent,
     VirtualLoadDemoComponent,
-    ScrollbarLoadDemoComponent
+    ScrollbarLoadDemoComponent,
+    CustomCellComponent
 
   ],
   imports: [

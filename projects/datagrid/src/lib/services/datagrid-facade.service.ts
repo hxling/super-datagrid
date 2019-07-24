@@ -243,14 +243,23 @@ export class DatagridFacadeService {
         }, offset);
 
         colgroup.leftFixedWidth = leftColsWidth;
+        colgroup.rightFixedWidth = 0;
+        if (colgroup.rightFixed && colgroup.rightFixed.length) {
+            colgroup.rightFixedWidth = colgroup.rightFixed.reduce((r, c) => {
+                return r + c.width;
+            }, 0);
+        }
 
         if (this._state.columns && this._state.columns.length) {
+            const i =  0;
             const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
                 col.left = totalWidth;
                 return totalWidth += col.width;
-            }, leftColsWidth);
+            }, i);
 
-            colgroup.minWidth = minWidth;
+            colgroup.normalWidth = minWidth;
         }
+
+        colgroup.totalWidth = leftColsWidth + colgroup.rightFixedWidth + colgroup.normalWidth;
     }
 }

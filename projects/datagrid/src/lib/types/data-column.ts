@@ -1,3 +1,8 @@
+import { TemplateRef } from '@angular/core';
+
+
+export type CustomStyle = {cls?: string, style?: {[key: string]: string}};
+
 export interface DataColumn {
     field: string;
     title: string;
@@ -8,8 +13,8 @@ export interface DataColumn {
     align?: 'left' | 'center' | 'right';
     /** 是否允许拖动列宽 */
     resizable?: string;
-    formatter?: (value, rowData, rowIndex) => void;
-    styler?: (value, rowData, rowIndex) => void;
+    formatter?: (value, rowData, rowIndex) => CustomStyle;
+    styler?: (value, rowData, rowIndex) => CustomStyle;
     left?: number;
     /** 是否固定 */
     fixed?: 'left' | 'right';
@@ -17,6 +22,8 @@ export interface DataColumn {
     hidden?: boolean;
 
     editor?: GridEditor;
+
+    template?: TemplateRef<any>;
 }
 
 export interface GridEditor {
@@ -36,8 +43,10 @@ export interface ColumnGroup {
     rightFixedWidth?: number;
     /** 右侧固定列集合 */
     rightFixed?: DataColumn[];
-    /** 最小宽度 */
-    minWidth?: number;
+    /** 正常宽度 */
+    normalWidth?: number;
+    /** 所有列宽度之各 */
+    totalWidth?: number;
 }
 
 export interface PaginationInfo {

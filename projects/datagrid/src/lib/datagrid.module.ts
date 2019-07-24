@@ -1,4 +1,3 @@
-import { DatagridTextboxEditorComponent } from './components/editors/textbox-editor.component';
 import { NgModule, InjectionToken } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
@@ -9,7 +8,7 @@ import { PerfectScrollbarConfigInterface, PERFECT_SCROLLBAR_CONFIG } from './per
 
 import { DatagridComponent } from './datagrid.component';
 import { DatagridHeaderComponent } from './components/header';
-import { DatagridBodyCellComponent, DatagridBodyComponent, GridRowDirective } from './components/body';
+import { DatagridCellComponent, DatagridBodyComponent, DatagridRowDirective, CellEditableDirective } from './components/body';
 import { PerfectScrollbarComponent } from './perfect-scrollbar/perfect-scrollbar.component';
 import { DatagridPagerComponent } from './components/pager/pager.component';
 import { NgxPaginationModule } from './pagination/ngx-pagination.module';
@@ -18,7 +17,7 @@ import { DatagridCellEditorDirective, DatagridColumnDirective } from './componen
 import { ModuleWithProviders } from '@angular/compiler/src/core';
 import { GRID_EDITORS } from './types';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DatagridEditorComponent, GridCellEditorDirective } from './components/editors';
+import { DatagridEditorComponent, GridCellEditorDirective, TextboxEditorComponent } from './components/editors';
 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -37,19 +36,19 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     declarations: [
         PerfectScrollbarDirective,
         PerfectScrollbarComponent,
-
+        CellEditableDirective,
         DatagridHeaderComponent,
-        DatagridBodyCellComponent,
+        DatagridCellComponent,
         DatagridBodyComponent,
         DatagridComponent,
         DatagridPagerComponent,
         DatagridCellEditorDirective,
         GridCellEditorDirective,
-        GridRowDirective,
+        DatagridRowDirective,
         DatagridColumnDirective,
         DataGridLoadingComponent,
         DatagridEditorComponent,
-        DatagridTextboxEditorComponent
+        TextboxEditorComponent
     ],
     providers: [
         {
@@ -57,20 +56,22 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
             useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
         },
         {
-            provide: GRID_EDITORS, useValue: {name: 'textbox', value: DatagridTextboxEditorComponent }, multi: true
+            provide: GRID_EDITORS, useValue: {name: 'textbox', value: TextboxEditorComponent }, multi: true
         }
     ],
     exports: [
         DatagridComponent,
+        DatagridHeaderComponent,
         DatagridColumnDirective,
         DatagridCellEditorDirective,
         DatagridEditorComponent,
-        DatagridTextboxEditorComponent,
+        TextboxEditorComponent,
         PerfectScrollbarDirective,
+        CellEditableDirective,
         PerfectScrollbarComponent
     ],
     entryComponents: [
-        DatagridTextboxEditorComponent
+        TextboxEditorComponent
     ]
 })
 export class DatagridModule {

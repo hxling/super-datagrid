@@ -15,6 +15,7 @@ export const SCROLL_X_REACH_START_ACTION = 'psXReachStart';
 
 /** 左侧固定列阴影样式名称 */
 export const FIXED_LEFT_SHADOW_CLS = 'f-datagrid-fixed-left-shadow';
+export const FIXED_RIGHT_SHADOW_CLS = 'f-datagrid-fixed-right-shadow';
 
 export const ROW_HOVER_CLS = 'f-datagrid-row-hover';
 

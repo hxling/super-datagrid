@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { PerfectScrollbarDirective } from '../../perfect-scrollbar/perfect-scrollbar.directive';
 import { ColumnGroup } from '../../types';
-import { SelectedRow } from './../../services/state';
+import { SelectedRow } from '../../services/state';
 import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
@@ -37,6 +37,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     scrollLeft = 0;
     deltaTopHeight = 0;
     wheelHeight = 0;
+    fixedRightScrollLeft = 0;
+    showRightShadow = false;
 
     @Input() columnsGroup: ColumnGroup;
     // 虚拟加载
@@ -68,8 +70,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         })
     );
 
-    // ps: any;
-
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
         private dfs: DatagridFacadeService, public datagrid: DatagridComponent,
@@ -77,7 +77,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnInit(): void {
-
         const initSubscrition = this.gridsize$.subscribe(state => {
             if (state) {
                 this.top = state.headerHeight;
@@ -87,10 +86,20 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.rowHeight = state.rowHeight;
                 this.columnsGroup = state.columnsGroup;
                 this.leftFixedWidth = this.columnsGroup.leftFixedWidth;
-                this.colsWidth = this.columnsGroup.minWidth;
+                this.rightFixedWidth = this.columnsGroup.rightFixedWidth;
+                this.colsWidth = this.columnsGroup.normalWidth;
                 this.setWheelHeight();
+                this.fixedRightScrollLeft = this.width - this.rightFixedWidth;
                 this.bodyStyle = this.getBodyStyle();
+
+                if (this.colsWidth + this.leftFixedWidth === this.fixedRightScrollLeft) {
+                    this.showRightShadow = false;
+                } else {
+                    this.showRightShadow = true;
+                }
+
                 this.cd.detectChanges();
+                this.ps.update();
             }
         });
 
@@ -100,15 +109,13 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
         this.selectedRowId$.subscribe(id => {
             this.currentRowId = id;
-            this.cd.detectChanges();
         });
-
-
     }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
             this.setWheelHeight();
+            this.cd.detectChanges();
         }
     }
 
@@ -137,6 +144,14 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     onScrollToX($event: any) {
         const x = $event.target.scrollLeft;
         this.scrollLeft = x;
+        this.fixedRightScrollLeft = this.scrollLeft + this.width - this.rightFixedWidth;
+
+        if (this.fixedRightScrollLeft === this.colsWidth + this.leftFixedWidth) {
+            this.showRightShadow = false;
+        } else {
+            this.showRightShadow = true;
+        }
+
         this.cd.detectChanges();
         this.dgs.onScrollMove(x, SCROLL_X_ACTION);
     }
@@ -157,6 +172,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     onPsXReachStart($event: any) {
         const x = $event.target.scrollLeft;
         this.dgs.onScrollMove(x, SCROLL_X_REACH_START_ACTION);
+    }
+
+    onPsXReachEnd($event: any) {
+        this.showRightShadow = false;
     }
 
     private scrollYMove(y: number, isUp: boolean = false) {
