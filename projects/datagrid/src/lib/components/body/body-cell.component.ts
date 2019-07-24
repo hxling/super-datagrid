@@ -13,9 +13,10 @@ import { GridRowDirective } from './body-row.directive';
 @Component({
     selector: 'grid-body-cell',
     template: `
-    <div class="f-datagrid-cell-content" #cellContainer [ngStyle]="cellStyler"
+    <div class="f-datagrid-cell-content" #cellContainer
      [ngClass]="{'f-datagrid-cell-edit': isEditing, 'f-datagrid-cell-selected': isSelected}">
-        <span *ngIf="!isEditing">{{ value }}</span>
+        <span *ngIf="!isEditing && !column.template">{{ value }}</span>
+        <ng-container *ngIf="!isEditing && column.template" [ngTemplateOutlet]="column.template" [ngTemplateOutletContext]="{$implicit: cellContext}"></ng-container>
         <ng-container #editorTemplate *ngIf="isEditing" cell-editor [column]="column" [group]="dr.form"></ng-container>
     </div>
     `,
@@ -41,13 +42,12 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     value: any;
 
     cellStyler: any = {};
-
     currentCell = this.dfs.currentCell$;
-    canEdit = () => this.datagrid.editable && this.datagrid.editMode === 'cell' && this.column.editor;
+    canEdit = () => this.dg.editable && this.dg.editMode === 'cell' && this.column.editor;
     constructor(
         private dfs: DatagridFacadeService, public dr: GridRowDirective,
         private render2: Renderer2, private utils: CommonUtils, private el: ElementRef,
-        private datagrid: DatagridComponent, private cfr: ComponentFactoryResolver,
+        private dg: DatagridComponent, private cfr: ComponentFactoryResolver,
         private cd: ChangeDetectorRef, private zone: NgZone) { }
 
     ngOnInit(): void {
@@ -59,7 +59,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
 
         this.updateValue();
 
-        this.cellStyler = this.buildCustomCellStyle();
+        this.buildCustomCellStyle();
 
         // this.currentCell.subscribe((cell: CellInfo) => {
         //     this.datagrid.currentCell = cell;
@@ -94,11 +94,10 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
         if (this.column.styler) {
             const cs = this.column.styler(this.rowData[this.column.field], this.rowData, this.rowIndex);
             if (cs && Object.keys(cs).length) {
-                return cs;
+                const td = this.el.nativeElement.parentNode;
+                this.dg.renderCustomStyle(cs, td);
             }
         }
-
-        return undefined;
     }
 
     @HostListener('dblclick', ['$event'])
@@ -130,7 +129,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
         if (this.dr.form) {
             Object.assign(this.rowData, this.dr.form.value);
         }
-        if (this.rowData) {
+        if (this.rowData && this.column && this.column.field) {
             this.value = this.utils.getValue(this.column.field, this.rowData);
         }
     }
@@ -143,7 +142,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
                 isEditing =  cell.isEditing;
             }
 
-            if (this.column.field === cell.field && cell.rowId === this.rowData[this.datagrid.idField]) {
+            if (this.column.field === cell.field && cell.rowId === this.rowData[this.dg.idField]) {
                 isSelected = true;
             }
         }

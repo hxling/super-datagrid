@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
     SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding, AfterContentInit, NgZone } from '@angular/core';
-import { DataColumn } from './types/data-column';
+import { DataColumn, CustomStyle } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DatagridColumnDirective } from './components/columns';
@@ -114,7 +114,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 是否启用异步加载数据 */
     @Input() virtualizedAsyncLoad = false;
 
-    @Input() rowStyler: (rowData, rowIndex?: number) => any;
+    @Input() rowStyler: (rowData, rowIndex?: number) => {cls?: string, style?: any};
     /** 编辑方式： row(整行编辑)、cell(单元格编辑)；默认为 row */
     @Input() editMode: 'row'| 'cell' = 'row';
     /** 编辑状态 */
@@ -348,4 +348,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.cd.detectChanges();
     }
 
+    renderCustomStyle(cs: CustomStyle, dom: any) {
+        if (cs.cls) {
+            this.render2.addClass(dom, cs.cls);
+        }
+
+        if (cs.style) {
+            const cssKeys = Object.keys(cs.style);
+            cssKeys.forEach(k => {
+                this.render2.setStyle(dom, k, cs.style[k]);
+            });
+        }
+    }
 }

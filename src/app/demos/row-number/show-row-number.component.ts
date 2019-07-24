@@ -8,7 +8,7 @@ import { DemoDataService } from '../demo-data.service';
         DemoDataService
     ]
 })
-export class showLineNumberComponent implements OnInit {
+export class ShowLineNumberComponent implements OnInit {
     showLoading = false;
     columns = [];
     items = [];
@@ -24,11 +24,11 @@ export class showLineNumberComponent implements OnInit {
             { field: 'id', width: 100, title: 'ID' },
             { field: 'name', width: 130, title: '姓名'},
             { field: 'sex', width: 70, title: '性别' },
+            { field: 'nianxin', width: 70, title: '年薪', styler: this.cellStyler },
             { field: 'birthday', width: 120, title: '出生日期'},
             { field: 'maray', width: 70, title: '婚否'},
             { field: 'addr', width: 170, title: '地址' },
             { field: 'company', width: 100, title: '公司' },
-            { field: 'nianxin', width: 70, title: '年薪', styler: this.cellStyler },
             { field: 'zhiwei', width: 100, title: '职位' }
         ];
 
@@ -39,9 +39,14 @@ export class showLineNumberComponent implements OnInit {
     rowStyle = (rowData) => {
         if (rowData.id === 5) {
             return {
-                background: 'red',
-                color: 'yellow',
-                border: '1px solid blue'
+                style: {
+                    color: 'blue',
+                    background: '#f8ad4f'
+                }
+            };
+        } else {
+            return {
+                cls: 'custom-row-style'
             };
         }
     }
@@ -50,13 +55,17 @@ export class showLineNumberComponent implements OnInit {
         if (val) {
             if ( val > 50000) {
                 return {
-                    background: 'green',
-                    color: 'white'
+                    style:  {
+                        background: 'green',
+                        color: 'white'
+                    }
                 };
             } else {
                 return {
-                    color: 'red',
-                    fontWeight:'bold'
+                    style: {
+                        color: 'blue',
+                        fontWeight: 'bold'
+                    }
                 };
             }
         }

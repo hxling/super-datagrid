@@ -1,5 +1,6 @@
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Directive, Input, Output, EventEmitter, HostListener, OnInit, ElementRef, Renderer2, AfterViewInit } from '@angular/core';
+import { Directive, Input, Output, EventEmitter, HostListener,
+    OnInit, ElementRef, Renderer2, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
 
@@ -14,14 +15,13 @@ export class GridRowDirective implements OnInit, AfterViewInit {
 
     form = new FormGroup({});
 
-    customRowStyle: any;
-
     constructor(public dg: DatagridComponent, private dfs: DatagridFacadeService,
+                private cd: ChangeDetectorRef,
                 private fb: FormBuilder, private el: ElementRef, private render: Renderer2) {}
 
     ngOnInit() {
         this.form = this.createControl();
-        this.customRowStyle = this.renderCustomStyle();
+        this.renderCustomStyle();
     }
 
     ngAfterViewInit() {
@@ -31,11 +31,9 @@ export class GridRowDirective implements OnInit, AfterViewInit {
         if (this.dg.rowStyler) {
             const trStyle = this.dg.rowStyler(this.rowData, this.rowIndex);
             if (trStyle && Object.keys(trStyle).length) {
-                return trStyle;
+                this.dg.renderCustomStyle(trStyle, this.el.nativeElement);
             }
         }
-
-        return {};
     }
 
     @HostListener('click', ['$event'])
