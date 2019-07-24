@@ -114,7 +114,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 是否启用异步加载数据 */
     @Input() virtualizedAsyncLoad = false;
 
-    @Input() rowStyler: () => void;
+    @Input() rowStyler: (rowData, rowIndex?: number) => any;
     /** 编辑方式： row(整行编辑)、cell(单元格编辑)；默认为 row */
     @Input() editMode: 'row'| 'cell' = 'row';
     /** 编辑状态 */

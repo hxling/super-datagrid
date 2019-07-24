@@ -13,7 +13,7 @@ import { GridRowDirective } from './body-row.directive';
 @Component({
     selector: 'grid-body-cell',
     template: `
-    <div class="f-datagrid-cell-content" #cellContainer
+    <div class="f-datagrid-cell-content" #cellContainer [ngStyle]="cellStyler"
      [ngClass]="{'f-datagrid-cell-edit': isEditing, 'f-datagrid-cell-selected': isSelected}">
         <span *ngIf="!isEditing">{{ value }}</span>
         <ng-container #editorTemplate *ngIf="isEditing" cell-editor [column]="column" [group]="dr.form"></ng-container>
@@ -40,6 +40,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     cellContext: any = {};
     value: any;
 
+    cellStyler: any = {};
 
     currentCell = this.dfs.currentCell$;
     canEdit = () => this.datagrid.editable && this.datagrid.editMode === 'cell' && this.column.editor;
@@ -57,6 +58,8 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
         };
 
         this.updateValue();
+
+        this.cellStyler = this.buildCustomCellStyle();
 
         // this.currentCell.subscribe((cell: CellInfo) => {
         //     this.datagrid.currentCell = cell;
@@ -85,6 +88,17 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         // this.isEditing$ = null;
+    }
+
+    private buildCustomCellStyle() {
+        if (this.column.styler) {
+            const cs = this.column.styler(this.rowData[this.column.field], this.rowData, this.rowIndex);
+            if (cs && Object.keys(cs).length) {
+                return cs;
+            }
+        }
+
+        return undefined;
     }
 
     @HostListener('dblclick', ['$event'])

@@ -25,12 +25,14 @@
                 <!-- <div #topDiv class="f-datagrid-virtual-row body-top" *ngIf="datagrid.virtualized" 
                     [style.height.px]="topHideHeight" style="transform: translate3d(0px, 0px, 0px);"></div> -->
                 <table #datatable style="border:0; width: 100%" class="f-datagrid-rows f-datagrid-row-hover" cellpadding=0 cellspacing="0">
-                    <tr class="f-datagrid-body-row" [grid-row]="row" [rowIndex]="i" #dr="gridRow" [formGroup]="dr.form"
+                    <tr class="f-datagrid-body-row" 
+                        [grid-row]="row" [rowIndex]="i" #dr="gridRow" [formGroup]="dr.form"
+                        [ngStyle]="dr.customRowStyle"
                         *ngFor="let row of data ; trackBy: trackByRows; let i = index; odd as odd"
                         [class.f-datagrid-row-odd]="odd && datagrid.striped"
                         [class.f-datagrid-row-even]="!odd && datagrid.striped"
                         [class.f-datagrid-row-selected]="currentRowId === row[datagrid.idField]"
-                        [style.height.px]="rowHeight" >
+                    >
                         <td cell-editable class="f-datagrid-cell" [style.width.px]="col.width" *ngFor="let col of columnsGroup?.normalColumns; let ci = index;">
                             <grid-body-cell [width]="col.width" [height]="rowHeight" [column]="col" [rowData]="row" [rowIndex]="i"></grid-body-cell>
                         </td>

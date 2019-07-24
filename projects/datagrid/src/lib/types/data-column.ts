@@ -8,8 +8,8 @@ export interface DataColumn {
     align?: 'left' | 'center' | 'right';
     /** 是否允许拖动列宽 */
     resizable?: string;
-    formatter?: (value, rowData, rowIndex) => void;
-    styler?: (value, rowData, rowIndex) => void;
+    formatter?: (value, rowData, rowIndex) => any;
+    styler?: (value, rowData, rowIndex) => any;
     left?: number;
     /** 是否固定 */
     fixed?: 'left' | 'right';

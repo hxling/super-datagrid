@@ -28,11 +28,39 @@ export class showLineNumberComponent implements OnInit {
             { field: 'maray', width: 70, title: '婚否'},
             { field: 'addr', width: 170, title: '地址' },
             { field: 'company', width: 100, title: '公司' },
-            { field: 'nianxin', width: 70, title: '年薪' },
+            { field: 'nianxin', width: 70, title: '年薪', styler: this.cellStyler },
             { field: 'zhiwei', width: 100, title: '职位' }
         ];
 
         this.total = 1000;
         this.items = this.dds.createData(1000);
+    }
+
+    rowStyle = (rowData) => {
+        if (rowData.id === 5) {
+            return {
+                background: 'red',
+                color: 'yellow',
+                border: '1px solid blue'
+            };
+        }
+    }
+
+    cellStyler = (val, data, index) => {
+        if (val) {
+            if ( val > 50000) {
+                return {
+                    background: 'green',
+                    color: 'white'
+                };
+            } else {
+                return {
+                    color: 'red',
+                    fontWeight:'bold'
+                };
+            }
+        }
+
+        return undefined;
     }
 }
