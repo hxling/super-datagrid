@@ -1,3 +1,4 @@
+import { AppHomeComponent } from './home.component';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -28,6 +29,7 @@ import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-te
   declarations: [
 
     AppComponent,
+    AppHomeComponent,
     ScrollBarLoadComponent,
     PageScrollComponent,
     AllDataLoadOnceComponent,

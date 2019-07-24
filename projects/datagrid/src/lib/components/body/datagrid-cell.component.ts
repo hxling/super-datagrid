@@ -1,4 +1,4 @@
-import { CellInfo } from './../../services/state';
+import { CellInfo } from '../../services/state';
 import { Component, OnInit, Input, Output, EventEmitter, HostListener,
     ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef,
     OnDestroy, ViewContainerRef, ComponentFactoryResolver, NgZone } from '@angular/core';
@@ -8,7 +8,7 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { map, filter } from 'rxjs/operators';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridEditorComponent } from '../editors/grid-editor.component';
-import { GridRowDirective } from './body-row.directive';
+import { DatagridRowDirective } from './datagrid-row.directive';
 
 @Component({
     selector: 'grid-body-cell',
@@ -22,7 +22,7 @@ import { GridRowDirective } from './body-row.directive';
     `,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DatagridBodyCellComponent implements OnInit, OnDestroy {
+export class DatagridCellComponent implements OnInit, OnDestroy {
     @Input() width: number;
     @Input() height: number;
     @Input() cls = '';
@@ -45,7 +45,7 @@ export class DatagridBodyCellComponent implements OnInit, OnDestroy {
     currentCell = this.dfs.currentCell$;
     canEdit = () => this.dg.editable && this.dg.editMode === 'cell' && this.column.editor;
     constructor(
-        private dfs: DatagridFacadeService, public dr: GridRowDirective,
+        private dfs: DatagridFacadeService, public dr: DatagridRowDirective,
         private render2: Renderer2, private utils: CommonUtils, private el: ElementRef,
         private dg: DatagridComponent, private cfr: ComponentFactoryResolver,
         private cd: ChangeDetectorRef, private zone: NgZone) { }

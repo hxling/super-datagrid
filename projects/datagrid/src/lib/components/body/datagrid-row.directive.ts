@@ -8,7 +8,7 @@ import { DatagridComponent } from '../../datagrid.component';
     selector: '[grid-row]',
     exportAs: 'gridRow'
 })
-export class GridRowDirective implements OnInit, AfterViewInit {
+export class DatagridRowDirective implements OnInit, AfterViewInit {
     @Input('grid-row') rowData: any;
     @Input() rowIndex: number;
     @Output() clickHandler = new EventEmitter();

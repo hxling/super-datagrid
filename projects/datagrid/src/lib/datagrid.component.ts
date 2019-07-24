@@ -108,7 +108,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 列集合 */
     @Input() columns: DataColumn[];
     @Input() fields: DataColumn[];
-
+    /** 数据折行，默认值：true,即在一行显示，不折行。 */
+    @Input() nowrap = true;
     /** 虚拟加载 */
     @Input() virtualized = true;
     /** 是否启用异步加载数据 */

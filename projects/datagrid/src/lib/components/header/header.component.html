@@ -33,7 +33,7 @@
         </ng-container>
 
         <div #fixedRight *ngIf="columnsGroup?.rightFixed && columnsGroup?.rightFixed.length" [style.width.px]="columnsGroup?.rightFixedWidth"
-            class="f-datagrid-cell-group f-datagrid-body-fixed-right" [class.f-datagrid-fixed-right-shadow]="!!scrollLeft" [style.height.px]="height">
+            class="f-datagrid-cell-group f-datagrid-body-fixed-right" [style.height.px]="height">
             <table class="f-datagrid-cell-header">
                 <thead>
                     <tr class="f-datagrid-body-row">

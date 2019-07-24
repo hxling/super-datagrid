@@ -1,3 +1,4 @@
+import { AppComponent } from './app.component';
 import { AllDataLoadOnceComponent } from './demos/alldata-load-once/alldata-load-once.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -12,14 +13,14 @@ import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-te
 
 const routes: Routes = [
   { path: 'scroll-load', component: ScrollBarLoadComponent},
-  { path: 'load-all', component: AllDataLoadOnceComponent},
-  { path: 'row-number', component: ShowLineNumberComponent},
-  { path: 'normal', component: NormalDatagridComponent},
-  { path: 'cell-edit', component: CellEditorComponent},
-  { path: 'ps-load', component: VirtualLoadDemoComponent},
-  { path: 'scrollbar', component: ScrollbarLoadDemoComponent},
-  { path: 'custom-cell', component: CustomCellComponent },
-  { path: '', component: PageScrollComponent}
+    { path: 'load-all', component: AllDataLoadOnceComponent},
+    { path: 'row-number', component: ShowLineNumberComponent},
+    { path: 'normal', component: NormalDatagridComponent},
+    { path: 'cell-edit', component: CellEditorComponent},
+    { path: 'ps-load', component: VirtualLoadDemoComponent},
+    { path: 'scrollbar', component: ScrollbarLoadDemoComponent},
+    { path: 'custom-cell', component: CustomCellComponent },
+    { path: '', component: NormalDatagridComponent}
 ];
 
 @NgModule({
