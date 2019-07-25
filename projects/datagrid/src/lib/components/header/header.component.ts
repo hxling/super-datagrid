@@ -10,7 +10,7 @@ import { DatagridComponent } from '../../datagrid.component';
 })
 export class DatagridHeaderComponent implements OnInit {
     @Input() height = 36;
-    @Input() columnGroup: ColumnGroup;
+    @Input() columnsGroup: ColumnGroup;
 
     @ViewChild('headerContainer') headerContainer: ElementRef;
     @ViewChild('fixedLeft') fixedLeft: ElementRef;

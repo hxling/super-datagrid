@@ -1,61 +1,59 @@
 import { VirtualizedLoaderService } from './virtualized-loader.service';
-import { FarrisDatagridState, initDataGridState, DataResult, CellInfo } from './state';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState } from './state';
+import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { DataColumn, ColumnGroup } from '../types';
-import { map, distinctUntilChanged, filter } from 'rxjs/operators';
+import { map, distinctUntilChanged, filter, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class DatagridFacadeService {
     protected _state: FarrisDatagridState;
     public virtualizedService: VirtualizedLoaderService;
-    readonly store = new BehaviorSubject<FarrisDatagridState>(this._state);
+
+    store = new BehaviorSubject<FarrisDatagridState>(this._state);
+
+    virtualRowSubject = new Subject<any>();
+    gridSizeSubject = new Subject<any>();
+
     readonly state$ = this.store.asObservable().pipe(
         filter( (state: any) => state)
     );
 
-    size$ = this.state$.pipe(
-        map((state: FarrisDatagridState) => {
-            const { pagerHeight, headerHeight, rowHeight, width, height, columnsGroup } = { ...state};
-            return {
-                pagerHeight, headerHeight, rowHeight, width, height, columnsGroup
-            };
-        }),
-        distinctUntilChanged()
-    );
-
-    readonly columnGroup$ = this.state$.pipe(
+    readonly columnGroup$ = this.store.asObservable().pipe(
+        filter( (state: any) => state),
         map((state: FarrisDatagridState) => state.columnsGroup),
         distinctUntilChanged()
     );
 
-    readonly data$ = this.state$.pipe(
+    gridSize$ = this.gridSizeSubject.asObservable().pipe(
+        filter( (state: any) => state),
         map((state: FarrisDatagridState) => {
-            if (state.virtual && state.virtualized) {
-                return {
-                    rows: state.virtual.virtualRows,
-                    top: state.virtual.topHideHeight || 0,
-                    bottom: state.virtual.bottomHideHeight || 0
-                };
-            } else {
-                return { rows: state.data || [] , top: 0, bottom: 0};
-            }
+            const { headerHeight, pagerHeight, width, columnsGroup, height, rowHeight } = {...state};
+            return { headerHeight, pagerHeight, width, columnsGroup, height, rowHeight };
         }),
         distinctUntilChanged()
     );
 
-    readonly currentEdit$ = this.state$.pipe(
-        map((state: FarrisDatagridState) => state.currentCell),
-        distinctUntilChanged()
+    readonly data$ = this.virtualRowSubject.asObservable().pipe(
+        filter(vs => vs),
+        map((vs: VirtualizedState) => {
+            return {
+                rows: vs.virtualRows,
+                top: vs.topHideHeight,
+                bottom: vs.bottomHideHeight
+            };
+        })
     );
 
-    readonly currentRow$ = this.state$.pipe(
+    readonly currentRow$ = this.store.asObservable().pipe(
+        filter( (state: any) => state),
         map((state: FarrisDatagridState) => state.currentRow),
         distinctUntilChanged()
     );
 
-    readonly currentCell$ = this.state$.pipe(
+    readonly currentCell$ = this.store.asObservable().pipe(
+        filter( (state: any) => state),
         map(state => state.currentCell),
         distinctUntilChanged()
     );
@@ -66,9 +64,14 @@ export class DatagridFacadeService {
     }
 
     updateVirthualRows(scrolltop: number) {
-        this.virtualizedService.state = this._state;
-        const virtual = { ...this._state.virtual, ...this.virtualizedService.getRows(scrolltop) };
+        let virtual = {rowIndex: 0, virtualRows: this._state.data, topHideHeight: 0, bottomHideHeight: 0 };
+        if (this._state.virtual && this._state.virtualized) {
+            this.virtualizedService.state = this._state;
+            virtual = { ...this._state.virtual, ...this.virtualizedService.getRows(scrolltop) };
+        }
+
         this.updateState({virtual});
+        this.virtualRowSubject.next(virtual);
     }
 
     getDeltaTopHeight(scrolTop, firstIndex) {
@@ -106,6 +109,7 @@ export class DatagridFacadeService {
         this.initColumns();
 
         this.updateVirthualRows(0);
+        this.gridSizeSubject.next(this._state);
     }
 
     loadData(data: any) {
@@ -118,6 +122,7 @@ export class DatagridFacadeService {
         this.virtualizedService.state = this._state;
         const virtual = { ...this._state.virtual, ...this.virtualizedService.reload() };
         console.log(virtual);
+        this.virtualRowSubject.next(virtual);
         this.updateState({virtual});
     }
 
@@ -167,13 +172,15 @@ export class DatagridFacadeService {
 
     setCurrentCell(rowIndex: number, rowData: any, field: string ) {
         if (!this.isCellSelected({rowIndex, field})) {
-            const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData), isEditing: false };
+            const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData) };
             this.updateState({currentCell});
         }
     }
 
     cancelSelectCell() {
-        this.updateState({currentCell: null});
+        if (this._state.currentCell) {
+            this.updateState({currentCell: null});
+        }
     }
 
     primaryId(data: any) {

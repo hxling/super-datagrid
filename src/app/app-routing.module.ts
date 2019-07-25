@@ -6,6 +6,8 @@ import { PageScrollComponent } from './demos/page-scroll/page-scroll.component';
 import { ShowRowNumberComponent } from './demos/row-number/show-row-number.component';
 import { NormalDatagridComponent } from './demos/normal-grid/normal-grid.component';
 import { CellEditorComponent } from './demos/cell-editor/cell-editor.component';
+import { VirtualLoadDemoComponent } from './demos/virtual-load/virtual-load-demo.component';
+import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-demo.component';
 
 const routes: Routes = [
   { path: 'scroll-load', component: ScrollBarLoadComponent},
@@ -13,6 +15,8 @@ const routes: Routes = [
   { path: 'row-number', component: ShowRowNumberComponent},
   { path: 'normal', component: NormalDatagridComponent},
   { path: 'cell-edit', component: CellEditorComponent},
+  { path: 'ps-load', component: VirtualLoadDemoComponent},
+  { path: 'scrollbar', component: ScrollbarLoadDemoComponent},
   { path: '', component: PageScrollComponent}
 ];
 

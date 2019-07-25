@@ -19,10 +19,13 @@ import { NormalDatagridComponent } from './demos/normal-grid/normal-grid.compone
 import { CellEditorComponent } from './demos/cell-editor/cell-editor.component';
 import { MyCustomGridEditorComponent } from './demos/myeditors/input-group-editor.component';
 import { GRID_EDITORS } from 'projects/datagrid/src/lib/types';
+import { VirtualLoadDemoComponent } from './demos/virtual-load/virtual-load-demo.component';
+import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-demo.component';
 
 
 @NgModule({
   declarations: [
+
     AppComponent,
     ScrollBarLoadComponent,
     PageScrollComponent,
@@ -30,7 +33,10 @@ import { GRID_EDITORS } from 'projects/datagrid/src/lib/types';
     ShowRowNumberComponent,
     NormalDatagridComponent,
     CellEditorComponent,
-    MyCustomGridEditorComponent
+    MyCustomGridEditorComponent,
+    VirtualLoadDemoComponent,
+    ScrollbarLoadDemoComponent
+
   ],
   imports: [
     BrowserModule,

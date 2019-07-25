@@ -1,0 +1,180 @@
+* {
+  box-sizing: border-box;
+}
+
+.f-datagrid {
+  border: 1px solid #CBCBCB;
+  position: relative;
+  overflow: hidden;
+  font-size: 14px;
+}
+.f-datagrid-header {
+  z-index: 2;
+  position: relative;
+}
+.f-datagrid-row-header {
+  height: 36px;
+  background: #F3F2F3;
+}
+.f-datagrid-row-header .f-datagrid-cell-group-left-shadow, .f-datagrid-row-header .f-datagrid-cell-group-right-shadow {
+  height: 36px;
+}
+.f-datagrid .f-datagrid-row-header .f-datagrid-cell {
+  background: #F3F2F3;
+}
+.f-datagrid-body {
+  position: absolute;
+  overflow: hidden;
+  z-index: 0;
+}
+.f-datagrid-body-wheel-area {
+  overflow: hidden;
+  position: relative;
+  background-color: #F5F5F5;
+  background-image: linear-gradient(#fff 50%, transparent 0);
+  background-origin: content-box;
+  background-size: 50% 72px;
+}
+.f-datagrid-body-fixed-left {
+  position: absolute;
+  z-index: 1;
+}
+.f-datagrid-body-row {
+  overflow: hidden;
+  height: 36px;
+  width: 100%;
+  top: 0;
+  border-bottom: 1px solid #CBCBCB;
+  background-color: #fff;
+  transition: all 0.15s ease;
+}
+.f-datagrid-row {
+  overflow: hidden;
+  height: 36px;
+  width: 100%;
+  top: 0;
+  border-bottom: 1px solid #CBCBCB;
+  background-color: #fff;
+  transition: all 0.15s ease;
+}
+.f-datagrid-row-body .f-datagrid-cell-group-left-shadow, .f-datagrid-row-body .f-datagrid-cell-group-right-shadow {
+  height: 36px;
+}
+.f-datagrid-row-hover tr:hover {
+  cursor: pointer;
+  background: #E5F3FF !important;
+  color: black;
+}
+.f-datagrid-row-hover tr:hover .f-datagrid-cell {
+  background: transparent;
+}
+.f-datagrid-row-selected {
+  background-color: #B7E4FF;
+  color: #222;
+}
+.f-datagrid-row-selected .f-datagrid-cell {
+  background-color: transparent;
+}
+.f-datagrid-row.virtualized {
+  pointer-events: none;
+  background-color: transparent !important;
+  border-width: 0;
+}
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-selected {
+  background-color: #B7E4FF !important;
+  color: #222;
+}
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-odd {
+  background-color: #FCFDFE;
+}
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-odd .f-datagrid-cell {
+  background-color: transparent;
+}
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-even {
+  background-color: #fff;
+}
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-even .f-datagrid-cell {
+  background-color: transparent;
+}
+.f-datagrid-cell-group-fixed-left {
+  position: absolute;
+  z-index: 4;
+  background: #fff;
+}
+.f-datagrid-cell-group-fixed-right {
+  position: absolute;
+  z-index: 4;
+  background: #fff;
+  margin-left: 10px;
+}
+.f-datagrid-fixed-left-shadow {
+  box-shadow: 3px 0px 5px rgba(9, 9, 9, 0.16);
+}
+.f-datagrid-fixed-right-shadow {
+  box-shadow: -3px 0px 5px rgba(9, 9, 9, 0.16);
+}
+.f-datagrid-cell {
+  height: 36px;
+  border-style: solid;
+  border-width: 0;
+  border-color: #CBCBCB;
+  overflow: hidden;
+  white-space: normal;
+}
+.f-datagrid-cell-formgroup {
+  height: 100%;
+}
+.f-datagrid-cell-editor {
+  width: 100%;
+  height: calc(36px - 3px);
+  border: 0;
+}
+.f-datagrid-cell-selected {
+  border: 1px solid #0091EA !important;
+}
+.f-datagrid-cell-edit .f-datagrid-cell-content {
+  padding: 0;
+}
+.f-datagrid-cell-content {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  margin: 0;
+  height: calc(36px - 3px);
+  line-height: calc(36px - 3px);
+}
+.f-datagrid-cell-content > span {
+  padding: 5px;
+}
+.f-datagrid-cell-rownumber {
+  background-color: #F3F2F3 !important;
+  color: #000 !important;
+  text-align: center;
+}
+.f-datagrid-cell-rownumber .f-datagrid-cell-content {
+  padding: 0;
+  text-align: center;
+}
+.f-datagrid-cell-rownumber.rownumber-selected {
+  background-color: #d9d9d9 !important;
+}
+.f-datagrid-bordered .f-datagrid-cell {
+  border-width: 0 1px 0 0;
+}
+.f-datagrid-pager {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  border-top: 1px solid #ccc;
+  background: #fafafa;
+}
+.f-datagrid .ps--active-x > .ps__rail-x, .f-datagrid .ps--active-y > .ps__rail-y {
+  z-index: 999;
+}
+.f-datagrid-body-fixed-left > .ps__rail-x, .f-datagrid-body-fixed-left > .ps__rail-y {
+  display: none !important;
+}
+
+/*# sourceMappingURL=datagrid.css.map */

@@ -9,7 +9,7 @@
                     [style.width.px]="leftFixedWidth" [style.height.px]="data.length * rowHeight" >
                 <table style="width: 100%" >
                     <tr class="f-datagrid-body-row" [style.height.px]="rowHeight" *ngFor="let row of data ; trackBy: trackByRows; let i=index; odd as odd">
-                        <td class="f-datagrid-cell f-datagrid-cell-rownumber" [style.width.px]="leftFixedWidth">
+                        <td class="f-datagrid-cell f-datagrid-cell-rownumber" [style.width.px]="datagrid.rowNumberWidth">
                             {{ i + 1 }}
                         </td>
                     </tr>    
