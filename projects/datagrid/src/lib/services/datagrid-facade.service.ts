@@ -1,10 +1,10 @@
-import { VirtualizedLoaderService } from './virtualized-loader.service';
-import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState } from './state';
-import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { DataColumn, ColumnGroup } from '../types';
-import { map, distinctUntilChanged, filter, switchMap, auditTime } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
+import { map, distinctUntilChanged, filter, switchMap, auditTime } from 'rxjs/operators';
+import { DataColumn, ColumnGroup } from '../types';
+import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState } from './state';
+import { VirtualizedLoaderService } from './virtualized-loader.service';
 
 @Injectable()
 export class DatagridFacadeService {
@@ -146,26 +146,6 @@ export class DatagridFacadeService {
         this.updateState({virtual}, false);
     }
 
-    initColumns() {
-        const columns = this._state.columns;
-        if (columns && columns.length) {
-
-            const leftFixedCols = this.getFixedCols();
-            const rightFixedCols = this.getFixedCols('right');
-            const normalCols = columns.filter(col => !col.fixed);
-
-            const colgroup = {
-                leftFixed: leftFixedCols,
-                rightFixed: rightFixedCols,
-                normalColumns: normalCols
-            };
-
-            this.initColumnsWidth(colgroup);
-
-            this.updateState({ columnsGroup: colgroup }, false);
-        }
-    }
-
     selectRow(rowIndex: number, rowData: any) {
         const id = this.primaryId(rowData);
         this.updateState({ currentRow: { id, data: rowData, index: rowIndex } });
@@ -225,6 +205,40 @@ export class DatagridFacadeService {
         }
     }
 
+    initColumns() {
+        const columns = this._state.columns;
+        if (columns && columns.length) {
+
+            const leftFixedCols = this.getFixedCols();
+            const rightFixedCols = this.getFixedCols('right');
+            const normalCols = columns.filter(col => !col.fixed);
+
+            const colgroup = {
+                leftFixed: leftFixedCols,
+                rightFixed: rightFixedCols,
+                normalColumns: normalCols
+            };
+
+            this.initColumnsWidth(colgroup);
+
+            if (this._state.fitColumns) {
+                this.fitColumns(colgroup);
+            }
+
+            this.updateState({ columnsGroup: colgroup }, false);
+        }
+    }
+
+    private fitColumns(colgroup: ColumnGroup) {
+        colgroup.normalWidth = this._state.width - colgroup.leftFixedWidth;
+        const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
+            return totalWidth += col.width;
+        }, 0);
+
+        colgroup.normalColumns.forEach( col => {
+            col.width = Math.floor( col.width / minWidth * colgroup.normalWidth );
+        });
+    }
 
     private getFixedCols(direction: 'left' | 'right' = 'left') {
         return this._state.columns.filter(col => col.fixed === direction);

@@ -1,4 +1,4 @@
-import { AppComponent } from './app.component';
+import { FitColumnsComponent } from './demos/fitcolumns/fit-columns.component';
 import { AllDataLoadOnceComponent } from './demos/alldata-load-once/alldata-load-once.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -20,7 +20,8 @@ const routes: Routes = [
     { path: 'ps-load', component: VirtualLoadDemoComponent},
     { path: 'scrollbar', component: ScrollbarLoadDemoComponent},
     { path: 'custom-cell', component: CustomCellComponent },
-    { path: '', component: NormalDatagridComponent}
+    { path: 'fit-columns', component: FitColumnsComponent },
+    { path: '', component: PageScrollComponent}
 ];
 
 @NgModule({

@@ -11,19 +11,35 @@
         position: relative;
     }
 
-    &-row-header {
+    &-header {
         height: $header-cell-height;
-        background: $header-bgcolor;
-        
+        background-color: $header-bgcolor;
+        overflow: hidden;
+        width: 100%;
+        border-bottom: 1px solid $border-color;
+        transition: all .15s ease;
+
+
         .f-datagrid-cell-group-left-shadow, .f-datagrid-cell-group-right-shadow {
             height:$header-cell-height;
         }
+
+        &-row {
+            background-color: $header-bgcolor;
+        }
+
+        &-cell {
+            height: 36px;
+            border-style: solid;
+            border-width: 0 1px 0 0;
+            border-color: #CBCBCB;
+            overflow: hidden;
+            white-space: normal;
+            &-content {
+                padding-left: 5px;
+            }
+        }
     }
-
-    & &-row-header &-cell{
-        background: $header-bgcolor;
-    }   
-
 
     &-body {
         position: absolute;
@@ -32,11 +48,6 @@
         &-wheel-area {
             overflow:hidden; 
             position: relative;
-
-            background-color: #F5F5F5;
-            background-image: linear-gradient(#fff 50%, transparent 0);
-            background-origin: content-box;
-            background-size: 50% 72px;
         }
 
         &-fixed-left {

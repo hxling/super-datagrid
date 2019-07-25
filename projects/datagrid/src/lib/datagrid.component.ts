@@ -4,12 +4,12 @@ import { Component, OnInit, Input, ViewEncapsulation,
 import { DataColumn, CustomStyle } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { DatagridColumnDirective } from './components/columns';
+import { DatagridColumnDirective } from './components/columns/datagrid-column.directive';
 import { DataResult, CellInfo } from './services/state';
 import { RestService, REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
-import { of, fromEvent, Subscription } from 'rxjs';
-import { GRID_EDITORS } from './types';
+import { of, Subscription } from 'rxjs';
+import { GRID_EDITORS } from './types/constant';
 
 @Component({
     selector: 'farris-datagrid',
@@ -125,9 +125,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Output() endEdit = new EventEmitter();
 
     @Output() scrollY = new EventEmitter();
+
+    @Output() pageSizeChanged = new EventEmitter();
     @Output() pageChanged = new EventEmitter();
 
-    @ContentChildren(DatagridColumnDirective) dgColumns: QueryList<DatagridColumnDirective>;
+    @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
 
     colGroup$ = this.dfs.columnGroup$;
     data$ = this.dfs.data$;
@@ -160,7 +162,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     constructor(private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
-                private cd: ChangeDetectorRef,
+                public cd: ChangeDetectorRef,
                 private inject: Injector, private zone: NgZone,
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
 
@@ -211,7 +213,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         this.initState();
         this.registerDocumentEvent();
-        this.loadData();
+        if (!this.data || !this.data.length) {
+            this.loadData();
+        }
     }
 
     private onKeyboardDown() {
@@ -290,14 +294,26 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.cd.detectChanges();
     }
 
-    private loadData() {
-        if (!this.data || !this.data.length) {
+    loadData(data?: any) {
+        if (data) {
+            if (this.pagination) {
+                this.pagerOpts = Object.assign(this.pagerOpts, {
+                    itemsPerPage: this.pageSize,
+                    currentPage: this.pageIndex,
+                    totalItems: this.total
+                });
+                this.dfs.setPagination(this.pageIndex, this.pageSize, this.total);
+            }
+            this.dfs.loadData(data);
+            this.dgs.dataSourceChanged();
+        } else {
             this.fetchData().subscribe((res: DataResult) => {
                 if (res) {
                     const { items, pageIndex, pageSize, total } = {...res};
                     this.total = total;
                     this.dfs.setPagination(pageIndex, pageSize, total);
                     this.dfs.loadData(items);
+                    this.dgs.dataSourceChanged();
                 }
             });
         }
@@ -318,7 +334,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     onPageChange(pageIndex: number) {
         this.pageIndex = pageIndex;
         this.pagerOpts.currentPage = pageIndex;
-        this.pageChanged.emit(pageIndex);
+        this.pageChanged.emit({pageIndex, pageSize: this.pageSize});
     }
 
     fetchData(_pageIndex = 1) {
@@ -329,6 +345,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     private initState() {
+        this.data = this.data || [];
         this.dfs.initState({...this});
     }
 
@@ -360,5 +377,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 this.render2.setStyle(dom, k, cs.style[k]);
             });
         }
+    }
+
+    refresh() {
+        this.cd.detectChanges();
     }
 }

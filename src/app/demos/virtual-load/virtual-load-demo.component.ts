@@ -1,7 +1,6 @@
-import { PerfectScrollbarDirective } from 'projects/datagrid/src/lib/perfect-scrollbar/perfect-scrollbar.directive';
+import { ScrollbarDirective } from '@farris/ui-datagrid';
 import { Component, OnInit, ChangeDetectorRef, Input, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
-import { viewClassName } from '@angular/compiler';
 
 @Component({
     selector: 'demo-virtual-load',
@@ -31,7 +30,7 @@ export class VirtualLoadDemoComponent implements OnInit {
     bottomAreaHeight = 0;
 
     @Input() rows = [];
-    @ViewChild('ps') ps: PerfectScrollbarDirective;
+    @ViewChild('ps') ps: ScrollbarDirective;
     private scrollTimer: any;
     compareItems: (item1: any, item2: any) => boolean = (item1: any, item2: any) => item1 === item2;
     constructor(private dds: DemoDataService, private cd: ChangeDetectorRef) {

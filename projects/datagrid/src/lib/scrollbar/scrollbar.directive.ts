@@ -1,3 +1,6 @@
+import { PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+
 import PerfectScrollbar from 'perfect-scrollbar';
 
 import ResizeObserver from 'resize-observer-polyfill';
@@ -5,26 +8,24 @@ import ResizeObserver from 'resize-observer-polyfill';
 import { Subject, fromEvent } from 'rxjs';
 import { auditTime, takeUntil } from 'rxjs/operators';
 
-import { PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
 import {
     NgZone, Inject, Optional, ElementRef, Directive,
     OnInit, DoCheck, OnChanges, OnDestroy, Input, Output, EventEmitter,
     SimpleChanges, KeyValueDiffer, KeyValueDiffers
 } from '@angular/core';
 
-import { Geometry, Position } from './perfect-scrollbar.interfaces';
+import { Geometry, Position } from './scrollbar.interfaces';
 
 import {
-    PERFECT_SCROLLBAR_CONFIG, PerfectScrollbarConfig, PerfectScrollbarConfigInterface,
-    PerfectScrollbarEvent, PerfectScrollbarEvents
-} from './perfect-scrollbar.interfaces';
+    SCROLLBAR_CONFIG, ScrollbarConfig, ScrollbarConfigInterface,
+    ScrollbarEvent, ScrollbarEvents
+} from './scrollbar.interfaces';
 
 @Directive({
-    selector: '[perfectScrollbar]',
-    exportAs: 'ngxPerfectScrollbar'
+    selector: '[scrollbar]',
+    exportAs: 'ngxScrollbar'
 })
-export class PerfectScrollbarDirective implements OnInit, OnDestroy, DoCheck, OnChanges {
+export class ScrollbarDirective implements OnInit, OnDestroy, DoCheck, OnChanges {
     private instance: PerfectScrollbar | null = null;
 
     private ro: ResizeObserver | null = null;
@@ -38,7 +39,7 @@ export class PerfectScrollbarDirective implements OnInit, OnDestroy, DoCheck, On
 
     @Input() disabled = false;
 
-    @Input('perfectScrollbar') config?: PerfectScrollbarConfigInterface;
+    @Input('scrollbar') config?: ScrollbarConfigInterface;
 
     @Output() psScrollY: EventEmitter<any> = new EventEmitter<any>();
     @Output() psScrollX: EventEmitter<any> = new EventEmitter<any>();
@@ -55,11 +56,11 @@ export class PerfectScrollbarDirective implements OnInit, OnDestroy, DoCheck, On
 
     constructor(private zone: NgZone, private differs: KeyValueDiffers,
                 public elementRef: ElementRef, @Inject(PLATFORM_ID) private platformId: any,
-                @Optional() @Inject(PERFECT_SCROLLBAR_CONFIG) private defaults: PerfectScrollbarConfigInterface) { }
+                @Optional() @Inject(SCROLLBAR_CONFIG) private defaults: ScrollbarConfigInterface) { }
 
     ngOnInit(): void {
         if (!this.disabled && isPlatformBrowser(this.platformId)) {
-            const config = new PerfectScrollbarConfig(this.defaults);
+            const config = new ScrollbarConfig(this.defaults);
 
             config.assign(this.config); // Custom configuration
 
@@ -86,7 +87,7 @@ export class PerfectScrollbarDirective implements OnInit, OnDestroy, DoCheck, On
             });
 
             this.zone.runOutsideAngular(() => {
-                PerfectScrollbarEvents.forEach((eventName: PerfectScrollbarEvent) => {
+                ScrollbarEvents.forEach((eventName: ScrollbarEvent) => {
                     const eventType = eventName.replace(/([A-Z])/g, (c) => `-${c.toLowerCase()}`);
 
                     fromEvent<Event>(this.elementRef.nativeElement, eventType)

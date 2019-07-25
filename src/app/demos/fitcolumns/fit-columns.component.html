@@ -3,14 +3,8 @@
 
     <farris-datagrid [columns]="columns" [data]="items" #dg="datagrid"
         [showLineNumber] ="true" [striped]="false" [showCheckbox]="false"
-        [virtualized]="true"
+        [virtualized]="true" [fitColumns]="true"
         [pagination]="false" [pageSize]= "pageSize" [pageIndex]="pageIndex"  [total]="total"
     ></farris-datagrid>
     
 </div>
-
-<ng-template #cell1 let-ctx>
-    <button class="btn btn-primary" (click)="onDeleteClick($event, ctx)">删除</button> &nbsp;
-    <button class="btn btn-success">审核</button>
-</ng-template>
-    

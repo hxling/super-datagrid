@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 
-export const PERFECT_SCROLLBAR_CONFIG = new InjectionToken(
+export const SCROLLBAR_CONFIG = new InjectionToken(
     'PERFECT_SCROLLBAR_CONFIG'
 );
 
@@ -29,7 +29,7 @@ export class Position {
     }
 }
 
-export type PerfectScrollbarEvent =
+export type ScrollbarEvent =
     | 'psScrollY'
     | 'psScrollX'
     | 'psScrollUp'
@@ -41,7 +41,7 @@ export type PerfectScrollbarEvent =
     | 'psXReachEnd'
     | 'psXReachStart';
 
-export const PerfectScrollbarEvents: PerfectScrollbarEvent[] = [
+export const ScrollbarEvents: ScrollbarEvent[] = [
     'psScrollY',
     'psScrollX',
 
@@ -56,7 +56,7 @@ export const PerfectScrollbarEvents: PerfectScrollbarEvent[] = [
     'psXReachStart'
 ];
 
-export interface PerfectScrollbarConfigInterface {
+export interface ScrollbarConfigInterface {
     handlers?: string[];
 
     wheelSpeed?: number;
@@ -77,7 +77,7 @@ export interface PerfectScrollbarConfigInterface {
     scrollYMarginOffset?: number;
 }
 
-export class PerfectScrollbarConfig implements PerfectScrollbarConfigInterface {
+export class ScrollbarConfig implements ScrollbarConfigInterface {
     public handlers?: string[];
 
     public wheelSpeed?: number;
@@ -97,14 +97,14 @@ export class PerfectScrollbarConfig implements PerfectScrollbarConfigInterface {
     public scrollXMarginOffset?: number;
     public scrollYMarginOffset?: number;
 
-    constructor(config: PerfectScrollbarConfigInterface = {}) {
+    constructor(config: ScrollbarConfigInterface = {}) {
         this.assign(config);
     }
 
-    public assign(config: PerfectScrollbarConfigInterface = {}) {
+    public assign(config: ScrollbarConfigInterface = {}) {
         for (const key in config) {
-            this[key as keyof PerfectScrollbarConfig] =
-                config[key as keyof PerfectScrollbarConfigInterface];
+            this[key as keyof ScrollbarConfig] =
+                config[key as keyof ScrollbarConfigInterface];
         }
     }
 }

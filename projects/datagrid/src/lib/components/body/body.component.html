@@ -1,6 +1,6 @@
 <div  class="f-datagrid-body" [ngStyle]="bodyStyle" [style.top.px]="top" tabindex=1>
 
-    <div [perfectScrollbar]="psConfig" class="ps f-datagrid-body-wheel-area" #ps="ngxPerfectScrollbar"
+    <div [scrollbar]="psConfig" class="ps f-datagrid-body-wheel-area" #ps="ngxScrollbar"
             [ngStyle]="bodyStyle" (psXReachEnd)="onPsXReachEnd($event)"
         (psScrollY)="onScrollToY($event)" (psYReachEnd)="onScrollYEnd($event)" (psScrollX)="onScrollToX($event)" (psXReachStart)="onPsXReachStart($event)">
        
@@ -23,7 +23,7 @@
             
 
             <div #fixedRight class="f-datagrid-body-fixed-right" [style.width.px]="rightFixedWidth" 
-                *ngIf="columnsGroup.rightFixed"
+                *ngIf="columnsGroup?.rightFixed && columnsGroup?.rightFixed.length"
                 [style.transform]="'translate3d('+ fixedRightScrollLeft +'px, '+ topHideHeight +'px, 0px)'"
                 [class.f-datagrid-fixed-right-shadow]="showRightShadow" [style.height.px]="wheelHeight - topHideHeight">
             

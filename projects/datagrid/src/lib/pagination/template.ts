@@ -29,11 +29,11 @@ export const DEFAULT_TEMPLATE = `
             *ngFor="let page of p.pages">
             <a tabindex="0" (keyup.enter)="p.setCurrent(page.value)" (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">
                 <span class="show-for-sr">{{ screenReaderPageLabel }} </span>
-                <span>{{ (page.label === '...') ? page.label : (page.label | number:'') }}</span>
+                <span>{{ page.label }}</span>
             </a>
             <ng-container *ngIf="p.getCurrent() === page.value">
                 <span class="show-for-sr">{{ screenReaderCurrentLabel }} </span>
-                <span>{{ (page.label === '...') ? page.label : (page.label | number:'') }}</span> 
+                <span>{{page.label }}</span> 
             </ng-container>
         </li>
 

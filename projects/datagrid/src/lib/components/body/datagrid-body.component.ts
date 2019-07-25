@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
-import { PerfectScrollbarDirective } from '../../perfect-scrollbar/perfect-scrollbar.directive';
+import { ScrollbarDirective } from '../../scrollbar/scrollbar.directive';
 import { ColumnGroup } from '../../types';
 import { SelectedRow } from '../../services/state';
 import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION } from '../../types/constant';
@@ -48,7 +48,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @Input() startRowIndex = 0;
     @Input() data: any;
 
-    @ViewChild('ps') ps?: PerfectScrollbarDirective;
+    @ViewChild('ps') ps?: ScrollbarDirective;
     // @ViewChild('psContainer') psc: ElementRef;
     // @ViewChild('topDiv') topDiv: ElementRef;
     // @ViewChild('bottomDiv') bottomDiv: ElementRef;
@@ -115,6 +115,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
             this.setWheelHeight();
+            this.ps.update();
             this.cd.detectChanges();
         }
     }
