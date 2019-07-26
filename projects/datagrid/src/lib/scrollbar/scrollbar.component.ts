@@ -9,23 +9,23 @@ import {
     ViewChild, ViewEncapsulation, ChangeDetectorRef
 } from '@angular/core';
 
-import { PerfectScrollbarDirective } from './perfect-scrollbar.directive';
+import { ScrollbarDirective } from './scrollbar.directive';
 
 import {
-    PerfectScrollbarEvent, PerfectScrollbarEvents,
-    PerfectScrollbarConfigInterface
-} from './perfect-scrollbar.interfaces';
+    ScrollbarEvent, ScrollbarEvents,
+    ScrollbarConfigInterface
+} from './scrollbar.interfaces';
 
 @Component({
-    selector: 'perfect-scrollbar',
-    exportAs: 'ngxPerfectScrollbar',
-    templateUrl: './perfect-scrollbar.component.html',
+    selector: 'scrollbar',
+    exportAs: 'ngxScrollbar',
+    templateUrl: './scrollbar.component.html',
     styleUrls: [
-        './perfect-scrollbar.component.css'
+        './scrollbar.component.css'
     ],
     encapsulation: ViewEncapsulation.None
 })
-export class PerfectScrollbarComponent implements OnInit, OnDestroy, DoCheck {
+export class ScrollbarComponent implements OnInit, OnDestroy, DoCheck {
     public states: any = {};
 
     public indicatorX = false;
@@ -61,7 +61,7 @@ export class PerfectScrollbarComponent implements OnInit, OnDestroy, DoCheck {
     @HostBinding('class.ps-show-active')
     @Input() scrollIndicators = false;
 
-    @Input() config?: PerfectScrollbarConfigInterface;
+    @Input() config?: ScrollbarConfigInterface;
 
     @Output() psScrollY: EventEmitter<any> = new EventEmitter<any>();
     @Output() psScrollX: EventEmitter<any> = new EventEmitter<any>();
@@ -76,7 +76,7 @@ export class PerfectScrollbarComponent implements OnInit, OnDestroy, DoCheck {
     @Output() psXReachEnd: EventEmitter<any> = new EventEmitter<any>();
     @Output() psXReachStart: EventEmitter<any> = new EventEmitter<any>();
 
-    @ViewChild(PerfectScrollbarDirective) directiveRef?: PerfectScrollbarDirective;
+    @ViewChild(ScrollbarDirective) directiveRef?: ScrollbarDirective;
 
     constructor(private zone: NgZone, private cdRef: ChangeDetectorRef,
                 @Inject(PLATFORM_ID) private platformId: any) { }
@@ -224,7 +224,7 @@ export class PerfectScrollbarComponent implements OnInit, OnDestroy, DoCheck {
             });
 
             window.setTimeout(() => {
-                PerfectScrollbarEvents.forEach((eventName: PerfectScrollbarEvent) => {
+                ScrollbarEvents.forEach((eventName: ScrollbarEvent) => {
                     if (this.directiveRef) {
                         this.directiveRef[eventName] = this[eventName];
                     }

@@ -7,6 +7,8 @@ export interface DataColumn {
     field: string;
     title: string;
     width: number;
+    /** 记录原始定义宽度 */
+    originalWidth?: number;
     /** 标题对齐方式 */
     hAlign?: 'left' | 'center' | 'right';
     /** 文本对齐方式 */

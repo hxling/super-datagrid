@@ -1,21 +1,24 @@
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
-    SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding, AfterContentInit, NgZone } from '@angular/core';
+    SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding,
+    AfterContentInit, NgZone, ElementRef
+} from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import ResizeObserver from 'resize-observer-polyfill';
+import { of, Subscription } from 'rxjs';
 import { DataColumn, CustomStyle } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
-import { DomSanitizer } from '@angular/platform-browser';
-import { DatagridColumnDirective } from './components/columns';
+import { DatagridColumnDirective } from './components/columns/datagrid-column.directive';
 import { DataResult, CellInfo } from './services/state';
 import { RestService, REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
-import { of, fromEvent, Subscription } from 'rxjs';
-import { GRID_EDITORS } from './types';
+import { GRID_EDITORS } from './types/constant';
 
 @Component({
     selector: 'farris-datagrid',
     template: `
     <div class="f-datagrid" [class.f-datagrid-bordered]="showBorder"
-    [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
+        [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
         <datagrid-header #header [columnsGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
         <datagrid-body [columnsGroup]="colGroup$ | async" [data]="ds.rows | paginate: pagerOpts"
                 [startRowIndex]="ds.index" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
@@ -38,7 +41,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() auther = `Lucas Huang - QQ:1055818239`;
     @Input() version = '0.0.1';
 
-    @HostBinding('style.position') dgCls = 'relative';
+    @HostBinding('class') hostCls = '';
 
     @Input() id = '';
     /** 显示边框 */
@@ -54,9 +57,28 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 行高 */
     @Input() rowHeight = 36;
     /** 填充容器 */
-    @Input() fit = false;
+    private _fit = false;
+    @Input() get fit() {
+        return this._fit;
+    }
+    set fit(val: boolean) {
+        this._fit = val;
+        if (this._fit) {
+            this.hostCls = 'f-datagrid-full';
+            this.calculateGridSize(val);
+        } else {
+            this.hostCls = '';
+        }
+    }
     /** 如果为真，则自动展开/收缩列的大小以适合网格宽度并防止水平滚动。 */
-    @Input() fitColumns = false;
+    private _fitColumns = false;
+    @Input() get fitColumns() {
+        return this._fitColumns;
+    }
+    set fitColumns(val: boolean) {
+        this._fitColumns = val;
+        this.setFitColumns(val);
+    }
     /** 显示表头 */
     @Input() showHeader = true;
     /** 可拖动列设置列宽 */
@@ -125,9 +147,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Output() endEdit = new EventEmitter();
 
     @Output() scrollY = new EventEmitter();
+
+    @Output() pageSizeChanged = new EventEmitter();
     @Output() pageChanged = new EventEmitter();
 
-    @ContentChildren(DatagridColumnDirective) dgColumns: QueryList<DatagridColumnDirective>;
+    @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
 
     colGroup$ = this.dfs.columnGroup$;
     data$ = this.dfs.data$;
@@ -157,10 +181,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     currentCell: CellInfo;
 
     private keyDownSub: Subscription = null;
+    private ro: ResizeObserver | null = null;
 
     constructor(private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
-                private cd: ChangeDetectorRef,
+                public cd: ChangeDetectorRef,
+                public el: ElementRef,
                 private inject: Injector, private zone: NgZone,
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
 
@@ -177,7 +203,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 this.editors[ed.name] = ed.value;
             });
         }
-        console.log(this.editors);
+        // console.log(this.editors);
     }
 
     ngOnInit() {
@@ -198,6 +224,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         this.zone.runOutsideAngular(() => {
             this.onKeyboardDown();
+
+            this.ro = new ResizeObserver(() => {
+                this.calculateGridSize();
+            });
+
+            this.ro.observe(this.el.nativeElement.parentElement);
         });
     }
 
@@ -211,7 +243,25 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         this.initState();
         this.registerDocumentEvent();
-        this.loadData();
+        if (!this.data || !this.data.length) {
+            this.loadData();
+        }
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.data && !changes.data.isFirstChange()) {
+            this.dfs.loadData(changes.data.currentValue);
+            this.dgs.dataSourceChanged();
+        }
+    }
+
+    ngOnDestroy() {
+        this.docuemntEvents();
+        this.unsubscribes();
+
+        if (this.ro) {
+            this.ro.disconnect();
+        }
     }
 
     private onKeyboardDown() {
@@ -290,35 +340,35 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.cd.detectChanges();
     }
 
-    private loadData() {
-        if (!this.data || !this.data.length) {
+    loadData(data?: any) {
+        if (data) {
+            if (this.pagination) {
+                this.pagerOpts = Object.assign(this.pagerOpts, {
+                    itemsPerPage: this.pageSize,
+                    currentPage: this.pageIndex,
+                    totalItems: this.total
+                });
+                this.dfs.setPagination(this.pageIndex, this.pageSize, this.total);
+            }
+            this.dfs.loadData(data);
+            this.dgs.dataSourceChanged();
+        } else {
             this.fetchData().subscribe((res: DataResult) => {
                 if (res) {
                     const { items, pageIndex, pageSize, total } = {...res};
                     this.total = total;
                     this.dfs.setPagination(pageIndex, pageSize, total);
                     this.dfs.loadData(items);
+                    this.dgs.dataSourceChanged();
                 }
             });
         }
     }
 
-    ngOnChanges(changes: SimpleChanges) {
-        if (changes.data && !changes.data.isFirstChange()) {
-            this.dfs.loadData(changes.data.currentValue);
-            this.dgs.dataSourceChanged();
-        }
-    }
-
-    ngOnDestroy() {
-        this.docuemntEvents();
-        this.unsubscribes();
-    }
-
     onPageChange(pageIndex: number) {
         this.pageIndex = pageIndex;
         this.pagerOpts.currentPage = pageIndex;
-        this.pageChanged.emit(pageIndex);
+        this.pageChanged.emit({pageIndex, pageSize: this.pageSize});
     }
 
     fetchData(_pageIndex = 1) {
@@ -329,7 +379,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     private initState() {
-        this.dfs.initState({...this});
+        this.data = this.data || [];
+        this.dfs.initState({...this, fitColumns: this.fitColumns, fit: this.fit});
     }
 
     private registerDocumentEvent() {
@@ -337,6 +388,27 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.dfs.endEditCell();
             this.dfs.cancelSelectCell();
         });
+    }
+
+    private setFitColumns(fitColumns = true) {
+        if (this.columns) {
+            this.dfs.fitColumns(fitColumns);
+        }
+    }
+
+    private calculateGridSize(fit = true) {
+        if (fit) {
+            const parent = this.el.nativeElement.parentElement;
+            const cmpRect = parent.getBoundingClientRect();
+
+            const padding = this.getElementPadding(parent);
+            const border = this.getElementBorderWidth(parent);
+
+            this.width = cmpRect.width - border.left - border.right - padding.left - padding.right;
+            this.height = cmpRect.height - border.top - border.bottom - padding.top - padding.bottom;
+            this.dfs.resize({width: this.width, height: this.height});
+            // this.refresh();
+        }
     }
 
     showLoading() {
@@ -360,5 +432,40 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 this.render2.setStyle(dom, k, cs.style[k]);
             });
         }
+    }
+
+    refresh() {
+        this.cd.detectChanges();
+    }
+
+    getBoundingClientRect(el: ElementRef) {
+        return el.nativeElement.getBoundingClientRect();
+    }
+
+    getElementPadding(el: HTMLElement) {
+        const style = getComputedStyle(el);
+        return {
+            top:  this.replacePX2Empty(style.paddingTop),
+            left:  this.replacePX2Empty(style.paddingLeft),
+            bottom:  this.replacePX2Empty(style.paddingBottom),
+            right:  this.replacePX2Empty(style.paddingRight)
+        };
+    }
+
+    getElementBorderWidth(el: HTMLElement) {
+        const style = getComputedStyle(el);
+        return {
+            top: this.replacePX2Empty(style.borderTopWidth),
+            bottom: this.replacePX2Empty(style.borderBottomWidth),
+            right: this.replacePX2Empty(style.borderRightWidth),
+            left: this.replacePX2Empty(style.borderLeftWidth)
+        };
+    }
+
+    private replacePX2Empty(strNum: string) {
+        if (strNum) {
+            return Number.parseInt(strNum.replace('px', ''), 10);
+        }
+        return 0;
     }
 }

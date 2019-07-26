@@ -12,6 +12,8 @@ import { Component, OnInit } from '@angular/core';
         <a class="navbar-brand" href="/cell-edit">单元格编辑</a>
         <a class="navbar-brand" href="/custom-cell">自定义单元格模板</a>
         <a class="navbar-brand" href="/scrollbar">原生滚动条</a>
+        <a class="navbar-brand" href="/fit-columns">自动列宽</a>
+        
     </nav>
     `
 })

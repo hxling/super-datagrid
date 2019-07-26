@@ -1,5 +1,7 @@
 
+import { InjectionToken } from '@angular/core';
 
+export const GRID_EDITORS = new InjectionToken('DataGrid Editors');
 
 
 export const SCROLL_Y_ACTION = 'psScrollY';

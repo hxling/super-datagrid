@@ -1,13 +1,11 @@
 import { CellInfo } from '../../services/state';
 import { Component, OnInit, Input, Output, EventEmitter, HostListener,
     ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef,
-    OnDestroy, ViewContainerRef, ComponentFactoryResolver, NgZone } from '@angular/core';
+    OnDestroy, ComponentFactoryResolver, NgZone } from '@angular/core';
 import { CommonUtils } from '@farris/ui-common';
 import { DataColumn } from '../../types';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
-import { map, filter } from 'rxjs/operators';
 import { DatagridComponent } from '../../datagrid.component';
-import { DatagridEditorComponent } from '../editors/grid-editor.component';
 import { DatagridRowDirective } from './datagrid-row.directive';
 
 @Component({

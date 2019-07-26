@@ -1,42 +1,72 @@
 
+
 &-datagrid {
  
     border: 1px solid $border-color;
     position: relative;
     overflow: hidden;
     font-size: 14px;
+    display: flex;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    
+    &-full{
+        position: relative;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex: 1;
+        height: 100%;
+    }
     
     &-header {
         z-index: 2;
         position: relative;
-    }
-
-    &-row-header {
         height: $header-cell-height;
-        background: $header-bgcolor;
-        
+        background-color: $header-bgcolor;
+        overflow: hidden;
+        width: 100%;
+        border-bottom: 1px solid $border-color;
+        transition: all .15s ease;
+
+
         .f-datagrid-cell-group-left-shadow, .f-datagrid-cell-group-right-shadow {
             height:$header-cell-height;
         }
+
+        &-row {
+            background-color: $header-bgcolor;
+        }
+
+        &-cell {
+            height: 36px;
+            border-style: solid;
+            border-width: 0 1px 0 0;
+            border-color: #CBCBCB;
+            overflow: hidden;
+            white-space: normal;
+            &-content {
+                padding-left: 5px;
+            }
+
+            &:last-child {
+                border-right: 0;
+            }
+        }
+        
     }
-
-    & &-row-header &-cell{
-        background: $header-bgcolor;
-    }   
-
 
     &-body {
         position: absolute;
         overflow: hidden;
         z-index: 0;
+        left: 0;
         &-wheel-area {
             overflow:hidden; 
             position: relative;
-
-            background-color: #F5F5F5;
-            background-image: linear-gradient(#fff 50%, transparent 0);
-            background-origin: content-box;
-            background-size: 50% 72px;
         }
 
         &-fixed-left {
@@ -157,6 +187,10 @@
         border-color: $border-color;
         overflow: hidden;
         white-space: normal;
+        &:last-child {
+            border-right: 0;
+        }
+
 
         &-formgroup {
             height: 100%;
@@ -214,6 +248,7 @@
     &-pager {
         position: absolute;
         bottom: 0;
+        left: 0;
         width: 100%;
         height: 40px;
         border-top: 1px solid #ccc;

@@ -20,7 +20,7 @@
 
     <div  class="f-datagrid-body" [style.top.px]="36" tabindex=1>
 
-            <div [perfectScrollbar]="psConfig" class="ps f-datagrid-body-wheel-area" #ps="ngxPerfectScrollbar"
+            <div [scrollbar]="psConfig" class="ps f-datagrid-body-wheel-area" #ps="ngxScrollbar"
                 style="width: 800px; height: 362px;" (psScrollY)="onScrollToY($event)">
         
                 <div [style.height.px]="3600">

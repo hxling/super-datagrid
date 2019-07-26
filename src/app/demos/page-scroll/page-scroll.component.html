@@ -12,18 +12,18 @@
     <div class="row">
         <div class="col-12">
             <label for="virthualRows">
-                <input type=checkbox [(ngModel)]="enabelVirthualRows">启用虚拟加载
+                <input id="virthualRows" type=checkbox [(ngModel)]="enabelVirthualRows">启用虚拟加载
             </label>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-12">
+        <div class="col-12" style="height: 800px">
                         
-            <farris-datagrid [columns]="columns" [data]="items"
+            <farris-datagrid [columns]="columns" [data]="items" #dg
                 [showLineNumber] ="false" [striped]="false" [showCheckbox]="false"
                 [virtualized]="enabelVirthualRows"
-                [pagination]="true"
+                [pagination]="true" [fit]="true" [fitColumns]="true"
                 [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
                 (beginEdit)="onBeginEdit($event)" (endEdit)="onEndEdit($event)"
                 (pageChanged)="changePageIndex($event)"
