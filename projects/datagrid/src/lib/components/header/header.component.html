@@ -1,5 +1,5 @@
 <!--表头-->
-<div class="f-datagrid-header" [style.min-width.px]="columnsGroup?.normalWidth">
+<div class="f-datagrid-header" [style.min-width.px]="dg.width">
 
     <!--左侧固定列-->
     <ng-container *ngIf="columnsGroup?.leftFixed && columnsGroup?.leftFixed.length  || dg.showLineNumber || dg.showCheckbox ">

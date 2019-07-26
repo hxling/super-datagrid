@@ -13,4 +13,7 @@
     <button class="btn btn-primary" (click)="onDeleteClick($event, ctx)">删除</button> &nbsp;
     <button class="btn btn-success">审核</button>
 </ng-template>
-    
+
+<ng-template #cell2 let-ctx>
+    <a href="http://www.baidu.com" target="blank">{{ ctx.rowData["name"] }}</a>
+</ng-template>

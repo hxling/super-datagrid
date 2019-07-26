@@ -88,7 +88,7 @@ export class DataGridLoadingComponent implements OnInit {
         if (this.loading) {
             this.loading = this.domSanitizer.bypassSecurityTrustHtml(this.loading);
         } else {
-            this.loading = this.domSanitizer.bypassSecurityTrustHtml(loading_style_spinner);
+            this.loading = this.domSanitizer.bypassSecurityTrustHtml(loading_style_ring);
         }
     }
 
