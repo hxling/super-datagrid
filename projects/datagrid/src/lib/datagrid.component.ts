@@ -250,7 +250,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.initState();
         this.registerDocumentEvent();
         if (!this.data || !this.data.length) {
-            this.loadData();
+            this.fetchData(1, this.pageSize).subscribe( res => {
+                if (!res) {
+                    return;
+                }
+                this.total = res.total;
+                this.loadData(res.items);
+            });
         }
     }
 
@@ -347,47 +353,74 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     loadData(data?: any) {
+        this.closeLoading();
         if (data) {
             if (this.pagination) {
-                this.pagerOpts = Object.assign(this.pagerOpts, {
-                    itemsPerPage: this.pageSize,
-                    currentPage: this.pageIndex,
-                    totalItems: this.total
-                });
+                // this.pagerOpts = Object.assign(this.pagerOpts, {
+                //     itemsPerPage: this.pageSize,
+                //     currentPage: this.pageIndex,
+                //     totalItems: this.total
+                // });
                 this.dfs.setPagination(this.pageIndex, this.pageSize, this.total);
             }
             this.dfs.loadData(data);
             this.dgs.dataSourceChanged();
         } else {
-            this.fetchData().subscribe((res: DataResult) => {
-                if (res) {
-                    const { items, pageIndex, pageSize, total } = {...res};
-                    this.total = total;
-                    this.dfs.setPagination(pageIndex, pageSize, total);
-                    this.dfs.loadData(items);
-                    this.dgs.dataSourceChanged();
-                }
-            });
+            // this.fetchData().subscribe((res: DataResult) => {
+            //     if (res) {
+            //         const { items, pageIndex, pageSize, total } = {...res};
+            //         this.total = total;
+            //         this.dfs.setPagination(pageIndex, pageSize, total);
+            //         this.dfs.loadData(items);
+            //         this.dgs.dataSourceChanged();
+            //     }
+            // });
         }
     }
 
     onPageChange(pageIndex: number) {
         this.pageIndex = pageIndex;
         this.pagerOpts.currentPage = pageIndex;
+
+        this.fetchData(pageIndex, this.pageSize).subscribe(res => {
+            if (res) {
+                this.loadData(res.items);
+            }
+        });
+
         this.pageChanged.emit({pageIndex, pageSize: this.pageSize});
     }
 
     onPageSizeChange(pageSize: number) {
         this.pageSize = pageSize;
         this.pagerOpts.itemsPerPage = pageSize;
+
+        this.fetchData(1, pageSize).subscribe(res => {
+            if (res) {
+                this.pageIndex = 1;
+                this.loadData(res.items);
+            }
+        });
+
         this.pageSizeChanged.emit({pageSize, pageIndex: this.pageIndex});
     }
 
-    fetchData(_pageIndex = 1) {
+    fetchData(pageIndex, pageSize) {
         if (this.restService) {
-            return this.restService.getData(this.url, { pageIndex: _pageIndex, pageSize: this.pageSize });
+            this.showLoading();
+            return this.restService.getData(this.url, { pageIndex, pageSize });
         }
         return of(undefined);
+    }
+
+    reload() {
+        this.fetchData(1, this.pageSize).subscribe(res => {
+            if (res) {
+                this.pageIndex = 1;
+                this.total = res.total;
+                this.loadData(res.items);
+            }
+        });
     }
 
     private initState() {

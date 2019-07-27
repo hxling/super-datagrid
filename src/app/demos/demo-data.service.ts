@@ -12,9 +12,19 @@ interface IServerResponse {
 export class DemoDataService implements RestService {
 
     data: any[];
+    datacount = 5000;
+    get dataLength() {
+        return this.datacount;
+    }
+
+    set dataLength(count) {
+        this.datacount = count;
+        this.data = this.createData(count);
+    }
+
 
     constructor() {
-        this.data = this.createData(5000);
+        this.data = this.createData(this.dataLength);
     }
 
     getData(url: string, param?: any): Observable<DataResult> {
@@ -46,6 +56,7 @@ export class DemoDataService implements RestService {
                 zhiwei: 'CEO&CPU'
             });
         }
+        this.data = arr;
         return arr;
     }
 

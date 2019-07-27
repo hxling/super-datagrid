@@ -57,8 +57,9 @@
 }
 
 .ngx-pagination .current span.page-link {
-  background: #2199e8;
+  background: #1890FF;
   color: #fefefe;
+  border-color: #1890FF;
 }
 
 .ngx-pagination .disabled {
