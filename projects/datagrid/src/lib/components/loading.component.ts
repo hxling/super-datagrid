@@ -71,7 +71,7 @@ const loading_style_ring =
 @Component({
     selector: 'datagrid-loading',
     template: `
-    <div style="width:100%;height:100%;position:absolute;top:0;background:rgba(255,255,255,0);z-index: 9;pointer-events: unset;">
+    <div style="width:100%;height:100%;position:absolute;top:0;left: 0;background:rgba(255,255,255,0);z-index: 9;pointer-events: unset;">
         <div style="width: 60px;height: 60px;position: relative;top: 50%;margin-top: -30px;left: 50%;margin-left: -30px;"
         [innerHTML]="loading" >
         </div>

@@ -22,6 +22,7 @@ export class PaginationControlsDirective implements OnInit, OnChanges, OnDestroy
     @Input() id: string;
     @Input() maxSize = 7;
     @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
+    @Output() pageSizeChange = new EventEmitter<number>();
     pages: Page[] = [];
 
     private changeSub: Subscription;
@@ -130,6 +131,14 @@ export class PaginationControlsDirective implements OnInit, OnChanges, OnDestroy
 
     getTotalItems(): number {
         return this.service.getInstance(this.id).totalItems;
+    }
+
+    getPageList() {
+        return this.service.getInstance(this.id).pageList;
+    }
+
+    getPageSize() {
+        return this.service.getInstance(this.id).itemsPerPage;
     }
 
     private checkValidId() {

@@ -22,7 +22,9 @@ import { GRID_EDITORS } from './types/constant';
         <datagrid-header #header [columnsGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
         <datagrid-body [columnsGroup]="colGroup$ | async" [data]="ds.rows | paginate: pagerOpts"
                 [startRowIndex]="ds.index" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
-        <datagrid-pager *ngIf="pagination" [id]="pagerOpts.id" (pageChange)="onPageChange($event)"></datagrid-pager>
+        <datagrid-pager *ngIf="pagination"
+            [id]="pagerOpts.id" (pageChange)="onPageChange($event)"
+            (pageSizeChange)="onPageSizeChange($event)"></datagrid-pager>
     </div>
     <datagrid-loading *ngIf="loading"></datagrid-loading>
     `,
@@ -94,10 +96,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     /** 分页信息 */
     @Input() pagination = true;
+    /** 每页记录数 */
+    @Input() pageList = [10, 20, 30, 50, 100];
     /** 当前页码 */
     @Input() pageIndex = 1;
     /** 每页记录数 */
     @Input() pageSize = 20;
+    /** 分页区高度 */
     @Input() pagerHeight = 40;
     /** 总记录数 */
     private _total = 0;
@@ -211,7 +216,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             id:  this.id ? this.id + '-pager' :  'farris-datagrid-pager_' + new Date().getTime(),
             itemsPerPage: this.pagination ? this.pageSize : this.total,
             currentPage: this.pageIndex,
-            totalItems: this.total
+            totalItems: this.total,
+            pageList: this.pageList
         };
 
         if (!this.pagination) {
@@ -244,7 +250,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.initState();
         this.registerDocumentEvent();
         if (!this.data || !this.data.length) {
-            this.loadData();
+            this.fetchData(1, this.pageSize).subscribe( res => {
+                if (!res) {
+                    return;
+                }
+                this.total = res.total;
+                this.loadData(res.items);
+            });
         }
     }
 
@@ -341,41 +353,74 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     loadData(data?: any) {
+        this.closeLoading();
         if (data) {
             if (this.pagination) {
-                this.pagerOpts = Object.assign(this.pagerOpts, {
-                    itemsPerPage: this.pageSize,
-                    currentPage: this.pageIndex,
-                    totalItems: this.total
-                });
+                // this.pagerOpts = Object.assign(this.pagerOpts, {
+                //     itemsPerPage: this.pageSize,
+                //     currentPage: this.pageIndex,
+                //     totalItems: this.total
+                // });
                 this.dfs.setPagination(this.pageIndex, this.pageSize, this.total);
             }
             this.dfs.loadData(data);
             this.dgs.dataSourceChanged();
         } else {
-            this.fetchData().subscribe((res: DataResult) => {
-                if (res) {
-                    const { items, pageIndex, pageSize, total } = {...res};
-                    this.total = total;
-                    this.dfs.setPagination(pageIndex, pageSize, total);
-                    this.dfs.loadData(items);
-                    this.dgs.dataSourceChanged();
-                }
-            });
+            // this.fetchData().subscribe((res: DataResult) => {
+            //     if (res) {
+            //         const { items, pageIndex, pageSize, total } = {...res};
+            //         this.total = total;
+            //         this.dfs.setPagination(pageIndex, pageSize, total);
+            //         this.dfs.loadData(items);
+            //         this.dgs.dataSourceChanged();
+            //     }
+            // });
         }
     }
 
     onPageChange(pageIndex: number) {
         this.pageIndex = pageIndex;
         this.pagerOpts.currentPage = pageIndex;
+
+        this.fetchData(pageIndex, this.pageSize).subscribe(res => {
+            if (res) {
+                this.loadData(res.items);
+            }
+        });
+
         this.pageChanged.emit({pageIndex, pageSize: this.pageSize});
     }
 
-    fetchData(_pageIndex = 1) {
+    onPageSizeChange(pageSize: number) {
+        this.pageSize = pageSize;
+        this.pagerOpts.itemsPerPage = pageSize;
+
+        this.fetchData(1, pageSize).subscribe(res => {
+            if (res) {
+                this.pageIndex = 1;
+                this.loadData(res.items);
+            }
+        });
+
+        this.pageSizeChanged.emit({pageSize, pageIndex: this.pageIndex});
+    }
+
+    fetchData(pageIndex, pageSize) {
         if (this.restService) {
-            return this.restService.getData(this.url, { pageIndex: _pageIndex, pageSize: this.pageSize });
+            this.showLoading();
+            return this.restService.getData(this.url, { pageIndex, pageSize });
         }
         return of(undefined);
+    }
+
+    reload() {
+        this.fetchData(1, this.pageSize).subscribe(res => {
+            if (res) {
+                this.pageIndex = 1;
+                this.total = res.total;
+                this.loadData(res.items);
+            }
+        });
     }
 
     private initState() {

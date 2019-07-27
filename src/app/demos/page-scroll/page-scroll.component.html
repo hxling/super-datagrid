@@ -4,29 +4,23 @@
 
     <div class="row" style="padding: 10px 0px;" >
         <div class="col-12">
-            <button class="btn btn-primary" (click)="changeDataItems(100)">100条</button>
-            <button class="btn btn-primary"  (click)="changeDataItems(200)">200条</button>
-            <button class="btn btn-primary" (click)="changeDataItems(1000)">1000条</button>
+            设置加载数据量：
+            <input type="number" [(ngModel)]="dataLength">
+            <button type="button" (click)="setDataLength(dataLength)">加载</button>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <label for="virthualRows">
-                <input id="virthualRows" type=checkbox [(ngModel)]="enabelVirthualRows">启用虚拟加载
-            </label>
-        </div>
-    </div>
-
     <div class="row">
         <div class="col-12" style="height: 800px">
                         
             <farris-datagrid [columns]="columns" [data]="items" #dg
                 [showLineNumber] ="false" [striped]="false" [showCheckbox]="false"
-                [virtualized]="enabelVirthualRows"
+                [virtualized]="true"
                 [pagination]="true" [fit]="true" [fitColumns]="true"
                 [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
+                [pageList]="[100, 200, 300, 500, 1000, 2000, 5000]"
                 (beginEdit)="onBeginEdit($event)" (endEdit)="onEndEdit($event)"
                 (pageChanged)="changePageIndex($event)"
+                (pageSizeChanged)="changePageSize($event)"
             ></farris-datagrid>
 
             <ng-template #name let-row='rowData' let-field="field">
