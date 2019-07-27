@@ -27,6 +27,7 @@
                 [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
                 (beginEdit)="onBeginEdit($event)" (endEdit)="onEndEdit($event)"
                 (pageChanged)="changePageIndex($event)"
+                (pageSizeChanged)="changePageSize($event)"
             ></farris-datagrid>
 
             <ng-template #name let-row='rowData' let-field="field">

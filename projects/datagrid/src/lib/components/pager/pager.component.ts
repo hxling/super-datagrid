@@ -29,15 +29,18 @@ export class DatagridPagerComponent implements OnInit {
     @Input() nextLabel = '下页';
 
     @Output() pageChange = new EventEmitter();
+    @Output() pageSizeChange = new EventEmitter();
 
     constructor(@SkipSelf() private datagrid: DatagridComponent) {}
 
     ngOnInit(): void {
     }
 
-    onPageChange(pageIdx: number) {
-        this.pageChange.emit(pageIdx);
+    onPageChange(pageIndex: number) {
+        this.pageChange.emit(Number.parseInt(pageIndex, 10));
     }
 
-    onPageSizeChange(event: any) {}
+    onPageSizeChange(pageSize: any) {
+        this.pageSizeChange.emit(Number.parseInt(pageSize, 10));
+    }
 }

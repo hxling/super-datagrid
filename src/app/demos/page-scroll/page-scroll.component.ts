@@ -44,7 +44,7 @@ export class PageScrollComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位', editor: this.textbox  }
         ];
 
-        // this.allDataSource = this.dds.createData(5);
+        this.allDataSource = this.dds.createData(5000);
         // this.showLoading = true;
         // this.dds.serverCall(this.allDataSource, 1, this.pageSize).subscribe( res => {
         //     this.items = res.items;
@@ -60,9 +60,18 @@ export class PageScrollComponent implements OnInit {
         this.items = items;
     }
 
+    changePageSize(event: any) {
+        this.showLoading = true;
+        this.dds.serverCall(this.allDataSource, event.pageIndex, event.pageSize).subscribe( res => {
+            this.items = res.items;
+            this.total = res.total;
+            this.showLoading = false;
+        });
+    }
+
     changePageIndex(event: any) {
         this.showLoading = true;
-        this.dds.serverCall(this.allDataSource, event.pageIndex, 100).subscribe( res => {
+        this.dds.serverCall(this.allDataSource, event.pageIndex, event.pageSize).subscribe( res => {
             this.items = res.items;
             this.total = res.total;
             this.showLoading = false;

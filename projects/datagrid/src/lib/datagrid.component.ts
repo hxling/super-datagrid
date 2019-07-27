@@ -22,7 +22,9 @@ import { GRID_EDITORS } from './types/constant';
         <datagrid-header #header [columnsGroup]="colGroup$ | async" [height]="headerHeight"></datagrid-header>
         <datagrid-body [columnsGroup]="colGroup$ | async" [data]="ds.rows | paginate: pagerOpts"
                 [startRowIndex]="ds.index" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
-        <datagrid-pager *ngIf="pagination" [id]="pagerOpts.id" (pageChange)="onPageChange($event)"></datagrid-pager>
+        <datagrid-pager *ngIf="pagination"
+            [id]="pagerOpts.id" (pageChange)="onPageChange($event)"
+            (pageSizeChange)="onPageSizeChange($event)"></datagrid-pager>
     </div>
     <datagrid-loading *ngIf="loading"></datagrid-loading>
     `,
@@ -94,10 +96,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     /** 分页信息 */
     @Input() pagination = true;
+    /** 每页记录数 */
+    @Input() pageList = [10, 20, 30, 50, 100];
     /** 当前页码 */
     @Input() pageIndex = 1;
     /** 每页记录数 */
     @Input() pageSize = 20;
+    /** 分页区高度 */
     @Input() pagerHeight = 40;
     /** 总记录数 */
     private _total = 0;
@@ -211,7 +216,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             id:  this.id ? this.id + '-pager' :  'farris-datagrid-pager_' + new Date().getTime(),
             itemsPerPage: this.pagination ? this.pageSize : this.total,
             currentPage: this.pageIndex,
-            totalItems: this.total
+            totalItems: this.total,
+            pageList: this.pageList
         };
 
         if (!this.pagination) {
@@ -369,6 +375,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.pageIndex = pageIndex;
         this.pagerOpts.currentPage = pageIndex;
         this.pageChanged.emit({pageIndex, pageSize: this.pageSize});
+    }
+
+    onPageSizeChange(pageSize: number) {
+        this.pageSize = pageSize;
+        this.pagerOpts.itemsPerPage = pageSize;
+        this.pageSizeChanged.emit({pageSize, pageIndex: this.pageIndex});
     }
 
     fetchData(_pageIndex = 1) {

@@ -1,0 +1,71 @@
+<pagination-template #p="paginationApi" [id]="id" [maxSize]="maxSize" (pageChange)="pageChange.emit($event)">
+    <div class="pagination-container">
+    <ul class="ngx-pagination pagination" role="navigation" [attr.aria-label]="screenReaderPaginationLabel"
+        [class.responsive]="responsive" *ngIf="!(autoHide && p.pages.length <= 1)">
+
+        <li class="pagination-message flex-grow-1 text-truncate">
+            <div class="text-truncate ">
+                每页 {{ p.getPageSize() }} 条记录，共 {{ p.getTotalItems() }} 条记录。
+            </div>
+        </li>
+        <!--首页-->
+        <li class="page-item" [class.disabled]="p.isFirstPage()" *ngIf="directionLinks">
+            <a tabindex="0" *ngIf="1 < p.getCurrent()" (keyup.enter)="p.first($event)" (click)="p.first($event)"
+                                                    [attr.aria-label]="previousLabel + ' ' + screenReaderPageLabel"  class="page-link">
+                <span class="f-icon f-page-first"></span>
+            </a>
+            <span *ngIf="p.isFirstPage()" class="page-link">
+                <span class="f-icon f-page-first"></span>
+            </span>
+        </li>
+
+        <!--上一页-->
+        <li class="page-item" [class.disabled]="p.isFirstPage()" *ngIf="directionLinks">
+            <a class="page-link" tabindex="0" *ngIf="1 < p.getCurrent()" (keyup.enter)="p.previous()" (click)="p.previous()"
+                [attr.aria-label]="previousLabel + ' ' + screenReaderPageLabel">
+                <span class="f-icon f-page-pre"></span>                
+            </a>
+            <span *ngIf="p.isFirstPage()" class="page-link">
+                <span class="f-icon f-page-pre"></span>
+            </span>
+        </li>
+        <!--页码-->
+        <li class="page-item" [class.current]="p.getCurrent() === page.value" [class.ellipsis]="page.label === '...'"
+            *ngFor="let page of p.pages">
+            <a class="page-link" tabindex="0" (keyup.enter)="p.setCurrent(page.value)" (click)="p.setCurrent(page.value)"
+                *ngIf="p.getCurrent() !== page.value">
+                <span>{{ page.label }}</span>
+            </a>
+            <span class="page-link" *ngIf="p.getCurrent() === page.value">{{page.label }}</span>
+        </li>
+        <!--下一页-->
+        <li class="page-item" [class.disabled]="p.isLastPage()" *ngIf="directionLinks">
+            <a class="page-link" tabindex="0" *ngIf="!p.isLastPage()" (keyup.enter)="p.next()" (click)="p.next()"
+                [attr.aria-label]="nextLabel + ' ' + screenReaderPageLabel">
+                <span class="f-icon f-page-next"></span>
+            </a>
+            <span *ngIf="p.isLastPage()" class="page-link">
+                <span class="f-icon f-page-next"></span>
+            </span>
+        </li>
+        <!--末页-->
+        <li class="page-item" [class.disabled]="p.isLastPage()" *ngIf="directionLinks">
+            <a class="page-link" tabindex="0" *ngIf="!p.isLastPage()" (keyup.enter)="p.last($event)"
+                (click)="p.last($event)" [attr.aria-label]="nextLabel + ' ' + screenReaderPageLabel">
+                <span class="f-icon f-page-last">{{ screenReaderPageLabel }}</span>
+            </a>
+            <span *ngIf="p.isLastPage()" class="page-link">
+                <span class="f-icon f-page-last">{{ screenReaderPageLabel }}</span>
+            </span>
+        </li>
+        <!--每页记录数-->
+        <li class="pagination-pagelist">
+            <select (change)="pageSizeChange.emit($event.target.value)"
+            class="form-control form-control-sm" style="width: auto" [disabled]="p.getTotalItems() === 0">
+            <option *ngFor="let pagesize of p.getPageList()" value="{{ pagesize }}"
+                    [selected]="pagesize === p.getPageSize()"> {{ pagesize }} </option>
+            </select>
+       </li>
+    </ul>
+</div>
+</pagination-template>
