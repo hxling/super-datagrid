@@ -8,12 +8,12 @@ export interface Action {
 
 export interface FarrisDatagridState {
     [key: string]: any;
-    headerHeight?: number;
     width?: number;
     height?: number;
     rowHeight?: number;
     idField?: string;
     data?: any;
+    headerHeight?: number;
     pageIndex?: number;
     pageSize?: number;
     pagerHeight?: number;

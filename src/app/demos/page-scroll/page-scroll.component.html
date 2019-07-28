@@ -10,10 +10,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-12" style="height: 800px">
+        <div #gridContainer class="col-12" style="height: 500px">
                         
             <farris-datagrid [columns]="columns" [data]="items" #dg
-                [showLineNumber] ="false" [striped]="false" [showCheckbox]="false"
+                [showLineNumber] ="true" [striped]="false" [showCheckbox]="false"
                 [virtualized]="true"
                 [pagination]="true" [fit]="true" [fitColumns]="true"
                 [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
@@ -21,6 +21,7 @@
                 (beginEdit)="onBeginEdit($event)" (endEdit)="onEndEdit($event)"
                 (pageChanged)="changePageIndex($event)"
                 (pageSizeChanged)="changePageSize($event)"
+                (selectChanged)="onSelectRow($event)"
             ></farris-datagrid>
 
             <ng-template #name let-row='rowData' let-field="field">

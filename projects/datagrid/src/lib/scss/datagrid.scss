@@ -11,6 +11,10 @@
     width: 100%;
     height: 100%;
     
+    table {
+        table-layout: fixed;
+    }
+
     &-full{
         position: relative;
         bottom: 0;
@@ -32,6 +36,9 @@
         border-bottom: 1px solid $border-color;
         transition: all .15s ease;
 
+        table { 
+            width:100%;
+        }
 
         .f-datagrid-cell-group-left-shadow, .f-datagrid-cell-group-right-shadow {
             height:$header-cell-height;
@@ -51,12 +58,23 @@
             &-content {
                 padding-left: 5px;
             }
-
-            &:last-child {
-                border-right: 0;
-            }
         }
         
+        tr td:last-child {
+            border-right: 0;
+        }
+
+        &-fixed-left {
+            position: absolute;
+            z-index: 4;
+            background: #fff;
+        }
+
+        &-fixed-right {
+            position: absolute;
+            z-index: 4;
+            background: #fff;
+        }
     }
 
     &-body {
@@ -79,6 +97,7 @@
             width: 200px;
             background: red;
             z-index: 999;
+            overflow: hidden;
         }
 
         &-row {
@@ -92,6 +111,13 @@
         }
 
     }
+
+    &-table {
+        tr td:last-child {
+            border-right-width: 0;
+        }
+    }
+
     &-row {
         overflow: hidden;
         height: $cell-height;
@@ -156,30 +182,7 @@
         }
     }
 
-    &-cell-group-fixed {
-        &-left {
-            position: absolute;
-            z-index: 4;
-            background: #fff;
-        }
-
-        &-right {
-            position: absolute;
-            z-index: 4;
-            background: #fff;
-            margin-left: 10px;
-        }
-    }
-
-    &-fixed-left-shadow {
-        
-    }
-
-    &-fixed-right-shadow {
-        border-left: 1px solid #b8b8b8;
-    }
-
-    
+  
     &-cell {
         height: $cell-height;
         border-style: solid;
@@ -187,10 +190,6 @@
         border-color: $border-color;
         overflow: hidden;
         white-space: normal;
-        &:last-child {
-            border-right: 0;
-        }
-
 
         &-formgroup {
             height: 100%;
@@ -241,9 +240,28 @@
     
     }
 
-    &-bordered &-cell {
-        border-width: 0 1px 0 0;
+    &-bordered {
+        .f-datagrid-cell {
+            border-width: 0 1px 0 0;
+        }
+
+
+        .f-datagrid-body-fixed-right {
+            border-left: 1px solid $border-color;
+        }
+
+        .f-datagrid-header {
+            &-fixed-right {
+                border-left: 1px solid $border-color;
+            }
+            &-fixed-left {
+                tr td:last-child {
+                    border-right: 1px solid $border-color;
+                }
+            }
+        }
     }
+
 
     &-pager {
         position: absolute;

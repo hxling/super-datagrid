@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
 import { REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
 import { DatagridComponent } from '@farris/ui-datagrid';
@@ -28,12 +28,12 @@ export class PageScrollComponent implements OnInit {
     @ViewChild('birthday') birthdayEditor: TemplateRef<any>;
     @ViewChild('maray') marayEditor: TemplateRef<any>;
     @ViewChild('dg') dg: DatagridComponent;
+    @ViewChild('gridContainer') gc: ElementRef;
     columns = [];
 
     constructor(private dds: DemoDataService) {}
 
     ngOnInit() {
-
         this.columns = [
             { field: 'id', width: 100, title: 'ID' },
             { field: 'name', width: 130, title: '姓名', editor: this.textbox },
@@ -46,6 +46,7 @@ export class PageScrollComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位', editor: this.textbox  }
         ];
 
+        this.onresize();
         // this.allDataSource = this.dds.createData(5000);
         // this.showLoading = true;
         // this.dds.serverCall(this.allDataSource, 1, this.pageSize).subscribe( res => {
@@ -55,9 +56,18 @@ export class PageScrollComponent implements OnInit {
         // });
     }
 
+    @HostListener('window:resize')
+    onresize() {
+        this.gc.nativeElement.style.height = (window.innerHeight - 140) + 'px';
+    }
+
     setDataLength(dataCount) {
-        this.dg.restService.dataLength = dataCount;
+        this.dg.restService['dataLength'] = dataCount;
         this.dg.reload();
+    }
+
+    onSelectRow($event) {
+        console.log($event);
     }
 
     changeDataItems(n =  20) {

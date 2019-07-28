@@ -3,7 +3,7 @@ import { Component, OnInit, Input, ViewChild, Renderer2,
     OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone } from '@angular/core';
 
 import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { ScrollbarDirective } from '../../scrollbar/scrollbar.directive';
@@ -38,6 +38,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     deltaTopHeight = 0;
     wheelHeight = 0;
     fixedRightScrollLeft = 0;
+    maxScrollLeft = 0;
     showRightShadow = false;
 
     @Input() columnsGroup: ColumnGroup;
@@ -60,15 +61,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     currentRowId =  undefined;
     gridsize$ = this.dfs.gridSize$;
-    selectedRowId$ = this.dfs.currentRow$.pipe(
-        map( (row: SelectedRow) => {
-            this.dg.selectedRow = row;
-            if (row) {
-                return row.id;
-            }
-            return undefined;
-        })
-    );
+    selectedRow$ = this.dfs.currentRow$;
 
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
@@ -91,7 +84,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.setWheelHeight();
                 this.fixedRightScrollLeft = this.width - this.rightFixedWidth;
                 this.bodyStyle = this.getBodyStyle();
-
+                this.maxScrollLeft = this.colsWidth + this.leftFixedWidth;
                 if (this.colsWidth + this.leftFixedWidth === this.fixedRightScrollLeft) {
                     this.showRightShadow = false;
                 } else {
@@ -107,8 +100,15 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.ps.scrollToTop();
         });
 
-        this.selectedRowId$.subscribe(id => {
-            this.currentRowId = id;
+        this.selectedRow$.pipe(
+            filter(row => !!row)
+        ).subscribe((row: SelectedRow) => {
+            if (row) {
+                this.currentRowId = row.id;
+            } else {
+                this.currentRowId = undefined;
+            }
+            this.dg.selectRow(row);
         });
     }
 
@@ -145,8 +145,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const x = $event.target.scrollLeft;
         this.scrollLeft = x;
         this.fixedRightScrollLeft = this.scrollLeft + this.width - this.rightFixedWidth;
-
-        if (this.fixedRightScrollLeft === this.colsWidth + this.leftFixedWidth) {
+        if (this.fixedRightScrollLeft === this.maxScrollLeft || this.fixedRightScrollLeft > this.maxScrollLeft) {
+            this.fixedRightScrollLeft = this.maxScrollLeft;
             this.showRightShadow = false;
         } else {
             this.showRightShadow = true;
@@ -248,7 +248,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             // console.log('fetchData - ↑');
             const prevPager = Math.floor(vs.rowIndex / pi.pageSize);
             this.dg.loading = true;
-            this.dg.fetchData(prevPager).subscribe( (r: DataResult) => {
+            this.dg.fetchData(prevPager, pi.pageSize).subscribe( (r: DataResult) => {
                 this.dg.loading = false;
                 const { items, pageIndex, pageSize, total } = {...r};
                 this.dfs.setPagination(pageIndex, pageSize, total);
@@ -270,7 +270,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
             // console.log('fetchData - ↓', this._index);
             this.dg.loading = true;
-            this.dg.fetchData(nextPager).subscribe( (r: DataResult) => {
+            this.dg.fetchData(nextPager, pi.pageSize).subscribe( (r: DataResult) => {
                 this.dg.closeLoading();
                 const { items, pageIndex, pageSize, total } = {...r};
                 this.dfs.setPagination(pageIndex, pageSize, total);
@@ -289,7 +289,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const nextPage = Math.floor(index / _pageSize) + 1;
 
         this.dg.showLoading();
-        this.dg.fetchData(nextPage).subscribe( (res: DataResult) => {
+        this.dg.fetchData(nextPage, _pageSize).subscribe( (res: DataResult) => {
             this.dg.closeLoading();
             const { items, pageIndex, pageSize, total } = {...res};
             this.dfs.setPagination(pageIndex, pageSize, total);

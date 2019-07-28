@@ -9,7 +9,7 @@ import { DemoDataService } from '../demo-data.service';
     providers: [
         DemoDataService
     ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VirtualLoadDemoComponent implements OnInit {
     psConfig = { swipeEasing: true,  minScrollbarLength: 20, wheelSpeed:1, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
@@ -42,6 +42,7 @@ export class VirtualLoadDemoComponent implements OnInit {
     }
 
     trackByRows = (index: number, row: any) => {
+        console.log(row.id);
         return row.id;
     }
 
