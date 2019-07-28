@@ -21,4 +21,6 @@ export interface PaginationInstance {
      * will be automatically set to the value of  collection.length.
      */
     totalItems?: number;
+    /** 每页显示记录数 */
+    pageList: number[];
 }

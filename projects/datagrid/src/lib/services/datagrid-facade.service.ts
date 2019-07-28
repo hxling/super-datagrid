@@ -205,6 +205,29 @@ export class DatagridFacadeService {
         }
     }
 
+    resize(newSize?: {width: number, height: number}) {
+        if (newSize) {
+            this.updateState(newSize, false);
+        }
+
+        this.resetColumnsSize();
+
+        this.updateVirthualRows(this._state.virtual.scrollTop);
+    }
+
+    fitColumns(fit) {
+        this.updateState({fitColumns: fit}, false);
+        this.setFitColumnsWidth(this._state.columnsGroup);
+        this.gridSizeSubject.next(this._state);
+    }
+
+    resetColumnsSize() {
+        if (this._state.fitColumns) {
+            this.setFitColumnsWidth(this._state.columnsGroup);
+        }
+        this.gridSizeSubject.next(this._state);
+    }
+
     initColumns() {
         const columns = this._state.columns;
         if (columns && columns.length) {
@@ -222,22 +245,28 @@ export class DatagridFacadeService {
             this.initColumnsWidth(colgroup);
 
             if (this._state.fitColumns) {
-                this.fitColumns(colgroup);
+                this.setFitColumnsWidth(colgroup);
             }
 
             this.updateState({ columnsGroup: colgroup }, false);
         }
     }
 
-    private fitColumns(colgroup: ColumnGroup) {
+    private setFitColumnsWidth(colgroup: ColumnGroup) {
+        if (!colgroup) {
+            return;
+        }
         colgroup.normalWidth = this._state.width - colgroup.leftFixedWidth;
         const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
             return totalWidth += col.width;
         }, 0);
 
         colgroup.normalColumns.forEach( col => {
+            col.originalWidth = col.width;
             col.width = Math.floor( col.width / minWidth * colgroup.normalWidth );
         });
+
+        colgroup.totalWidth = colgroup.leftFixedWidth + colgroup.rightFixedWidth + colgroup.normalWidth;
     }
 
     private getFixedCols(direction: 'left' | 'right' = 'left') {

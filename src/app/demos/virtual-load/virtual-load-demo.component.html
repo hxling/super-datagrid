@@ -31,7 +31,7 @@
                             [style.height.px]="topAreaHeight" style="backface-visibility: hidden;"></div>
         
                         <table style="border:0; width: 100%" class="f-datagrid-row-hover" cellpadding="0" cellspacing="0">
-                            <tr class="f-datagrid-body-row" *ngFor="let row of rows; trackBy: trackByRows let i = index; odd as odd" [style.height.px]="50" >
+                            <tr class="f-datagrid-body-row" *ngFor="let row of rows; trackBy: trackByRows let i = index; odd as odd" [style.height.px]="36" >
                                 <td class="f-datagrid-cell" [style.width.px]="col.width" *ngFor="let col of columns; let ci = index;">
                                     {{ row[col.field] }}
                                 </td>

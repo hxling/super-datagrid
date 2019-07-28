@@ -1,5 +1,4 @@
 import {Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewEncapsulation} from '@angular/core';
-import {DEFAULT_TEMPLATE, DEFAULT_STYLES} from './template';
 
 function coerceToBoolean(input: string | boolean): boolean {
     return !!input && input !== 'false';
@@ -10,8 +9,8 @@ function coerceToBoolean(input: string | boolean): boolean {
  */
 @Component({
     selector: 'pagination-controls',
-    template: DEFAULT_TEMPLATE,
-    styles: [DEFAULT_STYLES],
+    templateUrl: './pagination-controls.component.html',
+    styleUrls: ['./pagination-controls.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
@@ -50,5 +49,6 @@ export class PaginationControlsComponent {
     @Input() screenReaderPageLabel = 'page';
     @Input() screenReaderCurrentLabel = `You're on page`;
     @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
+    @Output() pageSizeChange = new EventEmitter<number>();
 
 }

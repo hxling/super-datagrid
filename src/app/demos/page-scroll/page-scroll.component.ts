@@ -16,7 +16,9 @@ export class PageScrollComponent implements OnInit {
     private  allDataSource = [];
     items;
     total = 0;
-    pageSize = 1;
+    pageSize = 100;
+
+    dataLength = 5000;
 
     enabelVirthualRows = true;
     title = 'farris-datagrid';
@@ -44,7 +46,7 @@ export class PageScrollComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位', editor: this.textbox  }
         ];
 
-        this.allDataSource = this.dds.createData(5);
+        // this.allDataSource = this.dds.createData(5000);
         // this.showLoading = true;
         // this.dds.serverCall(this.allDataSource, 1, this.pageSize).subscribe( res => {
         //     this.items = res.items;
@@ -53,21 +55,34 @@ export class PageScrollComponent implements OnInit {
         // });
     }
 
+    setDataLength(dataCount) {
+        this.dg.restService.dataLength = dataCount;
+        this.dg.reload();
+    }
+
     changeDataItems(n =  20) {
         const items = this.dds.createData(n);
         this.total = items.length;
         this.pageSize = items.length;
-        // this.dg.loadData(items);
         this.items = items;
     }
 
+    changePageSize(event: any) {
+        // this.showLoading = true;
+        // this.dds.serverCall(this.allDataSource, event.pageIndex, event.pageSize).subscribe( res => {
+        //     this.items = res.items;
+        //     this.total = res.total;
+        //     this.showLoading = false;
+        // });
+    }
+
     changePageIndex(event: any) {
-        this.showLoading = true;
-        this.dds.serverCall(this.allDataSource, event.pageIndex, this.pageSize).subscribe( res => {
-            this.items = res.items;
-            this.total = res.total;
-            this.showLoading = false;
-        });
+        // this.showLoading = true;
+        // this.dds.serverCall(this.allDataSource, event.pageIndex, event.pageSize).subscribe( res => {
+        //     this.items = res.items;
+        //     this.total = res.total;
+        //     this.showLoading = false;
+        // });
     }
 
 

@@ -11,6 +11,7 @@ export interface PaginatePipeArgs {
     itemsPerPage?: string | number;
     currentPage?: string | number;
     totalItems?: string | number;
+    pageList?: number[];
 }
 
 export interface PipeState {
@@ -89,7 +90,8 @@ export class PaginatePipe implements PipeTransform {
             id: config.id != null ? config.id : this.service.defaultId(),
             itemsPerPage: +config.itemsPerPage || 0,
             currentPage: +config.currentPage || 1,
-            totalItems: +config.totalItems || collection.length
+            totalItems: +config.totalItems || collection.length,
+            pageList: config.pageList || [10, 20, 30, 50, 100]
         };
     }
 
