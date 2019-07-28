@@ -38,7 +38,6 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
 
     @HostListener('click', ['$event'])
     onRowClick(event: MouseEvent) {
-        console.log(event);
         this.dfs.selectRow(this.rowIndex, this.rowData);
         this.clickHandler.emit();
     }

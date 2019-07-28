@@ -11,7 +11,7 @@ import { DatagridRowDirective } from './datagrid-row.directive';
 @Component({
     selector: 'grid-body-cell',
     template: `
-    <div class="f-datagrid-cell-content" #cellContainer
+    <div class="f-datagrid-cell-content" #cellContainer [style.width.px]="column.width"
      [ngClass]="{'f-datagrid-cell-edit': isEditing, 'f-datagrid-cell-selected': isSelected}">
         <span *ngIf="!isEditing && !column.template">{{ value }}</span>
         <ng-container *ngIf="!isEditing && column.template" [ngTemplateOutlet]="column.template" [ngTemplateOutletContext]="{$implicit: cellContext}"></ng-container>

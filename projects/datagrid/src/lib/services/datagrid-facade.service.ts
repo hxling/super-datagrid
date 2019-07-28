@@ -236,6 +236,10 @@ export class DatagridFacadeService {
             const rightFixedCols = this.getFixedCols('right');
             const normalCols = columns.filter(col => !col.fixed);
 
+            columns.forEach(c => {
+                c.originalWidth = c.width;
+            });
+
             const colgroup = {
                 leftFixed: leftFixedCols,
                 rightFixed: rightFixedCols,
@@ -258,12 +262,11 @@ export class DatagridFacadeService {
         }
         colgroup.normalWidth = this._state.width - colgroup.leftFixedWidth;
         const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
-            return totalWidth += col.width;
+            return totalWidth += col.originalWidth;
         }, 0);
 
         colgroup.normalColumns.forEach( col => {
-            col.originalWidth = col.width;
-            col.width = Math.floor( col.width / minWidth * colgroup.normalWidth );
+            col.width = Math.floor( col.originalWidth / minWidth * colgroup.normalWidth );
         });
 
         colgroup.totalWidth = colgroup.leftFixedWidth + colgroup.rightFixedWidth + colgroup.normalWidth;

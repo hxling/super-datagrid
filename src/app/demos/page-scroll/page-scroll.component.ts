@@ -60,6 +60,10 @@ export class PageScrollComponent implements OnInit {
         this.dg.reload();
     }
 
+    onSelectRow($event) {
+        console.log($event);
+    }
+
     changeDataItems(n =  20) {
         const items = this.dds.createData(n);
         this.total = items.length;

@@ -3,7 +3,7 @@ import { Component, OnInit, Input, ViewChild, Renderer2,
     OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone } from '@angular/core';
 
 import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { ScrollbarDirective } from '../../scrollbar/scrollbar.directive';
@@ -60,15 +60,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     currentRowId =  undefined;
     gridsize$ = this.dfs.gridSize$;
-    selectedRowId$ = this.dfs.currentRow$.pipe(
-        map( (row: SelectedRow) => {
-            this.dg.selectedRow = row;
-            if (row) {
-                return row.id;
-            }
-            return undefined;
-        })
-    );
+    selectedRow$ = this.dfs.currentRow$;
 
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
@@ -107,8 +99,15 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.ps.scrollToTop();
         });
 
-        this.selectedRowId$.subscribe(id => {
-            this.currentRowId = id;
+        this.selectedRow$.pipe(
+            filter(row => !!row)
+        ).subscribe((row: SelectedRow) => {
+            if (row) {
+                this.currentRowId = row.id;
+            } else {
+                this.currentRowId = undefined;
+            }
+            this.dg.selectRow(row);
         });
     }
 
