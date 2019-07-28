@@ -232,7 +232,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.onKeyboardDown();
 
             this.ro = new ResizeObserver(() => {
-                this.calculateGridSize();
+                this.calculateGridSize(this.fit);
             });
 
             this.ro.observe(this.el.nativeElement.parentElement);

@@ -56,7 +56,7 @@ export class PageScrollComponent implements OnInit {
     }
 
     setDataLength(dataCount) {
-        this.dg.restService.dataLength = dataCount;
+        this.dg.restService['dataLength'] = dataCount;
         this.dg.reload();
     }
 

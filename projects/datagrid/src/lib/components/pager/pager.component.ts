@@ -36,7 +36,7 @@ export class DatagridPagerComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    onPageChange(pageIndex: number) {
+    onPageChange(pageIndex: any) {
         this.pageChange.emit(Number.parseInt(pageIndex, 10));
     }
 

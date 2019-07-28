@@ -248,7 +248,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             // console.log('fetchData - ↑');
             const prevPager = Math.floor(vs.rowIndex / pi.pageSize);
             this.dg.loading = true;
-            this.dg.fetchData(prevPager).subscribe( (r: DataResult) => {
+            this.dg.fetchData(prevPager, pi.pageSize).subscribe( (r: DataResult) => {
                 this.dg.loading = false;
                 const { items, pageIndex, pageSize, total } = {...r};
                 this.dfs.setPagination(pageIndex, pageSize, total);
@@ -270,7 +270,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
             // console.log('fetchData - ↓', this._index);
             this.dg.loading = true;
-            this.dg.fetchData(nextPager).subscribe( (r: DataResult) => {
+            this.dg.fetchData(nextPager, pi.pageSize).subscribe( (r: DataResult) => {
                 this.dg.closeLoading();
                 const { items, pageIndex, pageSize, total } = {...r};
                 this.dfs.setPagination(pageIndex, pageSize, total);
@@ -289,7 +289,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const nextPage = Math.floor(index / _pageSize) + 1;
 
         this.dg.showLoading();
-        this.dg.fetchData(nextPage).subscribe( (res: DataResult) => {
+        this.dg.fetchData(nextPage, _pageSize).subscribe( (res: DataResult) => {
             this.dg.closeLoading();
             const { items, pageIndex, pageSize, total } = {...res};
             this.dfs.setPagination(pageIndex, pageSize, total);
