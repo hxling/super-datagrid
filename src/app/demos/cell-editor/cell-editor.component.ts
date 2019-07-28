@@ -22,7 +22,7 @@ export class CellEditorComponent implements OnInit {
 
         this.columns = [
             { field: 'id', width: 100, title: 'ID' },
-            { field: 'name', width: 130, title: '姓名', editor: { type: 'textbox', bindingData: 'name'}},
+            { field: 'name', width: 130, title: '姓名', editor: { type: 'textbox', bindingData: 'name', options: {}}},
             { field: 'sex', width: 70, title: '性别', editor: {type: 'input-group'} },
             { field: 'birthday', width: 120, title: '出生日期'},
             { field: 'maray', width: 70, title: '婚否'},

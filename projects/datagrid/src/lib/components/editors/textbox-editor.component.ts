@@ -9,7 +9,7 @@ import { DatagridEditorComponent } from './grid-editor.component';
     </div>
     `,
 })
-export class DatagridTextboxEditorComponent extends DatagridEditorComponent implements OnInit, OnDestroy {
+export class TextboxEditorComponent extends DatagridEditorComponent implements OnInit, OnDestroy {
 
     constructor(render: Renderer2, el: ElementRef) {
         super(render, el);

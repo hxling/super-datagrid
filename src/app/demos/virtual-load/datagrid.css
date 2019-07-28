@@ -75,10 +75,11 @@
 .f-datagrid-row-selected .f-datagrid-cell {
   background-color: transparent;
 }
-.f-datagrid-row.virtualized {
+.f-datagrid-virtual-row {
   pointer-events: none;
   background-color: transparent !important;
   border-width: 0;
+  width: 1px;
 }
 .f-datagrid-strip .f-datagrid-body .f-datagrid-row-selected {
   background-color: #B7E4FF !important;

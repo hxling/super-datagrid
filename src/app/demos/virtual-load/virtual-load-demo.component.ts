@@ -1,7 +1,6 @@
-import { PerfectScrollbarDirective } from 'projects/datagrid/src/lib/perfect-scrollbar/perfect-scrollbar.directive';
+import { ScrollbarDirective } from '@farris/ui-datagrid';
 import { Component, OnInit, ChangeDetectorRef, Input, ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
-import { viewClassName } from '@angular/compiler';
 
 @Component({
     selector: 'demo-virtual-load',
@@ -13,7 +12,7 @@ import { viewClassName } from '@angular/compiler';
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VirtualLoadDemoComponent implements OnInit {
-    psConfig = { swipeEasing: true,  minScrollbarLength: 20, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
+    psConfig = { swipeEasing: true,  minScrollbarLength: 20, wheelSpeed:1, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
     columns = [
         { field: 'id', width: 100, title: 'ID' },
         { field: 'name', width: 130, title: '姓名'},
@@ -27,17 +26,19 @@ export class VirtualLoadDemoComponent implements OnInit {
     ];
 
     data = [];
+    topAreaHeight = 0;
+    bottomAreaHeight = 0;
 
-    @Input() rows = {};
-    @ViewChild('ps') ps: PerfectScrollbarDirective;
+    @Input() rows = [];
+    @ViewChild('ps') ps: ScrollbarDirective;
     private scrollTimer: any;
     compareItems: (item1: any, item2: any) => boolean = (item1: any, item2: any) => item1 === item2;
     constructor(private dds: DemoDataService, private cd: ChangeDetectorRef) {
-        this.data = this.dds.createData(100000);
+        this.data = this.dds.createData(100);
     }
 
     ngOnInit(): void {
-        this.rows = this.getRows(0);
+        this.rendRows(0);
     }
 
     trackByRows = (index: number, row: any) => {
@@ -45,25 +46,35 @@ export class VirtualLoadDemoComponent implements OnInit {
         return row.id;
     }
 
+    private rendRows(y) {
+        const {virtualRows: rows, topHideHeight, bottomHideHeight } = this.getRows(y);
+        this.rows = rows;
+        this.topAreaHeight = topHideHeight;
+        this.bottomAreaHeight = bottomHideHeight;
+
+    }
 
     onScrollToY($event: any) {
+
+        const y = $event.target.scrollTop;
+        // this.rendRows(y);
+        // this.cd.detectChanges();
+
+        // const {virtualRows: rows, topHideHeight, bottomHideHeight } = this.getRows(y);
+        // this.topAreaHeight = topHideHeight;
+        // this.bottomAreaHeight = bottomHideHeight;
+        // this.cd.detectChanges();
         if (this.scrollTimer) {
             clearTimeout(this.scrollTimer);
         }
-
-        setTimeout(() => {
-            const y = $event.target.scrollTop;
-            const _rows = this.getRows(y);
-            console.log(_rows);
-            console.log(this.rows);
-            this.rows = Object.assign(this.rows, _rows);
-
-            console.log('new', this.rows);
+        this.scrollTimer = setTimeout(() => {
+            // this.rows = rows;
             // this.cd.markForCheck();
+            this.rendRows(y);
             this.cd.detectChanges();
             // this.ps.update();
             console.log('scroll Y');
-        }, 50000);
+        }, 0);
     }
 
     onScrollToX(event: any) {}

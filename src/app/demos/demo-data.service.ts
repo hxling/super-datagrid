@@ -14,7 +14,7 @@ export class DemoDataService implements RestService {
     data: any[];
 
     constructor() {
-        this.data = this.createData(500000);
+        this.data = this.createData(5);
     }
 
     getData(url: string, param?: any): Observable<DataResult> {

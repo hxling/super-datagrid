@@ -1,0 +1,49 @@
+{
+  "_from": "@farris/farris-theme-default",
+  "_id": "@farris/farris-theme-default@0.0.29",
+  "_inBundle": false,
+  "_integrity": "sha512-DDxGIJi/Iti2CIkVy9lllqwmcqjeVCpoU4y/4gzzPgqjOMAaHTuaiFL1hoibj9t71XnKRmEr6RrEws8uRtm9BQ==",
+  "_location": "/@farris/farris-theme-default",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "@farris/farris-theme-default",
+    "name": "@farris/farris-theme-default",
+    "escapedName": "@farris%2ffarris-theme-default",
+    "scope": "@farris",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@farris/farris-theme-default/-/farris-theme-default-0.0.29.tgz",
+  "_shasum": "491aaf838bb1f64632fe48afa2c92adc054dd34e",
+  "_spec": "@farris/farris-theme-default",
+  "_where": "E:\\Cloud\\farris-datagrid",
+  "author": {
+    "name": "ximena"
+  },
+  "bundleDependencies": false,
+  "dependencies": {},
+  "deprecated": false,
+  "description": "farris 主题 ",
+  "devDependencies": {},
+  "license": "MIT",
+  "main": "farris-all.css",
+  "name": "@farris/farris-theme-default",
+  "peerDependencies": {
+    "material-design-icons": "^3.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.0.29"
+}

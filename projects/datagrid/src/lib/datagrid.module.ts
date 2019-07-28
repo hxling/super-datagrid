@@ -1,27 +1,33 @@
-import { DatagridTextboxEditorComponent } from './components/editors/textbox-editor.component';
-import { NgModule, InjectionToken } from '@angular/core';
+import { NgModule, InjectionToken, ModuleWithProviders, Provider } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+
 import { FarrisCommonModule } from '@farris/ui-common';
 
-import { PerfectScrollbarDirective } from './perfect-scrollbar/perfect-scrollbar.directive';
-import { PerfectScrollbarConfigInterface, PERFECT_SCROLLBAR_CONFIG } from './perfect-scrollbar/perfect-scrollbar.interfaces';
-
 import { DatagridComponent } from './datagrid.component';
-import { DatagridHeaderComponent } from './components/header';
-import { DatagridBodyCellComponent, DatagridBodyComponent, GridRowDirective } from './components/body';
-import { PerfectScrollbarComponent } from './perfect-scrollbar/perfect-scrollbar.component';
-import { DatagridPagerComponent } from './components/pager/pager.component';
+
 import { NgxPaginationModule } from './pagination/ngx-pagination.module';
+import { DatagridPagerComponent } from './components/pager/pager.component';
 import { DataGridLoadingComponent } from './components/loading.component';
-import { DatagridCellEditorDirective, DatagridColumnDirective } from './components/columns';
-import { ModuleWithProviders } from '@angular/compiler/src/core';
-import { GRID_EDITORS } from './types';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DatagridEditorComponent, GridCellEditorDirective } from './components/editors';
+import { DatagridHeaderComponent } from './components/header/datagrid-header.component';
+import { CellEditableDirective } from './components/body/cell-editable.directive';
+import { DatagridCellComponent } from './components/body/datagrid-cell.component';
+import { DatagridRowDirective } from './components/body/datagrid-row.directive';
+import { DatagridBodyComponent } from './components/body/datagrid-body.component';
+import { DatagridCellEditorDirective } from './components/columns/column-cell-edit.directive';
+import { DatagridColumnDirective } from './components/columns/datagrid-column.directive';
+import { GridCellEditorDirective } from './components/editors/cell-editor.directive';
+import { DatagridEditorComponent } from './components/editors/grid-editor.component';
+import { TextboxEditorComponent } from './components/editors/textbox-editor.component';
+import { ScrollbarModule } from './scrollbar/scrollbar.module';
+import { ScrollbarConfigInterface, SCROLLBAR_CONFIG } from './scrollbar/scrollbar.interfaces';
+import { GRID_EDITORS } from './types/constant';
 
 
-const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
+
+
+const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
     minScrollbarLength: 20
 };
 
@@ -32,54 +38,51 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
         ReactiveFormsModule,
         HttpClientModule,
         NgxPaginationModule,
+        ScrollbarModule,
         FarrisCommonModule.forRoot()
     ],
     declarations: [
-        PerfectScrollbarDirective,
-        PerfectScrollbarComponent,
-
         DatagridHeaderComponent,
-        DatagridBodyCellComponent,
+        CellEditableDirective,
+        DatagridCellComponent,
+        DatagridRowDirective,
         DatagridBodyComponent,
         DatagridComponent,
         DatagridPagerComponent,
         DatagridCellEditorDirective,
-        GridCellEditorDirective,
-        GridRowDirective,
         DatagridColumnDirective,
         DataGridLoadingComponent,
+        GridCellEditorDirective,
         DatagridEditorComponent,
-        DatagridTextboxEditorComponent
+        TextboxEditorComponent
     ],
     providers: [
         {
-            provide: PERFECT_SCROLLBAR_CONFIG,
+            provide: SCROLLBAR_CONFIG,
             useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
         },
         {
-            provide: GRID_EDITORS, useValue: {name: 'textbox', value: DatagridTextboxEditorComponent }, multi: true
+            provide: GRID_EDITORS, useValue: {name: 'textbox', value: TextboxEditorComponent }, multi: true
         }
     ],
     exports: [
         DatagridComponent,
+        DatagridHeaderComponent,
         DatagridColumnDirective,
         DatagridCellEditorDirective,
         DatagridEditorComponent,
-        DatagridTextboxEditorComponent,
-        PerfectScrollbarDirective,
-        PerfectScrollbarComponent
+        TextboxEditorComponent,
+        CellEditableDirective,
     ],
     entryComponents: [
-        DatagridTextboxEditorComponent
+        TextboxEditorComponent
     ]
 })
 export class DatagridModule {
-    static forRoot(editors = []): ModuleWithProviders {
+    static forRoot(editors?: Provider[]): ModuleWithProviders {
         return {
             ngModule: DatagridModule,
-            providers: [
-                ...editors
-            ]
+            providers: editors || []
         };
     }
 }

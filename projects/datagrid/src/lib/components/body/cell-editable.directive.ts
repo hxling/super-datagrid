@@ -1,7 +1,7 @@
 import { Directive, Input, HostListener } from '@angular/core';
 
 @Directive({
-    selector: '[cell-editable]',
+    selector: 'cell-editable, [cell-editable]',
     exportAs: 'cellEditable'
 })
 export class CellEditableDirective {

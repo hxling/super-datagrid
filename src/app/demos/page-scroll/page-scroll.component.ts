@@ -1,6 +1,7 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
 import { REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
+import { DatagridComponent } from '@farris/ui-datagrid';
 
 @Component({
     selector: 'page-scroll',
@@ -13,9 +14,9 @@ import { REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
 export class PageScrollComponent implements OnInit {
     showLoading = false;
     private  allDataSource = [];
-    items = [];
+    items;
     total = 0;
-    pageSize = 500;
+    pageSize = 1;
 
     enabelVirthualRows = true;
     title = 'farris-datagrid';
@@ -24,7 +25,7 @@ export class PageScrollComponent implements OnInit {
     @ViewChild('sex') sexEditor: TemplateRef<any>;
     @ViewChild('birthday') birthdayEditor: TemplateRef<any>;
     @ViewChild('maray') marayEditor: TemplateRef<any>;
-
+    @ViewChild('dg') dg: DatagridComponent;
     columns = [];
 
     constructor(private dds: DemoDataService) {}
@@ -43,7 +44,7 @@ export class PageScrollComponent implements OnInit {
             { field: 'zhiwei', width: 100, title: '职位', editor: this.textbox  }
         ];
 
-        this.allDataSource = this.dds.createData(100000);
+        this.allDataSource = this.dds.createData(5);
         // this.showLoading = true;
         // this.dds.serverCall(this.allDataSource, 1, this.pageSize).subscribe( res => {
         //     this.items = res.items;
@@ -53,12 +54,16 @@ export class PageScrollComponent implements OnInit {
     }
 
     changeDataItems(n =  20) {
-        this.allDataSource = this.dds.createData(n);
+        const items = this.dds.createData(n);
+        this.total = items.length;
+        this.pageSize = items.length;
+        // this.dg.loadData(items);
+        this.items = items;
     }
 
-    changePageIndex(idx: number) {
+    changePageIndex(event: any) {
         this.showLoading = true;
-        this.dds.serverCall(this.allDataSource, idx, this.pageSize).subscribe( res => {
+        this.dds.serverCall(this.allDataSource, event.pageIndex, this.pageSize).subscribe( res => {
             this.items = res.items;
             this.total = res.total;
             this.showLoading = false;
@@ -67,10 +72,10 @@ export class PageScrollComponent implements OnInit {
 
 
     onBeginEdit(e: any) {
-        console.log('进入编辑', e);
+        // console.log('进入编辑', e);
     }
 
     onEndEdit(e: any) {
-        console.log('停止编辑', e);
+        // console.log('停止编辑', e);
     }
 }

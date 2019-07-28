@@ -20,8 +20,8 @@
     <div class="row">
         <div class="col-12">
                         
-            <farris-datagrid [columns]="columns" [data]="items"
-                [showRowNumber] ="false" [striped]="false" [showCheckbox]="false"
+            <farris-datagrid [columns]="columns" [data]="items" #dg
+                [showLineNumber] ="false" [striped]="false" [showCheckbox]="false"
                 [virtualized]="enabelVirthualRows"
                 [pagination]="true"
                 [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"

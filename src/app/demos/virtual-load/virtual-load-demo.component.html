@@ -18,27 +18,27 @@
     </div>
 
 
-    <div  class="f-datagrid-body" [ngStyle]="bodyStyle" [style.top.px]="top" tabindex=1>
+    <div  class="f-datagrid-body" [style.top.px]="36" tabindex=1>
 
-            <div [perfectScrollbar]="psConfig" class="ps f-datagrid-body-wheel-area" #ps="ngxPerfectScrollbar"
+            <div [scrollbar]="psConfig" class="ps f-datagrid-body-wheel-area" #ps="ngxScrollbar"
                 style="width: 800px; height: 362px;" (psScrollY)="onScrollToY($event)">
         
-                <div [style.height.px]="wheelHeight">
+                <div [style.height.px]="3600">
            
                     <div [style.width.px]="966" style="position: relative;" [style.left.px]="0">
         
-                        <div #topDiv class="f-datagrid-row body-top virtualized" 
-                            [style.height.px]="rows.topHideHeight" style="transform: translate3d(0px, 0px, 0px)"></div>
+                        <div #topDiv class="f-datagrid-virtual-row body-top"  
+                            [style.height.px]="topAreaHeight" style="backface-visibility: hidden;"></div>
         
                         <table style="border:0; width: 100%" class="f-datagrid-row-hover" cellpadding="0" cellspacing="0">
-                            <tr class="f-datagrid-body-row" *ngFor="let row of rows.virtualRows; trackBy: trackByRows; let i = index; odd as odd" [style.height.px]="36" >
+                            <tr class="f-datagrid-body-row" *ngFor="let row of rows; trackBy: trackByRows let i = index; odd as odd" [style.height.px]="50" >
                                 <td class="f-datagrid-cell" [style.width.px]="col.width" *ngFor="let col of columns; let ci = index;">
                                     {{ row[col.field] }}
                                 </td>
                             </tr>    
                         </table>
         
-                        <div #bottomDiv  style="transform: translate3d(0px, 0px, 0px)" class="f-datagrid-row body-bottom virtualized" [style.height.px]="rows.bottomHideHeight" ></div>
+                        <div #bottomDiv class="f-datagrid-virtual-row body-bottom" [style.height.px]="bottomAreaHeight" style="backface-visibility: hidden;"></div>
         
                     </div>
                 </div>

@@ -24,7 +24,7 @@ export class ScrollbarLoadDemoComponent implements OnInit {
 
     data = [];
 
-    rows = {};
+    rows = undefined;
 
     private scrollTimer: any;
     @ViewChild('scrollbar') scrollbar: ElementRef;
@@ -35,7 +35,7 @@ export class ScrollbarLoadDemoComponent implements OnInit {
 
     ngOnInit(): void {
         this.rows = this.getRows(0);
-        
+
         this.render.listen(this.scrollbar.nativeElement, 'scroll', (e) => {
             if (this.scrollTimer) {
                 clearTimeout(this.scrollTimer);

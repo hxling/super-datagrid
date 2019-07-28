@@ -1,1 +1,1 @@
-export * from './header.component';
+export * from './datagrid-header.component';
