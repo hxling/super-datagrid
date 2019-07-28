@@ -191,6 +191,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     private keyDownSub: Subscription = null;
     private ro: ResizeObserver | null = null;
+    private subscriptions: Subscription[] = [];
 
     constructor(private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
@@ -201,11 +202,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         this.restService = this.inject.get<RestService>(REST_SERVICEE, null);
 
-        this.data$.subscribe( (dataSource: any) => {
+        const dataSubscription = this.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
             this.cd.detectChanges();
             this.loadSuccess.emit(this.ds.rows);
         });
+
+        this.subscriptions.push(dataSubscription);
 
         const Editors = this.inject.get<any[]>(GRID_EDITORS, []);
         if (Editors.length) {
@@ -285,11 +288,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     private unsubscribes() {
-        if (!this.keyDownSub) {
-            return;
-        }
-        this.keyDownSub.unsubscribe();
-        this.keyDownSub = null;
+        this.subscriptions.forEach(ss => {
+            ss.unsubscribe();
+            ss = null;
+        });
+
+        this.subscriptions = [];
     }
 
     private onKeyDownEvent(e: any) {

@@ -38,6 +38,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     deltaTopHeight = 0;
     wheelHeight = 0;
     fixedRightScrollLeft = 0;
+    maxScrollLeft = 0;
     showRightShadow = false;
 
     @Input() columnsGroup: ColumnGroup;
@@ -83,7 +84,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.setWheelHeight();
                 this.fixedRightScrollLeft = this.width - this.rightFixedWidth;
                 this.bodyStyle = this.getBodyStyle();
-
+                this.maxScrollLeft = this.colsWidth + this.leftFixedWidth;
                 if (this.colsWidth + this.leftFixedWidth === this.fixedRightScrollLeft) {
                     this.showRightShadow = false;
                 } else {
@@ -144,8 +145,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         const x = $event.target.scrollLeft;
         this.scrollLeft = x;
         this.fixedRightScrollLeft = this.scrollLeft + this.width - this.rightFixedWidth;
-
-        if (this.fixedRightScrollLeft === this.colsWidth + this.leftFixedWidth) {
+        if (this.fixedRightScrollLeft === this.maxScrollLeft || this.fixedRightScrollLeft > this.maxScrollLeft) {
+            this.fixedRightScrollLeft = this.maxScrollLeft;
             this.showRightShadow = false;
         } else {
             this.showRightShadow = true;
