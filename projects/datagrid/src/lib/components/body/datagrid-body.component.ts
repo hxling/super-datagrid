@@ -58,10 +58,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     private scrollTimer: any = null;
 
-    currentRowId =  undefined;
     gridsize$ = this.dfs.gridSize$;
     selectedRow$ = this.dfs.currentRow$;
 
+    currentRowId =  undefined;
     hoverRowIndex: number;
 
     constructor(

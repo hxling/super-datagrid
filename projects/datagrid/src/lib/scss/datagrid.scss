@@ -90,6 +90,13 @@
         &-fixed-left {
             position: absolute;
             z-index: 1;
+
+            .f-datagrid-row-hover ,
+            .f-datagrid-row-selected {
+                .f-datagrid-cell-rownumber {
+                    background-color: #ededed !important;
+                }
+            }
         }
 
         &-fixed-right {

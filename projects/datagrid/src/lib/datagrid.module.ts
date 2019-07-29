@@ -24,6 +24,7 @@ import { ScrollbarModule } from './scrollbar/scrollbar.module';
 import { ScrollbarConfigInterface, SCROLLBAR_CONFIG } from './scrollbar/scrollbar.interfaces';
 import { GRID_EDITORS } from './types/constant';
 import { DatagridRowHoverDirective } from './components/body/datagrid-row-hover.directive';
+import { DatagridRowsComponent } from './components/body/datagrid-rows.component';
 
 
 
@@ -52,6 +53,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DatagridPagerComponent,
         DatagridCellEditorDirective,
         DatagridColumnDirective,
+        DatagridRowsComponent,
         DatagridRowHoverDirective,
         DataGridLoadingComponent,
         GridCellEditorDirective,

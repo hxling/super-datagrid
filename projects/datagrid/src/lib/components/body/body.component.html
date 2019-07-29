@@ -9,12 +9,13 @@
 
             <div #fixedLeft class="f-datagrid-body-fixed-left"  [class.f-datagrid-fixed-left-shadow]="!!scrollLeft"
                 *ngIf="dg.showLineNumber || dg.showCheckbox " [style.transform]="'translate3d('+ scrollLeft +'px, '+ topHideHeight +'px, 0px)'"
-                    [style.width.px]="leftFixedWidth" [style.height.px]="wheelHeight - topHideHeight">
+                [style.width.px]="leftFixedWidth" [style.height.px]="wheelHeight - topHideHeight">
 
                 <table style="width: 100%" >
-                    <tr class="f-datagrid-body-row" [style.height.px]="rowHeight" row-hover #hoverLeftRow="rowHover"
+                    <tr class="f-datagrid-body-row" [style.height.px]="rowHeight" row-hover #hoverLeftRow="rowHover" [rowIndex]="startRowIndex + i"
                         *ngFor="let row of data;trackBy: trackByRows; let i=index; odd as odd"
                         [class.f-datagrid-row-hover]="hoverRowIndex === hoverLeftRow.rowIndex"
+                        [class.f-datagrid-row-selected]="currentRowId === row[dg.idField]"
                         >
                         <td class="f-datagrid-cell f-datagrid-cell-rownumber" [style.width.px]="dg.lineNumberWidth">
                             {{ startRowIndex + i + 1 }}
@@ -28,48 +29,16 @@
                 *ngIf="columnsGroup?.rightFixed && columnsGroup?.rightFixed.length"
                 [style.transform]="'translate3d('+ fixedRightScrollLeft +'px, '+ topHideHeight +'px, 0px)'"
                 [class.f-datagrid-fixed-right-shadow]="showRightShadow" [style.height.px]="wheelHeight - topHideHeight">
-            
-                <table #datatable style="border:0; width: 100%" class="f-datagrid-rows" cellpadding=0 cellspacing="0">
-                    <tr class="f-datagrid-body-row" row-hover #hoverRightRow="rowHover"
-                        [grid-row]="row" [rowIndex]="startRowIndex + i" #dr="gridRow" [formGroup]="dr.form"
-                        *ngFor="let row of data ; trackBy: trackByRows; let i = index; odd as odd"
-                        [class.f-datagrid-row-odd]="odd && dg.striped"
-                        [class.f-datagrid-row-even]="!odd && dg.striped"
-                        [class.f-datagrid-row-selected]="currentRowId === row[dg.idField]"
-                        [class.f-datagrid-row-hover]="hoverRowIndex === hoverRightRow.rowIndex"
-                    >
-                        <td class="f-datagrid-cell" [attr.align]="col.align"
-                            [style.width.px]="col.width" *ngFor="let col of columnsGroup?.rightFixed; let ci = index;">
-                            <grid-body-cell [width]="col.width" [height]="rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
-                        </td>
-                    </tr>
-                </table>
-            
+                
+                <datagrid-rows [startRowIndex]="startRowIndex" [columns]="columnsGroup?.rightFixed" [data]="data"></datagrid-rows>
             </div>
 
-            <div [style.width.px]="colsWidth" style="position: relative;" [style.left.px]="leftFixedWidth"
-            class="f-datagrid-table"
-            [style.transform]="'translate3d(0px, '+ topHideHeight +'px, 0px)'" [style.height.px]="wheelHeight - topHideHeight">
-                
-                <table #datatable style="border:0; width: 100%" class="f-datagrid-rows" cellpadding=0 cellspacing="0">
-                    <tr class="f-datagrid-body-row" [row-hover]="row"  #hoverBodyRow="rowHover"
-                        [grid-row]="row" [rowIndex]="startRowIndex + i" #dr="gridRow" [formGroup]="dr.form"
-                        *ngFor="let row of data ; trackBy: trackByRows; let i = index; odd as odd"
-                        [class.f-datagrid-row-odd]="odd && dg.striped"
-                        [class.f-datagrid-row-even]="!odd && dg.striped"
-                        [class.f-datagrid-row-selected]="currentRowId === row[dg.idField]"
-                        [class.f-datagrid-row-hover]="hoverRowIndex === hoverBodyRow.rowIndex"
-                    >
-                        <td class="f-datagrid-cell" [attr.align]="col.align"
-                            [style.width.px]="col.width" *ngFor="let col of columnsGroup?.normalColumns; let ci = index;">
-                            <grid-body-cell [width]="col.width" [height]="rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
-                        </td>
-                    </tr>
-                </table>
+            <div [style.width.px]="colsWidth" style="position: relative;" [style.left.px]="leftFixedWidth" class="f-datagrid-table"
+                [style.transform]="'translate3d(0px, '+ topHideHeight +'px, 0px)'" [style.height.px]="wheelHeight - topHideHeight">
+
+                <datagrid-rows [startRowIndex]="startRowIndex" [columns]="columnsGroup?.normalColumns" [data]="data"></datagrid-rows>
                
             </div>
-
-            
            
         </div>
     </div>
