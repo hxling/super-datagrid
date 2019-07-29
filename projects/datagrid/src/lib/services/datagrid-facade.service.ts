@@ -151,9 +151,9 @@ export class DatagridFacadeService {
         this.updateState({ currentRow: { id, data: rowData, index: rowIndex } });
     }
 
-    setCurrentCell(rowIndex: number, rowData: any, field: string ) {
+    setCurrentCell(rowIndex: number, rowData: any, field: string, cellRef?: any ) {
         if (!this.isCellSelected({rowIndex, field})) {
-            const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData) };
+            const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData), cellRef };
             this.updateState({currentCell});
         }
     }

@@ -216,6 +216,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 this.editors[ed.name] = ed.value;
             });
         }
+
+        this.dfs.currentCell$.subscribe( cell => {
+            this.currentCell = cell;
+        });
     }
 
     ngOnInit() {

@@ -7,8 +7,8 @@
         [class.f-datagrid-row-selected]="dgb.currentRowId === row[dg.idField]"
         [class.f-datagrid-row-hover]="dgb.hoverRowIndex === hoverRow.rowIndex"
     >
-        <td class="f-datagrid-cell" [attr.align]="col.align"
-            [style.width.px]="col.width" *ngFor="let col of columns; let ci = index;">
+        <td [cell-editable]="row" [column]="col"
+            class="f-datagrid-cell" [attr.align]="col.align" [style.width.px]="col.width" *ngFor="let col of columns; let ci = index;">
             <grid-body-cell [width]="col.width" [height]="dg.rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
         </td>
     </tr>
