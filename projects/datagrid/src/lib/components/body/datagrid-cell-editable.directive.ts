@@ -1,9 +1,11 @@
+import { DatagridRowDirective } from './datagrid-row.directive';
 import { Directive, Input, HostListener, ElementRef, Renderer2, OnInit } from '@angular/core';
 import { DataColumn } from './../../types/data-column';
-import { DatagridFacadeService } from '../../services';
+import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { CellInfo } from '../../services/state';
 import { DatagridComponent } from '../../datagrid.component';
 import { CELL_SELECTED_CLS } from '../../types/constant';
+import { DomHandler } from '../../services/domhandler';
 
 @Directive({
     selector: '[cell-editable]',
@@ -11,10 +13,10 @@ import { CELL_SELECTED_CLS } from '../../types/constant';
 })
 export class DatagridCellEditableDirective implements OnInit {
     @Input('cell-editable') rowData: any;
-    @Input() rowIndex: number;
     @Input() column: DataColumn;
 
-    constructor(private dfs: DatagridFacadeService, public el: ElementRef, private render: Renderer2, private dg: DatagridComponent) {
+    constructor(private dfs: DatagridFacadeService, private dr: DatagridRowDirective,
+                public el: ElementRef, private render: Renderer2, private dg: DatagridComponent) {
     }
 
     ngOnInit() {
@@ -26,19 +28,15 @@ export class DatagridCellEditableDirective implements OnInit {
         if (this.dg.editable && this.dg.editMode === 'cell') {
             this.clearCellSelectedClass();
             this.render.addClass(this.el.nativeElement, CELL_SELECTED_CLS);
-            this.dfs.setCurrentCell(this.rowIndex, this.rowData, this.column.field, this);
+            this.dfs.setCurrentCell(this.dr.rowIndex, this.rowData, this.column.field, this.el.nativeElement);
+            event.stopPropagation();
+            event.preventDefault();
         }
     }
 
     private clearCellSelectedClass() {
         if (this.dg.currentCell) {
-            const element = (this.dg.currentCell.cellRef as DatagridCellEditableDirective).el.nativeElement;
-            if (element.classList) {
-                element.classList.remove(CELL_SELECTED_CLS);
-            } else {
-                element.className = element.className.replace(
-                                        new RegExp('(^|\\b)' + CELL_SELECTED_CLS.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-            }
+            DomHandler.removeClass(this.dg.currentCell.cellRef, CELL_SELECTED_CLS);
         }
     }
 
@@ -46,7 +44,7 @@ export class DatagridCellEditableDirective implements OnInit {
         let isEditing = false;
         let isSelected = false;
         if (cell ) {
-            if (cell.field === this.column.field && cell.rowIndex === this.rowIndex && this.column.editor) {
+            if (cell.field === this.column.field && cell.rowIndex === this.dr.rowIndex && this.column.editor) {
                 isEditing =  cell.isEditing;
             }
 

@@ -13,6 +13,7 @@
     
     table {
         table-layout: fixed;
+        border-collapse: separate;
     }
 
     &-full{
@@ -208,7 +209,8 @@
         }
 
         &-selected {
-            border: 1px solid $selected-cell-bgcolor!important;
+            border: 1px solid $selected-cell-border-color!important;
+            background-color: $selected-cell-bgcolor!important;
         }
 
         &-edit {
@@ -249,7 +251,7 @@
 
     &-bordered {
         .f-datagrid-cell {
-            border-width: 0 1px 0 0;
+            border-width: 0 1px 1px 0;
         }
 
 

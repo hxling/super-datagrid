@@ -11,7 +11,7 @@
                 *ngIf="dg.showLineNumber || dg.showCheckbox " [style.transform]="'translate3d('+ scrollLeft +'px, '+ topHideHeight +'px, 0px)'"
                 [style.width.px]="leftFixedWidth" [style.height.px]="wheelHeight - topHideHeight">
 
-                <table style="width: 100%" >
+                <table style="width: 100%" cellpadding="0" cellspacing="0">
                     <tr class="f-datagrid-body-row" [style.height.px]="rowHeight" row-hover #hoverLeftRow="rowHover" [rowIndex]="startRowIndex + i"
                         *ngFor="let row of data;trackBy: trackByRows; let i=index; odd as odd"
                         [class.f-datagrid-row-hover]="hoverRowIndex === hoverLeftRow.rowIndex"

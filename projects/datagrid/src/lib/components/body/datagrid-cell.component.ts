@@ -3,7 +3,6 @@ import { Component, OnInit, Input, Output, EventEmitter, HostListener,
     OnDestroy, ComponentFactoryResolver, NgZone } from '@angular/core';
 import { CommonUtils } from '@farris/ui-common';
 import { DataColumn } from '../../types';
-import { CellInfo } from '../../services/state';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridRowDirective } from './datagrid-row.directive';

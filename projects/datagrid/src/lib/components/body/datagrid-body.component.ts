@@ -8,11 +8,10 @@ import { map, filter } from 'rxjs/operators';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { ScrollbarDirective } from '../../scrollbar/scrollbar.directive';
 import { ColumnGroup } from '../../types';
-import { SelectedRow } from '../../services/state';
+import { SelectedRow, DataResult } from '../../services/state';
 import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
-import { DataResult } from '../../services/state';
 
 
 @Component({

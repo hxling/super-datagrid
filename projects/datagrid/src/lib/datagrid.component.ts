@@ -12,7 +12,8 @@ import { DatagridColumnDirective } from './components/columns/datagrid-column.di
 import { DataResult, CellInfo, SelectedRow } from './services/state';
 import { RestService, REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
-import { GRID_EDITORS } from './types/constant';
+import { GRID_EDITORS, CELL_SELECTED_CLS } from './types/constant';
+import { DomHandler } from './services/domhandler';
 
 @Component({
     selector: 'farris-datagrid',
@@ -175,6 +176,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     docuemntEvents: any;
+    documentEditListener: any;
     ds = {
         index: 0,
         rows: [],
@@ -219,6 +221,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         this.dfs.currentCell$.subscribe( cell => {
             this.currentCell = cell;
+            this.bindDocumentEditListener();
         });
     }
 
@@ -258,7 +261,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
 
         this.initState();
-        this.registerDocumentEvent();
+        // this.registerDocumentEvent();
         if (!this.data || !this.data.length) {
             this.fetchData(1, this.pageSize).subscribe( res => {
                 if (!res) {
@@ -283,6 +286,26 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         if (this.ro) {
             this.ro.disconnect();
+        }
+    }
+
+    bindDocumentEditListener() {
+        if (!this.documentEditListener) {
+            this.documentEditListener = (event) => {
+                if (this.currentCell) {
+                    DomHandler.removeClass(this.currentCell.cellRef, CELL_SELECTED_CLS);
+                    this.currentCell = null;
+                    this.unbindDocumentEditListener();
+                }
+            };
+            this.docuemntEvents = this.render2.listen(document, 'click', this.documentEditListener);
+        }
+    }
+
+    unbindDocumentEditListener() {
+        if (this.documentEditListener) {
+            this.docuemntEvents();
+            this.documentEditListener = null;
         }
     }
 
@@ -423,12 +446,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.dfs.initState({...this, fitColumns: this.fitColumns, fit: this.fit});
     }
 
-    private registerDocumentEvent() {
-        this.docuemntEvents = this.render2.listen(document, 'click', () => {
-            this.dfs.endEditCell();
-            this.dfs.cancelSelectCell();
-        });
-    }
+    // private registerDocumentEvent() {
+    //     this.docuemntEvents = this.render2.listen(document, 'click', () => {
+    //         this.dfs.endEditCell();
+    //         this.dfs.cancelSelectCell();
+    //     });
+    // }
 
     private setFitColumns(fitColumns = true) {
         if (this.columns) {
