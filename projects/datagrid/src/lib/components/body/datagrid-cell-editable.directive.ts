@@ -1,5 +1,5 @@
-import { DataColumn } from './../../types/data-column';
 import { Directive, Input, HostListener, ElementRef, Renderer2, OnInit } from '@angular/core';
+import { DataColumn } from './../../types/data-column';
 import { DatagridFacadeService } from '../../services';
 import { CellInfo } from '../../services/state';
 import { DatagridComponent } from '../../datagrid.component';
@@ -7,7 +7,7 @@ import { CELL_SELECTED_CLS } from '../../types/constant';
 
 @Directive({
     selector: '[cell-editable]',
-    exportAs: 'CellEditable'
+    exportAs: 'cellEditable'
 })
 export class DatagridCellEditableDirective implements OnInit {
     @Input('cell-editable') rowData: any;
@@ -24,13 +24,13 @@ export class DatagridCellEditableDirective implements OnInit {
     @HostListener('click', ['$event'])
     onClickCell(event: KeyboardEvent) {
         if (this.dg.editable && this.dg.editMode === 'cell') {
-            this.removeClass();
+            this.clearCellSelectedClass();
             this.render.addClass(this.el.nativeElement, CELL_SELECTED_CLS);
             this.dfs.setCurrentCell(this.rowIndex, this.rowData, this.column.field, this);
         }
     }
 
-    private removeClass() {
+    private clearCellSelectedClass() {
         if (this.dg.currentCell) {
             const element = (this.dg.currentCell.cellRef as DatagridCellEditableDirective).el.nativeElement;
             if (element.classList) {

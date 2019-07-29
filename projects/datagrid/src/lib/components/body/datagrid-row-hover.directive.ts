@@ -1,5 +1,5 @@
-import { DatagridBodyComponent } from './datagrid-body.component';
 import { Directive, HostListener, Input, ChangeDetectorRef } from '@angular/core';
+import { DatagridBodyComponent } from './datagrid-body.component';
 
 @Directive({
     selector: '[row-hover]',

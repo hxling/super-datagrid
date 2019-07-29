@@ -5,8 +5,9 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { FarrisCommonModule } from '@farris/ui-common';
 
-import { DatagridComponent } from './datagrid.component';
+import { GRID_EDITORS } from './types/constant';
 
+import { DatagridComponent } from './datagrid.component';
 import { NgxPaginationModule } from './pagination/ngx-pagination.module';
 import { DatagridPagerComponent } from './components/pager/pager.component';
 import { DataGridLoadingComponent } from './components/loading.component';
@@ -22,7 +23,7 @@ import { DatagridEditorComponent } from './components/editors/grid-editor.compon
 import { TextboxEditorComponent } from './components/editors/textbox-editor.component';
 import { ScrollbarModule } from './scrollbar/scrollbar.module';
 import { ScrollbarConfigInterface, SCROLLBAR_CONFIG } from './scrollbar/scrollbar.interfaces';
-import { GRID_EDITORS } from './types/constant';
+
 import { DatagridRowHoverDirective } from './components/body/datagrid-row-hover.directive';
 import { DatagridRowsComponent } from './components/body/datagrid-rows.component';
 

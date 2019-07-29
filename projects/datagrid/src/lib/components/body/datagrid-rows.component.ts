@@ -1,6 +1,6 @@
 
-import { DatagridFacadeService } from './../../services/datagrid-facade.service';
 import { Component, OnInit, Input } from '@angular/core';
+import { DatagridFacadeService } from './../../services/datagrid-facade.service';
 import { DataColumn } from '../../types';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridBodyComponent } from './datagrid-body.component';
