@@ -132,7 +132,7 @@
             }
         }
 
-        &-hover tr:hover {
+        &-hover {
             cursor: pointer;
             background: $row-hover-bgcolor!important;
             color: $row-hover-color;

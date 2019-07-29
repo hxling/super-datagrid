@@ -67,7 +67,7 @@ export class PageScrollComponent implements OnInit {
     }
 
     onSelectRow($event) {
-        console.log($event);
+        console.log(this.dg.selectedRow);
     }
 
     changeDataItems(n =  20) {

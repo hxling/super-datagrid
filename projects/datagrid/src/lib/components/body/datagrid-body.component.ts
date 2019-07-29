@@ -50,10 +50,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @Input() data: any;
 
     @ViewChild('ps') ps?: ScrollbarDirective;
-    // @ViewChild('psContainer') psc: ElementRef;
-    // @ViewChild('topDiv') topDiv: ElementRef;
-    // @ViewChild('bottomDiv') bottomDiv: ElementRef;
     @ViewChild('datatable') datatableEl: ElementRef;
+    @ViewChild('fixedLeft') fixedLeftEl: ElementRef;
+    @ViewChild('fixedRight') fixedRightEl: ElementRef;
 
     private rowHoverSubscription: Subscription;
 
@@ -62,6 +61,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     currentRowId =  undefined;
     gridsize$ = this.dfs.gridSize$;
     selectedRow$ = this.dfs.currentRow$;
+
+    hoverRowIndex: number;
 
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
@@ -110,7 +111,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             }
             this.dg.selectRow(row);
         });
+
     }
+
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
@@ -128,6 +131,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     trackByRows = (index: number, row: any) => {
         return row[this.dg.idField];
     }
+
 
     private setWheelHeight() {
         this.wheelHeight = this.dg.pagination ?
