@@ -91,16 +91,24 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
             // console.log('DblClick', event);
             this.closeEditingCell();
             setTimeout(() => {
-                if (this.isDifferentCell()) {
-                    this.selectCell();
-                }
-
-                this.dfs.editCell();
-                setTimeout(() => {
-                    this.bindEditorInputEvent();
-                });
+                this.openCellEditor();
             });
         }
+    }
+
+    openCellEditor() {
+        if (!this.column.editor) {
+            return;
+        }
+
+        if (this.isDifferentCell()) {
+            this.selectCell();
+        }
+
+        this.dfs.editCell();
+        setTimeout(() => {
+            this.bindEditorInputEvent();
+        });
     }
 
     closeEditingCell() {
@@ -128,7 +136,22 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     onKeyDownForInput(e: KeyboardEvent) {
         e.stopPropagation();
         const keyCode = e.keyCode;
-        console.log(keyCode);
+
+        switch (keyCode) {
+            case 13:  // Enter
+            case 27: // ESC
+                this.closeEditingCell();
+                break;
+            case 9: // Tab
+                const nextTd = this.dg.selectCell('right');
+                setTimeout(() => {
+                    this.dfs.editCell();
+                    setTimeout(() => {
+                        this.bindEditorInputEvent();
+                    });
+                }, this.clickDelay + 1);
+                break;
+        }
     }
 
 
@@ -138,6 +161,9 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         }
         this.clearCellSelectedClass();
         this.render.addClass(this.el.nativeElement, CELL_SELECTED_CLS);
+
+        this.el.nativeElement.editCell = () => this.openCellEditor();
+
         this.dfs.setCurrentCell(this.dr.rowIndex, this.rowData, this.column.field, this.el.nativeElement);
         this.moveScrollbar(this.el.nativeElement);
     }

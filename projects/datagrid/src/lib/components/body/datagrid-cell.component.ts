@@ -69,13 +69,16 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
         ).subscribe((cell: CellInfo) => {
             if (cell && this.column.editor) {
                 this.isEditing = cell.isEditing;
+                if (!this.isEditing) {
+                    this.updateValue();
+                }
                 this.cd.detectChanges();
             }
         });
 
-        this.dr.form.valueChanges.subscribe( val => {
-            this.updateValue();
-        });
+        // this.dr.form.valueChanges.subscribe( val => {
+        //     this.updateValue();
+        // });
 
     }
 

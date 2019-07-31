@@ -340,10 +340,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.subscriptions = [];
     }
 
-    private selectCell( dir: MoveDirection) {
+    selectCell( dir: MoveDirection, editable = false) {
         const nextTd = this.findNextCell(this.currentCell.field, dir);
         if (nextTd) {
             nextTd['click'].apply(nextTd);
+            return nextTd;
         }
     }
 
@@ -378,6 +379,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (this.currentCell && !this.currentCell.isEditing) {
             switch (keyCode) {
                 case 13: // Enter
+                    this.currentCell.cellRef['editCell'].apply(this.currentCell.cellRef);
+                    break;
                 case 40: // ↓
                     this.selectCell('down');
                     break;
