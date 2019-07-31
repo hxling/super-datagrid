@@ -189,6 +189,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     selectedRow: SelectedRow;
     currentCell: CellInfo;
 
+    clickDelay = 200;
+
     private ro: ResizeObserver | null = null;
     private subscriptions: Subscription[] = [];
 

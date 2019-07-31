@@ -18,7 +18,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
 
     private isSingleClick = true;
     private clickTimer: any;
-    private clickDelay = 200;
+
 
     private cellclick: any;
     private celldblclick: any;
@@ -74,7 +74,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
                     event.preventDefault();
                 }
             }
-        }, this.clickDelay);
+        }, this.dg.clickDelay);
 
     }
 
@@ -143,13 +143,15 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
                 this.closeEditingCell();
                 break;
             case 9: // Tab
+                this.dg.clickDelay = 0;
                 const nextTd = this.dg.selectCell('right');
                 setTimeout(() => {
                     this.dfs.editCell();
                     setTimeout(() => {
                         this.bindEditorInputEvent();
+                        this.dg.clickDelay = 200;
                     });
-                }, this.clickDelay + 1);
+                }, this.dg.clickDelay + 1);
                 break;
         }
     }
