@@ -256,6 +256,19 @@ export class DatagridFacadeService {
         }
     }
 
+    getColumnIndex(field: string, fixed: 'right'| '' | 'left' = '') {
+        const colgroup = this._state.columnsGroup;
+        if (!fixed) {
+            return colgroup.normalColumns.findIndex(n => n.field === field);
+        } else {
+            if (fixed === 'left') {
+                return colgroup.leftFixed.findIndex(n => n.field === field);
+            } else if (fixed === 'right') {
+                return colgroup.rightFixed.findIndex(n => n.field === field);
+            }
+        }
+    }
+
     private setFitColumnsWidth(colgroup: ColumnGroup) {
         if (!colgroup) {
             return;

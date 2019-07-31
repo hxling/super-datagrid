@@ -12,9 +12,8 @@
                 [style.width.px]="leftFixedWidth" [style.height.px]="wheelHeight - topHideHeight">
 
                 <table style="width: 100%" cellpadding="0" cellspacing="0">
-                    <tr class="f-datagrid-body-row" [style.height.px]="rowHeight" row-hover #hoverLeftRow="rowHover" [rowIndex]="startRowIndex + i"
+                    <tr class="f-datagrid-body-row" [style.height.px]="rowHeight"
                         *ngFor="let row of data;trackBy: trackByRows; let i=index; odd as odd"
-                        [class.f-datagrid-row-hover]="hoverRowIndex === hoverLeftRow.rowIndex"
                         [class.f-datagrid-row-selected]="currentRowId === row[dg.idField]"
                         >
                         <td class="f-datagrid-cell f-datagrid-cell-rownumber" [style.width.px]="dg.lineNumberWidth">

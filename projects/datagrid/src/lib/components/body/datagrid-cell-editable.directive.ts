@@ -1,5 +1,6 @@
-import { DatagridRowDirective } from './datagrid-row.directive';
+import { DatagridBodyComponent } from './datagrid-body.component';
 import { Directive, Input, HostListener, ElementRef, Renderer2, OnInit } from '@angular/core';
+import { DatagridRowDirective } from './datagrid-row.directive';
 import { DataColumn } from './../../types/data-column';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { CellInfo } from '../../services/state';
@@ -16,6 +17,7 @@ export class DatagridCellEditableDirective implements OnInit {
     @Input() column: DataColumn;
 
     constructor(private dfs: DatagridFacadeService, private dr: DatagridRowDirective,
+                private dgb: DatagridBodyComponent,
                 public el: ElementRef, private render: Renderer2, private dg: DatagridComponent) {
     }
 
@@ -29,8 +31,38 @@ export class DatagridCellEditableDirective implements OnInit {
             this.clearCellSelectedClass();
             this.render.addClass(this.el.nativeElement, CELL_SELECTED_CLS);
             this.dfs.setCurrentCell(this.dr.rowIndex, this.rowData, this.column.field, this.el.nativeElement);
+            this.moveScrollbar(this.el.nativeElement);
             event.stopPropagation();
             event.preventDefault();
+        }
+    }
+
+    private moveScrollbar(td: any) {
+        const tdPosLeft = td.offsetLeft + td.offsetWidth;
+        const containerWidth = this.dg.width - this.dgb.columnsGroup.leftFixedWidth;
+        const tdRect = td.getBoundingClientRect();
+        const scrollContainer = this.dgb.ps.elementRef.nativeElement;
+        const psContainer = scrollContainer.getBoundingClientRect();
+        const scrollTop = scrollContainer.scrollTop;
+        const scrollLeft = scrollContainer.scrollLeft;
+        if (tdPosLeft > containerWidth) {
+            const x = tdPosLeft - containerWidth + 2;
+            this.dgb.ps.scrollToX(x);
+        } else {
+            if (tdRect.x < psContainer.x) {
+                const x = scrollLeft - tdRect.x;
+                this.dgb.ps.scrollToX(x);
+            }
+        }
+
+        const tdPosTop = tdRect.top - psContainer.top + tdRect.height;
+        if (tdPosTop > psContainer.height) {
+            const y = tdPosTop - psContainer.height;
+            this.dgb.ps.scrollToY(scrollTop + y);
+        } else {
+            if (tdRect.y < psContainer.y) {
+                this.dgb.ps.scrollToY( scrollTop - (psContainer.y - tdRect.y));
+            }
         }
     }
 
@@ -39,6 +71,7 @@ export class DatagridCellEditableDirective implements OnInit {
             DomHandler.removeClass(this.dg.currentCell.cellRef, CELL_SELECTED_CLS);
         }
     }
+
 
     private getCellState(cell: CellInfo) {
         let isEditing = false;
