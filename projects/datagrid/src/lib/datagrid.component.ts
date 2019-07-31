@@ -300,6 +300,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 if (this.currentCell) {
                     DomHandler.removeClass(this.currentCell.cellRef, CELL_SELECTED_CLS);
                     // this.currentCell = null;
+                    if (this.currentCell.isEditing) {
+                        this.dfs.endEditCell();
+                    }
                     this.dfs.cancelSelectCell();
                     this.unbindDocumentEditListener();
                 }
@@ -369,12 +372,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     private onKeyDownEvent(e: any) {
-        console.log(e);
+        // console.log(e);
         const keyCode = e.keyCode;
 
         if (this.currentCell && !this.currentCell.isEditing) {
             switch (keyCode) {
                 case 13: // Enter
+                    this.dfs.editCell();
+                    break;
                 case 40: // ↓
                     this.selectCell('down');
                     break;
@@ -451,12 +456,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.dfs.initState({...this, fitColumns: this.fitColumns, fit: this.fit});
     }
 
-    // private registerDocumentEvent() {
-    //     this.docuemntEvents = this.render2.listen(document, 'click', () => {
-    //         this.dfs.endEditCell();
-    //         this.dfs.cancelSelectCell();
-    //     });
-    // }
 
     private setFitColumns(fitColumns = true) {
         if (this.columns) {

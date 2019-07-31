@@ -6,12 +6,13 @@ import { DataColumn } from '../../types';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridRowDirective } from './datagrid-row.directive';
+import { CellInfo } from '../../services/state';
+import { filter } from 'rxjs/operators';
 
 @Component({
     selector: 'grid-body-cell',
     template: `
-    <div class="f-datagrid-cell-content" #cellContainer [style.width.px]="column.width"
-     [ngClass]="{'f-datagrid-cell-edit': isEditing, 'f-datagrid-cell-selected': isSelected}">
+    <div class="f-datagrid-cell-content" #cellContainer [style.width.px]="column.width">
         <span *ngIf="!isEditing && !column.template">{{ value }}</span>
         <ng-container *ngIf="!isEditing && column.template" [ngTemplateOutlet]="column.template"
                         [ngTemplateOutletContext]="{$implicit: cellContext}"></ng-container>
@@ -59,8 +60,18 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
 
         this.buildCustomCellStyle();
 
-        // this.currentCell.subscribe((cell: CellInfo) => {
-        //     this.datagrid.currentCell = cell;
+        this.dfs.currentCell$.pipe(
+            filter((cell: CellInfo) => {
+                return cell && this.column.editor && cell.rowIndex === this.rowIndex && cell.field === this.column.field;
+            })
+        ).subscribe((cell: CellInfo) => {
+            if (cell && this.column.editor) {
+                this.isEditing = cell.isEditing;
+                this.cd.detectChanges();
+            }
+        });
+
+        // this.dfs.currentCell$.subscribe((cell: CellInfo) => {
         //     const { isEditing, isSelected } = {...this.getCellState(cell)};
         //     this.isEditing = isEditing;
         //     this.isSelected = isSelected;

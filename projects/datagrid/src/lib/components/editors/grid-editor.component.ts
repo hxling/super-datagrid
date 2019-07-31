@@ -13,21 +13,21 @@ export class DatagridEditorComponent implements OnInit, OnDestroy {
     group: FormGroup;
     column: DataColumn;
 
-    clickEvent: any;
-    dblClickEvent: any;
+    private clickEvent: any;
+    private keyDownEvent: any;
+    private dblClickEvent: any;
 
     constructor(public render: Renderer2, public el: ElementRef) {}
 
     ngOnInit(): void {
-        this.clickEvent = this.render.listen(this.el.nativeElement, 'click', (e: MouseEvent) => {
-            e.stopPropagation();
-            e.preventDefault();
-        });
+        // this.keyDownEvent = this.render.listen(this.el.nativeElement, 'keydown', (e: KeyboardEvent) => {
+        //     e.stopPropagation();
+        // });
 
-        this.dblClickEvent = this.render.listen(this.el.nativeElement, 'dblclick', (e: MouseEvent) => {
-            e.stopPropagation();
-            e.preventDefault();
-        });
+        // this.dblClickEvent = this.render.listen(this.el.nativeElement, 'dblclick', (e: MouseEvent) => {
+        //     e.stopPropagation();
+        //     e.preventDefault();
+        // });
     }
 
     ngOnDestroy() {
