@@ -1,13 +1,14 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener,
+import { Component, OnInit, Input, Output, EventEmitter,
     ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef,
     OnDestroy, ComponentFactoryResolver, NgZone } from '@angular/core';
 import { CommonUtils } from '@farris/ui-common';
-import { DataColumn } from '../../types';
+import { filter } from 'rxjs/operators';
+import { DataColumn } from '../../types/data-column';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridRowDirective } from './datagrid-row.directive';
 import { CellInfo } from '../../services/state';
-import { filter } from 'rxjs/operators';
+import { GridCellEditorDirective } from '../editors/cell-editor.directive';
 
 @Component({
     selector: 'grid-body-cell',
@@ -33,6 +34,7 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
     @Input() isSelected = false;
 
     @ViewChild('cellContainer') cellContainer: ElementRef;
+    @ViewChild(GridCellEditorDirective) cellEditor: GridCellEditorDirective;
 
     @Output() cellClick = new EventEmitter();
     @Output() cellDblClick = new EventEmitter();
@@ -71,24 +73,6 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
             }
         });
 
-        // this.dfs.currentCell$.subscribe((cell: CellInfo) => {
-        //     const { isEditing, isSelected } = {...this.getCellState(cell)};
-        //     this.isEditing = isEditing;
-        //     this.isSelected = isSelected;
-        //     if (isEditing) {
-        //         setTimeout(() => {
-        //             this.focus();
-        //             this.datagrid.beginEdit.emit({ rowIndex: this.rowIndex, rowData: this.rowData, value: this.value });
-        //         });
-        //     } else {
-        //         // end editing
-        //         this.updateValue();
-        //         this.datagrid.endEdit.emit({ rowIndex: this.rowIndex, rowData: this.rowData, value: this.value });
-        //     }
-
-        //     this.cd.detectChanges();
-        // });
-
         this.dr.form.valueChanges.subscribe( val => {
             this.updateValue();
         });
@@ -109,30 +93,6 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
         }
     }
 
-    // @HostListener('dblclick', ['$event'])
-    // onCellDblClick(event: KeyboardEvent) {
-    //     // event.stopPropagation();
-    //     // console.log(event);
-    //     // this.editCell(true);
-    //     this.cellDblClick.emit({originalEvent: event, column: this.column });
-    // }
-
-
-    // @HostListener('click', ['$event'])
-    // onCellClick(event: MouseEvent) {
-    //     // event.stopPropagation();
-    //     // this.dfs.endEditCell();
-    //     // this.dfs.setCurrentCell(this.rowIndex, this.rowData, this.column.field);
-    //     this.cellClick.emit({originalEvent: event, column: this.column });
-    // }
-
-    // private editCell(editable = false) {
-    //     if (this.canEdit() && !this.isEditing) {
-    //         this.dfs.editCell();
-    //         this.cd.detectChanges();
-    //         this.cellClick.emit({originalEvent: event });
-    //     }
-    // }
 
     updateValue() {
         if (this.dr.form) {
@@ -140,17 +100,6 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
         }
         if (this.rowData && this.column && this.column.field) {
             this.value = this.utils.getValue(this.column.field, this.rowData);
-        }
-    }
-
-    private focus() {
-        const navEl = this.cellContainer.nativeElement;
-        if (navEl.querySelector('input')) {
-            navEl.querySelector('input').focus();
-        } else {
-            if (navEl.querySelector('select')) {
-                navEl.querySelector('select').focus();
-            }
         }
     }
 }

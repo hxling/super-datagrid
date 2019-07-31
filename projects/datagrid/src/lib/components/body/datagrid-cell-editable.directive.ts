@@ -1,10 +1,9 @@
 import { DatagridCellComponent } from './datagrid-cell.component';
-import { Directive, Input, HostListener, ElementRef, Renderer2, OnInit, ViewChild, ContentChild, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Directive, Input, ElementRef, Renderer2, OnInit, ContentChild, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { DatagridBodyComponent } from './datagrid-body.component';
 import { DatagridRowDirective } from './datagrid-row.directive';
 import { DataColumn } from './../../types/data-column';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
-import { CellInfo } from '../../services/state';
 import { DatagridComponent } from '../../datagrid.component';
 import { CELL_SELECTED_CLS } from '../../types/constant';
 import { DomHandler } from '../../services/domhandler';
@@ -23,6 +22,8 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
 
     private cellclick: any;
     private celldblclick: any;
+
+    private editorInputKeydownEvent: any;
 
     @ContentChild(DatagridCellComponent) dc: DatagridCellComponent;
 
@@ -51,9 +52,11 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         if (this.celldblclick) {
             this.celldblclick();
         }
+
+        this.unBindEditorInputEvent();
     }
 
-    onClickCell(event: KeyboardEvent) {
+    private onClickCell(event: KeyboardEvent) {
         event.stopPropagation();
 
         if (event.target['nodeName'] === 'INPUT') {
@@ -64,6 +67,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         this.clickTimer = setTimeout(() => {
             if (this.isSingleClick) {
                 // console.log('ClickCell', event);
+                this.dfs.selectRow(this.dr.rowIndex, this.rowData);
                 if (this.dg.editable && this.dg.editMode === 'cell') {
                     this.closeEditingCell();
                     this.selectCell();
@@ -74,7 +78,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
 
     }
 
-    onDblClickCell(event: MouseEvent) {
+    private onDblClickCell(event: MouseEvent) {
 
         if (event.target['nodeName'] === 'INPUT') {
             return;
@@ -82,6 +86,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
 
         this.isSingleClick = false;
         clearTimeout(this.clickTimer);
+        this.dfs.selectRow(this.dr.rowIndex, this.rowData);
         if (this.dg.editable && this.dg.editMode === 'cell') {
             // console.log('DblClick', event);
             this.closeEditingCell();
@@ -91,12 +96,39 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
                 }
 
                 this.dfs.editCell();
+                setTimeout(() => {
+                    this.bindEditorInputEvent();
+                });
             });
         }
     }
 
     closeEditingCell() {
+        this.unBindEditorInputEvent();
         this.dfs.endEditCell();
+    }
+
+
+    bindEditorInputEvent() {
+        if (this.dc.cellEditor) {
+            const input = this.dc.cellEditor.componentRef.instance.inputElement;
+            if (input) {
+                this.editorInputKeydownEvent = this.render.listen(input, 'keydown', (e) => this.onKeyDownForInput(e));
+            }
+        }
+    }
+
+    unBindEditorInputEvent() {
+        if (this.editorInputKeydownEvent) {
+            this.editorInputKeydownEvent();
+            this.editorInputKeydownEvent = null;
+        }
+    }
+
+    onKeyDownForInput(e: KeyboardEvent) {
+        e.stopPropagation();
+        const keyCode = e.keyCode;
+        console.log(keyCode);
     }
 
 

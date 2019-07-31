@@ -101,7 +101,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         });
 
         this.selectedRow$.pipe(
-            filter(row => !!row)
+            filter(row => !!row && row.id !== this.currentRowId)
         ).subscribe((row: SelectedRow) => {
             if (row) {
                 this.currentRowId = row.id;
@@ -109,6 +109,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.currentRowId = undefined;
             }
             this.dg.selectRow(row);
+            this.cd.detectChanges();
         });
 
     }

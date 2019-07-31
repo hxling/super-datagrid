@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { DatagridEditorComponent } from './grid-editor.component';
 
 @Component({
@@ -11,8 +11,14 @@ import { DatagridEditorComponent } from './grid-editor.component';
 })
 export class TextboxEditorComponent extends DatagridEditorComponent implements OnInit, OnDestroy {
 
+    @ViewChild('cellEditorTextbox') input: ElementRef;
+
     constructor(render: Renderer2, el: ElementRef) {
         super(render, el);
+    }
+
+    ngOnInit() {
+        this.inputElement = this.input.nativeElement;
     }
 
 }

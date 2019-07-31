@@ -1,5 +1,5 @@
 import { FormGroup } from '@angular/forms';
-import { Component, Renderer2, OnInit, ElementRef, OnDestroy } from '@angular/core';
+import { Component, Renderer2, OnInit, ElementRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { DataColumn } from '../../types';
 
 
@@ -7,11 +7,13 @@ import { DataColumn } from '../../types';
     selector: 'datagrid-editor',
     template: ''
 })
-export class DatagridEditorComponent implements OnInit, OnDestroy {
+export class DatagridEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     type: string;
     options: any;
     group: FormGroup;
     column: DataColumn;
+
+    inputElement: any;
 
     private clickEvent: any;
     private keyDownEvent: any;
@@ -30,12 +32,22 @@ export class DatagridEditorComponent implements OnInit, OnDestroy {
         // });
     }
 
+    ngAfterViewInit() {
+        this.focus();
+    }
+
     ngOnDestroy() {
         if (this.clickEvent) {
             this.clickEvent();
         }
         if (this.dblClickEvent) {
             this.dblClickEvent();
+        }
+    }
+
+    private focus() {
+        if (this.inputElement) {
+            this.inputElement.focus();
         }
     }
 }
