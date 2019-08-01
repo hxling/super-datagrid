@@ -1,3 +1,4 @@
+import { CellInfo } from './state';
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { RowEventParam, RowHoverEventParam } from '../types/event-params';
@@ -23,12 +24,20 @@ export class DatagridService {
     private rowSelectSubject = new Subject<Partial<RowHoverEventParam>>();
 
     private dataSourceChangedSubject = new Subject();
+    /** 编辑单元格 */
+    private editCellSubject = new Subject();
+    /** 选中单元格 */
+    private selectCellSubject = new Subject();
+    /** 结束单元编辑 */
+    private endCellEdit = new Subject();
 
     public scorll$ = this.scorllSubject.asObservable();
     public scrollX$ = this.scrollX.asObservable();
     public rowHover$ = this.rowHoverSubject.asObservable();
     public rowClick$ = this.rowSelectSubject.asObservable();
     public onDataSourceChange = this.dataSourceChangedSubject.asObservable();
+    public cellEdit$ = this.editCellSubject.asObservable();
+    public endCellEdit$ = this.endCellEdit.asObservable();
 
     constructor() { }
 
@@ -50,5 +59,17 @@ export class DatagridService {
 
     onRowClick(rowIndex: number, rowData: any) {
         this.rowSelectSubject.next({ index: rowIndex, data: rowData });
+    }
+
+    onCellEdit(tdElement: any) {
+        this.editCellSubject.next(tdElement);
+    }
+
+    onEndCellEdit(cell: CellInfo) {
+        this.endCellEdit.next(cell);
+    }
+
+    onSelectCell(cell: CellInfo) {
+        this.selectCellSubject.next(cell);
     }
 }

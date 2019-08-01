@@ -47,7 +47,9 @@ export class DatagridEditorComponent implements OnInit, OnDestroy, AfterViewInit
 
     private focus() {
         if (this.inputElement) {
-            this.inputElement.focus();
+            setTimeout(() => {
+                this.inputElement.focus();
+            });
         }
     }
 }

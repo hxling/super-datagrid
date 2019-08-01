@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter,
     ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef,
-    OnDestroy, ComponentFactoryResolver, NgZone } from '@angular/core';
+    OnDestroy, ComponentFactoryResolver, NgZone, ViewRef } from '@angular/core';
 import { CommonUtils } from '@farris/ui-common';
 import { filter } from 'rxjs/operators';
 import { DataColumn } from '../../types/data-column';

@@ -168,6 +168,10 @@ export class DatagridFacadeService {
         return data[this._state.idField];
     }
 
+    getCurrentCell() {
+        return this._state.currentCell;
+    }
+
     editCell() {
         if (this._state.currentCell) {
             if (!this._state.currentCell.isEditing) {
@@ -178,7 +182,7 @@ export class DatagridFacadeService {
     }
 
     endEditCell() {
-        if (this._state.currentCell) {
+        if (this._state.currentCell && this._state.currentCell.isEditing) {
             const cei = { ...this._state.currentCell, isEditing: false };
             this.updateState({ currentCell: cei });
         }

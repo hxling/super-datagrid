@@ -231,6 +231,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.currentCell = cell;
             this.bindDocumentEditListener();
         });
+
         this.subscriptions.push(currentCellSubscription);
     }
 
@@ -297,6 +298,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     bindDocumentEditListener() {
+        this.unbindDocumentEditListener();
         if (!this.documentCellClickHandler) {
             this.documentCellClickHandler = (event) => {
                 if (this.currentCell) {
@@ -342,12 +344,15 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.subscriptions = [];
     }
 
-    selectCell( dir: MoveDirection, editable = false) {
+    selectNextCell( dir: MoveDirection) {
         const nextTd = this.findNextCell(this.currentCell.field, dir);
         if (nextTd) {
             nextTd['click'].apply(nextTd);
             return nextTd;
         }
+    }
+
+    editCell(rowIndex: number, field: string) {
     }
 
     private findNextCell(field: string, dir: MoveDirection) {
@@ -375,25 +380,34 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     private onKeyDownEvent(e: any) {
-        // console.log(e);
         const keyCode = e.keyCode;
-
         if (this.currentCell && !this.currentCell.isEditing) {
             switch (keyCode) {
                 case 13: // Enter
-                    this.currentCell.cellRef['editCell'].apply(this.currentCell.cellRef);
+                    const fn = this.currentCell.cellRef['editCell'];
+                    if (fn) {
+                        fn.apply(this.currentCell.cellRef);
+                    }
                     break;
                 case 40: // ↓
-                    this.selectCell('down');
+                    this.selectNextCell('down');
                     break;
                 case 38: // ↑
-                    this.selectCell('up');
+                    this.selectNextCell('up');
                     break;
                 case 39: // →
-                    this.selectCell('right');
+                    this.selectNextCell('right');
                     break;
                 case 37: // ←
-                    this.selectCell('left');
+                    this.selectNextCell('left');
+                    break;
+                case 9: // Tab
+                    if (e.shiftKey) {
+                        this.selectNextCell('left');
+                    } else {
+                        this.selectNextCell('right');
+                    }
+                    e.preventDefault();
                     break;
             }
         }

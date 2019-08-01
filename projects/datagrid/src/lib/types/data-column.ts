@@ -1,7 +1,12 @@
 import { TemplateRef } from '@angular/core';
 
 
-export type CustomStyle = { cls?: string, style?: { [key: string]: string } };
+export interface CustomStyle {
+    cls?: string;
+    style?: {
+        [key: string]: string;
+    };
+}
 
 export type MoveDirection = 'left' | 'right' | 'up' | 'down';
 

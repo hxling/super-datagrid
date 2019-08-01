@@ -1,3 +1,4 @@
+import { DatagridService } from './../../services/datagrid.service';
 import { DatagridCellComponent } from './datagrid-cell.component';
 import { Directive, Input, ElementRef, Renderer2, OnInit, ContentChild, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { DatagridBodyComponent } from './datagrid-body.component';
@@ -7,6 +8,8 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
 import { CELL_SELECTED_CLS } from '../../types/constant';
 import { DomHandler } from '../../services/domhandler';
+import { filter } from 'rxjs/operators';
+
 
 @Directive({
     selector: '[cell-editable]',
@@ -28,20 +31,36 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     @ContentChild(DatagridCellComponent) dc: DatagridCellComponent;
 
     private isDifferentCell = () => {
-        return !this.dg.currentCell || this.dg.currentCell.rowIndex !== this.dr.rowIndex || this.dg.currentCell.field !== this.column.field;
+        if (!this.dg.currentCell) {
+            return true;
+        } else {
+            return  this.dg.currentCell.rowIndex !== this.dr.rowIndex || this.dg.currentCell.field !== this.column.field;
+        }
     }
 
     constructor(private dfs: DatagridFacadeService, private dr: DatagridRowDirective,
                 private dgb: DatagridBodyComponent, private cd: ChangeDetectorRef,
+                private dgs: DatagridService,
                 public el: ElementRef, private render: Renderer2, private dg: DatagridComponent) {
     }
 
     ngOnInit() {
-        // console.log(this.dc);
         if (this.dg.editable) {
             this.cellclick = this.render.listen(this.el.nativeElement, 'click', (e) => this.onClickCell(e));
-            this.celldblclick = this.render.listen(this.el.nativeElement, 'dblclick', (e) => this.onDblClickCell(e));
+            if (this.column.editor) {
+                this.celldblclick = this.render.listen(this.el.nativeElement, 'dblclick', (e) => this.onDblClickCell(e));
+                this.el.nativeElement.editCell = () => this.openCellEditor();
+            }
         }
+
+        this.dgs.cellEdit$.pipe(
+            filter(() => {
+                const cell = this.dg.currentCell;
+                return cell.rowIndex === this.dr.rowIndex && cell.field === this.column.field;
+            } )
+        ).subscribe( td => {
+            this.bindEditorInputEvent();
+        });
     }
 
     ngOnDestroy() {
@@ -56,9 +75,8 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         this.unBindEditorInputEvent();
     }
 
-    private onClickCell(event: KeyboardEvent) {
+    private onClickCell(event: any) {
         event.stopPropagation();
-
         if (event.target['nodeName'] === 'INPUT') {
             return;
         }
@@ -70,7 +88,10 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
                 this.dfs.selectRow(this.dr.rowIndex, this.rowData);
                 if (this.dg.editable && this.dg.editMode === 'cell') {
                     this.closeEditingCell();
-                    this.selectCell();
+                    if (!this.isDifferentCell()) {
+                        return;
+                    }
+                    this.selectCell(this.column.field);
                     event.preventDefault();
                 }
             }
@@ -79,16 +100,14 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     }
 
     private onDblClickCell(event: MouseEvent) {
-
         if (event.target['nodeName'] === 'INPUT') {
             return;
         }
-
         this.isSingleClick = false;
-        clearTimeout(this.clickTimer);
         this.dfs.selectRow(this.dr.rowIndex, this.rowData);
+
+        clearTimeout(this.clickTimer);
         if (this.dg.editable && this.dg.editMode === 'cell') {
-            // console.log('DblClick', event);
             this.closeEditingCell();
             setTimeout(() => {
                 this.openCellEditor();
@@ -102,7 +121,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         }
 
         if (this.isDifferentCell()) {
-            this.selectCell();
+            this.selectCell(this.column.field);
         }
 
         this.dfs.editCell();
@@ -114,6 +133,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     closeEditingCell() {
         this.unBindEditorInputEvent();
         this.dfs.endEditCell();
+        this.dgs.onEndCellEdit(this.dfs.getCurrentCell());
     }
 
 
@@ -144,30 +164,23 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
                 break;
             case 9: // Tab
                 this.dg.clickDelay = 0;
-                const nextTd = this.dg.selectCell('right');
-                setTimeout(() => {
-                    this.dfs.editCell();
-                    setTimeout(() => {
-                        this.bindEditorInputEvent();
-                        this.dg.clickDelay = 200;
-                    });
-                }, this.dg.clickDelay + 1);
+                if (e.shiftKey) {
+                    this.movePrevCellAndEdit();
+                } else {
+                    this.moveNextCellAndEdit();
+                }
+                e.preventDefault();
                 break;
         }
     }
 
-
-    private selectCell() {
-        if (!this.isDifferentCell()) {
-            return;
-        }
+    private selectCell(field: string, tdElement?: any) {
+        tdElement = tdElement || this.el.nativeElement;
         this.clearCellSelectedClass();
-        this.render.addClass(this.el.nativeElement, CELL_SELECTED_CLS);
+        this.render.addClass(tdElement, CELL_SELECTED_CLS);
 
-        this.el.nativeElement.editCell = () => this.openCellEditor();
-
-        this.dfs.setCurrentCell(this.dr.rowIndex, this.rowData, this.column.field, this.el.nativeElement);
-        this.moveScrollbar(this.el.nativeElement);
+        this.dfs.setCurrentCell(this.dr.rowIndex, this.rowData, field, tdElement);
+        this.moveScrollbar(tdElement);
     }
 
     private moveScrollbar(td: any) {
@@ -195,6 +208,36 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         } else {
             if (tdRect.y < psContainer.y) {
                 this.dgb.ps.scrollToY( scrollTop - (psContainer.y - tdRect.y));
+            }
+        }
+    }
+
+    private moveNextCellAndEdit() {
+        const fieldIndex = this.dfs.getColumnIndex(this.column.field);
+        if (fieldIndex + 1 < this.dgb.columnsGroup.normalColumns.length) {
+            const nextColumn = this.dgb.columnsGroup.normalColumns[fieldIndex + 1];
+            const nextTd = this.dg.currentCell.cellRef.nextElementSibling;
+            this.closeEditingCell();
+            this.selectCell(nextColumn.field, nextTd);
+            nextTd.focus();
+            if (nextColumn.editor) {
+                this.dfs.editCell();
+                this.dgs.onCellEdit(nextTd);
+            }
+        }
+    }
+
+    private movePrevCellAndEdit() {
+        const fieldIndex = this.dfs.getColumnIndex(this.column.field);
+        if (fieldIndex - 1 >= 0) {
+            const nextColumn = this.dgb.columnsGroup.normalColumns[fieldIndex - 1];
+            const nextTd = this.dg.currentCell.cellRef.previousElementSibling;
+            this.closeEditingCell();
+            this.selectCell(nextColumn.field, nextTd);
+            nextTd.focus();
+            if (nextColumn.editor) {
+                this.dfs.editCell();
+                this.dgs.onCellEdit(nextTd);
             }
         }
     }
