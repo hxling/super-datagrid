@@ -72,7 +72,9 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
                 if (!this.isEditing) {
                     this.updateValue();
                 }
-                this.cd.detectChanges();
+                if (!this.cd['destroyed']) {
+                    this.cd.detectChanges();
+                }
             }
         });
 
