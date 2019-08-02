@@ -317,6 +317,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
     }
 
+    trackByRows = (index: number, row: any) => {
+        return row[this.idField];
+    }
+
     bindDocumentEditListener() {
         this.unbindDocumentEditListener();
         if (!this.documentCellClickHandler) {

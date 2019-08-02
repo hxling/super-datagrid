@@ -12,6 +12,7 @@ import { SelectedRow, DataResult } from '../../services/state';
 import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
+import { DatagridRowsComponent } from './datagrid-rows.component';
 
 
 @Component({
@@ -49,7 +50,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @Input() data: any;
 
     @ViewChild('ps') ps?: ScrollbarDirective;
-    @ViewChild('datatable') datatableEl: ElementRef;
+    @ViewChild('tableRows') tableRowsCmp: any;
     @ViewChild('fixedLeft') fixedLeftEl: ElementRef;
     @ViewChild('fixedRight') fixedRightEl: ElementRef;
 
@@ -128,10 +129,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     ngOnDestroy() {
         this.rowHoverSubscription.unsubscribe();
         this.rowHoverSubscription = null;
-    }
-
-    trackByRows = (index: number, row: any) => {
-        return row[this.dg.idField];
     }
 
 
@@ -224,7 +221,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private getVirtualRowPosition(): {top: number, bottom: number, containerBottom: number} {
         const headerHeight = this.top;
         const bodyRect = this.dg.getBoundingClientRect(this.el);
-        const datatableRect = this.dg.getBoundingClientRect(this.datatableEl);
+        const datatableRect = this.dg.getBoundingClientRect(this.tableRowsCmp.tableEl);
         const topDivHeight = datatableRect.top - bodyRect.top - headerHeight;
         const bottomDivHeight = datatableRect.bottom;
         const top = Math.floor(topDivHeight);
