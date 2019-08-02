@@ -1,17 +1,18 @@
-import { NgModule, InjectionToken, ModuleWithProviders, Provider } from '@angular/core';
+import { NgModule, ModuleWithProviders, Provider } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
 import { FarrisCommonModule } from '@farris/ui-common';
 
-import { DatagridComponent } from './datagrid.component';
+import { GRID_EDITORS } from './types/constant';
 
+import { DatagridComponent } from './datagrid.component';
 import { NgxPaginationModule } from './pagination/ngx-pagination.module';
 import { DatagridPagerComponent } from './components/pager/pager.component';
 import { DataGridLoadingComponent } from './components/loading.component';
 import { DatagridHeaderComponent } from './components/header/datagrid-header.component';
-import { CellEditableDirective } from './components/body/cell-editable.directive';
+import { DatagridCellEditableDirective } from './components/body/datagrid-cell-editable.directive';
 import { DatagridCellComponent } from './components/body/datagrid-cell.component';
 import { DatagridRowDirective } from './components/body/datagrid-row.directive';
 import { DatagridBodyComponent } from './components/body/datagrid-body.component';
@@ -22,7 +23,9 @@ import { DatagridEditorComponent } from './components/editors/grid-editor.compon
 import { TextboxEditorComponent } from './components/editors/textbox-editor.component';
 import { ScrollbarModule } from './scrollbar/scrollbar.module';
 import { ScrollbarConfigInterface, SCROLLBAR_CONFIG } from './scrollbar/scrollbar.interfaces';
-import { GRID_EDITORS } from './types/constant';
+
+import { DatagridRowHoverDirective } from './components/body/datagrid-row-hover.directive';
+import { DatagridRowsComponent } from './components/body/datagrid-rows.component';
 
 
 
@@ -43,7 +46,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
     ],
     declarations: [
         DatagridHeaderComponent,
-        CellEditableDirective,
+        DatagridCellEditableDirective,
         DatagridCellComponent,
         DatagridRowDirective,
         DatagridBodyComponent,
@@ -51,6 +54,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DatagridPagerComponent,
         DatagridCellEditorDirective,
         DatagridColumnDirective,
+        DatagridRowsComponent,
+        DatagridRowHoverDirective,
         DataGridLoadingComponent,
         GridCellEditorDirective,
         DatagridEditorComponent,
@@ -72,7 +77,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DatagridCellEditorDirective,
         DatagridEditorComponent,
         TextboxEditorComponent,
-        CellEditableDirective,
+        DatagridCellEditableDirective,
+        DatagridRowHoverDirective
     ],
     entryComponents: [
         TextboxEditorComponent

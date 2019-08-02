@@ -151,9 +151,9 @@ export class DatagridFacadeService {
         this.updateState({ currentRow: { id, data: rowData, index: rowIndex } });
     }
 
-    setCurrentCell(rowIndex: number, rowData: any, field: string ) {
+    setCurrentCell(rowIndex: number, rowData: any, field: string, cellRef?: any ) {
         if (!this.isCellSelected({rowIndex, field})) {
-            const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData) };
+            const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData), cellRef };
             this.updateState({currentCell});
         }
     }
@@ -168,6 +168,10 @@ export class DatagridFacadeService {
         return data[this._state.idField];
     }
 
+    getCurrentCell() {
+        return this._state.currentCell;
+    }
+
     editCell() {
         if (this._state.currentCell) {
             if (!this._state.currentCell.isEditing) {
@@ -178,7 +182,7 @@ export class DatagridFacadeService {
     }
 
     endEditCell() {
-        if (this._state.currentCell) {
+        if (this._state.currentCell && this._state.currentCell.isEditing) {
             const cei = { ...this._state.currentCell, isEditing: false };
             this.updateState({ currentCell: cei });
         }
@@ -253,6 +257,19 @@ export class DatagridFacadeService {
             }
 
             this.updateState({ columnsGroup: colgroup }, false);
+        }
+    }
+
+    getColumnIndex(field: string, fixed: 'right'| '' | 'left' = '') {
+        const colgroup = this._state.columnsGroup;
+        if (!fixed) {
+            return colgroup.normalColumns.findIndex(n => n.field === field);
+        } else {
+            if (fixed === 'left') {
+                return colgroup.leftFixed.findIndex(n => n.field === field);
+            } else if (fixed === 'right') {
+                return colgroup.rightFixed.findIndex(n => n.field === field);
+            }
         }
     }
 

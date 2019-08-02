@@ -4,7 +4,8 @@
  */
 
 export * from './lib/types/constant';
-export {DatagridCellComponent, DatagridRowDirective, DatagridBodyComponent, CellEditableDirective} from './lib/components/body/index';
+export { DatagridCellComponent, DatagridRowDirective,
+         DatagridBodyComponent, DatagridCellEditableDirective} from './lib/components/body/index';
 
 export { DatagridColumnDirective, DatagridCellEditorDirective } from './lib/components/columns/index';
 export { GridCellEditorDirective, DatagridEditorComponent, TextboxEditorComponent } from './lib/components/editors/index';

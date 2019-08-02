@@ -3,13 +3,20 @@
 
     <farris-datagrid [data]="items" [columns]="columns" #dg
         [editable]="true" [editMode]="'cell'"
-        [showLineNumber] ="true" [striped]="true" [showCheckbox]="false" [total]="total"
-        [virtualized]="false" [pagination]="false">
+        [showLineNumber] ="true" [striped]="true"  [total]="total"
+        [virtualized]="true" [pagination]="false">
     </farris-datagrid>
     
     </div>
+
 <div class="row">
 
-    {{ dg.currentCell | json }}
+    {{ dg.currentCell?.field }}
+
+</div>
+
+
+<div class="row">
+{{ dg.selectedRow | json }}
 
 </div>

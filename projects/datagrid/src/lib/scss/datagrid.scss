@@ -13,6 +13,7 @@
     
     table {
         table-layout: fixed;
+        border-collapse: separate;
     }
 
     &-full{
@@ -90,6 +91,13 @@
         &-fixed-left {
             position: absolute;
             z-index: 1;
+
+            .f-datagrid-row-hover ,
+            .f-datagrid-row-selected {
+                .f-datagrid-cell-rownumber {
+                    background-color: #ededed !important;
+                }
+            }
         }
 
         &-fixed-right {
@@ -132,7 +140,7 @@
             }
         }
 
-        &-hover tr:hover {
+        &-hover {
             cursor: pointer;
             background: $row-hover-bgcolor!important;
             color: $row-hover-color;
@@ -201,7 +209,8 @@
         }
 
         &-selected {
-            border: 1px solid $selected-cell-bgcolor!important;
+            border: 1px solid $selected-cell-border-color!important;
+            background-color: $selected-cell-bgcolor!important;
         }
 
         &-edit {
@@ -242,7 +251,7 @@
 
     &-bordered {
         .f-datagrid-cell {
-            border-width: 0 1px 0 0;
+            border-width: 0 1px 1px 0;
         }
 
 

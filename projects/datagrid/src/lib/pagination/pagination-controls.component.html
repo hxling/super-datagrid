@@ -59,7 +59,7 @@
             </span>
         </li>
         <!--每页记录数-->
-        <li class="pagination-pagelist">
+        <li class="pagination-pagelist" *ngIf="showPageList">
             <select (change)="pageSizeChange.emit($event.target.value)"
             class="form-control form-control-sm" style="width: auto" [disabled]="p.getTotalItems() === 0">
             <option *ngFor="let pagesize of p.getPageList()" value="{{ pagesize }}"

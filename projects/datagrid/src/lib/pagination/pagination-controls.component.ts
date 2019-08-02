@@ -48,6 +48,7 @@ export class PaginationControlsComponent {
     @Input() screenReaderPaginationLabel = 'Pagination';
     @Input() screenReaderPageLabel = 'page';
     @Input() screenReaderCurrentLabel = `You're on page`;
+    @Input() showPageList = false;
     @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
     @Output() pageSizeChange = new EventEmitter<number>();
 

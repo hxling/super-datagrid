@@ -8,11 +8,10 @@ import { map, filter } from 'rxjs/operators';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { ScrollbarDirective } from '../../scrollbar/scrollbar.directive';
 import { ColumnGroup } from '../../types';
-import { SelectedRow } from '../../services/state';
+import { SelectedRow, DataResult } from '../../services/state';
 import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
-import { DataResult } from '../../services/state';
 
 
 @Component({
@@ -50,18 +49,19 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @Input() data: any;
 
     @ViewChild('ps') ps?: ScrollbarDirective;
-    // @ViewChild('psContainer') psc: ElementRef;
-    // @ViewChild('topDiv') topDiv: ElementRef;
-    // @ViewChild('bottomDiv') bottomDiv: ElementRef;
     @ViewChild('datatable') datatableEl: ElementRef;
+    @ViewChild('fixedLeft') fixedLeftEl: ElementRef;
+    @ViewChild('fixedRight') fixedRightEl: ElementRef;
 
     private rowHoverSubscription: Subscription;
 
     private scrollTimer: any = null;
 
-    currentRowId =  undefined;
     gridsize$ = this.dfs.gridSize$;
     selectedRow$ = this.dfs.currentRow$;
+
+    currentRowId =  undefined;
+    hoverRowIndex: number;
 
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
@@ -101,7 +101,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         });
 
         this.selectedRow$.pipe(
-            filter(row => !!row)
+            filter(row => !!row && row.id !== this.currentRowId)
         ).subscribe((row: SelectedRow) => {
             if (row) {
                 this.currentRowId = row.id;
@@ -109,8 +109,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.currentRowId = undefined;
             }
             this.dg.selectRow(row);
+            this.cd.detectChanges();
         });
+
     }
+
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
@@ -128,6 +131,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     trackByRows = (index: number, row: any) => {
         return row[this.dg.idField];
     }
+
 
     private setWheelHeight() {
         this.wheelHeight = this.dg.pagination ?

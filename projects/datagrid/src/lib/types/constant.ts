@@ -22,3 +22,5 @@ export const FIXED_RIGHT_SHADOW_CLS = 'f-datagrid-fixed-right-shadow';
 export const ROW_HOVER_CLS = 'f-datagrid-row-hover';
 
 export const ROW_SELECTED_CLS = 'f-datagrid-row-selected';
+
+export const CELL_SELECTED_CLS = 'f-datagrid-cell-selected';

@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
-import { ColumnGroup } from '../../types';
+import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { ColumnGroup } from '../../types/data-column';
 import { DatagridService } from '../../services/datagrid.service';
 import { SCROLL_X_ACTION, FIXED_LEFT_SHADOW_CLS, SCROLL_X_REACH_START_ACTION, FIXED_RIGHT_SHADOW_CLS } from '../../types/constant';
 import { DatagridComponent } from '../../datagrid.component';
