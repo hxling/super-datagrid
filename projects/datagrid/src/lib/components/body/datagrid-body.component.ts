@@ -58,7 +58,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private scrollTimer: any = null;
 
     gridsize$ = this.dfs.gridSize$;
-    selectedRow$ = this.dfs.currentRow$;
+    selectedRow$ = this.dfs.selectRow$;
+    unSelectRow$ = this.dfs.unSelectRow$;
 
     currentRowId =  undefined;
     hoverRowIndex: number;
@@ -100,18 +101,19 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.ps.scrollToTop();
         });
 
-        this.selectedRow$.pipe(
-            filter(row => !!row && row.id !== this.currentRowId)
-        ).subscribe((row: SelectedRow) => {
+        this.selectedRow$.subscribe((row: SelectedRow) => {
             if (row) {
                 this.currentRowId = row.id;
-            } else {
-                this.currentRowId = undefined;
             }
             this.dg.selectRow(row);
             this.cd.detectChanges();
         });
 
+        this.unSelectRow$.subscribe( (prevRow: SelectedRow) => {
+            this.currentRowId = undefined;
+            this.dg.unSelectRow(prevRow);
+            this.cd.detectChanges();
+        });
     }
 
 
