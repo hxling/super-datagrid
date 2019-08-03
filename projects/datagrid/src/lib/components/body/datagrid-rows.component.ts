@@ -1,3 +1,4 @@
+import { DatagridService } from './../../services/datagrid.service';
 
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { DataColumn } from '../../types';
@@ -16,7 +17,8 @@ export class DatagridRowsComponent implements OnInit {
     @Input() columns: DataColumn[];
     @ViewChild('tableEl') tableEl: ElementRef;
 
-    constructor(public dg: DatagridComponent, public dgb: DatagridBodyComponent) { }
+    constructor(public dg: DatagridComponent, public dgb: DatagridBodyComponent, private dgs: DatagridService) { }
 
-    ngOnInit(): void { }
+    ngOnInit(): void {
+    }
 }

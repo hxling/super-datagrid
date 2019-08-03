@@ -169,11 +169,18 @@ export class DatagridFacadeService {
     }
 
     selectRow(rowIndex: number, rowData: any) {
+        const isMultiSelect = this._state.multiSelect;
         const id = this.primaryId(rowData);
-        if (!this.isRowSelected(id)) {
-            this.updateState({ currentRow: { id, data: rowData, index: rowIndex } });
-            this.selectRowSubject.next(this._state.currentRow);
+
+        if (!isMultiSelect) {
+            if (!this.isRowSelected(id)) {
+                this.updateState({ currentRow: { id, data: rowData, index: rowIndex } });
+                this.selectRowSubject.next(this._state.currentRow);
+            }
+        } else {
+
         }
+
     }
 
     unSelectRow(row: SelectedRow) {
@@ -329,8 +336,7 @@ export class DatagridFacadeService {
         let offset = 0;
         offset = this._state.showLineNumber ? offset + this._state.lineNumberWidth : offset;
 
-        offset = (this._state.multiSelect && this._state.showCheckbox) ?
-            offset + 36 : offset;
+        offset = this._state.showCheckbox ? offset + 36 : offset;
 
         const leftColsWidth = colgroup.leftFixed.reduce((r, c) => {
             c.left = r;

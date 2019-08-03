@@ -17,6 +17,12 @@ export class DatagridSelectionDemoComponent implements OnInit {
 
     @ViewChild('box') box: ElementRef;
 
+    useRowHover = true;
+    // 多选
+    useMultiSelect = false;
+    showCheckbox = true;
+    keepSelect = true;
+
     columns = [
         { field: 'id', width: 100, title: 'ID' },
         { field: 'name', width: 130, title: '姓名'},

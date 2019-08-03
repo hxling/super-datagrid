@@ -63,7 +63,15 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     unSelectRow$ = this.dfs.unSelectRow$;
 
     currentRowId =  undefined;
-    hoverRowIndex: number;
+
+    private _hoverRowIndex = -1;
+    get hoverRowIndex(): number {
+        return this._hoverRowIndex;
+    }
+    set hoverRowIndex(rowIdx: number) {
+        this._hoverRowIndex = rowIdx;
+        this.cd.detectChanges();
+    }
 
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
@@ -105,14 +113,16 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.selectedRow$.subscribe((row: SelectedRow) => {
             if (row) {
                 this.currentRowId = row.id;
+                this.dg.selectedRow = row;
             }
-            this.dg.selectRow(row);
+            this.dg.selectChanged.emit(row);
             this.cd.detectChanges();
         });
 
         this.unSelectRow$.subscribe( (prevRow: SelectedRow) => {
             this.currentRowId = undefined;
-            this.dg.unSelectRow(prevRow);
+            this.dg.selectedRow = null;
+            this.dg.unSelect.emit(prevRow);
             this.cd.detectChanges();
         });
     }

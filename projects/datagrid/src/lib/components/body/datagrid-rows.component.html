@@ -5,7 +5,7 @@
         [class.f-datagrid-row-odd]="odd && dg.striped"
         [class.f-datagrid-row-even]="!odd && dg.striped"
         [class.f-datagrid-row-selected]="dgb.currentRowId === row[dg.idField]"
-        [class.f-datagrid-row-hover]="dgb.hoverRowIndex === hoverRow.rowIndex"
+        [class.f-datagrid-row-hover]="dg.rowHover && dgb.hoverRowIndex === hoverRow.rowIndex"
     >
         <td [cell-editable]="row" [column]="col"
             class="f-datagrid-cell" [attr.align]="col.align" [style.width.px]="col.width" *ngFor="let col of columns; let ci = index;">

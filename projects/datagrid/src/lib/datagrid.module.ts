@@ -26,6 +26,7 @@ import { ScrollbarConfigInterface, SCROLLBAR_CONFIG } from './scrollbar/scrollba
 
 import { DatagridRowHoverDirective } from './components/body/datagrid-row-hover.directive';
 import { DatagridRowsComponent } from './components/body/datagrid-rows.component';
+import { DatagridCheckboxComponent } from './components/checkbox/datagrid-checkbox.component';
 
 
 
@@ -57,6 +58,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DatagridRowsComponent,
         DatagridRowHoverDirective,
         DataGridLoadingComponent,
+        DatagridCheckboxComponent,
         GridCellEditorDirective,
         DatagridEditorComponent,
         TextboxEditorComponent
