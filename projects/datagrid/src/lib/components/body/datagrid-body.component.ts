@@ -12,6 +12,7 @@ import { SelectedRow, DataResult } from '../../services/state';
 import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
+import { DatagridRowsComponent } from './datagrid-rows.component';
 
 
 @Component({
@@ -49,7 +50,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @Input() data: any;
 
     @ViewChild('ps') ps?: ScrollbarDirective;
-    @ViewChild('datatable') datatableEl: ElementRef;
+    @ViewChild('tableRows') tableRowsCmp: any;
     @ViewChild('fixedLeft') fixedLeftEl: ElementRef;
     @ViewChild('fixedRight') fixedRightEl: ElementRef;
 
@@ -58,10 +59,19 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private scrollTimer: any = null;
 
     gridsize$ = this.dfs.gridSize$;
-    selectedRow$ = this.dfs.currentRow$;
+    selectedRow$ = this.dfs.selectRow$;
+    unSelectRow$ = this.dfs.unSelectRow$;
 
     currentRowId =  undefined;
-    hoverRowIndex: number;
+
+    private _hoverRowIndex = -1;
+    get hoverRowIndex(): number {
+        return this._hoverRowIndex;
+    }
+    set hoverRowIndex(rowIdx: number) {
+        this._hoverRowIndex = rowIdx;
+        this.cd.detectChanges();
+    }
 
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
@@ -100,18 +110,21 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.ps.scrollToTop();
         });
 
-        this.selectedRow$.pipe(
-            filter(row => !!row && row.id !== this.currentRowId)
-        ).subscribe((row: SelectedRow) => {
+        this.selectedRow$.subscribe((row: SelectedRow) => {
             if (row) {
                 this.currentRowId = row.id;
-            } else {
-                this.currentRowId = undefined;
+                this.dg.selectedRow = row;
             }
-            this.dg.selectRow(row);
+            this.dg.selectChanged.emit(row);
             this.cd.detectChanges();
         });
 
+        this.unSelectRow$.subscribe( (prevRow: SelectedRow) => {
+            this.currentRowId = undefined;
+            this.dg.selectedRow = null;
+            this.dg.unSelect.emit(prevRow);
+            this.cd.detectChanges();
+        });
     }
 
 
@@ -126,10 +139,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     ngOnDestroy() {
         this.rowHoverSubscription.unsubscribe();
         this.rowHoverSubscription = null;
-    }
-
-    trackByRows = (index: number, row: any) => {
-        return row[this.dg.idField];
     }
 
 
@@ -222,7 +231,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private getVirtualRowPosition(): {top: number, bottom: number, containerBottom: number} {
         const headerHeight = this.top;
         const bodyRect = this.dg.getBoundingClientRect(this.el);
-        const datatableRect = this.dg.getBoundingClientRect(this.datatableEl);
+        const datatableRect = this.dg.getBoundingClientRect(this.tableRowsCmp.tableEl);
         const topDivHeight = datatableRect.top - bodyRect.top - headerHeight;
         const bottomDivHeight = datatableRect.bottom;
         const top = Math.floor(topDivHeight);

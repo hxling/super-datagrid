@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
 import { map, distinctUntilChanged, filter, switchMap, auditTime } from 'rxjs/operators';
 import { DataColumn, ColumnGroup } from '../types';
-import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState } from './state';
+import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow } from './state';
 import { VirtualizedLoaderService } from './virtualized-loader.service';
 
 @Injectable()
@@ -15,6 +15,11 @@ export class DatagridFacadeService {
 
     virtualRowSubject = new Subject<any>();
     gridSizeSubject = new Subject<any>();
+    private selectRowSubject = new Subject<any>();
+    private unSelectRowSubject = new Subject<any>();
+
+    selectRow$ = this.selectRowSubject.asObservable();
+    unSelectRow$ =  this.unSelectRowSubject.asObservable();
 
     readonly state$ = this.store.asObservable().pipe(
         filter( (state: any) => state)
@@ -50,8 +55,17 @@ export class DatagridFacadeService {
     readonly currentRow$ = this.store.asObservable().pipe(
         filter( (state: any) => state),
         map((state: FarrisDatagridState) => state.currentRow),
+        switchMap( (row) => {
+            if (row) {
+                return of(row);
+            } else {
+                this.unSelectRowSubject.next(row);
+                return this.unSelectRowSubject.asObservable();
+            }
+        }),
         distinctUntilChanged()
     );
+
 
     readonly currentCell$ = this.store.asObservable().pipe(
         filter( (state: any) => state),
@@ -146,9 +160,34 @@ export class DatagridFacadeService {
         this.updateState({virtual}, false);
     }
 
+    isRowSelected(id) {
+        if (!id || !this._state.currentRow) {
+            return false;
+        } else {
+            return this._state.currentRow.id == id;
+        }
+    }
+
     selectRow(rowIndex: number, rowData: any) {
+        const isMultiSelect = this._state.multiSelect;
         const id = this.primaryId(rowData);
-        this.updateState({ currentRow: { id, data: rowData, index: rowIndex } });
+
+        if (!isMultiSelect) {
+            if (!this.isRowSelected(id)) {
+                this.updateState({ currentRow: { id, data: rowData, index: rowIndex } });
+                this.selectRowSubject.next(this._state.currentRow);
+            }
+        } else {
+
+        }
+
+    }
+
+    unSelectRow(row: SelectedRow) {
+        if (this._state.currentRow) {
+            this.updateState({ currentRow: null });
+            this.unSelectRowSubject.next(row);
+        }
     }
 
     setCurrentCell(rowIndex: number, rowData: any, field: string, cellRef?: any ) {
@@ -297,8 +336,7 @@ export class DatagridFacadeService {
         let offset = 0;
         offset = this._state.showLineNumber ? offset + this._state.lineNumberWidth : offset;
 
-        offset = (this._state.multiSelect && this._state.showCheckbox) ?
-            offset + 36 : offset;
+        offset = this._state.showCheckbox ? offset + 36 : offset;
 
         const leftColsWidth = colgroup.leftFixed.reduce((r, c) => {
             c.left = r;

@@ -10,6 +10,7 @@ import { CellEditorComponent } from './demos/cell-editor/cell-editor.component';
 import { VirtualLoadDemoComponent } from './demos/virtual-load/virtual-load-demo.component';
 import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-demo.component';
 import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-template.component';
+import { DatagridSelectionDemoComponent } from './demos/selections/datagrid-selection-demo.component';
 
 const routes: Routes = [
   { path: 'scroll-load', component: ScrollBarLoadComponent},
@@ -21,6 +22,7 @@ const routes: Routes = [
     { path: 'scrollbar', component: ScrollbarLoadDemoComponent},
     { path: 'custom-cell', component: CustomCellComponent },
     { path: 'fit-columns', component: FitColumnsComponent },
+    { path: 'selection', component: DatagridSelectionDemoComponent},
     { path: '', component: PageScrollComponent}
 ];
 

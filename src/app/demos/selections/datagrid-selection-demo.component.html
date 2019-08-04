@@ -1,0 +1,55 @@
+<div #box class="d-flex flex-column" style="width: 100%; height: 300px;border:2px solid #ae00e6">
+    <div region="north" class="north" style="height: 200px;">
+        
+        <div class="fluid-container" style="margin: 15px;">
+            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                <input id="chk_rowHover" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useRowHover">
+                <label for="chk_rowHover" class="custom-control-label">启用 rowHover </label>
+            </div>
+
+            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                <input id="chk_keepSelect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="keepSelect">
+                <label for="chk_keepSelect" class="custom-control-label"> 保持选中 </label>
+            </div>
+
+            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                <input id="chk_MultiSelect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useMultiSelect">
+                <label for="chk_MultiSelect" class="custom-control-label"> 启用多选 </label>
+            </div>
+
+            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                <input id="chk_showCheckbox" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showCheckbox">
+                <label for="chk_showCheckbox" class="custom-control-label"> 显示复选框 </label>
+            </div>
+
+            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                <input id="chk_showAllCheckbox" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showAllCheckbox">
+                <label for="chk_showAllCheckbox" class="custom-control-label"> 显示全选 </label>
+            </div>
+
+
+            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                <input id="chk_checkonselect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="checkonselect">
+                <label for="chk_checkonselect" class="custom-control-label"> 选中并钩选 </label>
+            </div>
+
+
+            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                <input id="chk_selectoncheck" type="checkbox" #chk class="custom-control-input" [(ngModel)]="selectoncheck">
+                <label for="chk_selectoncheck" class="custom-control-label"> 钩选并选中 </label>
+            </div>
+
+
+        </div>
+    </div>
+    <div region="center" class="center flex-fill">
+        <farris-datagrid [columns]="columns" [data]="items" #dg
+            [showLineNumber] ="true" [striped]="false" [showCheckbox]="showCheckbox"
+            [virtualized]="true" [rowHover]="useRowHover" [keepSelect]="keepSelect"
+            [multiSelect]="useMultiSelect"
+            [pagination]="true" [fit]="true" [fitColumns]="true"
+            [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
+            [pageList]="[100, 200, 300, 500, 1000, 2000, 5000]"
+        ></farris-datagrid>
+    </div>
+</div>

@@ -24,6 +24,7 @@ import { VirtualLoadDemoComponent } from './demos/virtual-load/virtual-load-demo
 import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-demo.component';
 import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-template.component';
 import { FitColumnsComponent } from './demos/fitcolumns/fit-columns.component';
+import { DatagridSelectionDemoComponent } from './demos/selections/datagrid-selection-demo.component';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { FitColumnsComponent } from './demos/fitcolumns/fit-columns.component';
     VirtualLoadDemoComponent,
     ScrollbarLoadDemoComponent,
     CustomCellComponent,
-    FitColumnsComponent
+    FitColumnsComponent,
+    DatagridSelectionDemoComponent
 
   ],
   imports: [

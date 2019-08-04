@@ -5,7 +5,7 @@ import { Component, OnInit, Input, ViewEncapsulation,
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import ResizeObserver from 'resize-observer-polyfill';
-import { of, Subscription } from 'rxjs';
+import { of, Subscription, Observable } from 'rxjs';
 import { DataColumn, CustomStyle, MoveDirection, ColumnGroup } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DatagridColumnDirective } from './components/columns/datagrid-column.directive';
@@ -124,6 +124,17 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 启用多选时，是否显示checkbox */
     @Input() showCheckbox = true;
 
+    @Input() checkOnSelect = true;
+    @Input() selectOnCheck = true;
+
+    /**
+     * 单击行选中后，在次点击不会被取消选中状态;
+     */
+    @Input() keepSelect = true;
+
+    /** 空数据时，显示的提示文本 */
+    @Input() emptyMessage = '暂无数据';
+
     /** 主键字段 */
     @Input() idField = 'id';
     /** 请求数据源的URL */
@@ -149,6 +160,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 编辑状态 */
     @Input() editable = false;
 
+
+    @Input() beforeSelect: () => Observable<boolean>;
+
+
+
     @Output() beginEdit = new EventEmitter();
     @Output() endEdit = new EventEmitter();
 
@@ -160,6 +176,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Output() loadSuccess = new EventEmitter();
 
     @Output() selectChanged = new EventEmitter();
+    @Output() unSelect = new EventEmitter();
+    @Output() checkAll = new EventEmitter();
+    @Output() unCheckAll = new EventEmitter();
+
 
     @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
 
@@ -297,6 +317,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
     }
 
+    trackByRows = (index: number, row: any) => {
+        return row[this.idField];
+    }
+
     bindDocumentEditListener() {
         this.unbindDocumentEditListener();
         if (!this.documentCellClickHandler) {
@@ -431,6 +455,18 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         return of(undefined);
     }
 
+
+    reload() {
+        this.fetchData(1, this.pageSize).subscribe(res => {
+            if (res) {
+                this.pageIndex = 1;
+                this.total = res.total;
+                this.loadData(res.items);
+            }
+        });
+    }
+
+
     onPageChange(pageIndex: number) {
         this.pageIndex = pageIndex;
         this.pagerOpts.currentPage = pageIndex;
@@ -458,15 +494,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.pageSizeChanged.emit({pageSize, pageIndex: this.pageIndex});
     }
 
-    reload() {
-        this.fetchData(1, this.pageSize).subscribe(res => {
-            if (res) {
-                this.pageIndex = 1;
-                this.total = res.total;
-                this.loadData(res.items);
-            }
-        });
-    }
 
     private initState() {
         this.data = this.data || [];
@@ -550,6 +577,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.selectedRow = row;
             this.selectChanged.emit(row);
         }
+    }
+
+    unSelectRow(row: SelectedRow) {
+        this.selectedRow = null;
+        this.unSelect.emit(row);
     }
 
     private replacePX2Empty(strNum: string) {
