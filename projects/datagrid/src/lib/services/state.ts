@@ -22,6 +22,7 @@ export interface FarrisDatagridState {
     fitColumns: boolean;
     showLineNumber?: boolean;
     showCheckbox?: boolean;
+    checkboxColumnWidth: number;
     multiSelect?: boolean;
     selections: SelectedRow[];
     currentRow: SelectedRow;
@@ -61,6 +62,7 @@ export const initDataGridState: FarrisDatagridState = {
     pageIndex: 1,
     pageSize: 20,
     pagerHeight: 40,
+    checkboxColumnWidth: 36,
     pagination: false,
     virtual: {
         rowIndex: 0,

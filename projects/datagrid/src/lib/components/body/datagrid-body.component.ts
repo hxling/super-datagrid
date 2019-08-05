@@ -87,10 +87,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.height = state.height - this.top - pagerHeight;
                 this.width = state.width;
                 this.rowHeight = state.rowHeight;
-                this.columnsGroup = state.columnsGroup;
-                this.leftFixedWidth = this.columnsGroup.leftFixedWidth;
-                this.rightFixedWidth = this.columnsGroup.rightFixedWidth;
-                this.colsWidth = this.columnsGroup.normalWidth;
+
+                this.updateColumnSize(state.columnsGroup);
+
                 this.setWheelHeight();
                 this.fixedRightScrollLeft = this.width - this.rightFixedWidth;
                 this.bodyStyle = this.getBodyStyle();
@@ -104,6 +103,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.cd.detectChanges();
                 this.ps.update();
             }
+        });
+
+        this.dfs.columnResize$.subscribe((cg: ColumnGroup) => {
+            this.updateColumnSize(cg);
+            this.cd.detectChanges();
         });
 
         this.dgs.onDataSourceChange.subscribe(() => {
@@ -141,6 +145,12 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.rowHoverSubscription = null;
     }
 
+    private updateColumnSize(cg: ColumnGroup) {
+        this.columnsGroup = cg;
+        this.leftFixedWidth = this.columnsGroup.leftFixedWidth;
+        this.rightFixedWidth = this.columnsGroup.rightFixedWidth;
+        this.colsWidth = this.columnsGroup.normalWidth;
+    }
 
     private setWheelHeight() {
         this.wheelHeight = this.dg.pagination ?

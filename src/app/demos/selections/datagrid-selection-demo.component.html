@@ -8,6 +8,11 @@
             </div>
 
             <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                <input id="chk_showRowNumber" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showRowNumber">
+                <label for="chk_showRowNumber" class="custom-control-label"> 显示行号 </label>
+            </div>
+
+            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
                 <input id="chk_keepSelect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="keepSelect">
                 <label for="chk_keepSelect" class="custom-control-label"> 保持选中 </label>
             </div>
@@ -44,7 +49,7 @@
     </div>
     <div region="center" class="center flex-fill">
         <farris-datagrid [columns]="columns" [data]="items" #dg
-            [showLineNumber] ="true" [striped]="false" [showCheckbox]="showCheckbox"
+            [showLineNumber] ="showRowNumber" [striped]="false" [showCheckbox]="showCheckbox"
             [virtualized]="true" [rowHover]="useRowHover" [keepSelect]="keepSelect"
             [multiSelect]="useMultiSelect"
             [pagination]="true" [fit]="true" [fitColumns]="true"

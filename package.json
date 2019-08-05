@@ -22,7 +22,7 @@
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
-    "@farris/farris-theme-default": "0.0.29",
+    "@farris/farris-theme-default": "0.0.32",
     "@farris/ui-common": "0.0.8",
     "@farris/ui-datepicker": "0.0.5",
     "@farris/ui-input-group": "0.0.11",

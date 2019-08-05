@@ -1,10 +1,9 @@
-import { Component, OnInit, Input, SkipSelf, Output, EventEmitter } from '@angular/core';
-import { DatagridComponent } from '../../datagrid.component';
+import { Component, OnInit, Input, Output, EventEmitter, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 
 @Component({
     selector: 'datagrid-pager',
     template: `
-    <div class="f-datagrid-pager">
+    <div class="f-datagrid-pager" #pagerContainer>
         <pagination-controls #pager [id]="id" [maxSize]="maxSize" [directionLinks]="directionLinks"
             [autoHide]="autoHide" [responsive]="responsive" [previousLabel]="previousLabel" [nextLabel]="nextLabel"
             (pageChange)="onPageChange($event)"
@@ -13,7 +12,7 @@ import { DatagridComponent } from '../../datagrid.component';
     </div>
     `
 })
-export class DatagridPagerComponent implements OnInit {
+export class DatagridPagerComponent implements OnInit, AfterViewInit {
     @Input() id = 'farris-datagrid-pager';
     /** 显示页码的数量 */
     @Input() maxSize = 7;
@@ -31,9 +30,17 @@ export class DatagridPagerComponent implements OnInit {
     @Output() pageChange = new EventEmitter();
     @Output() pageSizeChange = new EventEmitter();
 
-    constructor(@SkipSelf() private datagrid: DatagridComponent) {}
+    @ViewChild('pagerContainer') pc: ElementRef;
+
+    outerHeight: number;
+
+    constructor(public el: ElementRef) {}
 
     ngOnInit(): void {
+    }
+
+    ngAfterViewInit() {
+        this.outerHeight = this.pc.nativeElement.offsetHeight;
     }
 
     onPageChange(pageIndex: any) {

@@ -16,13 +16,14 @@ import {
     ScrollbarConfigInterface
 } from './scrollbar.interfaces';
 
+// styleUrls: [
+//     './scrollbar.component.css'
+// ],
+
 @Component({
     selector: 'scrollbar',
     exportAs: 'ngxScrollbar',
     templateUrl: './scrollbar.component.html',
-    styleUrls: [
-        './scrollbar.component.css'
-    ],
     encapsulation: ViewEncapsulation.None
 })
 export class ScrollbarComponent implements OnInit, OnDestroy, DoCheck {

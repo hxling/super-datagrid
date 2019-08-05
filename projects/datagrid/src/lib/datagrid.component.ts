@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
     SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding,
-    AfterContentInit, NgZone, ElementRef
+    AfterContentInit, NgZone, ElementRef, ViewChild
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -15,6 +15,11 @@ import { DatagridService } from './services/datagrid.service';
 import { GRID_EDITORS, CELL_SELECTED_CLS } from './types/constant';
 import { DomHandler } from './services/domhandler';
 
+// styleUrls: [
+//     './scss/index.scss'
+// ],
+
+
 @Component({
     selector: 'farris-datagrid',
     template: `
@@ -23,7 +28,7 @@ import { DomHandler } from './services/domhandler';
         <datagrid-header #header [columnsGroup]="colGroup" [height]="headerHeight"></datagrid-header>
         <datagrid-body [columnsGroup]="colGroup" [data]="ds.rows | paginate: pagerOpts"
                 [startRowIndex]="ds.index" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
-        <datagrid-pager *ngIf="pagination"
+        <datagrid-pager *ngIf="pagination" #dgPager
             [id]="pagerOpts.id" (pageChange)="onPageChange($event)"
             (pageSizeChange)="onPageSizeChange($event)"></datagrid-pager>
     </div>
@@ -32,9 +37,6 @@ import { DomHandler } from './services/domhandler';
     providers: [
         DatagridFacadeService,
         DatagridService
-    ],
-    styleUrls: [
-        './scss/index.scss'
     ],
     exportAs: 'datagrid',
     encapsulation: ViewEncapsulation.None,
@@ -48,7 +50,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     @Input() id = '';
     /** 显示边框 */
-    @Input() showBorder = true;
+    @Input() showBorder = false;
     /** 启用斑马线  */
     @Input() striped = true;
     /** 宽度 */
@@ -182,6 +184,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
 
     @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
+    @ViewChild('dgPager') dgPager: any;
 
     colGroup: ColumnGroup;
     data$ = this.dfs.data$;
@@ -264,9 +267,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             pageList: this.pageList
         };
 
-        if (!this.pagination) {
-            this.pagerHeight = 0;
-        }
+        this.setPagerHeight();
 
         if (!this.columns) {
             this.columns = this.fields;
@@ -305,6 +306,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (changes.data && !changes.data.isFirstChange()) {
             this.dfs.loadData(changes.data.currentValue);
             this.dgs.dataSourceChanged();
+        }
+
+        if (changes.showCheckbox !== undefined && !changes.showCheckbox.isFirstChange()) {
+            this.dfs.showCheckbox(changes.showCheckbox.currentValue);
+        }
+
+        if (changes.showLineNumber !== undefined && !changes.showLineNumber.isFirstChange()) {
+            this.dfs.showLineNumber(changes.showLineNumber.currentValue);
         }
     }
 
@@ -377,6 +386,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     editCell(rowIndex: number, field: string) {
+    }
+
+    private setPagerHeight() {
+        if (!this.pagination) {
+            this.pagerHeight = 0;
+        } else {
+            if (this.pagerHeight < this.dgPager.outerHeight) {
+                this.pagerHeight = this.dgPager.outerHeight;
+            }
+        }
     }
 
     private findNextCell(field: string, dir: MoveDirection) {

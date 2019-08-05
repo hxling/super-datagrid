@@ -17,9 +17,11 @@ export class DatagridFacadeService {
     gridSizeSubject = new Subject<any>();
     private selectRowSubject = new Subject<any>();
     private unSelectRowSubject = new Subject<any>();
+    private columnResizeSubject = new Subject<any>();
 
     selectRow$ = this.selectRowSubject.asObservable();
     unSelectRow$ =  this.unSelectRowSubject.asObservable();
+    columnResize$ = this.columnResizeSubject.asObservable();
 
     readonly state$ = this.store.asObservable().pipe(
         filter( (state: any) => state)
@@ -312,6 +314,38 @@ export class DatagridFacadeService {
         }
     }
 
+    showCheckbox(isShow = true) {
+        const colgroup = this._state.columnsGroup;
+        this.updateState({showCheckbox: isShow}, false);
+        if (isShow) {
+            colgroup.leftFixedWidth = colgroup.leftFixedWidth + this._state.checkboxColumnWidth;
+        } else {
+            colgroup.leftFixedWidth = colgroup.leftFixedWidth - this._state.checkboxColumnWidth;
+        }
+
+        this.columnResizeSubject.next(colgroup);
+    }
+
+    hideCheckbox() {
+        this.showCheckbox(false);
+    }
+
+    showLineNumber(isShow = true) {
+        const colgroup = this._state.columnsGroup;
+        this.updateState({showLineNumber: isShow}, false);
+        if (isShow) {
+            colgroup.leftFixedWidth = colgroup.leftFixedWidth + this._state.lineNumberWidth;
+        } else {
+            colgroup.leftFixedWidth = colgroup.leftFixedWidth - this._state.lineNumberWidth;
+        }
+
+        this.columnResizeSubject.next(colgroup);
+    }
+
+    hideLineNumber() {
+        this.showLineNumber(false);
+    }
+
     private setFitColumnsWidth(colgroup: ColumnGroup) {
         if (!colgroup) {
             return;
@@ -336,7 +370,7 @@ export class DatagridFacadeService {
         let offset = 0;
         offset = this._state.showLineNumber ? offset + this._state.lineNumberWidth : offset;
 
-        offset = this._state.showCheckbox ? offset + 36 : offset;
+        offset = this._state.showCheckbox ? offset + this._state.checkboxColumnWidth : offset;
 
         const leftColsWidth = colgroup.leftFixed.reduce((r, c) => {
             c.left = r;

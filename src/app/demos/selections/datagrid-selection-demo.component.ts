@@ -22,6 +22,7 @@ export class DatagridSelectionDemoComponent implements OnInit {
     useMultiSelect = false;
     showCheckbox = true;
     keepSelect = true;
+    showRowNumber = true;
 
     columns = [
         { field: 'id', width: 100, title: 'ID' },

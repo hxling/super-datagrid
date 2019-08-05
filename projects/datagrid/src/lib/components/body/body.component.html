@@ -16,7 +16,7 @@
                         *ngFor="let row of data;trackBy: dg.trackByRows; let i=index; odd as odd"
                         [class.f-datagrid-row-selected]="currentRowId === row[dg.idField]"
                         >
-                        <td class="f-datagrid-cell f-datagrid-cell-rownumber" [style.width.px]="dg.lineNumberWidth">
+                        <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" [style.width.px]="dg.lineNumberWidth">
                             {{ startRowIndex + i + 1 }}
                         </td>
 

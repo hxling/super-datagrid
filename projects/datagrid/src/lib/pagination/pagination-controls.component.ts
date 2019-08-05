@@ -4,13 +4,14 @@ function coerceToBoolean(input: string | boolean): boolean {
     return !!input && input !== 'false';
 }
 
+// styleUrls: ['./pagination-controls.component.css'],
+
 /**
  * The default pagination controls component. Actually just a default implementation of a custom template.
  */
 @Component({
     selector: 'pagination-controls',
     templateUrl: './pagination-controls.component.html',
-    styleUrls: ['./pagination-controls.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
