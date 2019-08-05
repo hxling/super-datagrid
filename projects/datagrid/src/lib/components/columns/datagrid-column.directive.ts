@@ -1,4 +1,4 @@
-import { OnInit, Directive, Input, ContentChild, TemplateRef, ContentChildren, AfterContentInit } from '@angular/core';
+import { OnInit, Directive, Input, ContentChild, AfterContentInit } from '@angular/core';
 import { DatagridCellEditorDirective } from './column-cell-edit.directive';
 
 @Directive({

@@ -12,9 +12,21 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
     @Input() height = 36;
     @Input() columnsGroup: ColumnGroup;
 
+    @ViewChild('header') header: ElementRef;
     @ViewChild('headerContainer') headerContainer: ElementRef;
     @ViewChild('fixedLeft') fixedLeft: ElementRef;
-    @ViewChild('fixedRight') fixedRight: ElementRef;
+
+    private fixedRight: ElementRef;
+    @ViewChild('fixedRight') set fr(val) {
+        this.fixedRight = val;
+        if (val && this.columnsGroup) {
+            const left = this.dg.width - this.columnsGroup.rightFixedWidth;
+            this.render2.setStyle(this.fixedRight.nativeElement,  'transform', `translate3d(${ left }px, 0px, 0px)` );
+            if (left !== this.columnsGroup.normalWidth + this.columnsGroup.leftFixedWidth) {
+                this.render2.addClass(this.fixedRight.nativeElement, FIXED_RIGHT_SHADOW_CLS);
+            }
+        }
+    }
 
     constructor(  private dgSer: DatagridService, private render2: Renderer2, public dg: DatagridComponent) {
         this.dgSer.scorll$.subscribe((d: any) => {
@@ -43,17 +55,17 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
+    }
 
+    private setHeight() {
+        const offsetHeight = this.header.nativeElement.offsetHeight;
+        if (this.height < offsetHeight) {
+            this.height = offsetHeight;
+        }
     }
 
     ngAfterViewInit() {
-        if (this.fixedRight) {
-            const left = this.dg.width - this.columnsGroup.rightFixedWidth;
-            this.render2.setStyle(this.fixedRight.nativeElement,  'transform', `translate3d(${ left }px, 0px, 0px)` );
-            if (left !== this.columnsGroup.normalWidth + this.columnsGroup.leftFixedWidth) {
-                this.render2.addClass(this.fixedRight.nativeElement, FIXED_RIGHT_SHADOW_CLS);
-            }
-        }
+        this.setHeight();
     }
 
 }

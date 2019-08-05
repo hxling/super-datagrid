@@ -3,7 +3,6 @@ import { Component, OnInit, Input, ViewChild, Renderer2,
     OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone } from '@angular/core';
 
 import { Subscription } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
 
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { ScrollbarDirective } from '../../scrollbar/scrollbar.directive';
@@ -12,7 +11,6 @@ import { SelectedRow, DataResult } from '../../services/state';
 import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
-import { DatagridRowsComponent } from './datagrid-rows.component';
 
 
 @Component({
@@ -87,10 +85,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.height = state.height - this.top - pagerHeight;
                 this.width = state.width;
                 this.rowHeight = state.rowHeight;
-                this.columnsGroup = state.columnsGroup;
-                this.leftFixedWidth = this.columnsGroup.leftFixedWidth;
-                this.rightFixedWidth = this.columnsGroup.rightFixedWidth;
-                this.colsWidth = this.columnsGroup.normalWidth;
+
+                this.updateColumnSize(state.columnsGroup);
+
                 this.setWheelHeight();
                 this.fixedRightScrollLeft = this.width - this.rightFixedWidth;
                 this.bodyStyle = this.getBodyStyle();
@@ -104,6 +101,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.cd.detectChanges();
                 this.ps.update();
             }
+        });
+
+        this.dfs.columnResize$.subscribe((cg: ColumnGroup) => {
+            this.updateColumnSize(cg);
+            this.cd.detectChanges();
         });
 
         this.dgs.onDataSourceChange.subscribe(() => {
@@ -125,6 +127,24 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.dg.unSelect.emit(prevRow);
             this.cd.detectChanges();
         });
+
+        this.dfs.checkRow$.subscribe( () => {
+            this.cd.detectChanges();
+        });
+
+        this.dfs.unCheckRow$.subscribe( () => {
+            this.cd.detectChanges();
+        });
+
+        this.dfs.checkAll$.subscribe( () => this.cd.detectChanges());
+        this.dfs.selectAll$.subscribe( () => this.cd.detectChanges());
+        this.dfs.clearCheckeds$.subscribe( () => {
+            if (this.dg.selectOnCheck) {
+                this.currentRowId = undefined;
+                this.dg.selectedRow = null;
+            }
+            this.cd.detectChanges();
+        });
     }
 
 
@@ -137,10 +157,18 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnDestroy() {
-        this.rowHoverSubscription.unsubscribe();
-        this.rowHoverSubscription = null;
+        if (this.rowHoverSubscription) {
+            this.rowHoverSubscription.unsubscribe();
+            this.rowHoverSubscription = null;
+        }
     }
 
+    private updateColumnSize(cg: ColumnGroup) {
+        this.columnsGroup = cg;
+        this.leftFixedWidth = this.columnsGroup.leftFixedWidth;
+        this.rightFixedWidth = this.columnsGroup.rightFixedWidth;
+        this.colsWidth = this.columnsGroup.normalWidth;
+    }
 
     private setWheelHeight() {
         this.wheelHeight = this.dg.pagination ?
@@ -187,6 +215,18 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     onPsXReachEnd($event: any) {
         this.showRightShadow = false;
+    }
+
+    isChecked(rowData: any) {
+        if (rowData) {
+            return this.dfs.isRowChecked(rowData[this.dg.idField]);
+        } else {
+            return false;
+        }
+    }
+
+    isSelected(rowData: any) {
+        return this.dfs.isRowSelected(rowData[this.dg.idField]);
     }
 
     private scrollYMove(y: number, isUp: boolean = false) {
@@ -333,6 +373,5 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.ps.scrollToTop(this.scrollTop);
         }
     }
-
 
 }
