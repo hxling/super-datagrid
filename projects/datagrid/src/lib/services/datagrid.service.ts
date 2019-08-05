@@ -30,6 +30,7 @@ export class DatagridService {
     private selectCellSubject = new Subject();
     /** 结束单元编辑 */
     private endCellEdit = new Subject();
+    private changeCheckedRows = new Subject();
 
     public scorll$ = this.scorllSubject.asObservable();
     public scrollX$ = this.scrollX.asObservable();
@@ -38,6 +39,7 @@ export class DatagridService {
     public onDataSourceChange = this.dataSourceChangedSubject.asObservable();
     public cellEdit$ = this.editCellSubject.asObservable();
     public endCellEdit$ = this.endCellEdit.asObservable();
+    public checkedRowsTotalChanged$ = this.changeCheckedRows.asObservable();
 
     constructor() { }
 
@@ -71,5 +73,9 @@ export class DatagridService {
 
     onSelectCell(cell: CellInfo) {
         this.selectCellSubject.next(cell);
+    }
+
+    onCheckedRowsCountChange() {
+        this.changeCheckedRows.next();
     }
 }

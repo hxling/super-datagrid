@@ -3,7 +3,6 @@ import { Component, OnInit, Input, ViewChild, Renderer2,
     OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone } from '@angular/core';
 
 import { Subscription } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
 
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { ScrollbarDirective } from '../../scrollbar/scrollbar.directive';
@@ -49,7 +48,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @Input() data: any;
 
     @ViewChild('ps') ps?: ScrollbarDirective;
-    @ViewChild('datatable') datatableEl: ElementRef;
+    @ViewChild('tableRows') tableRowsCmp: any;
     @ViewChild('fixedLeft') fixedLeftEl: ElementRef;
     @ViewChild('fixedRight') fixedRightEl: ElementRef;
 
@@ -58,10 +57,19 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private scrollTimer: any = null;
 
     gridsize$ = this.dfs.gridSize$;
-    selectedRow$ = this.dfs.currentRow$;
+    selectedRow$ = this.dfs.selectRow$;
+    unSelectRow$ = this.dfs.unSelectRow$;
 
     currentRowId =  undefined;
-    hoverRowIndex: number;
+
+    private _hoverRowIndex = -1;
+    get hoverRowIndex(): number {
+        return this._hoverRowIndex;
+    }
+    set hoverRowIndex(rowIdx: number) {
+        this._hoverRowIndex = rowIdx;
+        this.cd.detectChanges();
+    }
 
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
@@ -77,10 +85,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.height = state.height - this.top - pagerHeight;
                 this.width = state.width;
                 this.rowHeight = state.rowHeight;
-                this.columnsGroup = state.columnsGroup;
-                this.leftFixedWidth = this.columnsGroup.leftFixedWidth;
-                this.rightFixedWidth = this.columnsGroup.rightFixedWidth;
-                this.colsWidth = this.columnsGroup.normalWidth;
+
+                this.updateColumnSize(state.columnsGroup);
+
                 this.setWheelHeight();
                 this.fixedRightScrollLeft = this.width - this.rightFixedWidth;
                 this.bodyStyle = this.getBodyStyle();
@@ -96,22 +103,50 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             }
         });
 
+        this.dfs.columnResize$.subscribe((cg: ColumnGroup) => {
+            this.updateColumnSize(cg);
+            this.cd.detectChanges();
+        });
+
         this.dgs.onDataSourceChange.subscribe(() => {
             this.ps.scrollToTop();
         });
 
-        this.selectedRow$.pipe(
-            filter(row => !!row && row.id !== this.currentRowId)
-        ).subscribe((row: SelectedRow) => {
+        this.selectedRow$.subscribe((row: SelectedRow) => {
             if (row) {
                 this.currentRowId = row.id;
-            } else {
-                this.currentRowId = undefined;
+                this.dg.selectedRow = row;
             }
-            this.dg.selectRow(row);
+            this.dg.selectChanged.emit(row);
             this.cd.detectChanges();
         });
 
+        this.unSelectRow$.subscribe( (prevRow: SelectedRow) => {
+            this.currentRowId = undefined;
+            this.dg.selectedRow = null;
+            this.dg.unSelect.emit(prevRow);
+            this.cd.detectChanges();
+        });
+
+        this.dfs.checkRow$.subscribe( () => {
+            this.cd.detectChanges();
+            this.dgs.onCheckedRowsCountChange();
+        });
+
+        this.dfs.unCheckRow$.subscribe( () => {
+            this.dgs.onCheckedRowsCountChange();
+            this.cd.detectChanges();
+        });
+
+        this.dfs.checkAll$.subscribe( () => this.cd.detectChanges());
+        this.dfs.selectAll$.subscribe( () => this.cd.detectChanges());
+        this.dfs.clearCheckeds$.subscribe( () => {
+            if (this.dg.selectOnCheck) {
+                this.currentRowId = undefined;
+                this.dg.selectedRow = null;
+            }
+            this.cd.detectChanges();
+        });
     }
 
 
@@ -124,14 +159,18 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnDestroy() {
-        this.rowHoverSubscription.unsubscribe();
-        this.rowHoverSubscription = null;
+        if (this.rowHoverSubscription) {
+            this.rowHoverSubscription.unsubscribe();
+            this.rowHoverSubscription = null;
+        }
     }
 
-    trackByRows = (index: number, row: any) => {
-        return row[this.dg.idField];
+    private updateColumnSize(cg: ColumnGroup) {
+        this.columnsGroup = cg;
+        this.leftFixedWidth = this.columnsGroup.leftFixedWidth;
+        this.rightFixedWidth = this.columnsGroup.rightFixedWidth;
+        this.colsWidth = this.columnsGroup.normalWidth;
     }
-
 
     private setWheelHeight() {
         this.wheelHeight = this.dg.pagination ?
@@ -180,6 +219,18 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.showRightShadow = false;
     }
 
+    isChecked(rowData: any) {
+        if (rowData) {
+            return this.dfs.isRowChecked(rowData[this.dg.idField]);
+        } else {
+            return false;
+        }
+    }
+
+    isSelected(rowData: any) {
+        return this.dfs.isRowSelected(rowData[this.dg.idField]);
+    }
+
     private scrollYMove(y: number, isUp: boolean = false) {
         this.dfs.setScrollTop(y);
         this.scrollTop = y;
@@ -222,7 +273,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private getVirtualRowPosition(): {top: number, bottom: number, containerBottom: number} {
         const headerHeight = this.top;
         const bodyRect = this.dg.getBoundingClientRect(this.el);
-        const datatableRect = this.dg.getBoundingClientRect(this.datatableEl);
+        const datatableRect = this.dg.getBoundingClientRect(this.tableRowsCmp.tableEl);
         const topDivHeight = datatableRect.top - bodyRect.top - headerHeight;
         const bottomDivHeight = datatableRect.bottom;
         const top = Math.floor(topDivHeight);
@@ -324,6 +375,5 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.ps.scrollToTop(this.scrollTop);
         }
     }
-
 
 }

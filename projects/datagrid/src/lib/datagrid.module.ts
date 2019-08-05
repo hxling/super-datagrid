@@ -3,8 +3,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
-import { FarrisCommonModule } from '@farris/ui-common';
-
 import { GRID_EDITORS } from './types/constant';
 
 import { DatagridComponent } from './datagrid.component';
@@ -26,6 +24,8 @@ import { ScrollbarConfigInterface, SCROLLBAR_CONFIG } from './scrollbar/scrollba
 
 import { DatagridRowHoverDirective } from './components/body/datagrid-row-hover.directive';
 import { DatagridRowsComponent } from './components/body/datagrid-rows.component';
+import { DatagridCheckboxComponent } from './components/checkbox/datagrid-checkbox.component';
+import { DatagridHeaderCheckboxComponent } from './components/checkbox/datagrid-header-checkbox.component';
 
 
 
@@ -41,8 +41,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         ReactiveFormsModule,
         HttpClientModule,
         NgxPaginationModule,
-        ScrollbarModule,
-        FarrisCommonModule.forRoot()
+        ScrollbarModule
     ],
     declarations: [
         DatagridHeaderComponent,
@@ -57,6 +56,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DatagridRowsComponent,
         DatagridRowHoverDirective,
         DataGridLoadingComponent,
+        DatagridCheckboxComponent,
+        DatagridHeaderCheckboxComponent,
         GridCellEditorDirective,
         DatagridEditorComponent,
         TextboxEditorComponent

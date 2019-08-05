@@ -1,6 +1,7 @@
-
-import { Component, OnInit, Input } from '@angular/core';
 import { DatagridFacadeService } from './../../services/datagrid-facade.service';
+import { DatagridService } from './../../services/datagrid.service';
+
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { DataColumn } from '../../types';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridBodyComponent } from './datagrid-body.component';
@@ -15,9 +16,12 @@ export class DatagridRowsComponent implements OnInit {
     @Input() startRowIndex: number;
     @Input() data: any;
     @Input() columns: DataColumn[];
+    @ViewChild('tableEl') tableEl: ElementRef;
 
+    constructor(public dg: DatagridComponent, public dgb: DatagridBodyComponent,
+                private dgs: DatagridService, private dfs: DatagridFacadeService) { }
 
-    constructor(public dg: DatagridComponent, public dgb: DatagridBodyComponent, private dfs: DatagridFacadeService) { }
+    ngOnInit(): void {
+    }
 
-    ngOnInit(): void { }
 }
