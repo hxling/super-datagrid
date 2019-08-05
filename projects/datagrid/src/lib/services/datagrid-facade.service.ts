@@ -214,6 +214,10 @@ export class DatagridFacadeService {
         return checkeds.findIndex(sr => sr.id.toString() === id.toString()) > -1;
     }
 
+    isCheckAll() {
+        return this._state.checkedRows.length === this._state.data.length;
+    }
+
     getSelections() {
         return this._state.selections || [];
     }

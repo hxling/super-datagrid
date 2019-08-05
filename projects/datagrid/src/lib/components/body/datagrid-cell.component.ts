@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter,
     ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef,
     OnDestroy, ComponentFactoryResolver, NgZone, ViewRef } from '@angular/core';
-import { CommonUtils } from '@farris/ui-common';
+import { Utils } from '../../utils/utils';
 import { filter } from 'rxjs/operators';
 import { DataColumn } from '../../types/data-column';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
@@ -47,7 +47,7 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
     canEdit = () => this.dg.editable && this.dg.editMode === 'cell' && this.column.editor;
     constructor(
         private dfs: DatagridFacadeService, public dr: DatagridRowDirective,
-        private render2: Renderer2, private utils: CommonUtils, private el: ElementRef,
+        private render2: Renderer2, private el: ElementRef,
         private dg: DatagridComponent, private cfr: ComponentFactoryResolver,
         private cd: ChangeDetectorRef, private zone: NgZone) { }
 
@@ -104,7 +104,7 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
             Object.assign(this.rowData, this.dr.form.value);
         }
         if (this.rowData && this.column && this.column.field) {
-            this.value = this.utils.getValue(this.column.field, this.rowData);
+            this.value = Utils.getValue(this.column.field, this.rowData);
         }
     }
 }

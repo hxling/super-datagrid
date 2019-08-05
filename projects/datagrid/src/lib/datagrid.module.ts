@@ -3,8 +3,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
-import { FarrisCommonModule } from '@farris/ui-common';
-
 import { GRID_EDITORS } from './types/constant';
 
 import { DatagridComponent } from './datagrid.component';
@@ -43,8 +41,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         ReactiveFormsModule,
         HttpClientModule,
         NgxPaginationModule,
-        ScrollbarModule,
-        FarrisCommonModule.forRoot()
+        ScrollbarModule
     ],
     declarations: [
         DatagridHeaderComponent,

@@ -3,6 +3,8 @@ import { ColumnGroup } from '../../types/data-column';
 import { DatagridService } from '../../services/datagrid.service';
 import { SCROLL_X_ACTION, FIXED_LEFT_SHADOW_CLS, SCROLL_X_REACH_START_ACTION, FIXED_RIGHT_SHADOW_CLS } from '../../types/constant';
 import { DatagridComponent } from '../../datagrid.component';
+import { DatagridHeaderCheckboxComponent } from '../checkbox/datagrid-header-checkbox.component';
+import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 
 @Component({
     selector: 'datagrid-header',
@@ -16,6 +18,11 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
     @ViewChild('headerContainer') headerContainer: ElementRef;
     @ViewChild('fixedLeft') fixedLeft: ElementRef;
 
+    private _chkall: DatagridHeaderCheckboxComponent;
+    @ViewChild('chkAll') set chkAll(v) {
+        this._chkall = v;
+    }
+
     private fixedRight: ElementRef;
     @ViewChild('fixedRight') set fr(val) {
         this.fixedRight = val;
@@ -28,8 +35,9 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
         }
     }
 
-    constructor(  private dgSer: DatagridService, private render2: Renderer2, public dg: DatagridComponent) {
-        this.dgSer.scorll$.subscribe((d: any) => {
+    constructor( private dgs: DatagridService, private dfs: DatagridFacadeService,
+                 private render2: Renderer2, public dg: DatagridComponent) {
+        this.dgs.scorll$.subscribe((d: any) => {
             if (d.type === SCROLL_X_ACTION) {
                 this.render2.setStyle(this.headerContainer.nativeElement,  'transform', `translate3d(-${d.x}px, 0px, 0px)` );
                 if (this.fixedLeft) {
@@ -55,6 +63,15 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
+        this.dgs.checkedRowsTotalChanged$.subscribe(() => {
+            if (this._chkall) {
+                if (this.dfs.isCheckAll()) {
+                    this._chkall.chk.nativeElement.indeterminate = false;
+                } else {
+                    this._chkall.chk.nativeElement.indeterminate = true;
+                }
+            }
+        });
     }
 
     private setHeight() {

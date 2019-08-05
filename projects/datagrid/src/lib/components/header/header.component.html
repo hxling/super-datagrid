@@ -11,7 +11,7 @@
                     <tr class="f-datagrid-header-row">
                         <td *ngIf="dg.showLineNumber" class="f-datagrid-header-cell" [style.height.px]="height" [style.width.px]="dg.lineNumberWidth"> </td>
                         <td *ngIf="dg.showCheckbox" class="f-datagrid-header-cell f-datagrid-header-checkbox" [style.height.px]="height" style="width: 36px; text-align: center">
-                            <datagrid-header-checkbox *ngIf="dg.showAllCheckbox"></datagrid-header-checkbox>
+                            <datagrid-header-checkbox #chkAll *ngIf="dg.showAllCheckbox"></datagrid-header-checkbox>
                         </td>
                     </tr>
                 </thead>

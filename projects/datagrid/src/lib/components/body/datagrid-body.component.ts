@@ -130,9 +130,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
         this.dfs.checkRow$.subscribe( () => {
             this.cd.detectChanges();
+            this.dgs.onCheckedRowsCountChange();
         });
 
         this.dfs.unCheckRow$.subscribe( () => {
+            this.dgs.onCheckedRowsCountChange();
             this.cd.detectChanges();
         });
 
