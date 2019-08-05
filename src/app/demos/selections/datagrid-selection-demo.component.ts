@@ -23,6 +23,11 @@ export class DatagridSelectionDemoComponent implements OnInit {
     showCheckbox = true;
     keepSelect = true;
     showRowNumber = true;
+    useStripe = true;
+    showAllCheckbox = true;
+    checkonselect = true;
+    selectoncheck = true;
+    showBorder = false;
 
     columns = [
         { field: 'id', width: 100, title: 'ID' },

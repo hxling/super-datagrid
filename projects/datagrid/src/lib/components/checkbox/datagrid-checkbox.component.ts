@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
     selector: 'datagrid-checkbox',
-    template: ` <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+    template: ` <div class="custom-control custom-checkbox f-checkradio-single">
         <input type="checkbox" #chk class="custom-control-input" [disabled]="disabled" [checked]="checked">
         <label class="custom-control-label" (click)="handleClick($event)"></label>
     </div>`,
@@ -14,6 +14,7 @@ import { Component, OnInit, Input } from '@angular/core';
         :host .custom-checkbox {
             opacity: 1;
             float: none;
+            top: 2px;
         }
         `
     ]

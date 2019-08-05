@@ -1,5 +1,5 @@
 <!--表头-->
-<div class="f-datagrid-header" [style.min-width.px]="dg.width">
+<div class="f-datagrid-header" [style.min-width.px]="dg.width" #header>
 
     <!--左侧固定列-->
     <ng-container *ngIf="columnsGroup?.leftFixed && columnsGroup?.leftFixed.length  || dg.showLineNumber || dg.showCheckbox ">
@@ -10,19 +10,14 @@
                 <thead>
                     <tr class="f-datagrid-header-row">
                         <td *ngIf="dg.showLineNumber" class="f-datagrid-header-cell" [style.height.px]="height" [style.width.px]="dg.lineNumberWidth"> </td>
-                        <td *ngIf="dg.showCheckbox" class="f-datagrid-header-cell f-datagrid-header-checkbox" [style.height.px]="height" style="width: 36px"> </td>
+                        <td *ngIf="dg.showCheckbox" class="f-datagrid-header-cell f-datagrid-header-checkbox" [style.height.px]="height" style="width: 36px; text-align: center">
+                            <datagrid-checkbox *ngIf="dg.showAllCheckbox"></datagrid-checkbox>
+                        </td>
                     </tr>
                 </thead>
             </table>
 
-            <!-- 全选checkbox -->
-            <!-- <div class="f-datagrid-cell-header" *ngIf="dg.showCheckbox && dg.multiSelect">
-                <xui-datagrid-cell [width]="36" [height]="36">
-                    <xui-checkbox [color]="'p-success'"></xui-checkbox>
-                </xui-datagrid-cell>
-            </div>
-
-
+            <!--
             <div class="f-datagrid-cell-header" *ngFor="let col of leftFixedCols">
                 <xui-datagrid-cell [width]="col.width" [left]="col.left" [height]="height">
                     {{col.title}}
@@ -44,22 +39,16 @@
         </table>
     </div>
 
-    <div  #headerContainer [style.left.px]="columnsGroup?.leftFixedWidth"
-        [style.width.px]="columnsGroup?.normalWidth"  style="position: absolute;">
-        <!-- <div class="f-datagrid-cell-header" *ngFor="let col of columnsGroup.normalColumns">
-            <datagrid-header-cell [width]="col.width" [left]="col.left" [height]="height">
-                {{col.title}}
-            </datagrid-header-cell>
-        </div> -->
-            <table style="width:100%"  cellpadding="0" cellspacing="0">
-                <thead>
-                    <tr class="f-datagrid-header-row">
-                        <td class="f-datagrid-header-cell" [attr.align]="col.hAlign" [style.width.px]="col.width" [style.height.px]="height" *ngFor="let col of columnsGroup?.normalColumns">
-                            <div class="f-datagrid-header-cell-content">{{ col.title }}</div>
-                        </td>
-                    </tr>
-                </thead>
-            </table>
+    <div #headerContainer [style.left.px]="columnsGroup?.leftFixedWidth" [style.width.px]="columnsGroup?.normalWidth"  style="position: absolute;">
+        <table style="width:100%"  cellpadding="0" cellspacing="0">
+            <thead>
+                <tr class="f-datagrid-header-row">
+                    <td class="f-datagrid-header-cell" [attr.align]="col.hAlign" [style.width.px]="col.width" [style.height.px]="height" *ngFor="let col of columnsGroup?.normalColumns">
+                        <div class="f-datagrid-header-cell-content">{{ col.title }}</div>
+                    </td>
+                </tr>
+            </thead>
+        </table>
         
     </div>
 </div>

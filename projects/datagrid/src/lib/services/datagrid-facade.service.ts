@@ -162,11 +162,24 @@ export class DatagridFacadeService {
         this.updateState({virtual}, false);
     }
 
+    isMultiSelect() {
+        return this._state.multiSelect;
+    }
+
     isRowSelected(id) {
-        if (!id || !this._state.currentRow) {
-            return false;
+        if (!this.isMultiSelect()) {
+            if (!id || !this._state.currentRow) {
+                return false;
+            } else {
+                return this._state.currentRow.id == id;
+            }
         } else {
-            return this._state.currentRow.id == id;
+            const selections = this._state.selections;
+            if (!selections || selections.length === 0) {
+                return false;
+            } else {
+                return selections.findIndex(sr => sr.id === id) > -1;
+            }
         }
     }
 
@@ -174,15 +187,18 @@ export class DatagridFacadeService {
         const isMultiSelect = this._state.multiSelect;
         const id = this.primaryId(rowData);
 
-        if (!isMultiSelect) {
-            if (!this.isRowSelected(id)) {
-                this.updateState({ currentRow: { id, data: rowData, index: rowIndex } });
+        if (!this.isRowSelected(id)) {
+            const srow = { id, data: rowData, index: rowIndex };
+            if (!isMultiSelect) {
+                this.updateState({ currentRow: srow }, false);
                 this.selectRowSubject.next(this._state.currentRow);
+            } else {
+                const selections = this._state.selections || [];
+                selections.push(srow);
             }
         } else {
 
         }
-
     }
 
     unSelectRow(row: SelectedRow) {
