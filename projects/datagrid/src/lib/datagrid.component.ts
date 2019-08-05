@@ -128,7 +128,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 启用多选时，是否显示checkbox */
     @Input() showCheckbox = true;
     @Input() showAllCheckbox = true;
-
+    /** 当启用多选时，点击行选中，只允许且只有一行被选中。 */
+    @Input() onlySelectSelf = true;
     @Input() checkOnSelect = true;
     @Input() selectOnCheck = true;
 
@@ -184,6 +185,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Output() unSelect = new EventEmitter();
     @Output() checkAll = new EventEmitter();
     @Output() unCheckAll = new EventEmitter();
+    @Output() clearSelections = new EventEmitter();
 
 
     @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
@@ -200,6 +202,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     set loading(val: boolean) {
         this._loading = val;
         this.cd.detectChanges();
+    }
+
+    get selections(): SelectedRow[] {
+        return this.dfs.getSelections();
     }
 
     ds = {
@@ -321,6 +327,23 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (changes.showLineNumber !== undefined && !changes.showLineNumber.isFirstChange()) {
             this.dfs.showLineNumber(changes.showLineNumber.currentValue);
         }
+
+        if (changes.multiSelect !== undefined && !changes.multiSelect.isFirstChange()) {
+            this.dfs.setMultiSelect(changes.multiSelect.currentValue);
+        }
+
+        if (changes.checkOnSelect !== undefined && !changes.checkOnSelect.isFirstChange()) {
+            this.dfs.setCheckOnSelect(changes.checkOnSelect.currentValue);
+        }
+
+        if (changes.selectOnCheck !== undefined && !changes.selectOnCheck.isFirstChange()) {
+            this.dfs.setSelectOnCheck(changes.selectOnCheck.currentValue);
+        }
+
+        if (changes.onlySelectSelf !== undefined && !changes.onlySelectSelf.isFirstChange()) {
+            this.dfs.updateProperty('onlySelectSelf', changes.onlySelectSelf.currentValue);
+        }
+
     }
 
     ngOnDestroy() {
@@ -376,8 +399,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     private unsubscribes() {
         this.subscriptions.forEach(ss => {
-            ss.unsubscribe();
-            ss = null;
+            if (ss) {
+                ss.unsubscribe();
+                ss = null;
+            }
         });
 
         this.subscriptions = [];
@@ -606,6 +631,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.selectedRow = row;
             this.selectChanged.emit(row);
         }
+    }
+
+    unSelectAll() {
+        this.dfs.clearSelections();
     }
 
     unSelectRow(row: SelectedRow) {

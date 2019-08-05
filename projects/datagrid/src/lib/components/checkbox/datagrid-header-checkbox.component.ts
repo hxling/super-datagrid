@@ -3,7 +3,7 @@ import { Component, OnInit, Input, DoCheck, ViewChild, ElementRef } from '@angul
 import { DatagridFacadeService } from './../../services/datagrid-facade.service';
 
 @Component({
-    selector: 'datagrid-checkbox',
+    selector: 'datagrid-header-checkbox',
     template: ` <div class="custom-control custom-checkbox f-checkradio-single">
         <input type="checkbox" #chk class="custom-control-input" [disabled]="disabled" [checked]="checked">
         <label class="custom-control-label" (click)="handleClick($event)"></label>
@@ -21,13 +21,12 @@ import { DatagridFacadeService } from './../../services/datagrid-facade.service'
         `
     ]
 })
-export class DatagridCheckboxComponent implements OnInit {
-    @Input() rowData: any;
-    @Input() rowIndex: any;
+export class DatagridHeaderCheckboxComponent implements OnInit {
     @Input() checked: boolean;
     @Input() disabled: boolean;
 
     @Input() indeterminate = false;
+
     @ViewChild('chk') chk: ElementRef;
     constructor(private dfs: DatagridFacadeService, private dg: DatagridComponent) { }
 
@@ -41,11 +40,14 @@ export class DatagridCheckboxComponent implements OnInit {
         if (!this.disabled) {
             this.checked = !this.checked;
 
+            this.indeterminate = false;
+            this.chk.nativeElement.indeterminate = false;
             if (this.checked) {
-                this.dfs.checkRow(this.rowIndex, this.rowData);
+                this.dfs.checkAll();
             } else {
-                this.dfs.unCheckRow(this.rowIndex, this.rowData);
+                this.dfs.clearCheckeds();
             }
+
         }
         event.stopPropagation();
     }

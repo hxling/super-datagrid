@@ -1,4 +1,3 @@
-import { PaginationInfo } from './../types/data-column';
 import { ColumnGroup, DataColumn } from './../types';
 
 export interface Action {
@@ -24,8 +23,13 @@ export interface FarrisDatagridState {
     showCheckbox?: boolean;
     checkboxColumnWidth: number;
     multiSelect?: boolean;
-    selections: SelectedRow[];
-    currentRow: SelectedRow;
+    /** 当启用多选时，点击行选中，只允许且只有一行被选中。 */
+    onlySelectSelf: boolean;
+    selectOnCheck: boolean;
+    checkOnSelect: boolean;
+    selections?: SelectedRow[];
+    checkedRows?: SelectedRow[];
+    currentRow?: SelectedRow;
     currentCell?: CellInfo;
     columnsGroup: ColumnGroup;
     virtualized?: boolean;
@@ -55,10 +59,14 @@ export const initDataGridState: FarrisDatagridState = {
     idField: 'id',
     showLineNumber: false,
     selections: [],
+    checkedRows: [],
     currentRow: null,
     columnsGroup: null,
     columns: [],
     fitColumns: false,
+    onlySelectSelf: true,
+    selectOnCheck: true,
+    checkOnSelect: true,
     pageIndex: 1,
     pageSize: 20,
     pagerHeight: 40,

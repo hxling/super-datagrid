@@ -127,6 +127,24 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.dg.unSelect.emit(prevRow);
             this.cd.detectChanges();
         });
+
+        this.dfs.checkRow$.subscribe( () => {
+            this.cd.detectChanges();
+        });
+
+        this.dfs.unCheckRow$.subscribe( () => {
+            this.cd.detectChanges();
+        });
+
+        this.dfs.checkAll$.subscribe( () => this.cd.detectChanges());
+        this.dfs.selectAll$.subscribe( () => this.cd.detectChanges());
+        this.dfs.clearCheckeds$.subscribe( () => {
+            if (this.dg.selectOnCheck) {
+                this.currentRowId = undefined;
+                this.dg.selectedRow = null;
+            }
+            this.cd.detectChanges();
+        });
     }
 
 
@@ -139,8 +157,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnDestroy() {
-        this.rowHoverSubscription.unsubscribe();
-        this.rowHoverSubscription = null;
+        if (this.rowHoverSubscription) {
+            this.rowHoverSubscription.unsubscribe();
+            this.rowHoverSubscription = null;
+        }
     }
 
     private updateColumnSize(cg: ColumnGroup) {
@@ -195,6 +215,18 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     onPsXReachEnd($event: any) {
         this.showRightShadow = false;
+    }
+
+    isChecked(rowData: any) {
+        if (rowData) {
+            return this.dfs.isRowChecked(rowData[this.dg.idField]);
+        } else {
+            return false;
+        }
+    }
+
+    isSelected(rowData: any) {
+        return this.dfs.isRowSelected(rowData[this.dg.idField]);
     }
 
     private scrollYMove(y: number, isUp: boolean = false) {
@@ -341,6 +373,5 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.ps.scrollToTop(this.scrollTop);
         }
     }
-
 
 }

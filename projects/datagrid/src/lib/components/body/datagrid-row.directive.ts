@@ -44,10 +44,9 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
             this.clickHandler.emit();
         } else {
             if (!this.dg.keepSelect) {
-                this.dfs.unSelectRow(this.dg.selectedRow);
+                this.dfs.unSelectRow(this.rowIndex, this.rowData);
             }
         }
-
     }
 
     createControl() {

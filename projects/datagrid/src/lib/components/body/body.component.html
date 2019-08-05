@@ -16,14 +16,14 @@
                         *ngFor="let row of data;trackBy: dg.trackByRows; let i=index; odd as odd"
                         [class.f-datagrid-row-odd]="odd && dg.striped"
                         [class.f-datagrid-row-even]="!odd && dg.striped"
-                        [class.f-datagrid-row-selected]="currentRowId === row[dg.idField]"
+                        [class.f-datagrid-row-selected]="currentRowId === row[dg.idField] "
                         >
                         <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" [style.width.px]="dg.lineNumberWidth">
                             {{ startRowIndex + i + 1 }}
                         </td>
 
                         <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox" style="width: 36px; text-align: center;">
-                            <datagrid-checkbox></datagrid-checkbox>
+                            <datagrid-checkbox [rowData]="row" [rowIndex]="startRowIndex + i" [checked]="isChecked(row)"></datagrid-checkbox>
                         </td>
 
                     </tr>

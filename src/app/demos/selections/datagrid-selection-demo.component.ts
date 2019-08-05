@@ -18,16 +18,39 @@ export class DatagridSelectionDemoComponent implements OnInit {
     @ViewChild('box') box: ElementRef;
 
     useRowHover = true;
-    // 多选
-    useMultiSelect = false;
-    showCheckbox = true;
+    showBorder = false;
     keepSelect = true;
     showRowNumber = true;
     useStripe = true;
-    showAllCheckbox = true;
-    checkonselect = true;
-    selectoncheck = true;
-    showBorder = false;
+    // 多选
+
+    _useMultiSelect = false;
+    get useMultiSelect() {
+        return this._useMultiSelect;
+    }
+    set useMultiSelect(v) {
+        this._useMultiSelect = v;
+        if (v) {
+            this.showAllCheckbox = true;
+            this.showCheckbox = true;
+            this.checkonselect = true;
+            this.selectoncheck = true;
+            this.onlySelectSelf = true;
+        } else {
+            this.showAllCheckbox = false;
+            this.showCheckbox = false;
+            this.checkonselect = false;
+            this.selectoncheck = false;
+            this.onlySelectSelf = false;
+        }
+    }
+
+    onlySelectSelf = false;
+    showAllCheckbox = false;
+    checkonselect = false;
+    selectoncheck = false;
+    showCheckbox = false;
+
 
     columns = [
         { field: 'id', width: 100, title: 'ID' },

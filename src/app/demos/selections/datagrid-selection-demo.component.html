@@ -31,6 +31,13 @@
                 <label for="chk_MultiSelect" class="custom-control-label"> 启用多选 </label>
             </div>
 
+            
+            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                <input id="chk_onlySelectSelf" type="checkbox" #chk class="custom-control-input" [(ngModel)]="onlySelectSelf">
+                <label for="chk_onlySelectSelf" class="custom-control-label"> 多选仅选中一条，其他钩选 </label>
+            </div>
+            
+
             <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
                 <input id="chk_showCheckbox" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showCheckbox">
                 <label for="chk_showCheckbox" class="custom-control-label"> 显示复选框 </label>
@@ -59,11 +66,14 @@
     <div region="center" class="center flex-fill" style="border: 1px solid #cdcdcd;">
         <farris-datagrid [columns]="columns" [data]="items" #dg [showAllCheckbox]="showAllCheckbox"
             [showLineNumber] ="showRowNumber" [striped]="useStripe" [showCheckbox]="showCheckbox"
-            [virtualized]="true" [rowHover]="useRowHover" [keepSelect]="keepSelect"
-            [multiSelect]="useMultiSelect" [showBorder]= "showBorder"
+            [virtualized]="true" [rowHover]="useRowHover" [keepSelect]="keepSelect" [onlySelectSelf]="onlySelectSelf"
+            [multiSelect]="useMultiSelect" [showBorder]= "showBorder" [selectOnCheck]="selectoncheck" [checkOnSelect]="checkonselect"
             [pagination]="true" [fit]="true" [fitColumns]="true"
             [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
             [pageList]="[100, 200, 300, 500, 1000, 2000, 5000]"
         ></farris-datagrid>
     </div>
+
+
+
 </div>
