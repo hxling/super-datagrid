@@ -52,7 +52,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @ViewChild('fixedLeft') fixedLeftEl: ElementRef;
     @ViewChild('fixedRight') fixedRightEl: ElementRef;
 
-    private rowHoverSubscription: Subscription;
+    // private rowHoverSubscription: Subscription;
 
     private scrollTimer: any = null;
 
@@ -128,23 +128,46 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.cd.detectChanges();
         });
 
-        this.dfs.checkRow$.subscribe( () => {
-            this.cd.detectChanges();
-            this.dgs.onCheckedRowsCountChange();
-        });
-
-        this.dfs.unCheckRow$.subscribe( () => {
-            this.dgs.onCheckedRowsCountChange();
+        this.dfs.selectAll$.subscribe( (rows: SelectedRow[]) => {
+            this.dg.selectAll.emit(rows);
             this.cd.detectChanges();
         });
 
-        this.dfs.checkAll$.subscribe( () => this.cd.detectChanges());
-        this.dfs.selectAll$.subscribe( () => this.cd.detectChanges());
+        this.dfs.checkRow$.subscribe( (row: SelectedRow) => {
+            this.dg.checked.emit(row);
+            this.dgs.onCheckedRowsCountChange();
+            this.cd.detectChanges();
+        });
+
+        this.dfs.clearSelections$.subscribe(() => {
+            this.currentRowId = undefined;
+            this.dg.selectedRow = null;
+
+            if (this.dg.checkOnSelect) {
+                this.dgs.onCheckedRowsCountChange();
+            }
+            this.dg.unSelectAll.emit();
+            this.cd.detectChanges();
+        });
+
+        this.dfs.unCheckRow$.subscribe( (prevRow: SelectedRow) => {
+            this.dg.unChecked.emit(prevRow);
+            this.dgs.onCheckedRowsCountChange();
+            this.cd.detectChanges();
+        });
+
+        this.dfs.checkAll$.subscribe( (rows: SelectedRow[]) => {
+            this.dg.checkAll.emit(rows);
+            this.cd.detectChanges();
+        });
+
         this.dfs.clearCheckeds$.subscribe( () => {
             if (this.dg.selectOnCheck) {
                 this.currentRowId = undefined;
                 this.dg.selectedRow = null;
             }
+            this.dg.unCheckAll.emit();
+            this.dgs.onCheckedRowsCountChange();
             this.cd.detectChanges();
         });
     }
@@ -159,10 +182,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnDestroy() {
-        if (this.rowHoverSubscription) {
-            this.rowHoverSubscription.unsubscribe();
-            this.rowHoverSubscription = null;
-        }
+        // if (this.rowHoverSubscription) {
+        //     this.rowHoverSubscription.unsubscribe();
+        //     this.rowHoverSubscription = null;
+        // }
     }
 
     private updateColumnSize(cg: ColumnGroup) {

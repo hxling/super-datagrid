@@ -1,4 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
+import { PaginationControlsDirective } from './../../pagination/pagination-controls.directive';
+import { PaginationControlsComponent } from '../../pagination/pagination-controls.component';
 
 @Component({
     selector: 'datagrid-pager',
@@ -31,6 +33,11 @@ export class DatagridPagerComponent implements OnInit, AfterViewInit {
     @Output() pageSizeChange = new EventEmitter();
 
     @ViewChild('pagerContainer') pc: ElementRef;
+    @ViewChild('pager') pager: PaginationControlsComponent;
+
+    get pagination(): PaginationControlsDirective {
+        return this.pager.paginationDirective;
+    }
 
     outerHeight: number;
 

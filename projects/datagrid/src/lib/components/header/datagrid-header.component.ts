@@ -65,7 +65,7 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.dgs.checkedRowsTotalChanged$.subscribe(() => {
             if (this._chkall) {
-                if (this.dfs.isCheckAll()) {
+                if (this.dfs.isCheckAll() || !this.dfs.getCheckeds().length) {
                     this._chkall.chk.nativeElement.indeterminate = false;
                 } else {
                     this._chkall.chk.nativeElement.indeterminate = true;
