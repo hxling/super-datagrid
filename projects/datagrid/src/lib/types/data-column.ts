@@ -31,8 +31,11 @@ export interface DataColumn {
     hidden?: boolean;
 
     editor?: GridEditor;
-
+    /** 单元格自定义模板 */
     template?: TemplateRef<any>;
+    /** 鼠标移动至单元格后，显示悬浮消息 */
+    showtips?: false;
+
 }
 
 export interface GridEditor {

@@ -28,7 +28,7 @@ import { DomHandler } from './services/domhandler';
         <datagrid-header #header [columnsGroup]="colGroup" [height]="headerHeight"></datagrid-header>
         <datagrid-body [columnsGroup]="colGroup" [data]="ds.rows | paginate: pagerOpts"
                 [startRowIndex]="ds.index" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
-        <datagrid-pager *ngIf="pagination" #dgPager
+        <datagrid-pager *ngIf="pagination" #dgPager [showPageList]="showPageList"
             [id]="pagerOpts.id" (pageChange)="onPageChange($event)"
             (pageSizeChange)="onPageSizeChange($event)"></datagrid-pager>
     </div>
@@ -124,6 +124,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() pageSize = 20;
     /** 分页区高度 */
     @Input() pagerHeight = 40;
+    /** 显示每页记录数 */
+    @Input() showPageList = false;
     /** 总记录数 */
     private _total = 0;
     get total() {

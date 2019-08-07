@@ -6,7 +6,7 @@ import { PaginationControlsComponent } from '../../pagination/pagination-control
     selector: 'datagrid-pager',
     template: `
     <div class="f-datagrid-pager" #pagerContainer>
-        <pagination-controls #pager [id]="id" [maxSize]="maxSize" [directionLinks]="directionLinks"
+        <pagination-controls #pager [id]="id" [maxSize]="maxSize" [directionLinks]="directionLinks" [showPageList]="showPageList"
             [autoHide]="autoHide" [responsive]="responsive" [previousLabel]="previousLabel" [nextLabel]="nextLabel"
             (pageChange)="onPageChange($event)"
             (pageSizeChange)="onPageSizeChange($event)">
@@ -28,6 +28,7 @@ export class DatagridPagerComponent implements OnInit, AfterViewInit {
     @Input() previousLabel = '上页';
     /** 下页标签 */
     @Input() nextLabel = '下页';
+    @Input() showPageList = false;
 
     @Output() pageChange = new EventEmitter();
     @Output() pageSizeChange = new EventEmitter();
