@@ -1,0 +1,332 @@
+/*******************************
+        新表格组件
+*******************************/
+$grid-prefix: 'f-datagrid';
+$cell-height: 36px;
+
+$header-cell-height:40px;
+
+$selected-cell-bgcolor: #dce7ff;
+$selected-cell-border-color: #388fff;
+
+$row-number-bgcolor: #fafafa;
+
+
+
+.#{$grid-prefix} {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  color: $farris-grid-text;
+  background: $farris-grid-bg;
+
+  table {
+    table-layout: fixed;
+    border-collapse: separate;
+  }
+
+  &-header {
+    z-index: 2;
+    position: relative;
+    width: 100%;
+    height: $header-cell-height;
+    color: $farris-grid-header-text;
+    font-weight: $farris-grid-header-font-weight;
+    background-color: $farris-grid-header-bg;
+    overflow: hidden;
+    border-bottom: 1px solid $farris-grid-header-border;
+    transition: all 0.15s ease;
+
+    table {
+      width: 100%;
+    }
+    //----------------------------------作用？
+    .f-datagrid-cell-group-left-shadow,
+    .f-datagrid-cell-group-right-shadow {
+      height: $header-cell-height;
+    }
+
+    &-row {
+      background-color: $farris-grid-header-bg;
+    }
+
+    &-cell {
+      height: $header-cell-height!important; //这个地方的高度，被组件style了
+      overflow: hidden;
+      white-space: normal;
+      &-content {
+        padding: $farris-grid-header-padding-y $farris-grid-header-padding-x;
+      }
+      &:hover{
+        background:$farris-grid-header-border;
+      }
+    }
+
+    &-fixed-left,
+    &-fixed-right {
+      position: absolute;
+      z-index: 4;
+      background: #fff;
+    }
+  }
+
+  &-body {
+    position: absolute;
+    overflow: hidden;
+    z-index: 0;
+    left: 0;
+    &-wheel-area {
+      overflow: hidden;
+      position: relative;
+    }
+
+    &-fixed-left {
+      position: absolute;
+      z-index: 1;
+      background: #fff;
+      // 行滑过，选中时候颜色
+      .#{$grid-prefix}-row-hover,
+      .#{$grid-prefix}-row-selected {
+        // 行号背景色
+        .#{$grid-prefix}-cell-rownumber {
+          background-color: #ededed !important;
+        }
+      }
+    }
+
+    &-fixed-right {
+      position: absolute;
+      width: 200px;
+      background: #fff;
+      z-index: 999;
+      overflow: hidden;
+    }
+
+    &-row {
+      overflow: hidden;
+      height: $cell-height;
+      width: 100%;
+      top: 0;
+     // border-bottom: 1px solid $farris-grid-border;-这一句没有作用
+      transition: all 0.15s ease;
+    }
+  }
+
+  &-table {
+    tr td:last-child {
+      border-right-width: 0;
+    }
+  }
+
+  &-row {
+    overflow: hidden;
+    height: $cell-height;
+    width: 100%;
+    top: 0;
+    border-bottom: 1px solid $farris-grid-border;
+    background-color: #fff;
+    transition: all 0.15s ease;
+    &-body {
+      .f-datagrid-cell-group-left-shadow,
+      .f-datagrid-cell-group-right-shadow {
+        height: $cell-height;
+      }
+    }
+
+    &-hover {
+      cursor: pointer;
+      color: $farris-grid-hovered-text;
+      background: $farris-grid-hovered-bg !important;
+      border-color: $farris-grid-hovered-border;
+      .f-datagrid-cell {
+        //  background: transparent;
+      }
+    }
+
+    &-selected {
+      color: $farris-grid-selected-text;
+      background-color: $farris-grid-selected-bg;
+      border-color: $farris-grid-selected-border;
+      .f-datagrid-cell {
+        //background-color: transparent;
+      }
+    }
+  }
+
+  &-virtual-row {
+    overflow: hidden;
+    pointer-events: none;
+    background-color: transparent !important;
+    border-width: 0;
+    width: 1px;
+  }
+
+  &-cell {
+    height: $cell-height;
+    border-style: solid;
+    border-width: 0 0 1px;
+    border-color: $farris-grid-border;
+    overflow: hidden;
+    white-space: normal;
+
+    &-formgroup {
+      height: 100%;
+    }
+    &-editor {
+      width: 100%;
+      height: calc(#{$cell-height} - 3px);
+      border: 0;
+    }
+
+    &-selected {
+      border: 1px solid $selected-cell-border-color !important;
+      background-color: $selected-cell-bgcolor !important;
+    }
+    // 编辑单元格 ------------------------此class被应用到输入控件上
+    &-edit {
+      .f-datagrid-cell-content {
+        padding: 0;
+      }
+    }
+
+    &-content {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      width: 100%;
+      margin: 0;
+      height: calc(#{$cell-height} - 3px);
+      line-height: calc(#{$cell-height} - 3px);
+
+      & > span {
+        padding:$farris-grid-cell-padding-y $farris-grid-cell-padding-x;
+      }
+    }
+
+    &-rownumber {
+      background-color: $row-number-bgcolor !important;
+      color: #000 !important;
+      text-align: center;
+      .f-datagrid-cell-content {
+        padding: 0;
+        text-align: center;
+      }
+
+      &.rownumber-selected {
+        background-color: #d9d9d9 !important;
+      }
+    }
+  }
+  &-pager {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: $farris-grid-pager-height;
+    border-top: 1px solid $farris-grid-pager-border;
+    background: $farris-grid-pager-bg;
+
+    .pagination{    
+      margin:0;
+      padding:0;
+      height: $farris-grid-pager-height;
+      align-items: center;
+     }
+
+  }
+
+  .ps--active-x > .ps__rail-x,
+  .ps--active-y > .ps__rail-y {
+    z-index: 999;
+  }
+
+  &-body-fixed-left {
+    > .ps__rail-x,
+    > .ps__rail-y {
+      display: none !important;
+    }
+  }
+  // 阴影
+  &-fixed-right-shadow {
+    box-shadow: $f-grid-box-shadow-right;
+  }
+  &-fixed-left-shadow {
+    box-shadow: $f-grid-box-shadow-left;
+  }
+}
+.#{$grid-prefix} {
+  // ————————————————————————————表格填充？
+  &-full {
+    position: relative;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex: 1;
+    height: 100%;
+  }
+  /*******************************
+        新表格组件——带斑马线
+*******************************/
+  &-strip {
+    .f-datagrid-body {
+      .f-datagrid-row-selected {        
+        color: $farris-grid-selected-text;
+        border-color:$farris-grid-selected-border;
+        background-color: $farris-grid-selected-bg!important;
+      }
+
+      .f-datagrid-row-odd {
+        background: $farris-grid-alt-bg;
+        color: $farris-grid-alt-text;
+        .f-datagrid-cell {
+          border-color: $farris-grid-alt-border;
+        }
+      }
+      .f-datagrid-row-even {
+       
+        .f-datagrid-cell {
+        
+          //  background-color: transparent;
+        }
+      }
+    }
+  }
+  /*******************************
+          新表格组件——带边线
+  *******************************/
+  &-bordered {
+    border: 1px solid $farris-grid-border;
+
+    .f-datagrid-cell {
+      border-width: 0 1px 1px 0;
+    }
+
+    .f-datagrid-body-fixed-right {
+      border-left: 1px solid $farris-grid-border;
+    }
+
+    .f-datagrid-header {
+      &-cell {
+        border: 1px solid $farris-grid-border;
+        border-width: 0 1px 0 0;
+      }
+
+      tr td:last-child {
+        border-right: 0;
+      }
+      &-fixed-right {
+        border-left: 1px solid $farris-grid-border;
+      }
+      &-fixed-left {
+        tr td:last-child {
+          border-right: 1px solid $farris-grid-border;
+        }
+      }
+    }
+  }
+}

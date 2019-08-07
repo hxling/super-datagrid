@@ -1,4 +1,5 @@
-import {Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewEncapsulation} from '@angular/core';
+import { PaginationControlsDirective } from './pagination-controls.directive';
+import {Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewEncapsulation, ViewChild} from '@angular/core';
 
 function coerceToBoolean(input: string | boolean): boolean {
     return !!input && input !== 'false';
@@ -52,5 +53,5 @@ export class PaginationControlsComponent {
     @Input() showPageList = false;
     @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
     @Output() pageSizeChange = new EventEmitter<number>();
-
+    @ViewChild('p') paginationDirective: PaginationControlsDirective;
 }

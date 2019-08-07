@@ -10,7 +10,7 @@ import { DataColumn, CustomStyle, MoveDirection, ColumnGroup } from './types/dat
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DatagridColumnDirective } from './components/columns/datagrid-column.directive';
 import { DataResult, CellInfo, SelectedRow } from './services/state';
-import { RestService, REST_SERVICEE } from './services/rest.service';
+import { RestService, DATAGRID_REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
 import { GRID_EDITORS, CELL_SELECTED_CLS } from './types/constant';
 import { DomHandler } from './services/domhandler';
@@ -23,7 +23,7 @@ import { DomHandler } from './services/domhandler';
 @Component({
     selector: 'farris-datagrid',
     template: `
-    <div class="f-datagrid" [class.f-datagrid-bordered]="showBorder"
+    <div class="f-datagrid" [class.f-datagrid-bordered]="showBorder" [class.f-datagrid-wrap]="!nowrap"
         [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
         <datagrid-header #header [columnsGroup]="colGroup" [height]="headerHeight"></datagrid-header>
         <datagrid-body [columnsGroup]="colGroup" [data]="ds.rows | paginate: pagerOpts"
@@ -39,6 +39,17 @@ import { DomHandler } from './services/domhandler';
         DatagridService
     ],
     exportAs: 'datagrid',
+    styles: [
+        `
+        .f-datagrid-wrap .f-datagrid-cell-content {
+            white-space: normal;
+            word-break: break-all;
+            word-spacing: normal;
+            height: auto;
+            line-height: 24px;
+        }
+        `
+    ],
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -46,7 +57,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() auther = `Lucas Huang - QQ:1055818239`;
     @Input() version = '0.0.1';
 
-    @HostBinding('style.position') pos = 'absolute';
+    @HostBinding('style.position') pos = 'relative';
     @HostBinding('class') hostCls = '';
 
     @Input() id = '';
@@ -86,6 +97,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this._fitColumns = val;
         this.setFitColumns(val);
     }
+
+    @Input() disabled = false;
+    @Input() lockPagination = false;
+
     /** 显示表头 */
     @Input() showHeader = true;
     /** 可拖动列设置列宽 */
@@ -167,9 +182,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() editable = false;
 
 
-    @Input() beforeSelect: () => Observable<boolean>;
-
-
 
     @Output() beginEdit = new EventEmitter();
     @Output() endEdit = new EventEmitter();
@@ -181,11 +193,20 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     @Output() loadSuccess = new EventEmitter();
 
+    @Input() beforeSelect: (rowindex: number, rowdata: any) => Observable<boolean>;
+    @Input() beforeUnselect: (rowindex: number, rowdata: any) => Observable<boolean>;
+    @Input() beforeCheck: (rowindex: number, rowdata: any) => Observable<boolean>;
+    @Input() beforeUncheck: (rowindex: number, rowdata: any) => Observable<boolean>;
+
     @Output() selectChanged = new EventEmitter();
     @Output() unSelect = new EventEmitter();
+    @Output() selectAll = new EventEmitter();
+    @Output() unSelectAll = new EventEmitter();
+
+    @Output() checked = new EventEmitter();
+    @Output() unChecked = new EventEmitter();
     @Output() checkAll = new EventEmitter();
     @Output() unCheckAll = new EventEmitter();
-    @Output() clearSelections = new EventEmitter();
 
 
     @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
@@ -208,6 +229,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         return this.dfs.getSelections();
     }
 
+    get checkeds() {
+        return this.dfs.getCheckeds();
+    }
+
     ds = {
         index: 0,
         rows: [],
@@ -225,7 +250,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     clickDelay = 200;
 
     private ro: ResizeObserver | null = null;
-    private subscriptions: Subscription[] = [];
+    subscriptions: Subscription[] = [];
 
     docuemntCellClickEvents: any;
     documentCellClickHandler: any;
@@ -239,7 +264,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 private inject: Injector, private zone: NgZone,
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
 
-        this.restService = this.inject.get<RestService>(REST_SERVICEE, null);
+        this.restService = this.inject.get<RestService>(DATAGRID_REST_SERVICEE, null);
 
         const dataSubscription = this.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
@@ -304,6 +329,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 this.loadData(res.items);
             });
         }
+
+        this.initBeforeEvents();
     }
 
     ngAfterContentInit() {
@@ -344,14 +371,51 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.dfs.updateProperty('onlySelectSelf', changes.onlySelectSelf.currentValue);
         }
 
+        if (changes.keepSelect !== undefined && !changes.keepSelect.isFirstChange()) {
+            this.dfs.updateProperty('keepSelect', changes.keepSelect.currentValue);
+        }
+
+        if (changes.nowrap !== undefined && !changes.nowrap.isFirstChange()) {
+            this.dfs.updateProperty('nowrap', changes.nowrap.currentValue);
+        }
+
+        if (changes.pageIndex !== undefined && !changes.pageIndex.isFirstChange()) {
+            this.dfs.updateProperty('pageIndex', changes.pageIndex.currentValue);
+            this.pagerOpts = Object.assign(this.pagerOpts, {
+                currentPage: this.pageIndex
+            });
+        }
+
+        if (changes.pageSize !== undefined && !changes.pageSize.isFirstChange()) {
+            this.dfs.updateProperty('pageSize', changes.pageSize.currentValue);
+            this.pagerOpts = Object.assign(this.pagerOpts, {
+                itemsPerPage: this.pageSize
+            });
+        }
     }
 
     ngOnDestroy() {
-        this.docuemntCellClickEvents();
         this.unsubscribes();
 
         if (this.ro) {
             this.ro.disconnect();
+        }
+    }
+
+    private initBeforeEvents() {
+        if (!this.beforeSelect) {
+            this.beforeSelect = () => of(true);
+        }
+        if (!this.beforeUnselect) {
+            this.beforeUnselect = () => of(true);
+        }
+
+        if (!this.beforeCheck) {
+            this.beforeCheck = () => of(true);
+        }
+
+        if (!this.beforeUncheck) {
+            this.beforeUncheck = () => of(true);
         }
     }
 
@@ -365,7 +429,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.documentCellClickHandler = (event) => {
                 if (this.currentCell) {
                     DomHandler.removeClass(this.currentCell.cellRef, CELL_SELECTED_CLS);
-                    // this.currentCell = null;
                     if (this.currentCell.isEditing) {
                         this.dfs.endEditCell();
                     }
@@ -406,6 +469,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         });
 
         this.subscriptions = [];
+
+        if (this.docuemntCellClickEvents) {
+            this.docuemntCellClickEvents();
+        }
     }
 
     selectNextCell( dir: MoveDirection) {
@@ -496,6 +563,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         data = data || [];
         if (this.pagination) {
             this.dfs.setPagination(this.pageIndex, this.pageSize, this.total);
+
+            this.pagerOpts = Object.assign(this.pagerOpts, {
+                itemsPerPage: this.pageSize,
+                currentPage: this.pageIndex,
+                totalItems: this.total
+            });
         }
         this.dfs.loadData(data);
         this.dgs.dataSourceChanged();
@@ -520,8 +593,18 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         });
     }
 
+    setPageIndex(pageIndex: number) {
+        // console.log(this.dgPager.pagination);
+        this.pageIndex = pageIndex;
+        this.pagerOpts.currentPage = pageIndex;
+        this.cd.detectChanges();
+    }
+
 
     onPageChange(pageIndex: number) {
+        if (this.lockPagination) {
+            return;
+        }
         this.pageIndex = pageIndex;
         this.pagerOpts.currentPage = pageIndex;
 
@@ -535,6 +618,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     onPageSizeChange(pageSize: number) {
+        if (this.lockPagination) {
+            return;
+        }
         this.pageSize = pageSize;
         this.pagerOpts.itemsPerPage = pageSize;
 
@@ -626,20 +712,52 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         };
     }
 
-    selectRow(row: SelectedRow) {
-        if (row && (!this.selectedRow || this.selectedRow.id !== row.id)) {
-            this.selectedRow = row;
-            this.selectChanged.emit(row);
+    selectRow(id: any) {
+        if (id && (!this.selectedRow || this.selectedRow.id !== id)) {
+            this.dfs.selectRecord(id);
         }
     }
 
-    unSelectAll() {
+    unSelectRow(id: any) {
+        if (id) {
+            this.dfs.selectRecord(id, false);
+        }
+    }
+
+    selectAllRows() {
+        if (this.multiSelect) {
+            this.dfs.selectAll();
+        }
+    }
+
+    clearSelections() {
         this.dfs.clearSelections();
     }
 
-    unSelectRow(row: SelectedRow) {
-        this.selectedRow = null;
-        this.unSelect.emit(row);
+    checkRow(id: any) {
+        if (this.canOperateCheckbox()) {
+            this.dfs.checkRecord(id);
+        }
+    }
+
+    checkAllRows() {
+        if (this.canOperateCheckbox()) {
+            this.dfs.checkAll();
+        }
+    }
+
+    unCheckRow(id: any) {
+        if (this.canOperateCheckbox()) {
+            this.dfs.checkRecord(id, false);
+        }
+    }
+
+    clearCheckeds() {
+        this.dfs.clearCheckeds();
+    }
+
+    private canOperateCheckbox() {
+        return this.multiSelect && this.showCheckbox;
     }
 
     private replacePX2Empty(strNum: string) {

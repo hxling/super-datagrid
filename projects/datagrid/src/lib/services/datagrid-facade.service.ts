@@ -16,6 +16,7 @@ export class DatagridFacadeService {
 
     virtualRowSubject = new Subject<any>();
     gridSizeSubject = new Subject<any>();
+    errorSubject = new Subject();
     private selectRowSubject = new Subject<any>();
     private unSelectRowSubject = new Subject<any>();
     private columnResizeSubject = new Subject<any>();
@@ -28,6 +29,7 @@ export class DatagridFacadeService {
     private unCheckAllSubject =  new Subject();
     private selectAllSubject = new Subject();
 
+    error$ = this.errorSubject.asObservable();
     selectRow$ = this.selectRowSubject.asObservable();
     unSelectRow$ =  this.unSelectRowSubject.asObservable();
     columnResize$ = this.columnResizeSubject.asObservable();
@@ -188,15 +190,24 @@ export class DatagridFacadeService {
         return this._state.multiSelect;
     }
 
+    private _isRowSelected(id: any) {
+        if (!id || !this._state.currentRow) {
+            return false;
+        } else {
+            return this._state.currentRow.id.toString() === id.toString();
+        }
+    }
+
     isRowSelected(id: any) {
         if (!this.isMultiSelect()) {
-            if (!id || !this._state.currentRow) {
-                return false;
-            } else {
-                return this._state.currentRow.id.toString() === id.toString();
-            }
+           return this._isRowSelected(id);
         } else {
             const selections = this._state.selections;
+
+            if (this._canCancelSelectWhenMulti()) {
+                return this._isRowSelected(id);
+            }
+
             if (!selections || selections.length === 0) {
                 return false;
             } else {
@@ -215,7 +226,7 @@ export class DatagridFacadeService {
     }
 
     isCheckAll() {
-        return this._state.checkedRows.length === this._state.data.length;
+        return  this._state.checkedRows.length === this._state.data.length;
     }
 
     getSelections() {
@@ -226,10 +237,28 @@ export class DatagridFacadeService {
         return this._state.checkedRows || [];
     }
 
+    checkRecord(id: any, checked = true) {
+        if (id) {
+            const row = this.findRow(id);
+            if (row) {
+                const {index: rowIndex, data: rowData} = {...row};
+                if (checked) {
+                    this.checkRow(rowIndex, rowData);
+                } else {
+                    this.unCheckRow(rowIndex, rowData);
+                }
+            } else {
+                this.errorSubject.next(`未找到ID为${id}的数据。`);
+            }
+        } else {
+            this.errorSubject.next(`参数id 不能为空。`);
+        }
+    }
+
     checkRow(rowIndex: number, rowData: any) {
         const id = this.primaryId(rowData);
         const checkeds = this._state.checkedRows || [];
-        if (!this.isRowChecked(id)) {
+        if (id && !this.isRowChecked(id)) {
             const srow = { id, data: rowData, index: rowIndex };
             checkeds.push(srow);
             this._state.checkedRows = checkeds;
@@ -304,6 +333,47 @@ export class DatagridFacadeService {
         this.selectAllSubject.next(this._state.selections);
     }
 
+    findRow(id): {index: number, data: any} {
+        if (this._state.data && this._state.data.length) {
+            let index = -1;
+            const data = this._state.data.find( (n, i) => {
+                const r = this.primaryId(n) === id;
+                if (r) {
+                    index = i;
+                }
+                return r;
+            });
+
+            return {index, data};
+        }
+        return null;
+    }
+
+    findRowIndex(id) {
+        if (this._state.data && this._state.data.length) {
+            return this._state.data.findIndex(n => this.primaryId(n) === id);
+        }
+        return -1;
+    }
+
+    selectRecord(id: any, select = true) {
+        if (id) {
+            const row = this.findRow(id);
+            if (row) {
+                const {index: rowIndex, data: rowData} = {...row};
+                if (select) {
+                    this.selectRow(rowIndex, rowData);
+                } else {
+                    this.unSelectRow(rowIndex, rowData);
+                }
+            } else {
+                this.errorSubject.next(`未找到ID为${id}的数据。`);
+            }
+        } else {
+            this.errorSubject.next(`参数id 不能为空。`);
+        }
+    }
+
     selectRow(rowIndex: number, rowData: any) {
         const isMultiSelect = this.isMultiSelect();
         const id = this.primaryId(rowData);
@@ -317,7 +387,7 @@ export class DatagridFacadeService {
             } else {
                 if (this._state.onlySelectSelf) {
                     this._clearSelections();
-                    this.updateState({ currentRow: srow }, false);
+                    this.updateState({ currentRow: srow, selections: [srow] }, false);
                 } else {
                     selections.push(srow);
                 }
@@ -345,10 +415,18 @@ export class DatagridFacadeService {
             this._state.selections = selections.filter(sr => sr.id !== id);
             this.unSelectRowSubject.next(srow);
 
+            if (this._canCancelSelectWhenMulti()) {
+                this.updateState({ currentRow: null });
+            }
+
             if (this._state.checkOnSelect) {
                 this.unCheckRow(rowIndex, rowData);
             }
         }
+    }
+
+    private _canCancelSelectWhenMulti() {
+        return !this._state.keepSelect && this._state.onlySelectSelf;
     }
 
     private _clearSelections() {
@@ -356,27 +434,31 @@ export class DatagridFacadeService {
         this._state.selections = [];
     }
 
+    private _clearCheckeds() {
+        this._state.checkedRows = [];
+    }
+
     clearSelections() {
+        const rows = this._state.selections;
         this._clearSelections();
         if (this._state.checkOnSelect) {
-            this._state.checkedRows = [];
+            this._clearCheckeds();
         }
-        this.clearSelectionSubject.next();
+        this.clearSelectionSubject.next(rows);
     }
 
     clearCheckeds() {
-        this._state.checkedRows = [];
+        const rows = this.getCheckeds();
+        this._clearCheckeds();
         if (this._state.selectOnCheck) {
-            this._state.currentRow = null;
-            this._state.selections = [];
+           this._clearSelections();
         }
-        this.clearCheckedsSubject.next();
+        this.clearCheckedsSubject.next(rows);
     }
 
     clearAll() {
-        this._state.currentRow = null;
-        this._state.selections = [];
-        this._state.checkedRows = [];
+        this._clearCheckeds();
+        this._clearSelections();
         this.clearAllSubject.next();
     }
 

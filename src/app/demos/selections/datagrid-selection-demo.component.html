@@ -1,76 +1,139 @@
 <div #box class="d-flex flex-column" style="width: 100%; height: 300px;">
-    <div region="north" class="north" style="height: 100px;background: #edfff5">
+    <div region="north" class="north" style="height: 160px;background: #edfff5; border: 1px solid green; border-bottom: none;">
         <div class="fluid-container" style="margin: 15px;">
-            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                <input id="chk_rowHover" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useRowHover">
-                <label for="chk_rowHover" class="custom-control-label">启用 rowHover </label>
+            <div class="row">
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_rowHover" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useRowHover">
+                    <label for="chk_rowHover" class="custom-control-label">启用 rowHover </label>
+                </div>
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_useStripe" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useStripe">
+                    <label for="chk_useStripe" class="custom-control-label">启用 斑马线 </label>
+                </div>
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_showBorder" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showBorder">
+                    <label for="chk_showBorder" class="custom-control-label">显示边框线 </label>
+                </div>
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_showRowNumber" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showRowNumber">
+                    <label for="chk_showRowNumber" class="custom-control-label"> 显示行号 </label>
+                </div>
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_keepSelect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="keepSelect">
+                    <label for="chk_keepSelect" class="custom-control-label"> 保持选中 </label>
+                </div>
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_MultiSelect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useMultiSelect">
+                    <label for="chk_MultiSelect" class="custom-control-label"> 启用多选 </label>
+                </div>
+
+                
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_onlySelectSelf" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="onlySelectSelf">
+                    <label for="chk_onlySelectSelf" class="custom-control-label"> 多选仅选中一条，其他钩选 </label>
+                </div>
+                
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_showCheckbox" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="showCheckbox">
+                    <label for="chk_showCheckbox" class="custom-control-label"> 显示复选框 </label>
+                </div>
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_showAllCheckbox" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="showAllCheckbox">
+                    <label for="chk_showAllCheckbox" class="custom-control-label"> 显示全选 </label>
+                </div>
+
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_checkonselect" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="checkonselect">
+                    <label for="chk_checkonselect" class="custom-control-label"> 选中并钩选 </label>
+                </div>
+
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_selectoncheck" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="selectoncheck">
+                    <label for="chk_selectoncheck" class="custom-control-label"> 钩选并选中 </label>
+                </div>
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_nowrap" type="checkbox" #chk class="custom-control-input" [(ngModel)]="wrap">
+                    <label for="chk_nowrap" class="custom-control-label"> 折行 </label>
+                </div>
+
             </div>
 
-            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                <input id="chk_useStripe" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useStripe">
-                <label for="chk_useStripe" class="custom-control-label">启用 斑马线 </label>
+            <div class="row">
+                <div class="col-6">
+                    <button (click)="getCurrentRow()">获取当前行</button>
+                    <button (click)="getSelectRows()">所有选中行</button>
+                    <button (click)="getCheckRows()">获取钩选行</button>
+                </div>
+                <div class="col-6">      
+                    <button (click)="cancelCurrentRow()">取消选中行</button>
+                    <button (click)="cancelSelectAll()">取消所有选中行</button>
+                    <button (click)="unCheckedRow(6)">取消钩选(id: 6)</button>
+                    <button (click)="cancelAllCheckeds()">取消所有钩选行</button>
+                </div>
+               
             </div>
-
-            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                <input id="chk_showBorder" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showBorder">
-                <label for="chk_showBorder" class="custom-control-label">显示边框线 </label>
+            <div class="row">
+                <div class="col-6">
+                    <button (click)="selectRow(6)">选中行(id: 6)</button>
+                    <button (click)="checkedRow(6)">钩选行(id: 6)</button>
+                    <button (click)="selectedAll()">全部选中</button>
+                    <button (click)="checkedAll()">全部钩选</button>
+                </div>
             </div>
-
-            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                <input id="chk_showRowNumber" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showRowNumber">
-                <label for="chk_showRowNumber" class="custom-control-label"> 显示行号 </label>
+            <div class="row">
+                <div class="col-12">
+                    <input type="number" [(ngModel)]="pageindex"> <button (click)="changePageindex(pageindex)">change pageindex</button>
+                    <button (click)="lockPagination()">{{btnText}}</button>
+                </div>
             </div>
-
-            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                <input id="chk_keepSelect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="keepSelect">
-                <label for="chk_keepSelect" class="custom-control-label"> 保持选中 </label>
-            </div>
-
-            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                <input id="chk_MultiSelect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useMultiSelect">
-                <label for="chk_MultiSelect" class="custom-control-label"> 启用多选 </label>
-            </div>
-
-            
-            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                <input id="chk_onlySelectSelf" type="checkbox" #chk class="custom-control-input" [(ngModel)]="onlySelectSelf">
-                <label for="chk_onlySelectSelf" class="custom-control-label"> 多选仅选中一条，其他钩选 </label>
-            </div>
-            
-
-            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                <input id="chk_showCheckbox" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showCheckbox">
-                <label for="chk_showCheckbox" class="custom-control-label"> 显示复选框 </label>
-            </div>
-
-            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                <input id="chk_showAllCheckbox" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showAllCheckbox">
-                <label for="chk_showAllCheckbox" class="custom-control-label"> 显示全选 </label>
-            </div>
-
-
-            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                <input id="chk_checkonselect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="checkonselect">
-                <label for="chk_checkonselect" class="custom-control-label"> 选中并钩选 </label>
-            </div>
-
-
-            <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                <input id="chk_selectoncheck" type="checkbox" #chk class="custom-control-input" [(ngModel)]="selectoncheck">
-                <label for="chk_selectoncheck" class="custom-control-label"> 钩选并选中 </label>
-            </div>
-
-
         </div>
     </div>
     <div region="center" class="center flex-fill" style="border: 1px solid #cdcdcd;">
-        <farris-datagrid [columns]="columns" [data]="items" #dg [showAllCheckbox]="showAllCheckbox"
-            [showLineNumber] ="showRowNumber" [striped]="useStripe" [showCheckbox]="showCheckbox"
-            [virtualized]="true" [rowHover]="useRowHover" [keepSelect]="keepSelect" [onlySelectSelf]="onlySelectSelf"
-            [multiSelect]="useMultiSelect" [showBorder]= "showBorder" [selectOnCheck]="selectoncheck" [checkOnSelect]="checkonselect"
-            [pagination]="true" [fit]="true" [fitColumns]="true"
+        <farris-datagrid #dg 
+            [columns]="columns"
+            [data]="items"
+            [showAllCheckbox]="showAllCheckbox"
+            [showLineNumber] ="showRowNumber" 
+            [striped]="useStripe" 
+            [showCheckbox]="showCheckbox"
+            [virtualized]="true" 
+            [rowHover]="useRowHover" 
+            [keepSelect]="keepSelect" 
+            [onlySelectSelf]="onlySelectSelf"
+            [multiSelect]="useMultiSelect" 
+            [showBorder]= "showBorder" 
+            [selectOnCheck]="selectoncheck" 
+            [checkOnSelect]="checkonselect"
+            [pagination]="true" 
+            [fit]="true" [fitColumns]="true"
             [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
             [pageList]="[100, 200, 300, 500, 1000, 2000, 5000]"
+
+            [nowrap]="!wrap"
+
+            [beforeSelect]="onBeforeSelect"
+            [beforeUnselect]="onBeforeUnselect"
+            [beforeCheck]="onBeforeCheck"
+            [beforeUncheck]="onBeforeUncheck"
+            
+            (selectChanged)="selectChanged($event)"
+            (unSelect)="unSelect($event)"
+            (selectAll)="selectAll($event)"
+            (unSelectAll)="unSelectAll($event)"
+            (checked) = "checked($event)"
+            (unChecked) = "unChecked($event)"
+            (checkAll)="checkAll($event)"
+            (unCheckAll)="unCheckAll($event)"
         ></farris-datagrid>
     </div>
 

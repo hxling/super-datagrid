@@ -3,7 +3,7 @@ import { DataResult } from './state';
 import { Observable } from 'rxjs';
 import { InjectionToken } from '@angular/core';
 
-export const REST_SERVICEE = new InjectionToken<RestService>('DataGrid Request Data Service.');
+export const DATAGRID_REST_SERVICEE = new InjectionToken<RestService>('DataGrid Request Data Service.');
 
 export abstract class RestService {
     abstract getData(url: string, param?: any): Observable<DataResult>;
