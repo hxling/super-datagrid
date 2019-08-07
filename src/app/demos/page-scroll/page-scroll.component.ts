@@ -12,7 +12,6 @@ import { DatagridComponent } from '@farris/ui-datagrid';
     ]
 })
 export class PageScrollComponent implements OnInit {
-    showLoading = false;
     private  allDataSource = [];
     items;
     total = 0;
