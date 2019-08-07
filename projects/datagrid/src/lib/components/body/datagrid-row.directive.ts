@@ -40,11 +40,26 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
     onRowClick(event: MouseEvent) {
         const rowId = this.dfs.primaryId(this.rowData);
         if (!this.dfs.isRowSelected(rowId)) {
-            this.dfs.selectRow(this.rowIndex, this.rowData);
-            this.clickHandler.emit();
+
+            this.dg.beforeSelect(this.rowIndex, this.rowData).subscribe( (canSelect: boolean) => {
+                if (canSelect) {
+                    // if (!this.dg.multiSelect || (this.dg.multiSelect && this.dg.onlySelectSelf)) {
+                    //     if (this.dg.selectedRow) {
+                    //         const rowid = this.dg.selectedRow.id;
+                    //         this.dfs.selectRecord(rowid, false);
+                    //     }
+                    // }
+                    this.dfs.selectRow(this.rowIndex, this.rowData);
+                    this.clickHandler.emit();
+                }
+            });
         } else {
             if (!this.dg.keepSelect) {
-                this.dfs.unSelectRow(this.rowIndex, this.rowData);
+                this.dg.beforeUnselect(this.rowIndex, this.rowData).subscribe((canUnselect: boolean) => {
+                    if (canUnselect) {
+                        this.dfs.unSelectRow(this.rowIndex, this.rowData);
+                    }
+                });
             }
         }
     }

@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
-import { REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
+import { DATAGRID_REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
 import { DatagridComponent } from '@farris/ui-datagrid';
 
 @Component({
@@ -8,7 +8,7 @@ import { DatagridComponent } from '@farris/ui-datagrid';
     templateUrl: './page-scroll.component.html',
     providers: [
         DemoDataService,
-        {provide: REST_SERVICEE, useClass: DemoDataService}
+        {provide: DATAGRID_REST_SERVICEE, useClass: DemoDataService}
     ]
 })
 export class PageScrollComponent implements OnInit {

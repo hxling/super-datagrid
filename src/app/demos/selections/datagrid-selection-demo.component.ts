@@ -1,13 +1,14 @@
 import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
-import { REST_SERVICEE, DatagridComponent } from '@farris/ui-datagrid';
+import { DATAGRID_REST_SERVICEE, DatagridComponent } from '@farris/ui-datagrid';
+import { of } from 'rxjs';
 
 @Component({
     selector: 'grid-selection',
     templateUrl: './datagrid-selection-demo.component.html',
     providers: [
         DemoDataService,
-        {provide: REST_SERVICEE, useClass: DemoDataService}
+        {provide: DATAGRID_REST_SERVICEE, useClass: DemoDataService}
     ]
 })
 export class DatagridSelectionDemoComponent implements OnInit {
@@ -23,6 +24,7 @@ export class DatagridSelectionDemoComponent implements OnInit {
     keepSelect = true;
     showRowNumber = true;
     useStripe = true;
+    wrap = false;
     // 多选
 
     _useMultiSelect = false;
@@ -154,15 +156,15 @@ export class DatagridSelectionDemoComponent implements OnInit {
     }
 
     unSelect($event) {
-        console.dir('取消选中的行：', $event);
+        console.log('取消选中的行：', $event);
     }
 
     checked($event) {
-        console.dir('钩选的行：', $event);
+        console.log('钩选的行：', $event);
     }
 
     unChecked($event) {
-        console.dir('取消钩选的行：', $event);
+        console.log('取消钩选的行：', $event);
     }
 
     checkAll($event) {
@@ -179,5 +181,29 @@ export class DatagridSelectionDemoComponent implements OnInit {
 
     unSelectAll($event) {
         console.log('取消全选', $event);
+    }
+
+    // Before Event
+    onBeforeSelect(rowIndex, rowData) {
+        if (rowIndex === 5) {
+            return of(false);
+        }
+        console.log('Before Select', rowIndex, rowData);
+        return of(true);
+    }
+
+    onBeforeUnselect(rowIndex, rowData) {
+        console.log('Before Unselect', rowIndex, rowData);
+        return of(true);
+    }
+
+    onBeforeCheck(rowIndex, rowData) {
+        console.log('Before Check', rowIndex, rowData);
+        return of(true);
+    }
+
+    onBeforeUncheck(rowIndex, rowData) {
+        console.log('Before Uncheck', rowIndex, rowData);
+        return of(true);
     }
 }

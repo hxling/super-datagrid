@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
-import { REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
+import { DATAGRID_REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
 
 @Component({
     selector: 'scroll-load-async',
     templateUrl: './scrollbar-load.component.html',
     providers: [
         DemoDataService,
-        {provide: REST_SERVICEE, useClass: DemoDataService}
+        {provide: DATAGRID_REST_SERVICEE, useClass: DemoDataService}
     ]
 })
 export class ScrollBarLoadComponent implements OnInit {

@@ -50,7 +50,7 @@ export class DemoDataService implements RestService {
                 sex: '男',
                 birthday: (2000 + i) + '-01-01',
                 maray: true,
-                addr: `天齐大道${7000 + i}号`,
+                addr: this.buildLongText(i, `天齐大道${7000 + i}号`),
                 company: `inspur`,
                 nianxin: Math.round(Math.random() * 10000) * 12,
                 zhiwei: 'CEO&CPU'
@@ -58,6 +58,14 @@ export class DemoDataService implements RestService {
         }
         this.data = arr;
         return arr;
+    }
+
+    buildLongText(index, t: string) {
+        if (index % 5 === 0) {
+            return t.repeat(5);
+        }
+
+        return t;
     }
 
     serverCall(data: any[], pageIdx: number, pageSize = 10): Observable<IServerResponse> {

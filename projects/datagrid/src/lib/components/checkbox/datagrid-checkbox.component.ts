@@ -39,12 +39,18 @@ export class DatagridCheckboxComponent implements OnInit {
 
     handleClick(event: MouseEvent) {
         if (!this.disabled) {
-            this.checked = !this.checked;
-
-            if (this.checked) {
-                this.dfs.checkRow(this.rowIndex, this.rowData);
+            if (!this.checked) {
+                this.dg.beforeCheck(this.rowIndex, this.rowData).subscribe((canCheck: boolean) => {
+                    if (canCheck) {
+                        this.dfs.checkRow(this.rowIndex, this.rowData);
+                    }
+                });
             } else {
-                this.dfs.unCheckRow(this.rowIndex, this.rowData);
+                this.dg.beforeUncheck(this.rowIndex, this.rowData).subscribe((canUncheck: boolean) => {
+                    if (canUncheck) {
+                        this.dfs.unCheckRow(this.rowIndex, this.rowData);
+                    }
+                });
             }
         }
         event.stopPropagation();

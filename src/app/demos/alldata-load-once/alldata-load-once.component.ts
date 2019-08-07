@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
+import { DATAGRID_REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
 import { DemoDataService } from '../demo-data.service';
 
 @Component({
@@ -7,7 +7,7 @@ import { DemoDataService } from '../demo-data.service';
     templateUrl: './alldata-load-once.html',
     providers: [
         DemoDataService,
-        {provide: REST_SERVICEE, useClass: DemoDataService}
+        {provide: DATAGRID_REST_SERVICEE, useClass: DemoDataService}
     ]
 })
 export class AllDataLoadOnceComponent implements OnInit {
