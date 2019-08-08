@@ -14,6 +14,9 @@ import { Component, OnInit } from '@angular/core';
         <a class="navbar-brand" href="/selection">选中行</a>
         <a class="navbar-brand" href="/fit-columns">自动列宽</a>
 
+
+        <a class="navbar-brand" href="/illimited">无限滚动加载</a>
+        <a class="navbar-brand" href="/pagination">分页大数据加载</a>
     </nav>
     `
 })

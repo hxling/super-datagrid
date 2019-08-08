@@ -8,7 +8,18 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 
 @Component({
     selector: 'datagrid-header',
-    templateUrl: './header.component.html'
+    templateUrl: './header.component.html',
+    styles: [`
+        .f-datagrid-sort {
+            float: right;
+            width: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .f-datagrid-sort:hover {
+            color: blue;
+        }
+    `]
 })
 export class DatagridHeaderComponent implements OnInit, AfterViewInit {
     @Input() height = 36;
@@ -85,4 +96,5 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
         this.setHeight();
     }
 
+    onSortClick() {}
 }

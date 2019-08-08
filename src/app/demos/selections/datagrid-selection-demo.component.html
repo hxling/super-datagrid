@@ -61,10 +61,10 @@
                     <label for="chk_selectoncheck" class="custom-control-label"> 钩选并选中 </label>
                 </div>
 
-                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                <!-- <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
                     <input id="chk_nowrap" type="checkbox" #chk class="custom-control-input" [(ngModel)]="wrap">
                     <label for="chk_nowrap" class="custom-control-label"> 折行 </label>
-                </div>
+                </div> -->
 
             </div>
 
@@ -119,7 +119,7 @@
             [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
             [pageList]="[100, 200, 300, 500, 1000, 2000, 5000]"
 
-            [nowrap]="!wrap"
+            [nowrap]="true"
 
             [beforeSelect]="onBeforeSelect"
             [beforeUnselect]="onBeforeUnselect"

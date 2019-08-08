@@ -126,6 +126,12 @@
         }
     }
 
+    &-sort {
+        float: right;
+        width: 20px;
+        text-align: center;
+    }
+
     &-row {
         overflow: hidden;
         height: $cell-height;

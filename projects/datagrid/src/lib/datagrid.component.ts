@@ -143,7 +143,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 启用多选 */
     @Input() multiSelect = false;
     /** 启用多选时，是否显示checkbox */
-    @Input() showCheckbox = true;
+    @Input() showCheckbox = false;
     @Input() showAllCheckbox = true;
     /** 当启用多选时，点击行选中，只允许且只有一行被选中。 */
     @Input() onlySelectSelf = true;
@@ -182,7 +182,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() editMode: 'row'| 'cell' = 'row';
     /** 编辑状态 */
     @Input() editable = false;
-
+    /** 编辑器高度 */
+    @Input() editorHeight = 30;
+    /** 启用远端排序 */
+    @Input() remoteSort = true;
+    /** 排序字段 */
+    @Input() sortName: string;
+    /** 排序方式 asc | desc */
+    @Input() sortOrder: string;
+    /** 允许多列排序 */
+    @Input() multiSort: boolean;
 
 
     @Output() beginEdit = new EventEmitter();
@@ -194,6 +203,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Output() pageChanged = new EventEmitter();
 
     @Output() loadSuccess = new EventEmitter();
+
 
     @Input() beforeSelect: (rowindex: number, rowdata: any) => Observable<boolean>;
     @Input() beforeUnselect: (rowindex: number, rowdata: any) => Observable<boolean>;
@@ -579,7 +589,15 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     fetchData(pageIndex, pageSize) {
         if (this.restService) {
             this.showLoading();
-            return this.restService.getData(this.url, { pageIndex, pageSize });
+            const params = { pageIndex, pageSize };
+            if (this.sortName) {
+                params['sortName'] = this.sortName;
+            }
+            if (this.sortOrder) {
+                params['sortOrder'] = this.sortOrder;
+            }
+
+            return this.restService.getData(this.url, params);
         }
         return of(undefined);
     }

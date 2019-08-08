@@ -12,7 +12,7 @@ interface IServerResponse {
 export class DemoDataService implements RestService {
 
     data: any[];
-    datacount = 5000;
+    private datacount = 1000;
     get dataLength() {
         return this.datacount;
     }
@@ -59,6 +59,7 @@ export class DemoDataService implements RestService {
         this.data = arr;
         return arr;
     }
+
 
     buildLongText(index, t: string) {
         if (index % 5 === 0) {

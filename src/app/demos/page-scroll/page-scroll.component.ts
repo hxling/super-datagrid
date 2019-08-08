@@ -1,7 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
-import { DATAGRID_REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
-import { DatagridComponent } from '@farris/ui-datagrid';
+import { DatagridComponent, DATAGRID_REST_SERVICEE } from '@farris/ui-datagrid';
 
 @Component({
     selector: 'page-scroll',

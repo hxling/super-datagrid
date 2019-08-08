@@ -33,19 +33,11 @@ export class DatagridSelectionDemoComponent implements OnInit {
     }
     set useMultiSelect(v) {
         this._useMultiSelect = v;
-        if (v) {
-            this.showAllCheckbox = true;
-            this.showCheckbox = true;
-            this.checkonselect = true;
-            this.selectoncheck = true;
-            this.onlySelectSelf = true;
-        } else {
-            this.showAllCheckbox = false;
-            this.showCheckbox = false;
-            this.checkonselect = false;
-            this.selectoncheck = false;
-            this.onlySelectSelf = false;
-        }
+        this.showAllCheckbox = v;
+        this.showCheckbox = v;
+        this.checkonselect = v;
+        this.selectoncheck = v;
+        this.onlySelectSelf = v;
     }
 
     onlySelectSelf = false;
@@ -57,13 +49,13 @@ export class DatagridSelectionDemoComponent implements OnInit {
 
     columns = [
         { field: 'id', width: 100, title: 'ID' },
-        { field: 'name', width: 130, title: '姓名'},
+        { field: 'name', width: 130, title: '姓名' , sortable: true, order: 'desc'},
         { field: 'sex', width: 70, title: '性别'},
         { field: 'birthday', width: 120, title: '出生日期'},
-        { field: 'maray', width: 70, title: '婚否'},
+        { field: 'maray', width: 70, title: '婚否', sortable: true},
         { field: 'addr', width: 170, title: '地址'},
         { field: 'company', width: 100, title: '公司'},
-        { field: 'nianxin', width: 70, title: '年薪'},
+        { field: 'nianxin', width: 70, title: '年薪', sortable: true, order: 'asc'},
         { field: 'zhiwei', width: 100, title: '职位'}
     ];
 

@@ -43,7 +43,13 @@
             <thead>
                 <tr class="f-datagrid-header-row">
                     <td class="f-datagrid-header-cell" [attr.align]="col.hAlign" [style.width.px]="col.width" [style.height.px]="height" *ngFor="let col of columnsGroup?.normalColumns">
-                        <div class="f-datagrid-header-cell-content">{{ col.title }}</div>
+                        <div class="f-datagrid-header-cell-content">
+                            {{ col.title }}
+                            <ng-container *ngIf="col.sortable">
+                                <span class="f-datagrid-sort f-datagrid-sort-asc" *ngIf="col.order === 'asc'">↑</span>
+                                <span class="f-datagrid-sort f-datagrid-sort-desc" *ngIf="col.order === 'desc'">↓</span>
+                            </ng-container>
+                        </div>
                     </td>
                 </tr>
             </thead>

@@ -295,7 +295,7 @@ export class DatagridFacadeService {
             };
         });
 
-        if (this._state.selectOnCheck) {
+        if (this._state.selectOnCheck && !this._state.onlySelectSelf) {
             this._state.selections = [];
             this._state.selections = this._state.data.map( (r, i) => {
                 return {
@@ -627,6 +627,31 @@ export class DatagridFacadeService {
     hideLineNumber() {
         this.showLineNumber(false);
     }
+
+
+    private compare(a, b) {
+        return a === b ? 0 : (a > b ? 1 : -1);
+    }
+
+    private _sort(r1, r2) {
+        let r = 0;
+        const sortFields = this._state.sortName.split(',');
+        const orders = this._state.sortOrder.split(',');
+
+        for (let i = 0; i < sortFields.length; i++) {
+            const sn = sortFields[i];
+            const so = orders[i];
+            r = this.compare(r1[sn], r2[sn]) * (so === 'asc' ? 1 : -1);
+            if (r !== 0) {
+                return r;
+            }
+        }
+        return r;
+    }
+
+    sort() {
+    }
+
 
     private setFitColumnsWidth(colgroup: ColumnGroup) {
         if (!colgroup) {

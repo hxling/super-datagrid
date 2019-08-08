@@ -11,6 +11,8 @@ import { VirtualLoadDemoComponent } from './demos/virtual-load/virtual-load-demo
 import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-demo.component';
 import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-template.component';
 import { DatagridSelectionDemoComponent } from './demos/selections/datagrid-selection-demo.component';
+import { IllimitedScrollComponent } from './demos/Demo/illimited-scroll.component';
+import { PaginationScrollComponent } from './demos/Demo/pagination-scroll.component';
 
 const routes: Routes = [
   { path: 'scroll-load', component: ScrollBarLoadComponent},
@@ -23,6 +25,8 @@ const routes: Routes = [
     { path: 'custom-cell', component: CustomCellComponent },
     { path: 'fit-columns', component: FitColumnsComponent },
     { path: 'selection', component: DatagridSelectionDemoComponent},
+    { path: 'illimited', component: IllimitedScrollComponent},
+    { path: 'pagination', component: PaginationScrollComponent},
     { path: '', component: PageScrollComponent}
 ];
 

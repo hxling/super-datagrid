@@ -20,8 +20,6 @@ export interface DataColumn {
     hAlign?: 'left' | 'center' | 'right';
     /** 文本对齐方式 */
     align?: 'left' | 'center' | 'right';
-    /** 是否允许拖动列宽 */
-    resizable?: string;
     formatter?: (value, rowData, rowIndex) => CustomStyle;
     styler?: (value, rowData, rowIndex) => CustomStyle;
     left?: number;
@@ -34,8 +32,12 @@ export interface DataColumn {
     /** 单元格自定义模板 */
     template?: TemplateRef<any>;
     /** 鼠标移动至单元格后，显示悬浮消息 */
-    showtips?: false;
-
+    showtips?: boolean;
+    /** True to allow the column can be sorted. */
+    sortable?: boolean;
+    order?: 'asc' | 'desc';
+    /** True to allow the column can be resized. */
+    resizable?: boolean;
 }
 
 export interface GridEditor {
