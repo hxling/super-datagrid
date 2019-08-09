@@ -2,12 +2,13 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 14:16:19
- * @Company: Inspur
+ * @LastEditTime: 2019-08-09 18:43:43
+ * @QQ: 1055818239
  * @Version: v0.0.1
  */
-import { DataColumn } from './../../types/data-column';
+
 import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { DataColumn } from './../../types/data-column';
 import { ColumnGroup } from '../../types/data-column';
 import { DatagridService } from '../../services/datagrid.service';
 import { SCROLL_X_ACTION, FIXED_LEFT_SHADOW_CLS, SCROLL_X_REACH_START_ACTION, FIXED_RIGHT_SHADOW_CLS } from '../../types/constant';
@@ -152,14 +153,16 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
 
         this.dg.sortName = sortFields.join(',');
         this.dg.sortOrder = sortOrders.join(',');
-
         this.dfs.setSortInfo(this.dg.sortName, this.dg.sortOrder);
+
         this.dg.beforeSortColumn(this.dg.sortName, this.dg.sortOrder).subscribe(() => {
             if (this.dg.remoteSort) {
                 this.dg.reload();
             } else {
                 this.dfs.clientSort();
             }
+
+            this.dg.columnSorted.emit(col);
         });
 
     }
