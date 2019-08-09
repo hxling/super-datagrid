@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-09 14:58:19
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { AppHomeComponent } from './home.component';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
@@ -24,8 +32,6 @@ import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-
 import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-template.component';
 import { FitColumnsComponent } from './demos/fitcolumns/fit-columns.component';
 import { DatagridSelectionDemoComponent } from './demos/selections/datagrid-selection-demo.component';
-import { IllimitedScrollComponent } from './demos/Demo/illimited-scroll.component';
-import { PaginationScrollComponent } from './demos/Demo/pagination-scroll.component';
 
 
 @NgModule({
@@ -45,9 +51,6 @@ import { PaginationScrollComponent } from './demos/Demo/pagination-scroll.compon
     CustomCellComponent,
     FitColumnsComponent,
     DatagridSelectionDemoComponent,
-
-    IllimitedScrollComponent,
-    PaginationScrollComponent
 
   ],
   imports: [

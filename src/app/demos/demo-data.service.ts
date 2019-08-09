@@ -3,7 +3,7 @@ import { Utils } from './utils';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-07-29 08:14:22
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 11:56:33
+ * @LastEditTime: 2019-08-09 15:01:40
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -77,10 +77,10 @@ export class DemoDataService implements RestService {
             const k = i + 1;
             arr.push({
                 id: k,
-                name: '姓名' + k,
+                name: Utils.userNames[Utils.randomNum(0, 19)],
                 sex: '男',
                 birthday: (2000 + i) + '-01-01',
-                maray: ['', true, false][Utils.randomNum(0,2)],
+                maray: ['', true, false][Utils.randomNum(0, 2)],
                 addr: this.buildLongText(i, `天齐大道${7000 + i}号`),
                 company: `inspur`,
                 nianxin: Math.round(Math.random() * 10000) * 12,

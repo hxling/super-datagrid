@@ -2,10 +2,11 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 14:43:27
- * @Company: Inspur
+ * @LastEditTime: 2019-08-09 14:45:44
+ * @QQ: 1055818239
  * @Version: v0.0.1
  */
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
