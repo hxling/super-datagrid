@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-09 14:58:07
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { FitColumnsComponent } from './demos/fitcolumns/fit-columns.component';
 import { AllDataLoadOnceComponent } from './demos/alldata-load-once/alldata-load-once.component';
 import { NgModule } from '@angular/core';
@@ -11,8 +19,7 @@ import { VirtualLoadDemoComponent } from './demos/virtual-load/virtual-load-demo
 import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-demo.component';
 import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-template.component';
 import { DatagridSelectionDemoComponent } from './demos/selections/datagrid-selection-demo.component';
-import { IllimitedScrollComponent } from './demos/Demo/illimited-scroll.component';
-import { PaginationScrollComponent } from './demos/Demo/pagination-scroll.component';
+
 
 const routes: Routes = [
   { path: 'scroll-load', component: ScrollBarLoadComponent},
@@ -25,8 +32,6 @@ const routes: Routes = [
     { path: 'custom-cell', component: CustomCellComponent },
     { path: 'fit-columns', component: FitColumnsComponent },
     { path: 'selection', component: DatagridSelectionDemoComponent},
-    { path: 'illimited', component: IllimitedScrollComponent},
-    { path: 'pagination', component: PaginationScrollComponent},
     { path: '', component: PageScrollComponent}
 ];
 

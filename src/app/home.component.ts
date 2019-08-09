@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-09 14:57:54
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -13,10 +21,6 @@ import { Component, OnInit } from '@angular/core';
         <a class="navbar-brand" href="/custom-cell">自定义单元格模板</a>
         <a class="navbar-brand" href="/selection">选中行</a>
         <a class="navbar-brand" href="/fit-columns">自动列宽</a>
-
-
-        <a class="navbar-brand" href="/illimited">无限滚动加载</a>
-        <a class="navbar-brand" href="/pagination">分页大数据加载</a>
     </nav>
     `
 })
