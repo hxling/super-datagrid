@@ -46,8 +46,10 @@
                         <div class="f-datagrid-header-cell-content">
                             {{ col.title }}
                             <ng-container *ngIf="col.sortable">
-                                <span class="f-datagrid-sort f-datagrid-sort-asc" *ngIf="col.order === 'asc'">↑</span>
-                                <span class="f-datagrid-sort f-datagrid-sort-desc" *ngIf="col.order === 'desc'">↓</span>
+                                <span class="f-datagrid-sort" [class.f-datagrid-sort-asc]="col.order === 'asc'" [class.f-datagrid-sort-desc]="col.order === 'desc'"
+                                    (click)="onSortColumnClick($event, col)" 
+                                    *ngIf="col.order">{{ col.order === 'asc'? '↑' : '↓' }}  </span>
+                                <span class="f-datagrid-sort" (click)="onSortColumnClick($event, col)" *ngIf="!col.order"> ⇵ </span>
                             </ng-container>
                         </div>
                     </td>

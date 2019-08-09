@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:53
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-09 14:43:27
+ * @Company: Inspur
+ * @Version: v0.0.1
+ */
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
@@ -5,7 +13,7 @@ import { map, distinctUntilChanged, filter, switchMap, auditTime } from 'rxjs/op
 import { DataColumn, ColumnGroup } from '../types';
 import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow } from './state';
 import { VirtualizedLoaderService } from './virtualized-loader.service';
-import { SRCSET_ATTRS } from '@angular/core/src/sanitization/html_sanitizer';
+// import { orderBy } from 'lodash-es';
 
 @Injectable()
 export class DatagridFacadeService {
@@ -633,6 +641,33 @@ export class DatagridFacadeService {
         return a === b ? 0 : (a > b ? 1 : -1);
     }
 
+    setSortInfo(sortName, sortOrder) {
+        const fields = sortName.split(',');
+        const orders = sortOrder.split(',');
+        if (!this._state.multiSort) {
+            const colgroup = this._state.columnsGroup;
+
+            const updateFieldOrder = (cols: DataColumn[]) => {
+                if (!cols || !cols.length) {
+                    return;
+                }
+                cols.forEach( col => {
+                    col.order = undefined;
+                    const i = fields.findIndex(f => f === col.field);
+                    if (i >= 0) {
+                        col.order = orders[i];
+                    }
+                });
+            };
+
+            updateFieldOrder(colgroup.normalColumns);
+            updateFieldOrder(colgroup.leftFixed);
+            updateFieldOrder(colgroup.rightFixed);
+        }
+
+        this.updateState({sortName, sortOrder}, false);
+    }
+
     private _sort(r1, r2) {
         let r = 0;
         const sortFields = this._state.sortName.split(',');
@@ -649,7 +684,10 @@ export class DatagridFacadeService {
         return r;
     }
 
-    sort() {
+    clientSort() {
+        const sortedData = this._state.data.sort(this._sort.bind(this));
+        // const sortedData = orderBy(this._state.data, this._state.sortName.split(','), this._state.sortOrder.split(','));
+        this.loadData(sortedData);
     }
 
 

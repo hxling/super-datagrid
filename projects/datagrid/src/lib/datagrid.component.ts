@@ -1,3 +1,12 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-09 14:02:10
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
+
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
     SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding,
@@ -209,6 +218,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() beforeUnselect: (rowindex: number, rowdata: any) => Observable<boolean>;
     @Input() beforeCheck: (rowindex: number, rowdata: any) => Observable<boolean>;
     @Input() beforeUncheck: (rowindex: number, rowdata: any) => Observable<boolean>;
+    @Input() beforeSortColumn: (field: string, order: string) => Observable<boolean>;
 
     @Output() selectChanged = new EventEmitter();
     @Output() unSelect = new EventEmitter();
@@ -219,6 +229,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Output() unChecked = new EventEmitter();
     @Output() checkAll = new EventEmitter();
     @Output() unCheckAll = new EventEmitter();
+
+    @Output() columnSorted = new EventEmitter();
 
 
     @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
@@ -391,6 +403,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.dfs.updateProperty('nowrap', changes.nowrap.currentValue);
         }
 
+        if (changes.multiSort !== undefined && !changes.multiSort.isFirstChange()) {
+            this.dfs.updateProperty('multiSort', changes.multiSort.currentValue);
+        }
+
         if (changes.pageIndex !== undefined && !changes.pageIndex.isFirstChange()) {
             this.dfs.updateProperty('pageIndex', changes.pageIndex.currentValue);
             this.pagerOpts = Object.assign(this.pagerOpts, {
@@ -428,6 +444,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         if (!this.beforeUncheck) {
             this.beforeUncheck = () => of(true);
+        }
+
+        if (!this.beforeSortColumn) {
+            this.beforeSortColumn = () => of(true);
         }
     }
 
