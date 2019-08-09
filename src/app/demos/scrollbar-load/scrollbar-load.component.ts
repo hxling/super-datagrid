@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
-import { DATAGRID_REST_SERVICEE } from 'projects/datagrid/src/lib/services/rest.service';
+import { DATAGRID_REST_SERVICEE } from '@farris/ui-datagrid';
 
 @Component({
     selector: 'scroll-load-async',

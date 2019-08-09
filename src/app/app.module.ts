@@ -19,12 +19,13 @@ import { ShowLineNumberComponent } from './demos/row-number/show-row-number.comp
 import { NormalDatagridComponent } from './demos/normal-grid/normal-grid.component';
 import { CellEditorComponent } from './demos/cell-editor/cell-editor.component';
 import { MyCustomGridEditorComponent } from './demos/myeditors/input-group-editor.component';
-import {  } from 'projects/datagrid/src/lib/types';
 import { VirtualLoadDemoComponent } from './demos/virtual-load/virtual-load-demo.component';
 import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-demo.component';
 import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-template.component';
 import { FitColumnsComponent } from './demos/fitcolumns/fit-columns.component';
 import { DatagridSelectionDemoComponent } from './demos/selections/datagrid-selection-demo.component';
+import { IllimitedScrollComponent } from './demos/Demo/illimited-scroll.component';
+import { PaginationScrollComponent } from './demos/Demo/pagination-scroll.component';
 
 
 @NgModule({
@@ -43,7 +44,10 @@ import { DatagridSelectionDemoComponent } from './demos/selections/datagrid-sele
     ScrollbarLoadDemoComponent,
     CustomCellComponent,
     FitColumnsComponent,
-    DatagridSelectionDemoComponent
+    DatagridSelectionDemoComponent,
+
+    IllimitedScrollComponent,
+    PaginationScrollComponent
 
   ],
   imports: [

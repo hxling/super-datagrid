@@ -1,3 +1,12 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-09 14:02:10
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
+
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
     SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding,
@@ -28,7 +37,7 @@ import { DomHandler } from './services/domhandler';
         <datagrid-header #header [columnsGroup]="colGroup" [height]="headerHeight"></datagrid-header>
         <datagrid-body [columnsGroup]="colGroup" [data]="ds.rows | paginate: pagerOpts"
                 [startRowIndex]="ds.index" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
-        <datagrid-pager *ngIf="pagination" #dgPager
+        <datagrid-pager *ngIf="pagination" #dgPager [showPageList]="showPageList"
             [id]="pagerOpts.id" (pageChange)="onPageChange($event)"
             (pageSizeChange)="onPageSizeChange($event)"></datagrid-pager>
     </div>
@@ -124,6 +133,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() pageSize = 20;
     /** 分页区高度 */
     @Input() pagerHeight = 40;
+    /** 显示每页记录数 */
+    @Input() showPageList = false;
     /** 总记录数 */
     private _total = 0;
     get total() {
@@ -141,7 +152,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 启用多选 */
     @Input() multiSelect = false;
     /** 启用多选时，是否显示checkbox */
-    @Input() showCheckbox = true;
+    @Input() showCheckbox = false;
     @Input() showAllCheckbox = true;
     /** 当启用多选时，点击行选中，只允许且只有一行被选中。 */
     @Input() onlySelectSelf = true;
@@ -180,7 +191,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() editMode: 'row'| 'cell' = 'row';
     /** 编辑状态 */
     @Input() editable = false;
-
+    /** 编辑器高度 */
+    @Input() editorHeight = 30;
+    /** 启用远端排序 */
+    @Input() remoteSort = true;
+    /** 排序字段 */
+    @Input() sortName: string;
+    /** 排序方式 asc | desc */
+    @Input() sortOrder: string;
+    /** 允许多列排序 */
+    @Input() multiSort: boolean;
 
 
     @Output() beginEdit = new EventEmitter();
@@ -193,10 +213,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     @Output() loadSuccess = new EventEmitter();
 
+
     @Input() beforeSelect: (rowindex: number, rowdata: any) => Observable<boolean>;
     @Input() beforeUnselect: (rowindex: number, rowdata: any) => Observable<boolean>;
     @Input() beforeCheck: (rowindex: number, rowdata: any) => Observable<boolean>;
     @Input() beforeUncheck: (rowindex: number, rowdata: any) => Observable<boolean>;
+    @Input() beforeSortColumn: (field: string, order: string) => Observable<boolean>;
 
     @Output() selectChanged = new EventEmitter();
     @Output() unSelect = new EventEmitter();
@@ -207,6 +229,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Output() unChecked = new EventEmitter();
     @Output() checkAll = new EventEmitter();
     @Output() unCheckAll = new EventEmitter();
+
+    @Output() columnSorted = new EventEmitter();
 
 
     @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
@@ -379,6 +403,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.dfs.updateProperty('nowrap', changes.nowrap.currentValue);
         }
 
+        if (changes.multiSort !== undefined && !changes.multiSort.isFirstChange()) {
+            this.dfs.updateProperty('multiSort', changes.multiSort.currentValue);
+        }
+
         if (changes.pageIndex !== undefined && !changes.pageIndex.isFirstChange()) {
             this.dfs.updateProperty('pageIndex', changes.pageIndex.currentValue);
             this.pagerOpts = Object.assign(this.pagerOpts, {
@@ -416,6 +444,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         if (!this.beforeUncheck) {
             this.beforeUncheck = () => of(true);
+        }
+
+        if (!this.beforeSortColumn) {
+            this.beforeSortColumn = () => of(true);
         }
     }
 
@@ -577,7 +609,15 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     fetchData(pageIndex, pageSize) {
         if (this.restService) {
             this.showLoading();
-            return this.restService.getData(this.url, { pageIndex, pageSize });
+            const params = { pageIndex, pageSize };
+            if (this.sortName) {
+                params['sortName'] = this.sortName;
+            }
+            if (this.sortOrder) {
+                params['sortOrder'] = this.sortOrder;
+            }
+
+            return this.restService.getData(this.url, params);
         }
         return of(undefined);
     }

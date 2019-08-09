@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-09 13:53:21
+ * @Company: Inspur
+ * @Version: v0.0.1
+ */
 import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
 import { DATAGRID_REST_SERVICEE, DatagridComponent } from '@farris/ui-datagrid';
@@ -25,6 +33,9 @@ export class DatagridSelectionDemoComponent implements OnInit {
     showRowNumber = true;
     useStripe = true;
     wrap = false;
+    
+    remoteSort = true;
+    multiSort = false;
     // 多选
 
     _useMultiSelect = false;
@@ -33,19 +44,11 @@ export class DatagridSelectionDemoComponent implements OnInit {
     }
     set useMultiSelect(v) {
         this._useMultiSelect = v;
-        if (v) {
-            this.showAllCheckbox = true;
-            this.showCheckbox = true;
-            this.checkonselect = true;
-            this.selectoncheck = true;
-            this.onlySelectSelf = true;
-        } else {
-            this.showAllCheckbox = false;
-            this.showCheckbox = false;
-            this.checkonselect = false;
-            this.selectoncheck = false;
-            this.onlySelectSelf = false;
-        }
+        this.showAllCheckbox = v;
+        this.showCheckbox = v;
+        this.checkonselect = v;
+        this.selectoncheck = v;
+        this.onlySelectSelf = v;
     }
 
     onlySelectSelf = false;
@@ -57,13 +60,13 @@ export class DatagridSelectionDemoComponent implements OnInit {
 
     columns = [
         { field: 'id', width: 100, title: 'ID' },
-        { field: 'name', width: 130, title: '姓名'},
+        { field: 'name', width: 130, title: '姓名' , sortable: true},
         { field: 'sex', width: 70, title: '性别'},
         { field: 'birthday', width: 120, title: '出生日期'},
-        { field: 'maray', width: 70, title: '婚否'},
+        { field: 'maray', width: 70, title: '婚否', sortable: true},
         { field: 'addr', width: 170, title: '地址'},
         { field: 'company', width: 100, title: '公司'},
-        { field: 'nianxin', width: 70, title: '年薪'},
+        { field: 'nianxin', width: 70, title: '年薪', sortable: true},
         { field: 'zhiwei', width: 100, title: '职位'}
     ];
 

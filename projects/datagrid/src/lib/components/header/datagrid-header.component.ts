@@ -1,3 +1,12 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:53
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-09 14:16:19
+ * @Company: Inspur
+ * @Version: v0.0.1
+ */
+import { DataColumn } from './../../types/data-column';
 import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { ColumnGroup } from '../../types/data-column';
 import { DatagridService } from '../../services/datagrid.service';
@@ -8,7 +17,24 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 
 @Component({
     selector: 'datagrid-header',
-    templateUrl: './header.component.html'
+    templateUrl: './header.component.html',
+    styles: [`
+        .f-datagrid-sort {
+            float: right;
+            width: 20px;
+            text-align: center;
+            cursor: pointer;
+            opacity: .65;
+        }
+
+        .f-datagrid-sort:hover {
+            color: blue;
+            opacity: 1;
+        }
+        .f-datagrid-sort-asc, .f-datagrid-sort-desc {
+            opacity: 1;
+        }
+    `]
 })
 export class DatagridHeaderComponent implements OnInit, AfterViewInit {
     @Input() height = 36;
@@ -85,4 +111,56 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
         this.setHeight();
     }
 
+    onSortColumnClick(e: MouseEvent, col: DataColumn) {
+        if (!col.sortable) {
+            return;
+        }
+        const sortName = this.dg.sortName;
+        const sortOrder = this.dg.sortOrder;
+        let sortFields = [];
+        let sortOrders = [];
+        if (sortName) {
+            sortFields = sortName.split(',');
+            sortOrders = sortOrder.split(',');
+        }
+
+        const colOrder = col.order || 'asc';
+        let newOrder = colOrder;
+        const i = sortFields.findIndex(n => n === col.field);
+        if (i >= 0) {
+            const _order = sortOrders[i] === 'asc' ? 'desc' : 'asc';
+            newOrder = _order;
+            if (this.dg.multiSort && newOrder === 'asc') {
+                newOrder = undefined;
+                sortFields.splice(i, 1);
+                sortOrders.splice(i, 1);
+            } else {
+                sortOrders[i] = _order;
+            }
+
+        } else {
+            if (this.dg.multiSort) {
+                sortFields.push(col.field);
+                sortOrders.push(colOrder);
+            } else {
+                sortFields = [col.field];
+                sortOrders = [colOrder];
+            }
+        }
+
+        col.order = newOrder;
+
+        this.dg.sortName = sortFields.join(',');
+        this.dg.sortOrder = sortOrders.join(',');
+
+        this.dfs.setSortInfo(this.dg.sortName, this.dg.sortOrder);
+        this.dg.beforeSortColumn(this.dg.sortName, this.dg.sortOrder).subscribe(() => {
+            if (this.dg.remoteSort) {
+                this.dg.reload();
+            } else {
+                this.dfs.clientSort();
+            }
+        });
+
+    }
 }

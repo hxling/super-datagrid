@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-09 11:59:05
+ * @Company: Inspur
+ * @Version: v0.0.1
+ */
 import { TemplateRef } from '@angular/core';
 
 
@@ -20,8 +28,6 @@ export interface DataColumn {
     hAlign?: 'left' | 'center' | 'right';
     /** 文本对齐方式 */
     align?: 'left' | 'center' | 'right';
-    /** 是否允许拖动列宽 */
-    resizable?: string;
     formatter?: (value, rowData, rowIndex) => CustomStyle;
     styler?: (value, rowData, rowIndex) => CustomStyle;
     left?: number;
@@ -31,8 +37,16 @@ export interface DataColumn {
     hidden?: boolean;
 
     editor?: GridEditor;
-
+    /** 单元格自定义模板 */
     template?: TemplateRef<any>;
+    /** 鼠标移动至单元格后，显示悬浮消息 */
+    showtips?: boolean;
+    /** True to allow the column can be sorted. */
+    sortable?: boolean;
+    order?: 'asc' | 'desc';
+    sorter?: (r1: any, r2: any) => boolean;
+    /** True to allow the column can be resized. */
+    resizable?: boolean;
 }
 
 export interface GridEditor {

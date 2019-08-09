@@ -36,6 +36,10 @@ export interface FarrisDatagridState {
     /** 是否启用异步虚拟加载数据: false - 客户端内存中取数；true - 远端服务器加载数据, 默认值为 false */
     virtualizedAsyncLoad?: boolean;
     virtual?: VirtualizedState;
+    sortName?: string;
+    sortOrder?: string;
+    multiSort?: boolean;
+    remoteSort?: boolean;
 }
 
 export interface VirtualizedState {
@@ -77,7 +81,11 @@ export const initDataGridState: FarrisDatagridState = {
         scrollTop: 0,
         topHideHeight: 0,
         bottomHideHeight: 0
-    }
+    },
+    sortName: undefined,
+    sortOrder: undefined,
+    multiSort: false,
+    remoteSort: true
 };
 
 export interface CellInfo {
