@@ -5,7 +5,7 @@ import { DatagridComponent } from './../../datagrid.component';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-10 09:04:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-10 13:46:23
+ * @LastEditTime: 2019-08-10 16:06:08
  * @QQ: 1055818239
  * @Version: v0.0.12
  */
@@ -19,7 +19,9 @@ export class DatagridResizeColumnDirective implements AfterViewInit, OnDestroy {
     resizerMouseDownListener: any;
     documentMouseMoveListener: any;
     documentMouseUpListener: any;
+    dblclickListener: any;
 
+    // private isSingleClick = true;
     constructor(public ngzone: NgZone, public el: ElementRef, public render: Renderer2, private dg: DatagridComponent) {}
 
     ngAfterViewInit() {
@@ -33,6 +35,8 @@ export class DatagridResizeColumnDirective implements AfterViewInit, OnDestroy {
             this.ngzone.runOutsideAngular(() => {
                 this.resizerMouseDownListener = this.onMouseDown.bind(this);
                 this.resizer.addEventListener('mousedown', this.resizerMouseDownListener);
+
+                // this.dblclickListener = this.render.listen(document, 'dblclick', this.onDblClick.bind(this));
             });
         }
     }
@@ -66,7 +70,6 @@ export class DatagridResizeColumnDirective implements AfterViewInit, OnDestroy {
     onMouseDown(event: MouseEvent) {
         this.dg.onColumnResizeBegin(event);
         this.bindDocumentEvents();
-
     }
 
     onMouseMove(event: MouseEvent) {
@@ -84,5 +87,9 @@ export class DatagridResizeColumnDirective implements AfterViewInit, OnDestroy {
         }
 
         this.unbindDocumentEvents();
+
+        if (this.dblclickListener) {
+            this.dblclickListener();
+        }
     }
 }

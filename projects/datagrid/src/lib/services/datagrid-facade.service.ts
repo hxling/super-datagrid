@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-10 14:40:36
+ * @LastEditTime: 2019-08-10 15:46:43
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -533,6 +533,9 @@ export class DatagridFacadeService {
         }
     }
 
+
+
+
     protected updateState(state: Partial<FarrisDatagridState>, emit = true) {
         const newState = { ...this._state, ...state };
         this._state = newState;
@@ -605,11 +608,11 @@ export class DatagridFacadeService {
         }
     }
 
-    resizeColumns() {
+    resizeColumns(restitute = false) {
         const colgroup = this._state.columnsGroup;
-        this.initColumnsWidth(colgroup);
+        this.initColumnsWidth(colgroup, restitute);
         if (this._state.fitColumns) {
-            this.setFitColumnsWidth(colgroup);
+            this.setFitColumnsWidth(colgroup, restitute);
         }
         this.updateState({ columnsGroup:  {...colgroup} }, false);
         this.gridSizeSubject.next(this._state);
@@ -617,6 +620,78 @@ export class DatagridFacadeService {
 
     getColumn(fieldName: string) {
         return this._state.columns.find(n => n.field === fieldName);
+    }
+
+    private setFitColumnsWidth(colgroup: ColumnGroup, restitute = false) {
+        if (!colgroup) {
+            return;
+        }
+        colgroup.normalWidth = this._state.width - colgroup.leftFixedWidth;
+        const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
+            if (!restitute) {
+                return totalWidth += col.width;
+            } else {
+                return totalWidth += col.originalWidth;
+            }
+        }, 0);
+
+        colgroup.normalColumns.forEach( col => {
+            if (!restitute) {
+                col.width = Math.floor( col.width / minWidth * colgroup.normalWidth );
+            } else {
+                col.width = Math.floor( col.originalWidth / minWidth * colgroup.normalWidth );
+            }
+        });
+
+        colgroup.totalWidth = colgroup.leftFixedWidth + colgroup.rightFixedWidth + colgroup.normalWidth;
+    }
+
+    private getFixedCols(direction: 'left' | 'right' = 'left') {
+        return this._state.columns.filter(col => col.fixed === direction);
+    }
+
+    private initColumnsWidth(colgroup: ColumnGroup,  restitute = false) {
+        let offset = 0;
+        offset = this._state.showLineNumber ? offset + this._state.lineNumberWidth : offset;
+
+        offset = this._state.showCheckbox ? offset + this._state.checkboxColumnWidth : offset;
+
+        const leftColsWidth = colgroup.leftFixed.reduce((r, c) => {
+            c.left = r;
+            if (!restitute) {
+                return r + c.width;
+            } else {
+                return r + c.originalWidth;
+            }
+        }, offset);
+
+        colgroup.leftFixedWidth = leftColsWidth;
+        colgroup.rightFixedWidth = 0;
+        if (colgroup.rightFixed && colgroup.rightFixed.length) {
+            colgroup.rightFixedWidth = colgroup.rightFixed.reduce((r, c) => {
+                if (!restitute) {
+                    return r + c.width;
+                } else {
+                    return r + c.originalWidth;
+                }
+            }, 0);
+        }
+
+        if (this._state.columns && this._state.columns.length) {
+            const i =  0;
+            const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
+                col.left = totalWidth;
+                if (!restitute) {
+                    return totalWidth += col.width;
+                } else {
+                    return totalWidth + col.originalWidth;
+                }
+            }, i);
+
+            colgroup.normalWidth = minWidth;
+        }
+
+        colgroup.totalWidth = leftColsWidth + colgroup.rightFixedWidth + colgroup.normalWidth;
     }
 
     showCheckbox(isShow = true) {
@@ -710,55 +785,4 @@ export class DatagridFacadeService {
     }
 
 
-    private setFitColumnsWidth(colgroup: ColumnGroup) {
-        if (!colgroup) {
-            return;
-        }
-        colgroup.normalWidth = this._state.width - colgroup.leftFixedWidth;
-        const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
-            return totalWidth += col.width;
-        }, 0);
-
-        colgroup.normalColumns.forEach( col => {
-            col.width = Math.floor( col.width / minWidth * colgroup.normalWidth );
-        });
-
-        colgroup.totalWidth = colgroup.leftFixedWidth + colgroup.rightFixedWidth + colgroup.normalWidth;
-    }
-
-    private getFixedCols(direction: 'left' | 'right' = 'left') {
-        return this._state.columns.filter(col => col.fixed === direction);
-    }
-
-    private initColumnsWidth(colgroup: ColumnGroup) {
-        let offset = 0;
-        offset = this._state.showLineNumber ? offset + this._state.lineNumberWidth : offset;
-
-        offset = this._state.showCheckbox ? offset + this._state.checkboxColumnWidth : offset;
-
-        const leftColsWidth = colgroup.leftFixed.reduce((r, c) => {
-            c.left = r;
-            return r + c.width;
-        }, offset);
-
-        colgroup.leftFixedWidth = leftColsWidth;
-        colgroup.rightFixedWidth = 0;
-        if (colgroup.rightFixed && colgroup.rightFixed.length) {
-            colgroup.rightFixedWidth = colgroup.rightFixed.reduce((r, c) => {
-                return r + c.width;
-            }, 0);
-        }
-
-        if (this._state.columns && this._state.columns.length) {
-            const i =  0;
-            const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
-                col.left = totalWidth;
-                return totalWidth += col.width;
-            }, i);
-
-            colgroup.normalWidth = minWidth;
-        }
-
-        colgroup.totalWidth = leftColsWidth + colgroup.rightFixedWidth + colgroup.normalWidth;
-    }
 }

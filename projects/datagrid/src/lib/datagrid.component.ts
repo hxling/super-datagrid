@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-10 14:48:26
+ * @LastEditTime: 2019-08-10 16:23:53
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -178,8 +178,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 数据为空时显示的信息 */
     @Input() emptyMsg = '';
     /** 列集合 */
-    @Input() columns: DataColumn[];
-    @Input() fields: DataColumn[];
+    @Input() columns: DataColumn[] | DataColumn[][];
+    @Input() fields: DataColumn[] | DataColumn[][];
     /** 数据折行，默认值：true,即在一行显示，不折行。 */
     @Input() nowrap = true;
     /** 虚拟加载 */
@@ -853,8 +853,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         const newColWidth = this.resizeColumnInfo.startWidth + e.pageX - this.resizeColumnInfo.startX;
 
-        col.width = newColWidth + 1;
+        col.width = newColWidth;
         this.dfs.resizeColumns();
+    }
+
+    restituteColumnsSize() {
+        this.dfs.resizeColumns(true);
     }
 
     //#endregion
