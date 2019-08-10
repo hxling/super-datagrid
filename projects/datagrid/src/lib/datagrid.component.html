@@ -1,0 +1,25 @@
+<!--
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-10 11:02:50
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-10 13:49:48
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ -->
+
+<div #datagridContainer class="f-datagrid" [class.f-datagrid-bordered]="showBorder" [class.f-datagrid-wrap]="!nowrap"
+    [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
+
+    <datagrid-header #header [columnsGroup]="colGroup" [height]="headerHeight"></datagrid-header>
+    
+    <datagrid-body [columnsGroup]="colGroup" [data]="ds.rows | paginate: pagerOpts" [startRowIndex]="ds.index"
+        [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
+    
+    <datagrid-pager *ngIf="pagination" #dgPager [showPageList]="showPageList" [id]="pagerOpts.id"
+        (pageChange)="onPageChange($event)" (pageSizeChange)="onPageSizeChange($event)"></datagrid-pager>
+
+    <div class="f-datagrid-resize-bg" #resizeProxyBg></div>
+    <div #resizeProxy class="f-datagrid-resize-proxy" *ngIf="resizeColumn"></div>
+</div>
+
+<datagrid-loading *ngIf="loading"></datagrid-loading>

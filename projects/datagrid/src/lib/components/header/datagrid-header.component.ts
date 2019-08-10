@@ -2,12 +2,12 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 18:43:43
+ * @LastEditTime: 2019-08-10 13:59:03
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 
-import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { DataColumn } from './../../types/data-column';
 import { ColumnGroup } from '../../types/data-column';
 import { DatagridService } from '../../services/datagrid.service';
@@ -35,7 +35,25 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
         .f-datagrid-sort-asc, .f-datagrid-sort-desc {
             opacity: 1;
         }
-    `]
+
+        .f-datagrid-header-cell-resize {
+            background-clip: padding-box;
+            position: relative;
+        }
+        .column-resize-bar {
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            width: 5px;
+            height: 100%;
+            padding: 0;
+            cursor: col-resize;
+            border: 1px solid transparent;
+        }
+    `],
+    encapsulation: ViewEncapsulation.None
 })
 export class DatagridHeaderComponent implements OnInit, AfterViewInit {
     @Input() height = 36;

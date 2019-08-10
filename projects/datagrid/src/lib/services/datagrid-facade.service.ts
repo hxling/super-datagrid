@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-10 09:01:02
+ * @LastEditTime: 2019-08-10 14:40:36
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -56,7 +56,7 @@ export class DatagridFacadeService {
         filter( (state: any) => state)
     );
 
-    readonly columnGroup$ = this.store.asObservable().pipe(
+    readonly columnGroup$ = this.gridSizeSubject.asObservable().pipe(
         filter( (state: any) => state),
         map((state: FarrisDatagridState) => state.columnsGroup),
         distinctUntilChanged()
@@ -154,13 +154,13 @@ export class DatagridFacadeService {
         this.updateState(state, false);
         this.initColumns();
 
-        this.updateVirthualRows(0);
         this.gridSizeSubject.next(this._state);
+        this.updateVirthualRows(0);
     }
 
     loadData(data: any) {
         this.updateState({ data }, false);
-        this.updateVirthualRows(this._state.virtual.scrollTop);
+        this.updateVirthualRows(this._state.virtual.scrollTop || 0);
     }
 
     loadDataForVirtual(data: any) {
@@ -605,6 +605,16 @@ export class DatagridFacadeService {
         }
     }
 
+    resizeColumns() {
+        const colgroup = this._state.columnsGroup;
+        this.initColumnsWidth(colgroup);
+        if (this._state.fitColumns) {
+            this.setFitColumnsWidth(colgroup);
+        }
+        this.updateState({ columnsGroup:  {...colgroup} }, false);
+        this.gridSizeSubject.next(this._state);
+    }
+
     getColumn(fieldName: string) {
         return this._state.columns.find(n => n.field === fieldName);
     }
@@ -706,11 +716,11 @@ export class DatagridFacadeService {
         }
         colgroup.normalWidth = this._state.width - colgroup.leftFixedWidth;
         const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
-            return totalWidth += col.originalWidth;
+            return totalWidth += col.width;
         }, 0);
 
         colgroup.normalColumns.forEach( col => {
-            col.width = Math.floor( col.originalWidth / minWidth * colgroup.normalWidth );
+            col.width = Math.floor( col.width / minWidth * colgroup.normalWidth );
         });
 
         colgroup.totalWidth = colgroup.leftFixedWidth + colgroup.rightFixedWidth + colgroup.normalWidth;

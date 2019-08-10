@@ -1,3 +1,11 @@
+<!--
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-10 13:56:13
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ -->
 
 <div class="row">
     <!-- <input id="gridFitColumns" [(ngModel)]="gridFitCols" type="checkbox">
@@ -11,7 +19,7 @@
 
     <farris-datagrid [columns]="columns" [data]="items" #dg="datagrid"
         [showLineNumber] ="true" [striped]="false" [showCheckbox]="false"
-        [virtualized]="true" [fitColumns]="true" [fit]="true"
+        [virtualized]="true" [fitColumns]="true" [fit]="true" [showBorder]="true"
         [pagination]="false" [pageSize]= "pageSize" [pageIndex]="pageIndex"  [total]="total"
     ></farris-datagrid>
     

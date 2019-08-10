@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:53
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-10 09:48:35
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { NgModule, ModuleWithProviders, Provider } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -26,6 +34,7 @@ import { DatagridRowHoverDirective } from './components/body/datagrid-row-hover.
 import { DatagridRowsComponent } from './components/body/datagrid-rows.component';
 import { DatagridCheckboxComponent } from './components/checkbox/datagrid-checkbox.component';
 import { DatagridHeaderCheckboxComponent } from './components/checkbox/datagrid-header-checkbox.component';
+import { DatagridResizeColumnDirective } from './components/header/datagrid-resize-column.directive';
 
 
 
@@ -45,6 +54,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
     ],
     declarations: [
         DatagridHeaderComponent,
+        DatagridResizeColumnDirective,
         DatagridCellEditableDirective,
         DatagridCellComponent,
         DatagridRowDirective,
@@ -79,7 +89,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DatagridEditorComponent,
         TextboxEditorComponent,
         DatagridCellEditableDirective,
-        DatagridRowHoverDirective
+        DatagridRowHoverDirective,
+        DatagridResizeColumnDirective
     ],
     entryComponents: [
         TextboxEditorComponent

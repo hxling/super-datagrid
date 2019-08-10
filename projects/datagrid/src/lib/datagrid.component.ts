@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 14:02:10
+ * @LastEditTime: 2019-08-10 14:48:26
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -28,21 +28,9 @@ import { DomHandler } from './services/domhandler';
 //     './scss/index.scss'
 // ],
 
-
 @Component({
     selector: 'farris-datagrid',
-    template: `
-    <div class="f-datagrid" [class.f-datagrid-bordered]="showBorder" [class.f-datagrid-wrap]="!nowrap"
-        [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
-        <datagrid-header #header [columnsGroup]="colGroup" [height]="headerHeight"></datagrid-header>
-        <datagrid-body [columnsGroup]="colGroup" [data]="ds.rows | paginate: pagerOpts"
-                [startRowIndex]="ds.index" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
-        <datagrid-pager *ngIf="pagination" #dgPager [showPageList]="showPageList"
-            [id]="pagerOpts.id" (pageChange)="onPageChange($event)"
-            (pageSizeChange)="onPageSizeChange($event)"></datagrid-pager>
-    </div>
-    <datagrid-loading *ngIf="loading"></datagrid-loading>
-    `,
+    templateUrl: './datagrid.component.html',
     providers: [
         DatagridFacadeService,
         DatagridService
@@ -56,6 +44,19 @@ import { DomHandler } from './services/domhandler';
             word-spacing: normal;
             height: auto;
             line-height: 24px;
+        }
+        .f-datagrid-resize-proxy {
+            width: 1px;
+            border-left: 1px dashed #939292;
+            left: 0px;
+            display: none;
+            position: absolute;
+            height: 100%;
+            z-index: 99;
+        }
+
+        .f-datagrid-resize-bg{
+            z-index: 98;width: 100%;height: 100%;background: transparent;position: absolute; display: none;
         }
         `
     ],
@@ -236,6 +237,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
     @ViewChild('dgPager') dgPager: any;
     @ViewChild('header') dgHeader: any;
+    @ViewChild('resizeProxy') resizeProxy: ElementRef;
+    @ViewChild('resizeProxyBg') resizeProxyBg: ElementRef;
+    @ViewChild('datagridContainer') dgContainer: ElementRef;
 
     colGroup: ColumnGroup;
     data$ = this.dfs.data$;
@@ -272,6 +276,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     currentCell: CellInfo;
 
     clickDelay = 200;
+    private resizeColumnInfo = {
+        proxyLineEdge: 0,
+        startWidth: 0,
+        startX: 0
+    };
 
     private ro: ResizeObserver | null = null;
     subscriptions: Subscription[] = [];
@@ -298,7 +307,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.subscriptions.push(dataSubscription);
 
         const columnGroupSubscription = this.dfs.columnGroup$.subscribe(cg => {
-            this.colGroup = cg;
+            if (cg) {
+                this.colGroup = cg;
+                this.cd.detectChanges();
+            }
         });
         this.subscriptions.push(columnGroupSubscription);
 
@@ -329,14 +341,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (!this.columns) {
             this.columns = this.fields;
         }
-
-        this.zone.runOutsideAngular(() => {
-            this.ro = new ResizeObserver(() => {
-                this.calculateGridSize(this.fit);
-            });
-
-            this.ro.observe(this.el.nativeElement.parentElement);
-        });
     }
 
     ngAfterViewInit(): void {
@@ -355,6 +359,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
 
         this.initBeforeEvents();
+
+        this.zone.runOutsideAngular(() => {
+            this.ro = new ResizeObserver(() => {
+                this.calculateGridSize(this.fit);
+            });
+
+            this.ro.observe(this.el.nativeElement.parentElement);
+        });
     }
 
     ngAfterContentInit() {
@@ -795,6 +807,57 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     clearCheckeds() {
         this.dfs.clearCheckeds();
     }
+
+    //#region Resize Column
+
+    private getResizeProxyPosLeft(e: MouseEvent) {
+        const target = event.target as any;
+        const dgRect = this.getBoundingClientRect(this.dgContainer);
+        const td = target.parentElement;
+        const deltaEdge = td.offsetWidth - (e.pageX - td.getBoundingClientRect().left);
+        this.resizeColumnInfo.proxyLineEdge = deltaEdge;
+        this.resizeColumnInfo.startWidth = td.offsetWidth;
+        this.resizeColumnInfo.startX = e.pageX;
+        return e.pageX - dgRect.left - 1 + deltaEdge;
+    }
+
+    private toggleResizeProxy(show = true) {
+        let display = 'block';
+        if (!show) {
+            display = 'none';
+        }
+        this.render2.setStyle(this.resizeProxyBg.nativeElement, 'display', display);
+        this.render2.setStyle(this.resizeProxy.nativeElement, 'display', display);
+    }
+
+    onColumnResizeBegin(e: MouseEvent) {
+        if (this.resizeProxy) {
+            const proxy = this.resizeProxy.nativeElement;
+            const proxyPosLeft = this.getResizeProxyPosLeft(e);
+            this.render2.setStyle(proxy, 'left', proxyPosLeft + 'px');
+            this.toggleResizeProxy();
+        }
+    }
+    onColumnResize(e: MouseEvent) {
+        const proxy = this.resizeProxy.nativeElement;
+        const dgRect = this.getBoundingClientRect(this.dgContainer);
+        const proxyPosLeft = e.pageX - dgRect.left - 1 + this.resizeColumnInfo.proxyLineEdge;
+        this.render2.setStyle(proxy, 'left', proxyPosLeft + 'px');
+        e.stopPropagation();
+        e.preventDefault();
+    }
+    onColumnResizeEnd(e: MouseEvent, col: DataColumn) {
+        const proxy = this.resizeProxy.nativeElement;
+        this.toggleResizeProxy(false);
+        this.resizeColumnInfo.proxyLineEdge = 0;
+
+        const newColWidth = this.resizeColumnInfo.startWidth + e.pageX - this.resizeColumnInfo.startX;
+
+        col.width = newColWidth + 1;
+        this.dfs.resizeColumns();
+    }
+
+    //#endregion
 
     private canOperateCheckbox() {
         return this.multiSelect && this.showCheckbox;
