@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 14:45:44
+ * @LastEditTime: 2019-08-10 09:01:02
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -605,6 +605,10 @@ export class DatagridFacadeService {
         }
     }
 
+    getColumn(fieldName: string) {
+        return this._state.columns.find(n => n.field === fieldName);
+    }
+
     showCheckbox(isShow = true) {
         const colgroup = this._state.columnsGroup;
         this.updateState({showCheckbox: isShow}, false);
@@ -677,7 +681,11 @@ export class DatagridFacadeService {
         for (let i = 0; i < sortFields.length; i++) {
             const sn = sortFields[i];
             const so = orders[i];
-            r = this.compare(r1[sn], r2[sn]) * (so === 'asc' ? 1 : -1);
+
+            const col = this.getColumn(sn);
+
+            const orderby = col.sorter  ||  this.compare;
+            r = orderby(r1[sn], r2[sn]) * (so === 'asc' ? 1 : -1);
             if (r !== 0) {
                 return r;
             }

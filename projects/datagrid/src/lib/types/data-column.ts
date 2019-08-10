@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 11:59:05
+ * @LastEditTime: 2019-08-10 09:00:52
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -44,7 +44,7 @@ export interface DataColumn {
     /** True to allow the column can be sorted. */
     sortable?: boolean;
     order?: 'asc' | 'desc';
-    sorter?: (r1: any, r2: any) => boolean;
+    sorter?: (r1: any, r2: any) => 0 | 1 | -1;
     /** True to allow the column can be resized. */
     resizable?: boolean;
 }
