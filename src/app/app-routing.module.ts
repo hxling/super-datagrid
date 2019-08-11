@@ -1,3 +1,4 @@
+import { HeaderGroupDemoComponent } from './demos/group-header/header-group.component';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
@@ -32,6 +33,7 @@ const routes: Routes = [
     { path: 'custom-cell', component: CustomCellComponent },
     { path: 'fit-columns', component: FitColumnsComponent },
     { path: 'selection', component: DatagridSelectionDemoComponent},
+    { path: 'header-group', component: HeaderGroupDemoComponent},
     { path: '', component: PageScrollComponent}
 ];
 

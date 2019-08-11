@@ -567,13 +567,13 @@ export class DatagridFacadeService {
         this.gridSizeSubject.next(this._state);
     }
 
-    initColumns() {
-        const columns = this._state.columns;
-        if (columns && columns.length) {
 
-            const leftFixedCols = this.getFixedCols();
+    initColumns() {
+        const columns = this._state.flatColumns;
+        if (columns && columns.length) {
+            const leftFixedCols = this.getFixedCols('left');
             const rightFixedCols = this.getFixedCols('right');
-            const normalCols = columns.filter(col => !col.fixed);
+            const normalCols = this.getFixedCols();
 
             columns.forEach(c => {
                 c.originalWidth = c.width;
@@ -619,7 +619,7 @@ export class DatagridFacadeService {
     }
 
     getColumn(fieldName: string) {
-        return this._state.columns.find(n => n.field === fieldName);
+        return this._state.flatColumns.find(n => n.field === fieldName);
     }
 
     private setFitColumnsWidth(colgroup: ColumnGroup, restitute = false) {
@@ -646,8 +646,24 @@ export class DatagridFacadeService {
         colgroup.totalWidth = colgroup.leftFixedWidth + colgroup.rightFixedWidth + colgroup.normalWidth;
     }
 
-    private getFixedCols(direction: 'left' | 'right' = 'left') {
-        return this._state.columns.filter(col => col.fixed === direction);
+    private getFixedCols(direction: 'left' | 'right' | '' = '') {
+        let cols = [];
+        if (!direction) {
+            cols = this._state.flatColumns.filter(col => !col.fixed);
+        } else {
+            cols = this._state.flatColumns.filter(col => col.fixed === direction);
+        }
+
+
+        return cols.sort((a, b) => {
+            if (a.index > b.index) {
+                return 1;
+            } else if (a.index < b.index) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
     }
 
     private initColumnsWidth(colgroup: ColumnGroup,  restitute = false) {

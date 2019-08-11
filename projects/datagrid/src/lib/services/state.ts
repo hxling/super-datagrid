@@ -17,7 +17,8 @@ export interface FarrisDatagridState {
     pageSize?: number;
     pagerHeight?: number;
     pagination?: boolean;
-    columns: DataColumn[];
+    columns: Array<DataColumn> | Array<DataColumn>[];
+    flatColumns?: Array<DataColumn>;
     fitColumns: boolean;
     showLineNumber?: boolean;
     showCheckbox?: boolean;

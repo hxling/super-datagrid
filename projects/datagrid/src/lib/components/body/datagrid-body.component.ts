@@ -92,7 +92,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     private listenSubjects() {
         const initSubscrition = this.gridsize$.subscribe(state => {
             if (state) {
-                this.top = state.headerHeight;
+                this.top = this.dg.realHeaderHeight;
                 const pagerHeight = state.pagerHeight;
                 this.height = state.height - this.top - pagerHeight;
                 this.width = state.width;

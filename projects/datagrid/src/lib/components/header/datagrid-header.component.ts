@@ -52,6 +52,9 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
             cursor: col-resize;
             border: 1px solid transparent;
         }
+        .f-datagrid-header-cell-group {
+            border-bottom-width: 1px!important;
+        }
     `],
     encapsulation: ViewEncapsulation.None
 })
@@ -60,7 +63,7 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
     @Input() columnsGroup: ColumnGroup;
 
     @ViewChild('header') header: ElementRef;
-    @ViewChild('headerContainer') headerContainer: ElementRef;
+    @ViewChild('headerContainer') headerColumnsTable: ElementRef;
     @ViewChild('fixedLeft') fixedLeft: ElementRef;
 
     private _chkall: DatagridHeaderCheckboxComponent;
@@ -84,7 +87,7 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
                  private render2: Renderer2, public dg: DatagridComponent) {
         this.dgs.scorll$.subscribe((d: any) => {
             if (d.type === SCROLL_X_ACTION) {
-                this.render2.setStyle(this.headerContainer.nativeElement,  'transform', `translate3d(-${d.x}px, 0px, 0px)` );
+                this.render2.setStyle(this.headerColumnsTable.nativeElement,  'transform', `translate3d(-${d.x}px, 0px, 0px)` );
                 if (this.fixedLeft) {
                     this.render2.addClass(this.fixedLeft.nativeElement, FIXED_LEFT_SHADOW_CLS);
                 }
@@ -119,15 +122,16 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
         });
     }
 
-    private setHeight() {
-        const offsetHeight = this.header.nativeElement.offsetHeight;
-        if (this.height < offsetHeight) {
-            this.height = offsetHeight;
-        }
-    }
+    // setHeight() {
+    //     const offsetHeight =  Math.max(this.headerColumnsTable.nativeElement.offsetHeight, this.dg.headerHeight);
+    //     if (this.height < offsetHeight) {
+    //         this.height = offsetHeight;
+    //         this.header.nativeElement.style.height = this.height + 'px';
+    //     }
+    // }
 
     ngAfterViewInit() {
-        this.setHeight();
+        // this.setHeight();
     }
 
     onSortColumnClick(e: MouseEvent, col: DataColumn) {

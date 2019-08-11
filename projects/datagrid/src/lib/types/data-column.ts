@@ -25,7 +25,7 @@ export interface DataColumn {
     /** 记录原始定义宽度 */
     originalWidth?: number;
     /** 标题对齐方式 */
-    hAlign?: 'left' | 'center' | 'right';
+    halign?: 'left' | 'center' | 'right';
     /** 文本对齐方式 */
     align?: 'left' | 'center' | 'right';
     formatter?: (value, rowData, rowIndex) => CustomStyle;
@@ -47,6 +47,9 @@ export interface DataColumn {
     sorter?: (r1: any, r2: any) => 0 | 1 | -1;
     /** True to allow the column can be resized. */
     resizable?: boolean;
+    rowspan?: number;
+    colspan?: number;
+    index?: number;
 }
 
 export interface GridEditor {

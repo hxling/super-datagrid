@@ -32,6 +32,8 @@ import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-
 import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-template.component';
 import { FitColumnsComponent } from './demos/fitcolumns/fit-columns.component';
 import { DatagridSelectionDemoComponent } from './demos/selections/datagrid-selection-demo.component';
+import { LayoutRowComponent } from './demos/layout/layout-row.component';
+import { HeaderGroupDemoComponent } from './demos/group-header/header-group.component';
 
 
 @NgModule({
@@ -51,6 +53,8 @@ import { DatagridSelectionDemoComponent } from './demos/selections/datagrid-sele
     CustomCellComponent,
     FitColumnsComponent,
     DatagridSelectionDemoComponent,
+    LayoutRowComponent,
+    HeaderGroupDemoComponent
 
   ],
   imports: [

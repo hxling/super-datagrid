@@ -80,7 +80,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 高度 */
     @Input() height = 400;
     /** 表头高度 */
-    @Input() headerHeight = 36;
+    @Input() headerHeight = 40;
     /** 行高 */
     @Input() rowHeight = 36;
     /** 填充容器 */
@@ -178,8 +178,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 数据为空时显示的信息 */
     @Input() emptyMsg = '';
     /** 列集合 */
-    @Input() columns: DataColumn[] | DataColumn[][];
-    @Input() fields: DataColumn[] | DataColumn[][];
+    @Input() columns: any;
+    @Input() fields: any;
     /** 数据折行，默认值：true,即在一行显示，不折行。 */
     @Input() nowrap = true;
     /** 虚拟加载 */
@@ -274,6 +274,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     selectedRow: SelectedRow;
     currentCell: CellInfo;
+    flatColumns: DataColumn[];
 
     clickDelay = 200;
     private resizeColumnInfo = {
@@ -284,6 +285,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     private ro: ResizeObserver | null = null;
     subscriptions: Subscription[] = [];
+    realHeaderHeight = 0;
 
     docuemntCellClickEvents: any;
     documentCellClickHandler: any;
@@ -341,13 +343,22 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (!this.columns) {
             this.columns = this.fields;
         }
+
+        if (this.columns && this.columns.length) {
+            if (!Array.isArray(this.columns[0])) {
+                this.columns = [ ...this.columns ];
+            }
+        }
+
+        this.flatColumns = this.columns['flat']().filter(col => !col.colspan);
+        this.realHeaderHeight = this.columns.length * this.headerHeight;
     }
 
     ngAfterViewInit(): void {
-        this.setHeaderHeight();
         this.setPagerHeight();
-
+        // this.setHeaderHeight();
         this.initState();
+
         if (!this.data || !this.data.length) {
             this.fetchData(1, this.pageSize).subscribe( res => {
                 if (!res) {
@@ -540,9 +551,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
     }
 
-    private setHeaderHeight() {
-        this.headerHeight = this.dgHeader.height;
-    }
+    // private setHeaderHeight() {
+    //     this.dgHeader.setHeight();
+    //     this.headerHeight = this.dgHeader.height;
+    //     this.dfs.updateProperty('headerHeight', this.headerHeight);
+    // }
 
     private findNextCell(field: string, dir: MoveDirection) {
         let td = null;

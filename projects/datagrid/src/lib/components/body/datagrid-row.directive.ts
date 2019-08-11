@@ -66,7 +66,7 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
 
     createControl() {
         const group = this.fb.group({});
-        this.dg.columns.forEach(col => {
+        this.dg.flatColumns.forEach(col => {
             if (!col.editor) {return; }
             const control = this.fb.control(
                 this.rowData[col.field],

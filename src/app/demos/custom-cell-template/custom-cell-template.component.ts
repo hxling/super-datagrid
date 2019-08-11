@@ -33,7 +33,7 @@ export class CustomCellComponent implements OnInit {
             { field: 'addr', width: 170, title: '地址' },
             { field: 'company', width: 100, title: '公司' },
             { field: 'zhiwei', width: 100, title: '职位' },
-            { title: '管理', width: 200, template: this.cell1, align: 'center', hAlign: 'center', fixed: 'right' }
+            { title: '管理', width: 200, template: this.cell1, align: 'center', halign: 'center', fixed: 'right' }
         ];
 
         this.total = 1000;
