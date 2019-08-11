@@ -346,7 +346,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         if (this.columns && this.columns.length) {
             if (!Array.isArray(this.columns[0])) {
-                this.columns = [ ...this.columns ];
+                this.columns = [ this.columns ];
             }
         }
 

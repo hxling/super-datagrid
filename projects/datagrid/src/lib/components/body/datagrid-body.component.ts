@@ -1,10 +1,8 @@
 import {
     Component, OnInit, Input, ViewChild, Renderer2,
     ElementRef, OnDestroy, ChangeDetectorRef,
-    OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone, AfterViewInit
+    OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone
 } from '@angular/core';
-
-import { Subscription } from 'rxjs';
 
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { ScrollbarDirective } from '../../scrollbar/scrollbar.directive';
@@ -69,15 +67,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this._hoverRowIndex = rowIdx;
         this.cd.detectChanges();
     }
-
-    // set rowHeightList(list: number[]) {
-    //     this.wheelHeight = list.reduce((r, c) => r + c , 0);
-    //     if (this.fixedLeftEl) {
-    //         const trdoms = this.fixedLeftEl.nativeElement.querySelectorAll('.fixed-left-row');
-    //         trdoms.forEach( (tr, i) => tr.style.height = list[i] + 'px' );
-    //     }
-    //     this.cd.detectChanges();
-    // }
 
     constructor(
         private cd: ChangeDetectorRef, private el: ElementRef,
@@ -211,10 +200,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnDestroy() {
-        // if (this.rowHoverSubscription) {
-        //     this.rowHoverSubscription.unsubscribe();
-        //     this.rowHoverSubscription = null;
-        // }
     }
 
     updateRowHeight(list: number[]) {
