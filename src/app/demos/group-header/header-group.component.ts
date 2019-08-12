@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 18:22:57
+ * @LastEditTime: 2019-08-12 19:07:41
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -24,7 +24,7 @@ export class HeaderGroupDemoComponent implements OnInit {
     pageIndex = 1;
     footerItems = [];
 
-    showBorder = false;
+    showBorder = true;
     constructor(private dds: DemoDataService) {}
 
     ngOnInit() {
