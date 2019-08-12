@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-12 07:47:12
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-12 10:51:16
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import {
     Component, OnInit, Input, ViewChild, Renderer2,
     ElementRef, OnDestroy, ChangeDetectorRef,
@@ -90,7 +98,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.updateColumnSize(state.columnsGroup);
 
                 this.setWheelHeight();
-                this.fixedRightScrollLeft = this.width - this.rightFixedWidth;
+                this.fixedRightScrollLeft = this.scrollLeft + this.width - this.rightFixedWidth;
                 this.bodyStyle = this.getBodyStyle();
                 this.maxScrollLeft = this.colsWidth + this.leftFixedWidth;
                 if (this.colsWidth + this.leftFixedWidth === this.fixedRightScrollLeft) {

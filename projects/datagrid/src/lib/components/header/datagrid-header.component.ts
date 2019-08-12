@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 09:46:35
+ * @LastEditTime: 2019-08-12 10:43:33
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -23,6 +23,7 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 })
 export class DatagridHeaderComponent implements OnInit, AfterViewInit {
     @Input() height = 36;
+    @Input() columns = [];
     @Input() columnsGroup: ColumnGroup;
 
     @ViewChild('header') header: ElementRef;

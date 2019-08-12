@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 09:11:35
+ * @LastEditTime: 2019-08-12 10:43:20
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -50,7 +50,7 @@
     style="position: absolute;">
         <table style="width:100%"  cellpadding="0" cellspacing="0" border="0">
             <thead>
-                <tr class="f-datagrid-header-row" *ngFor="let cols of dg.columns">
+                <tr class="f-datagrid-header-row" *ngFor="let cols of columns">
 
                     <ng-container *ngFor="let col of cols">
                         <ng-container *ngIf="col.colspan">
