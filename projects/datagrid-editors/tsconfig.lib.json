@@ -17,8 +17,8 @@
       "es2018"
     ],
     "paths": {
-      "@farris/ui-datagrid-editors": [
-        "dist/@farris/ui-datagrid-editors"
+      "@farris/ui-datagrid": [
+        "dist/@farris/ui-datagrid"
       ]
     }
   },

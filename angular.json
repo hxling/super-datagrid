@@ -169,6 +169,41 @@
           }
         }
       }
+    },
+    "datagrid-editors": {
+      "root": "projects/datagrid-editors",
+      "sourceRoot": "projects/datagrid-editors/src",
+      "projectType": "library",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/datagrid-editors/tsconfig.lib.json",
+            "project": "projects/datagrid-editors/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/datagrid-editors/src/test.ts",
+            "tsConfig": "projects/datagrid-editors/tsconfig.spec.json",
+            "karmaConfig": "projects/datagrid-editors/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/datagrid-editors/tsconfig.lib.json",
+              "projects/datagrid-editors/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "farris-datagrid"

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 14:58:19
+ * @LastEditTime: 2019-08-12 11:44:58
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -17,6 +17,7 @@ import { AppComponent } from './app.component';
 
 import { InputGroupModule} from '@farris/ui-input-group';
 
+import { DatagridTextboxComponent, DatagridEditorsModule } from '@farris/ui-datagrid-editors';
 import { DatagridModule, ScrollbarModule, GRID_EDITORS } from '@farris/ui-datagrid';
 
 import { FarrisDatePickerModule } from '@farris/ui-datepicker';
@@ -63,7 +64,9 @@ import { HeaderGroupDemoComponent } from './demos/group-header/header-group.comp
     FormsModule,
     ReactiveFormsModule,
     ScrollbarModule,
+    DatagridEditorsModule,
     DatagridModule.forRoot([
+      { provide: GRID_EDITORS, useValue: { name: 'textbox2', value: DatagridTextboxComponent }, multi: true },
       { provide: GRID_EDITORS, useValue: { name: 'input-group', value: MyCustomGridEditorComponent }, multi: true }
     ]),
     FarrisDatePickerModule,

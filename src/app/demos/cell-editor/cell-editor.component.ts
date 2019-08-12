@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-12 11:31:49
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { Component, OnInit } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
 
@@ -22,7 +30,7 @@ export class CellEditorComponent implements OnInit {
 
         this.columns = [
             { field: 'id', width: 100, title: 'ID' },
-            { field: 'name', width: 130, title: '姓名', editor: { type: 'textbox', bindingData: 'name', options: {}}},
+            { field: 'name', width: 130, title: '姓名', editor: { type: 'textbox2', bindingData: 'name', options: {}}},
             { field: 'sex', width: 70, title: '性别', editor: {type: 'input-group'} },
             { field: 'birthday', width: 120, title: '出生日期', editor: { type: 'textbox', bindingData: 'birthday', options: {}}},
             { field: 'maray', width: 70, title: '婚否', editor: { type: 'textbox', bindingData: 'maray', options: {}}},

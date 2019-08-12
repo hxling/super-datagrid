@@ -1,8 +1,17 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-12 11:24:33
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 
 /*
  * Public API Surface of datagrid
  */
 
+export * from './lib/types/data-column';
 export * from './lib/types/constant';
 export { DatagridCellComponent, DatagridRowDirective,
          DatagridBodyComponent, DatagridCellEditableDirective} from './lib/components/body/index';

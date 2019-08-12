@@ -24,6 +24,12 @@
       ],
       "datagrid/*": [
         "dist/datagrid/*"
+      ],
+      "datagrid-editors": [
+        "dist/datagrid-editors"
+      ],
+      "datagrid-editors/*": [
+        "dist/datagrid-editors/*"
       ]
     }
   }
