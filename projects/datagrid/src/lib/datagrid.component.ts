@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-10 16:23:53
+ * @LastEditTime: 2019-08-12 09:49:16
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -36,30 +36,6 @@ import { DomHandler } from './services/domhandler';
         DatagridService
     ],
     exportAs: 'datagrid',
-    styles: [
-        `
-        .f-datagrid-wrap .f-datagrid-cell-content {
-            white-space: normal;
-            word-break: break-all;
-            word-spacing: normal;
-            height: auto;
-            line-height: 24px;
-        }
-        .f-datagrid-resize-proxy {
-            width: 1px;
-            border-left: 1px dashed #939292;
-            left: 0px;
-            display: none;
-            position: absolute;
-            height: 100%;
-            z-index: 99;
-        }
-
-        .f-datagrid-resize-bg{
-            z-index: 98;width: 100%;height: 100%;background: transparent;position: absolute; display: none;
-        }
-        `
-    ],
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-10 13:59:03
+ * @LastEditTime: 2019-08-12 09:46:35
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -19,43 +19,6 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 @Component({
     selector: 'datagrid-header',
     templateUrl: './header.component.html',
-    styles: [`
-        .f-datagrid-sort {
-            float: right;
-            width: 20px;
-            text-align: center;
-            cursor: pointer;
-            opacity: .65;
-        }
-
-        .f-datagrid-sort:hover {
-            color: blue;
-            opacity: 1;
-        }
-        .f-datagrid-sort-asc, .f-datagrid-sort-desc {
-            opacity: 1;
-        }
-
-        .f-datagrid-header-cell-resize {
-            background-clip: padding-box;
-            position: relative;
-        }
-        .column-resize-bar {
-            display: block;
-            position: absolute;
-            top: 0;
-            right: 0;
-            margin: 0;
-            width: 5px;
-            height: 100%;
-            padding: 0;
-            cursor: col-resize;
-            border: 1px solid transparent;
-        }
-        .f-datagrid-header-cell-group {
-            border-bottom-width: 1px!important;
-        }
-    `],
     encapsulation: ViewEncapsulation.None
 })
 export class DatagridHeaderComponent implements OnInit, AfterViewInit {

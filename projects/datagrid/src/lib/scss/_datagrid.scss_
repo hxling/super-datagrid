@@ -4,14 +4,12 @@
 $grid-prefix: 'f-datagrid';
 $cell-height: 36px;
 
-$header-cell-height:40px;
+$header-cell-height: 40px;
 
 $selected-cell-bgcolor: #dce7ff;
 $selected-cell-border-color: #388fff;
 
 $row-number-bgcolor: #fafafa;
-
-
 
 .#{$grid-prefix} {
   display: flex;
@@ -249,7 +247,6 @@ $row-number-bgcolor: #fafafa;
       height: $farris-grid-pager-height;
       align-items: center;
     }
-
   }
 
   .ps--active-x>.ps__rail-x,
@@ -310,9 +307,7 @@ $row-number-bgcolor: #fafafa;
       }
 
       .f-datagrid-row-even {
-
         .f-datagrid-cell {
-
           //  background-color: transparent;
         }
       }

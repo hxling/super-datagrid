@@ -2,8 +2,14 @@
 $cell-height:           36px;
 $header-cell-height:    40px;
 
-$border-color: #CBCBCB;
+$grid-border-color: #e9e9e9;
+$grid-bgcolor: #fff;
+$grid-text-color: rgba(0,0,0,.75);
+
+$border-color: $grid-border-color;
 $header-bgcolor: #fafafa;
+$header-color: #000;
+$header-hover-bgcolor: #e6e6e6;
 
 $strip-row-bgcolor: #f2f2f2;
 
@@ -20,3 +26,9 @@ $row-hover-bgcolor: #f3fbff;
 $row-hover-color: rgb(0, 0, 0);
 
 $row-number-bgcolor: #fafafa;
+
+$pager-height: 3.5rem;
+$pager-bgcolor: #fff;
+$pager-border-color: $grid-border-color;
+
+$resize-proxy-border-color: #939292;
