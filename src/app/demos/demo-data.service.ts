@@ -3,7 +3,7 @@ import { Utils } from './utils';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-07-29 08:14:22
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 15:35:09
+ * @LastEditTime: 2019-08-12 18:24:14
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -88,6 +88,21 @@ export class DemoDataService implements RestService {
             });
         }
         this.data = arr;
+        return arr;
+    }
+
+    createFooterData() {
+        const arr = [];
+        arr.push({
+            id: '合计',
+            nianxin: '￥123456'
+        });
+
+        arr.push({
+            name: '总记录数：',
+            sex: '100条'
+        });
+
         return arr;
     }
 

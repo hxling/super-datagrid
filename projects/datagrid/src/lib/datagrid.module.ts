@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 10:13:55
+ * @LastEditTime: 2019-08-12 15:10:29
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -36,6 +36,7 @@ import { DatagridCheckboxComponent } from './components/checkbox/datagrid-checkb
 import { DatagridHeaderCheckboxComponent } from './components/checkbox/datagrid-header-checkbox.component';
 import { DatagridResizeColumnDirective } from './components/header/datagrid-resize-column.directive';
 import { SafePipe } from './utils/safe.pipe';
+import { DatagridFooterComponent } from './components/footer/datagrid-footer.component';
 
 
 
@@ -56,6 +57,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
     declarations: [
         SafePipe,
         DatagridHeaderComponent,
+        DatagridFooterComponent,
         DatagridResizeColumnDirective,
         DatagridCellEditableDirective,
         DatagridCellComponent,

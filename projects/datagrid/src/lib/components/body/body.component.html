@@ -1,3 +1,11 @@
+<!--
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-12 15:37:13
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ -->
 <div  class="f-datagrid-body" [ngStyle]="bodyStyle" [style.top.px]="top">
 
     <div [scrollbar]="psConfig" class="ps f-datagrid-body-wheel-area" #ps="ngxScrollbar"
@@ -29,7 +37,6 @@
                     </tr>
                 </table>
             </div>
-            
 
             <div #fixedRight class="f-datagrid-body-fixed-right" [style.width.px]="rightFixedWidth" 
                 *ngIf="columnsGroup?.rightFixed && columnsGroup?.rightFixed.length"

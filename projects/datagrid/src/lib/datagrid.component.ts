@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 09:49:16
+ * @LastEditTime: 2019-08-12 17:41:06
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -55,8 +55,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() width = 800;
     /** 高度 */
     @Input() height = 400;
+    /** 显示表头 */
+    @Input() showHeader = true;
     /** 表头高度 */
     @Input() headerHeight = 40;
+    /** 显示页脚 */
+    @Input() showFooter = false;
+    @Input() footerHeight = 36;
     /** 行高 */
     @Input() rowHeight = 36;
     /** 填充容器 */
@@ -87,8 +92,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() disabled = false;
     @Input() lockPagination = false;
 
-    /** 显示表头 */
-    @Input() showHeader = true;
     /** 可拖动列设置列宽 */
     @Input() resizeColumn = true;
     /** 显示行号 */
@@ -150,6 +153,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() url: string;
     /** 数据源 */
     @Input() data: any[];
+    @Input() footerData: any[] = [];
+
 
     /** 数据为空时显示的信息 */
     @Input() emptyMsg = '';
@@ -251,6 +256,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     selectedRow: SelectedRow;
     currentCell: CellInfo;
     flatColumns: DataColumn[];
+    footerWidth  = 0;
 
     clickDelay = 200;
     private resizeColumnInfo = {
@@ -287,6 +293,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         const columnGroupSubscription = this.dfs.columnGroup$.subscribe(cg => {
             if (cg) {
                 this.colGroup = cg;
+                this.footerWidth = cg.totalWidth;
                 this.cd.detectChanges();
             }
         });

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 10:51:16
+ * @LastEditTime: 2019-08-12 17:41:34
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -91,7 +91,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             if (state) {
                 this.top = this.dg.realHeaderHeight;
                 const pagerHeight = state.pagerHeight;
-                this.height = state.height - this.top - pagerHeight;
+                const footerHeight = this.dg.showFooter ? this.dg.footerHeight * this.dg.footerData.length : 0;
+                this.height = state.height - this.top - pagerHeight - footerHeight;
                 this.width = state.width;
                 this.rowHeight = state.rowHeight;
 

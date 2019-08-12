@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-07-29 08:07:54
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-12 17:04:03
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { Component, OnInit } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
 
@@ -12,6 +20,7 @@ export class NormalDatagridComponent implements OnInit {
     showLoading = false;
     columns = [];
     items = [];
+    footerItems = [];
     total = 0;
     pageSize = 200;
     pageIndex = 1;
@@ -34,5 +43,6 @@ export class NormalDatagridComponent implements OnInit {
 
         this.total = 100;
         this.items = this.dds.createData(100);
+        this.footerItems = this.dds.createFooterData();
     }
 }

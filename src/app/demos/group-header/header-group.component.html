@@ -1,9 +1,24 @@
+<!--
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-12 07:47:12
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-12 18:23:46
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ -->
 <layout-row>
 
+    <div region="north">
+        <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+            <input id="chk_showBorder" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showBorder">
+            <label for="chk_showBorder" class="custom-control-label">显示边框线 </label>
+        </div>
+    </div>
+
     <div region="center" style="height: 100%">
-        <farris-datagrid [columns]="columns" [data]="items" #dg="datagrid" [fit]="true"
-            [showLineNumber] ="true" [striped]="true" [showCheckbox]="false" [fitColumns]="true"
-            [virtualized]="false" [keepSelect]="false" [nowrap]="true" [showBorder]="true"
+        <farris-datagrid [columns]="columns" [data]="items" #dg="datagrid" [fit]="true"  [footerData]="footerItems"
+            [showLineNumber] ="true" [striped]="true" [showCheckbox]="false" [fitColumns]="true" [showFooter]="true"
+            [virtualized]="false" [keepSelect]="false" [nowrap]="true" [showBorder]="showBorder"
             [pagination]="false" [pageSize]= "pageSize" [pageIndex]="pageIndex"  [total]="total"
         ></farris-datagrid>
     </div>

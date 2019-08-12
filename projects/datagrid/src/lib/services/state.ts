@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-12 07:47:12
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-12 16:59:11
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { ColumnGroup, DataColumn } from './../types';
 
 export interface Action {
@@ -99,6 +107,7 @@ export interface CellInfo {
 }
 
 export interface DataResult {
+    footer?: any[];
     items: any[];
     total?: number;
     pageIndex?: number;

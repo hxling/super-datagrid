@@ -80,11 +80,11 @@ farris-datagrid {
   width: 0.5em;
   height: 100%;
   padding: 0;
-  cursor: col-resize;
+  cursor: e-resize;
   border: 1px solid transparent;
 }
 .f-datagrid-header-cell-group {
-  border-bottom-width: 1px !important;
+  border-bottom: 1px solid #e9e9e9 !important;
 }
 .f-datagrid-header-fixed-left, .f-datagrid-header-fixed-right {
   position: absolute;
@@ -191,7 +191,8 @@ farris-datagrid {
   line-height: calc(36px - 3px);
 }
 .f-datagrid-cell-content > span {
-  padding: 5px;
+  padding: 0 5px;
+  display: block;
 }
 .f-datagrid-cell-rownumber {
   background-color: #fafafa !important;
@@ -306,6 +307,19 @@ farris-datagrid {
   word-spacing: normal;
   height: auto;
   line-height: 24px;
+}
+.f-datagrid-footer {
+  background: #fff;
+  z-index: 97;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  min-height: 36px;
+  border-top: 1px solid #ccc;
+}
+.f-datagrid-footer table {
+  table-layout: fixed;
 }
 
 /*

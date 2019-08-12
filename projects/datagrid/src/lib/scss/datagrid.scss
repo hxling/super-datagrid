@@ -78,13 +78,13 @@
                     width: .5em;
                     height: 100%;
                     padding: 0;
-                    cursor: col-resize;
+                    cursor: e-resize;
                     border: 1px solid transparent;
                 }
             }
 
             &-group {
-                border-bottom-width: 1px!important;
+                border-bottom: 1px solid $border-color!important;
             }
         
         }
@@ -227,7 +227,8 @@
             line-height: calc(#{$cell-height} - 3px);
 
             &>span {
-                padding: 5px;
+                padding: 0 5px;
+                display: block;
             }
         }
 
@@ -376,6 +377,21 @@
         word-spacing: normal;
         height: auto;
         line-height: 24px;
+    }
+
+    &-footer {
+        background: #fff;
+        z-index: 97;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        min-height: 36px;
+        border-top:1px solid #ccc;
+
+        table {
+            table-layout: fixed;
+        }
     }
 }
  
