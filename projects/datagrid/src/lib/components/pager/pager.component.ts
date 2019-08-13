@@ -1,11 +1,21 @@
-import { Component, OnInit, Input, Output, EventEmitter, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-13 09:41:26
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
+import { Component, OnInit, Input, Output, EventEmitter, ElementRef, AfterViewInit, ViewChild, HostBinding } from '@angular/core';
 import { PaginationControlsDirective } from './../../pagination/pagination-controls.directive';
 import { PaginationControlsComponent } from '../../pagination/pagination-controls.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'datagrid-pager',
     template: `
-    <div class="f-datagrid-pager" #pagerContainer>
+    <div class="f-datagrid-pager" #pagerContainer [ngStyle]="styles">
         <pagination-controls #pager [id]="id" [maxSize]="maxSize" [directionLinks]="directionLinks" [showPageList]="showPageList"
             [autoHide]="autoHide" [responsive]="responsive" [previousLabel]="previousLabel" [nextLabel]="nextLabel"
             (pageChange)="onPageChange($event)"
@@ -15,6 +25,7 @@ import { PaginationControlsComponent } from '../../pagination/pagination-control
     `
 })
 export class DatagridPagerComponent implements OnInit, AfterViewInit {
+
     @Input() id = 'farris-datagrid-pager';
     /** 显示页码的数量 */
     @Input() maxSize = 7;
@@ -29,6 +40,7 @@ export class DatagridPagerComponent implements OnInit, AfterViewInit {
     /** 下页标签 */
     @Input() nextLabel = '下页';
     @Input() showPageList = false;
+    @Input() locked = false;
 
     @Output() pageChange = new EventEmitter();
     @Output() pageSizeChange = new EventEmitter();
@@ -41,8 +53,9 @@ export class DatagridPagerComponent implements OnInit, AfterViewInit {
     }
 
     outerHeight: number;
+    styles = { opacity: 1 };
 
-    constructor(public el: ElementRef) {}
+    constructor(public el: ElementRef, private cd: ChangeDetectorRef) {}
 
     ngOnInit(): void {
     }
@@ -57,5 +70,16 @@ export class DatagridPagerComponent implements OnInit, AfterViewInit {
 
     onPageSizeChange(pageSize: any) {
         this.pageSizeChange.emit(Number.parseInt(pageSize, 10));
+    }
+
+    lock() {
+        this.locked = true;
+        this.styles = {opacity: 0.5 };
+        this.cd.detectChanges();
+    }
+    unlock() {
+        this.locked = false;
+        this.styles = {opacity: 1 };
+        this.cd.detectChanges();
     }
 }

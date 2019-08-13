@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-10 11:02:50
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 17:08:19
+ * @LastEditTime: 2019-08-13 08:44:28
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -17,7 +17,7 @@
             
     <datagrid-footer [width]="footerWidth" [columns]="colGroup?.normalColumns" [data]="footerData" *ngIf="showFooter"></datagrid-footer>
     
-    <datagrid-pager *ngIf="pagination" #dgPager [showPageList]="showPageList" [id]="pagerOpts.id"
+    <datagrid-pager *ngIf="pagination" #dgPager [showPageList]="showPageList" [id]="pagerOpts.id" [locked]="lockPagination"
         (pageChange)="onPageChange($event)" (pageSizeChange)="onPageSizeChange($event)"></datagrid-pager>
 
     <div class="f-datagrid-resize-bg" #resizeProxyBg></div>

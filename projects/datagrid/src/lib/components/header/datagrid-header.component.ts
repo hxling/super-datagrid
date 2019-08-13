@@ -2,12 +2,13 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 10:43:33
+ * @LastEditTime: 2019-08-13 19:24:30
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 
-import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef,
+    AfterViewInit, ViewEncapsulation, Injector, Inject, forwardRef } from '@angular/core';
 import { DataColumn } from './../../types/data-column';
 import { ColumnGroup } from '../../types/data-column';
 import { DatagridService } from '../../services/datagrid.service';
@@ -47,8 +48,15 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
         }
     }
 
-    constructor( private dgs: DatagridService, private dfs: DatagridFacadeService,
-                 private render2: Renderer2, public dg: DatagridComponent) {
+    private dgs: DatagridService;
+    private dfs: DatagridFacadeService;
+
+    constructor(
+        private render2: Renderer2, private injector: Injector,
+        @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent ) {
+        this.dfs = this.injector.get(DatagridFacadeService);
+        this.dgs = this.injector.get(DatagridService);
+
         this.dgs.scorll$.subscribe((d: any) => {
             if (d.type === SCROLL_X_ACTION) {
                 this.render2.setStyle(this.headerColumnsTable.nativeElement,  'transform', `translate3d(-${d.x}px, 0px, 0px)` );

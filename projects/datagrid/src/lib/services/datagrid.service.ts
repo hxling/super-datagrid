@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:53
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-13 20:30:07
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { CellInfo } from './state';
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';

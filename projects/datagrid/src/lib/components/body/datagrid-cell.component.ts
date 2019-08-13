@@ -1,6 +1,14 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:53
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-13 19:20:00
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { Component, OnInit, Input, Output, EventEmitter,
-    ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef,
-    OnDestroy, ComponentFactoryResolver, NgZone, ViewRef } from '@angular/core';
+    ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef,
+    OnDestroy, Injector, Inject, forwardRef } from '@angular/core';
 import { Utils } from '../../utils/utils';
 import { filter } from 'rxjs/operators';
 import { DataColumn } from '../../types/data-column';
@@ -44,12 +52,14 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
 
     cellStyler: any = {};
 
+    private dfs: DatagridFacadeService;
     canEdit = () => this.dg.editable && this.dg.editMode === 'cell' && this.column.editor;
     constructor(
-        private dfs: DatagridFacadeService, public dr: DatagridRowDirective,
-        private render2: Renderer2, private el: ElementRef,
-        private dg: DatagridComponent, private cfr: ComponentFactoryResolver,
-        private cd: ChangeDetectorRef, private zone: NgZone) { }
+        @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
+        @Inject(forwardRef(() => DatagridRowDirective)) public dr: DatagridRowDirective,
+        private el: ElementRef, private cd: ChangeDetectorRef, private injector: Injector) {
+        this.dfs = this.injector.get(DatagridFacadeService);
+    }
 
     ngOnInit(): void {
         this.cellContext = {

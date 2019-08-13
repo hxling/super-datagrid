@@ -1,6 +1,14 @@
-import { FormBuilder, FormGroup } from '@angular/forms';
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-12 07:47:12
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-13 19:21:24
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Directive, Input, Output, EventEmitter, HostListener,
-    OnInit, ElementRef, Renderer2, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+    OnInit, ElementRef, AfterViewInit, Injector, Inject, forwardRef } from '@angular/core';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
 
@@ -14,10 +22,12 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
     @Output() clickHandler = new EventEmitter();
 
     form = new FormGroup({});
-
-    constructor(public dg: DatagridComponent, private dfs: DatagridFacadeService,
-                private cd: ChangeDetectorRef,
-                private fb: FormBuilder, private el: ElementRef, private render: Renderer2) {}
+    private dfs: DatagridFacadeService;
+    constructor(
+        @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
+        private injector: Injector, private fb: FormBuilder, private el: ElementRef) {
+        this.dfs = this.injector.get(DatagridFacadeService);
+    }
 
     ngOnInit() {
         this.form = this.createControl();
@@ -70,10 +80,21 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
             if (!col.editor) {return; }
             const control = this.fb.control(
                 this.rowData[col.field],
-                // this.bindValidations(field.validations || [])
+                {
+                    validators: this.bindValidations(col),
+                    updateOn: 'change'
+                }
             );
             group.addControl(col.field, control);
         });
         return group;
+    }
+
+    private bindValidations(col) {
+        return [
+            Validators.required,
+            Validators.maxLength(10),
+            Validators.minLength(3)
+        ];
     }
 }

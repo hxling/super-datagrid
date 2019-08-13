@@ -1,6 +1,14 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-13 19:19:17
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { DatagridService } from './../../services/datagrid.service';
 import { DatagridCellComponent } from './datagrid-cell.component';
-import { Directive, Input, ElementRef, Renderer2, OnInit, ContentChild, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Directive, Input, ElementRef, Renderer2, OnInit, ContentChild, OnDestroy, Injector, forwardRef, Inject } from '@angular/core';
 import { DatagridBodyComponent } from './datagrid-body.component';
 import { DatagridRowDirective } from './datagrid-row.directive';
 import { DataColumn } from './../../types/data-column';
@@ -29,7 +37,10 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     private editorInputKeydownEvent: any;
 
     @ContentChild(DatagridCellComponent) dc: DatagridCellComponent;
-
+    private dgb: DatagridBodyComponent;
+    private dr: DatagridRowDirective;
+    private dfs: DatagridFacadeService;
+    private dgs: DatagridService;
     private isDifferentCell = () => {
         if (!this.dg.currentCell) {
             return true;
@@ -38,10 +49,13 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         }
     }
 
-    constructor(private dfs: DatagridFacadeService, private dr: DatagridRowDirective,
-                private dgb: DatagridBodyComponent, private cd: ChangeDetectorRef,
-                private dgs: DatagridService,
-                public el: ElementRef, private render: Renderer2, private dg: DatagridComponent) {
+    constructor(
+        private injector: Injector, public el: ElementRef, private render: Renderer2,
+        @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent) {
+        this.dgb = this.injector.get(DatagridBodyComponent);
+        this.dr = this.injector.get(DatagridRowDirective);
+        this.dfs = this.injector.get(DatagridFacadeService);
+        this.dgs = this.injector.get(DatagridService);
     }
 
     ngOnInit() {

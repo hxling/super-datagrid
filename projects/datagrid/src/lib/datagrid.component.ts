@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 17:41:06
+ * @LastEditTime: 2019-08-13 17:59:31
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -90,7 +90,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     @Input() disabled = false;
-    @Input() lockPagination = false;
 
     /** 可拖动列设置列宽 */
     @Input() resizeColumn = true;
@@ -103,6 +102,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 允许编辑时，单击进入编辑状态 */
     @Input() clickToEdit = false;
 
+    private _lockPagination = false;
+    @Input() get lockPagination() {
+        return this._lockPagination;
+    }
+    set lockPagination(val: boolean) {
+        this._lockPagination = val;
+        if (this.dgPager) {
+            this.dgPager[val ? 'lock' : 'unlock']();
+        }
+    }
     /** 分页信息 */
     @Input() pagination = true;
     /** 每页记录数 */
@@ -223,7 +232,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @ViewChild('datagridContainer') dgContainer: ElementRef;
 
     colGroup: ColumnGroup;
-    data$ = this.dfs.data$;
 
     private _loading = false;
     get loading() {
@@ -274,16 +282,19 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     documentCellKeydownEvents: any;
     documentCellKeydownHandler: any;
 
-    constructor(private dfs: DatagridFacadeService,
-                private dgs: DatagridService,
-                public cd: ChangeDetectorRef,
+    private dfs: DatagridFacadeService;
+    private dgs: DatagridService;
+
+    constructor(public cd: ChangeDetectorRef,
                 public el: ElementRef,
                 private inject: Injector, private zone: NgZone,
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
 
         this.restService = this.inject.get<RestService>(DATAGRID_REST_SERVICEE, null);
+        this.dfs = this.inject.get(DatagridFacadeService);
+        this.dgs = this.inject.get(DatagridService);
 
-        const dataSubscription = this.data$.subscribe( (dataSource: any) => {
+        const dataSubscription = this.dfs.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
             this.cd.detectChanges();
             this.loadSuccess.emit(this.ds.rows);

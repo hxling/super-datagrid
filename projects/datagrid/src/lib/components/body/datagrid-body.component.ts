@@ -2,14 +2,14 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 17:41:34
+ * @LastEditTime: 2019-08-13 20:07:48
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import {
     Component, OnInit, Input, ViewChild, Renderer2,
     ElementRef, OnDestroy, ChangeDetectorRef,
-    OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone
+    OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone, Injector, forwardRef, Inject, Optional
 } from '@angular/core';
 
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
@@ -61,10 +61,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     private scrollTimer: any = null;
 
-    gridsize$ = this.dfs.gridSize$;
-    selectedRow$ = this.dfs.selectRow$;
-    unSelectRow$ = this.dfs.unSelectRow$;
-
     currentRowId = undefined;
 
     private _hoverRowIndex = -1;
@@ -76,10 +72,15 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.cd.detectChanges();
     }
 
+    private dfs: DatagridFacadeService;
+    private dgs: DatagridService;
     constructor(
-        private cd: ChangeDetectorRef, private el: ElementRef,
-        private dfs: DatagridFacadeService, public dg: DatagridComponent,
-        private render: Renderer2, private dgs: DatagridService, private zone: NgZone) {
+        private injector: Injector,
+        @Optional() public dg: DatagridComponent,
+        private cd: ChangeDetectorRef, private el: ElementRef
+    ) {
+        this.dfs = this.injector.get(DatagridFacadeService);
+        this.dgs = this.injector.get(DatagridService);
     }
 
     ngOnInit(): void {
@@ -87,7 +88,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     private listenSubjects() {
-        const initSubscrition = this.gridsize$.subscribe(state => {
+        const initSubscrition = this.dfs.gridSize$.subscribe(state => {
             if (state) {
                 this.top = this.dg.realHeaderHeight;
                 const pagerHeight = state.pagerHeight;
@@ -128,7 +129,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         );
 
         this.dg.subscriptions.push(
-            this.selectedRow$.subscribe((row: SelectedRow) => {
+            this.dfs.selectRow$.subscribe((row: SelectedRow) => {
                 if (row) {
                     this.currentRowId = row.id;
                     this.dg.selectedRow = row;
@@ -138,7 +139,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             })
         );
         this.dg.subscriptions.push(
-            this.unSelectRow$.subscribe((prevRow: SelectedRow) => {
+            this.dfs.unSelectRow$.subscribe((prevRow: SelectedRow) => {
                 this.currentRowId = undefined;
                 this.dg.selectedRow = null;
                 this.dg.unSelect.emit(prevRow);

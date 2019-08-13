@@ -1,11 +1,11 @@
-import { Directive, Input, NgZone, ElementRef, Renderer2, AfterViewInit, OnDestroy } from '@angular/core';
+import { Directive, Input, NgZone, ElementRef, Renderer2, AfterViewInit, OnDestroy, Injector, forwardRef, Inject } from '@angular/core';
 import { DataColumn } from '../../types/data-column';
 import { DatagridComponent } from './../../datagrid.component';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-10 09:04:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-10 16:06:08
+ * @LastEditTime: 2019-08-13 19:25:18
  * @QQ: 1055818239
  * @Version: v0.0.12
  */
@@ -21,8 +21,11 @@ export class DatagridResizeColumnDirective implements AfterViewInit, OnDestroy {
     documentMouseUpListener: any;
     dblclickListener: any;
 
-    // private isSingleClick = true;
-    constructor(public ngzone: NgZone, public el: ElementRef, public render: Renderer2, private dg: DatagridComponent) {}
+    constructor(
+        @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
+        public ngzone: NgZone, public el: ElementRef, public render: Renderer2
+    ) {
+    }
 
     ngAfterViewInit() {
         if (this.isEnable) {
