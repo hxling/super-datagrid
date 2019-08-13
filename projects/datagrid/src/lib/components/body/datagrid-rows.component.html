@@ -1,4 +1,15 @@
+<!--
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-13 07:56:49
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ -->
 <table #tableEl style="border:0; width: 100%" class="f-datagrid-rows" cellpadding=0 cellspacing="0">
+    <colgroup>
+        <col *ngFor="let col of columns" [width]="col.width + 'px'"/>
+    </colgroup>
     <tr class="f-datagrid-body-row" [row-hover]="row"  #hoverRow="rowHover" [attr.id]="'row-'+ dr.rowIndex "
         [grid-row]="row" [rowIndex]="startRowIndex + i" #dr="gridRow" [formGroup]="dr.form"
         *ngFor="let row of data ; trackBy: dg.trackByRows; let i = index; odd as odd"
@@ -8,7 +19,7 @@
         [class.f-datagrid-row-hover]="dg.rowHover && dgb.hoverRowIndex === hoverRow.rowIndex"
     >
         <td [cell-editable]="row" [column]="col"
-            class="f-datagrid-cell" [attr.align]="col.align" [style.width.px]="col.width" *ngFor="let col of columns; let ci = index;">
+            class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columns; let ci = index;">
             <grid-body-cell [width]="col.width" [height]="dg.rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
         </td>
     </tr>

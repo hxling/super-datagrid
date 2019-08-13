@@ -2,17 +2,22 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 15:02:10
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 17:27:49
+ * @LastEditTime: 2019-08-13 08:33:42
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
-<div #footerContainer class="f-datagrid-footer" [style.height.px]="height" [style.width.px]="width + 6">
+<div #footerContainer class="f-datagrid-footer" [style.height.px]="height" [style.width.px]="width">
     <!-- 你瞅啥？ 瞅你咋地！！！ -->
     <table #tableEl style="border:0; width: 100%" class="f-datagrid-rows" cellpadding=0 cellspacing="0">
-        <tr class="f-datagrid-body-row" *ngFor="let row of data; let i = index; odd as odd">
-            <td class="f-datagrid-cell" [attr.align]="col.align" 
-                [style.width.px]="isFirst ? col.width + 36 : col.width" *ngFor="let col of columns; let isFirst = first">
-                {{ row[col.field] || '' }}
+        <colgroup>
+            <col *ngIf="dg.showLineNumber" width="36px">
+            <col [width]="col.width + 'px'" *ngFor="let col of columns; let isFirst = first">
+        </colgroup>
+        
+        <tr class="f-datagrid-body-row" *ngFor="let row of data">
+            <td *ngIf="dg.showLineNumber"> </td>
+            <td class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columns; let isFirst = first">
+                <div [style.width.px]="col.width">{{ row[col.field] || ' ' }}</div>
             </td>
         </tr>
     </table>

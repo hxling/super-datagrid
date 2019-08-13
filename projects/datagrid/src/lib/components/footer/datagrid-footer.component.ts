@@ -1,9 +1,10 @@
+import { DatagridComponent } from './../../datagrid.component';
 import { DatagridFacadeService } from './../../services/datagrid-facade.service';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 15:01:21
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 18:08:30
+ * @LastEditTime: 2019-08-13 08:05:25
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -33,7 +34,7 @@ export class DatagridFooterComponent implements OnInit, OnDestroy {
 
     height: number;
     scrollXSubscription: Subscription;
-    constructor(private dgs: DatagridService, private el: ElementRef, private render: Renderer2) {
+    constructor(private dgs: DatagridService, private el: ElementRef, private render: Renderer2, public dg: DatagridComponent) {
         this.scrollXSubscription = this.dgs.scorll$.subscribe((d: any) => {
             if (d.type === SCROLL_X_ACTION) {
                 this.render.setStyle(this.footerContainer.nativeElement,  'transform', `translate3d(-${d.x}px, 0px, 0px)` );

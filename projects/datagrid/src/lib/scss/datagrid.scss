@@ -12,7 +12,7 @@
     background-color: $grid-bgcolor;
    
     table {
-        table-layout: auto;
+        table-layout: fixed;
         border-collapse: separate;
     }
 
@@ -40,7 +40,6 @@
         transition: all .15s ease;
 
         table { 
-            table-layout: auto;
             width:100%;
         }
 

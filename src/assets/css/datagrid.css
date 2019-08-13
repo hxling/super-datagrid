@@ -21,7 +21,7 @@ farris-datagrid {
   /** 折行 */
 }
 .f-datagrid table {
-  table-layout: auto;
+  table-layout: fixed;
   border-collapse: separate;
 }
 .f-datagrid-full {
@@ -47,7 +47,6 @@ farris-datagrid {
   transition: all 0.15s ease;
 }
 .f-datagrid-header table {
-  table-layout: auto;
   width: 100%;
 }
 .f-datagrid-header .f-datagrid-cell-group-left-shadow, .f-datagrid-header .f-datagrid-cell-group-right-shadow {
