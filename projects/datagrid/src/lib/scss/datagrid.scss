@@ -336,7 +336,9 @@
         }
     }
 
-
+    /**
+    * 拖动列宽
+    */
     &-resize-proxy {
         width: 1px;
         border-left: 1px dashed $resize-proxy-border-color;

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 19:41:32
+ * @LastEditTime: 2019-08-14 16:32:18
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -25,8 +25,6 @@ import { DatagridBodyComponent } from './components/body/datagrid-body.component
 import { DatagridCellEditorDirective } from './components/columns/column-cell-edit.directive';
 import { DatagridColumnDirective } from './components/columns/datagrid-column.directive';
 import { GridCellEditorDirective } from './components/editors/cell-editor.directive';
-import { DatagridEditorComponent } from './components/editors/grid-editor.component';
-import { TextboxEditorComponent } from './components/editors/textbox-editor.component';
 import { ScrollbarModule } from './scrollbar/scrollbar.module';
 import { ScrollbarConfigInterface, SCROLLBAR_CONFIG } from './scrollbar/scrollbar.interfaces';
 
@@ -37,9 +35,6 @@ import { DatagridHeaderCheckboxComponent } from './components/checkbox/datagrid-
 import { DatagridResizeColumnDirective } from './components/header/datagrid-resize-column.directive';
 import { SafePipe } from './utils/safe.pipe';
 import { DatagridFooterComponent } from './components/footer/datagrid-footer.component';
-import { DatagridService } from './services/datagrid.service';
-
-
 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
@@ -73,17 +68,12 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DataGridLoadingComponent,
         DatagridCheckboxComponent,
         DatagridHeaderCheckboxComponent,
-        GridCellEditorDirective,
-        DatagridEditorComponent,
-        TextboxEditorComponent
+        GridCellEditorDirective
     ],
     providers: [
         {
             provide: SCROLLBAR_CONFIG,
             useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
-        },
-        {
-            provide: GRID_EDITORS, useValue: {name: 'textbox', value: TextboxEditorComponent }, multi: true
         }
     ],
     exports: [
@@ -91,14 +81,12 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DatagridHeaderComponent,
         DatagridColumnDirective,
         DatagridCellEditorDirective,
-        DatagridEditorComponent,
-        TextboxEditorComponent,
         DatagridCellEditableDirective,
         DatagridRowHoverDirective,
         DatagridResizeColumnDirective
     ],
     entryComponents: [
-        TextboxEditorComponent
+
     ]
 })
 export class DatagridModule {

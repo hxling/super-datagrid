@@ -2,12 +2,12 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 11:07:01
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 11:09:51
+ * @LastEditTime: 2019-08-14 15:14:25
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import { Directive, OnInit, OnDestroy, AfterViewInit, Renderer2, ElementRef } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { DataColumn } from '@farris/ui-datagrid';
 
 @Directive({
@@ -18,6 +18,7 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
     options: any;
     group: FormGroup;
     column: DataColumn;
+    formControl: FormControl;
 
     inputElement: any;
 
@@ -28,6 +29,9 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
     constructor(public render: Renderer2, public el: ElementRef) {}
 
     ngOnInit(): void {
+
+        this.formControl = this.group.get(this.column.field) as FormControl;
+        console.log(this.formControl);
         // this.keyDownEvent = this.render.listen(this.el.nativeElement, 'keydown', (e: KeyboardEvent) => {
         //     e.stopPropagation();
         // });

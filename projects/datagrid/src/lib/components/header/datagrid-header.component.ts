@@ -2,13 +2,13 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 19:24:30
+ * @LastEditTime: 2019-08-14 08:46:34
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 
 import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef,
-    AfterViewInit, ViewEncapsulation, Injector, Inject, forwardRef } from '@angular/core';
+    AfterViewInit, ViewEncapsulation, Injector, Inject, forwardRef, Optional } from '@angular/core';
 import { DataColumn } from './../../types/data-column';
 import { ColumnGroup } from '../../types/data-column';
 import { DatagridService } from '../../services/datagrid.service';
@@ -53,7 +53,7 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
 
     constructor(
         private render2: Renderer2, private injector: Injector,
-        @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent ) {
+        @Optional() public dg: DatagridComponent ) {
         this.dfs = this.injector.get(DatagridFacadeService);
         this.dgs = this.injector.get(DatagridService);
 

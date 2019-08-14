@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 17:59:31
+ * @LastEditTime: 2019-08-14 10:50:32
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -31,13 +31,13 @@ import { DomHandler } from './services/domhandler';
 @Component({
     selector: 'farris-datagrid',
     templateUrl: './datagrid.component.html',
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         DatagridFacadeService,
-        DatagridService
+        DatagridService,
     ],
-    exportAs: 'datagrid',
-    encapsulation: ViewEncapsulation.None,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    exportAs: 'datagrid'
 })
 export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterContentInit, AfterViewInit {
     @Input() auther = `Lucas Huang - QQ:1055818239`;
@@ -226,7 +226,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
     @ViewChild('dgPager') dgPager: any;
-    @ViewChild('header') dgHeader: any;
     @ViewChild('resizeProxy') resizeProxy: ElementRef;
     @ViewChild('resizeProxyBg') resizeProxyBg: ElementRef;
     @ViewChild('datagridContainer') dgContainer: ElementRef;
@@ -282,17 +281,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     documentCellKeydownEvents: any;
     documentCellKeydownHandler: any;
 
-    private dfs: DatagridFacadeService;
-    private dgs: DatagridService;
-
     constructor(public cd: ChangeDetectorRef,
                 public el: ElementRef,
                 private inject: Injector, private zone: NgZone,
+                private dfs: DatagridFacadeService,
+                private dgs: DatagridService,
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
 
         this.restService = this.inject.get<RestService>(DATAGRID_REST_SERVICEE, null);
-        this.dfs = this.inject.get(DatagridFacadeService);
-        this.dgs = this.inject.get(DatagridService);
 
         const dataSubscription = this.dfs.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
@@ -544,12 +540,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             }
         }
     }
-
-    // private setHeaderHeight() {
-    //     this.dgHeader.setHeight();
-    //     this.headerHeight = this.dgHeader.height;
-    //     this.dfs.updateProperty('headerHeight', this.headerHeight);
-    // }
 
     private findNextCell(field: string, dir: MoveDirection) {
         let td = null;

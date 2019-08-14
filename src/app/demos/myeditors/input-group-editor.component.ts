@@ -1,5 +1,13 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-14 16:33:23
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { Component, OnInit, Renderer2, ElementRef, ViewChild } from '@angular/core';
-import { DatagridEditorComponent } from '@farris/ui-datagrid';
+import { DatagridBaseEditorDirective } from '@farris/ui-datagrid-editors';
 import { InputGroupComponent } from '@farris/ui-input-group';
 
 @Component({
@@ -10,7 +18,7 @@ import { InputGroupComponent } from '@farris/ui-input-group';
     </div>
     `,
 })
-export class MyCustomGridEditorComponent extends DatagridEditorComponent implements OnInit {
+export class MyCustomGridEditorComponent extends DatagridBaseEditorDirective implements OnInit {
 
     @ViewChild('ig') ig: InputGroupComponent;
 

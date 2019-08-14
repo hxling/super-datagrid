@@ -1,8 +1,9 @@
+import { DatagridTextareaComponent } from './../../projects/datagrid-editors/src/lib/editors/datagrid-textarea.component';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 17:07:33
+ * @LastEditTime: 2019-08-14 16:34:18
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -17,7 +18,7 @@ import { AppComponent } from './app.component';
 
 import { InputGroupModule} from '@farris/ui-input-group';
 
-import { DatagridTextboxComponent, DatagridEditorsModule } from '@farris/ui-datagrid-editors';
+import { DatagridTextboxComponent, DatagridEditorsModule, EditorProviders } from '@farris/ui-datagrid-editors';
 import { DatagridModule, ScrollbarModule, GRID_EDITORS } from '@farris/ui-datagrid';
 
 import { FarrisDatePickerModule } from '@farris/ui-datepicker';
@@ -66,7 +67,7 @@ import { HeaderGroupDemoComponent } from './demos/group-header/header-group.comp
     ScrollbarModule,
     DatagridEditorsModule,
     DatagridModule.forRoot([
-      { provide: GRID_EDITORS, useValue: { name: 'textbox2', value: DatagridTextboxComponent }, multi: true },
+      ...EditorProviders,
       { provide: GRID_EDITORS, useValue: { name: 'input-group', value: MyCustomGridEditorComponent }, multi: true }
     ]),
     FarrisDatePickerModule,
