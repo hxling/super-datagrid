@@ -2,12 +2,12 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-14 11:39:55
+ * @LastEditTime: 2019-08-15 09:57:16
  * @Company: Inspur
  * @Version: v0.0.1
  */
 import { TemplateRef } from '@angular/core';
-
+import { ColumnFormatter } from '@farris/ui-common/column';
 
 export interface CustomStyle {
     cls?: string;
@@ -15,6 +15,7 @@ export interface CustomStyle {
         [key: string]: string;
     };
 }
+
 
 export type MoveDirection = 'left' | 'right' | 'up' | 'down';
 
@@ -28,7 +29,7 @@ export interface DataColumn {
     halign?: 'left' | 'center' | 'right';
     /** 文本对齐方式 */
     align?: 'left' | 'center' | 'right';
-    formatter?: (value, rowData, rowIndex) => CustomStyle;
+    formatter?: (value, rowData, rowIndex) => any | ColumnFormatter;
     styler?: (value, rowData, rowIndex) => CustomStyle;
     left?: number;
     /** 是否固定 */

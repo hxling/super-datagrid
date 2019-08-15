@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-14 14:08:23
+ * @LastEditTime: 2019-08-15 09:44:03
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -205,9 +205,12 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         const psContainer = scrollContainer.getBoundingClientRect();
         const scrollTop = scrollContainer.scrollTop;
         const scrollLeft = scrollContainer.scrollLeft;
+        const scrollbarXLeft = this.dgb.ps.elementRef.nativeElement.scrollLeft;
         if (tdPosLeft > containerWidth) {
             const x = tdPosLeft - containerWidth + 2;
-            this.dgb.ps.scrollToX(x);
+            if (x > scrollbarXLeft) {
+                this.dgb.ps.scrollToX(x);
+            }
         } else {
             if (tdRect.x < psContainer.x) {
                 const x = scrollLeft - tdRect.x;

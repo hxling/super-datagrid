@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-09 11:55:10
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 16:38:24
+ * @LastEditTime: 2019-08-15 14:59:54
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -63,7 +63,23 @@ export class Utils {
     }
 
     static getZhiWei() {
-        return ['司令', '军长', '师长', '旅长', '团长', '营长', '连长', '排长', '班长'][Utils.randomNum(0, 8)];
+        // return ['司令', '军长', '师长', '旅长', '团长', '营长', '连长', '排长', '班长'][Utils.randomNum(0, 8)];
+        const n = Utils.randomNum(1, 8);
+        return '9'.repeat(9 - n);
+    }
+
+    static enumData() {
+        return [
+            {label: '司令', value: '999999999'},
+            {label: '军长', value: '99999999'},
+            {label: '师长', value: '9999999'},
+            {label: '旅长', value: '999999'},
+            {label: '团长', value: '99999'},
+            {label: '营长', value: '9999'},
+            {label: '连长', value: '999'},
+            {label: '排长', value: '99'},
+            {label: '班长', value: '9'}
+        ];
     }
 
     static randomNum(minNum, maxNum) {

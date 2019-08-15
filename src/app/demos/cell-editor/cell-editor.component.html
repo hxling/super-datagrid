@@ -1,13 +1,17 @@
-        
-<div class="row" style="padding: 20px 0; margin-top: 120px">        
+<!--
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-15 19:57:09
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ -->
+       
+       
+<layout-row>
 
-    <farris-datagrid [data]="items" [columns]="columns" #dg
-        [editable]="true" [editMode]="'cell'"[showCheckbox]="true"
-        [showLineNumber] ="true" [striped]="true"  [total]="total"
-        [virtualized]="true" [pagination]="false">
-    </farris-datagrid>
-    
-    </div>
+    <div region="north">
+       
 
 <div class="row">
 
@@ -20,3 +24,16 @@
 {{ dg.selectedRow | json }}
 
 </div>
+    </div>
+
+    <div region="center" style="height: 100%">
+        <farris-datagrid [data]="items" [columns]="columns" #dg [fit]="true"
+        [editable]="true" [editMode]="'cell'"[showCheckbox]="true"
+        [showLineNumber] ="true" [striped]="true"  [total]="total"
+        [virtualized]="true" [pagination]="false">
+    </farris-datagrid>
+    </div>
+
+
+</layout-row>
+

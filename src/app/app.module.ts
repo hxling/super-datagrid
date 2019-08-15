@@ -1,9 +1,8 @@
-import { DatagridTextareaComponent } from './../../projects/datagrid-editors/src/lib/editors/datagrid-textarea.component';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-14 16:34:18
+ * @LastEditTime: 2019-08-15 08:11:52
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -18,8 +17,8 @@ import { AppComponent } from './app.component';
 
 import { InputGroupModule} from '@farris/ui-input-group';
 
-import { DatagridTextboxComponent, DatagridEditorsModule, EditorProviders } from '@farris/ui-datagrid-editors';
-import { DatagridModule, ScrollbarModule, GRID_EDITORS } from '@farris/ui-datagrid';
+import { DatagridEditorsModule, EditorProviders } from '@farris/ui-datagrid-editors';
+import { DatagridModule, ScrollbarModule } from '@farris/ui-datagrid';
 
 import { FarrisDatePickerModule } from '@farris/ui-datepicker';
 import { ScrollBarLoadComponent } from './demos/scrollbar-load/scrollbar-load.component';
@@ -28,7 +27,6 @@ import { AllDataLoadOnceComponent } from './demos/alldata-load-once/alldata-load
 import { ShowLineNumberComponent } from './demos/row-number/show-row-number.component';
 import { NormalDatagridComponent } from './demos/normal-grid/normal-grid.component';
 import { CellEditorComponent } from './demos/cell-editor/cell-editor.component';
-import { MyCustomGridEditorComponent } from './demos/myeditors/input-group-editor.component';
 import { VirtualLoadDemoComponent } from './demos/virtual-load/virtual-load-demo.component';
 import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-demo.component';
 import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-template.component';
@@ -49,7 +47,6 @@ import { HeaderGroupDemoComponent } from './demos/group-header/header-group.comp
     ShowLineNumberComponent,
     NormalDatagridComponent,
     CellEditorComponent,
-    MyCustomGridEditorComponent,
     VirtualLoadDemoComponent,
     ScrollbarLoadDemoComponent,
     CustomCellComponent,
@@ -68,14 +65,12 @@ import { HeaderGroupDemoComponent } from './demos/group-header/header-group.comp
     DatagridEditorsModule,
     DatagridModule.forRoot([
       ...EditorProviders,
-      { provide: GRID_EDITORS, useValue: { name: 'input-group', value: MyCustomGridEditorComponent }, multi: true }
     ]),
     FarrisDatePickerModule,
     InputGroupModule,
     AppRoutingModule
   ],
   entryComponents: [
-    MyCustomGridEditorComponent
   ],
   providers: [
   ],

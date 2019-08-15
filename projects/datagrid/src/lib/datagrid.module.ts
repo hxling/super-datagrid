@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-14 16:32:18
+ * @LastEditTime: 2019-08-15 10:16:04
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -11,7 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
-import { GRID_EDITORS } from './types/constant';
+import { DataColumnModule } from '@farris/ui-common/column';
 
 import { DatagridComponent } from './datagrid.component';
 import { NgxPaginationModule } from './pagination/ngx-pagination.module';
@@ -48,7 +48,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         ReactiveFormsModule,
         HttpClientModule,
         NgxPaginationModule,
-        ScrollbarModule
+        ScrollbarModule,
+        DataColumnModule.forRoot()
     ],
     declarations: [
         SafePipe,

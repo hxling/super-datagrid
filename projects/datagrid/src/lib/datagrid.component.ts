@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-14 10:50:32
+ * @LastEditTime: 2019-08-15 15:48:55
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -23,6 +23,7 @@ import { RestService, DATAGRID_REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
 import { GRID_EDITORS, CELL_SELECTED_CLS } from './types/constant';
 import { DomHandler } from './services/domhandler';
+import { Utils } from './utils/utils';
 
 // styleUrls: [
 //     './scss/index.scss'
@@ -473,6 +474,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (!this.documentCellClickHandler) {
             this.documentCellClickHandler = (event) => {
                 if (this.currentCell) {
+                    if (Utils.hasDialogOpen()) {
+                        return;
+                    }
                     DomHandler.removeClass(this.currentCell.cellRef, CELL_SELECTED_CLS);
                     if (this.currentCell.isEditing) {
                         this.dfs.endEditCell();

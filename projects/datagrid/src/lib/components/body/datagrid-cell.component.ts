@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 19:20:00
+ * @LastEditTime: 2019-08-15 10:21:19
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -17,12 +17,18 @@ import { DatagridComponent } from '../../datagrid.component';
 import { DatagridRowDirective } from './datagrid-row.directive';
 import { CellInfo } from '../../services/state';
 import { GridCellEditorDirective } from '../editors/cell-editor.directive';
+import { ColumnFormatService } from '@farris/ui-common/column';
 
 @Component({
     selector: 'grid-body-cell',
     template: `
     <div class="f-datagrid-cell-content" #cellContainer [style.width.px]="column.width">
-        <span *ngIf="!isEditing && !column.template">{{ value }}</span>
+
+        <ng-container *ngIf="!isEditing && !column.template">
+            <span *ngIf="column.formatter" [innerHtml]="formatData(column.field, rowData, column.formatter) | safe: 'html'"></span>
+            <span *ngIf="!column.formatter">{{ value }}</span>
+        </ng-container>
+
         <ng-container *ngIf="!isEditing && column.template" [ngTemplateOutlet]="column.template"
                         [ngTemplateOutletContext]="{$implicit: cellContext}"></ng-container>
         <ng-container #editorTemplate *ngIf="isEditing" cell-editor [column]="column" [group]="dr.form"></ng-container>
@@ -57,7 +63,9 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
     constructor(
         @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
         @Inject(forwardRef(() => DatagridRowDirective)) public dr: DatagridRowDirective,
-        private el: ElementRef, private cd: ChangeDetectorRef, private injector: Injector) {
+        private el: ElementRef, private cd: ChangeDetectorRef, private injector: Injector,
+        public colFormatSer: ColumnFormatService
+    ) {
         this.dfs = this.injector.get(DatagridFacadeService);
     }
 
@@ -108,6 +116,10 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
         }
     }
 
+    formatData(field: any, data: any, formatter: any) {
+        const value = Utils.getValue(field, data);
+        return this.colFormatSer.format(value, data, formatter);
+    }
 
     updateValue() {
         if (this.dr.form) {

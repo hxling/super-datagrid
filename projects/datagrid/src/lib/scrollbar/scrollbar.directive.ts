@@ -1,3 +1,11 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-07-29 08:14:22
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-15 09:28:20
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -26,7 +34,7 @@ import {
     exportAs: 'ngxScrollbar'
 })
 export class ScrollbarDirective implements OnInit, OnDestroy, DoCheck, OnChanges {
-    private instance: PerfectScrollbar | null = null;
+    instance: PerfectScrollbar | null = null;
 
     private ro: ResizeObserver | null = null;
 
