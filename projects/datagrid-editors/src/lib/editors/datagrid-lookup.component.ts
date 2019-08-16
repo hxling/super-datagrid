@@ -1,9 +1,9 @@
-import { AfterViewInit } from '@angular/core';
+import { AfterViewInit, ApplicationRef } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 09:29:33
+ * @LastEditTime: 2019-08-16 19:14:10
  * @QQ: 1055818239
  * @Version: v0.0.1
  */

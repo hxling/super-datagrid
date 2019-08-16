@@ -2,13 +2,13 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-15 10:21:19
+ * @LastEditTime: 2019-08-16 19:10:50
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import { Component, OnInit, Input, Output, EventEmitter,
     ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef,
-    OnDestroy, Injector, Inject, forwardRef } from '@angular/core';
+    OnDestroy, Injector, Inject, forwardRef, ApplicationRef } from '@angular/core';
 import { Utils } from '../../utils/utils';
 import { filter } from 'rxjs/operators';
 import { DataColumn } from '../../types/data-column';
@@ -61,6 +61,7 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
     private dfs: DatagridFacadeService;
     canEdit = () => this.dg.editable && this.dg.editMode === 'cell' && this.column.editor;
     constructor(
+        private app: ApplicationRef,
         @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
         @Inject(forwardRef(() => DatagridRowDirective)) public dr: DatagridRowDirective,
         private el: ElementRef, private cd: ChangeDetectorRef, private injector: Injector,
@@ -93,6 +94,8 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
                 if (!this.cd['destroyed']) {
                     this.cd.detectChanges();
                 }
+
+                // this.app.tick();
             }
         });
 
