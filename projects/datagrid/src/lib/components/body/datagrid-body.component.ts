@@ -1,15 +1,16 @@
+import { Subscription } from 'rxjs';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 20:07:48
+ * @LastEditTime: 2019-08-16 18:58:41
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import {
     Component, OnInit, Input, ViewChild, Renderer2,
     ElementRef, OnDestroy, ChangeDetectorRef,
-    OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone, Injector, forwardRef, Inject, Optional
+    OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone, Injector, forwardRef, Inject, Optional, ApplicationRef
 } from '@angular/core';
 
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
@@ -72,10 +73,26 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.cd.detectChanges();
     }
 
+    private gridSizeSubscribe: Subscription;
+    private columnResizeSubscribe: Subscription;
+    private onDataSourceChangeSubscribe: Subscription;
+    private selectRowSubscribe: Subscription;
+    private unselectRowSubscribe: Subscription;
+    private selectAllSubscribe: Subscription;
+    private Subscribe: Subscription;
+    private checkRowSubscribe: Subscription;
+    private clearSelectionsSubscribe: Subscription;
+    private checkAllSubscribe: Subscription;
+    private uncheckRowSubscribe: Subscription;
+    private clearCheckedsSubscribe: Subscription;
+
+    private subscriptions = [];
+
     private dfs: DatagridFacadeService;
     private dgs: DatagridService;
     constructor(
         private injector: Injector,
+        private app: ApplicationRef,
         @Optional() public dg: DatagridComponent,
         private cd: ChangeDetectorRef, private el: ElementRef
     ) {
@@ -87,8 +104,23 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.listenSubjects();
     }
 
+    private destroySubscriptions() {
+        if (this.subscriptions && this.subscriptions.length) {
+            this.subscriptions.forEach((sub: Subscription) => {
+                if (sub) {
+                    sub.unsubscribe();
+                    sub = null;
+                }
+            });
+
+            this.subscriptions = [];
+        }
+    }
+
     private listenSubjects() {
-        const initSubscrition = this.dfs.gridSize$.subscribe(state => {
+        this.destroySubscriptions();
+
+        this.gridSizeSubscribe = this.dfs.gridSize$.subscribe(state => {
             if (state) {
                 this.top = this.dg.realHeaderHeight;
                 const pagerHeight = state.pagerHeight;
@@ -113,103 +145,102 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.ps.update();
             }
         });
-        this.dg.subscriptions.push(initSubscrition);
 
-        this.dg.subscriptions.push(
-            this.dfs.columnResize$.subscribe((cg: ColumnGroup) => {
-                this.updateColumnSize(cg);
-                this.cd.detectChanges();
-            })
-        );
+        this.subscriptions.push(this.gridSizeSubscribe);
 
-        this.dg.subscriptions.push(
-            this.dgs.onDataSourceChange.subscribe(() => {
-                this.ps.scrollToTop();
-            })
-        );
+        this.columnResizeSubscribe = this.dfs.columnResize$.subscribe((cg: ColumnGroup) => {
+            this.updateColumnSize(cg);
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.columnResizeSubscribe);
 
-        this.dg.subscriptions.push(
-            this.dfs.selectRow$.subscribe((row: SelectedRow) => {
-                if (row) {
-                    this.currentRowId = row.id;
-                    this.dg.selectedRow = row;
-                }
-                this.dg.selectChanged.emit(row);
-                this.cd.detectChanges();
-            })
-        );
-        this.dg.subscriptions.push(
-            this.dfs.unSelectRow$.subscribe((prevRow: SelectedRow) => {
+        this.onDataSourceChangeSubscribe = this.dgs.onDataSourceChange.subscribe(() => {
+            this.ps.scrollToTop();
+        });
+        this.subscriptions.push(this.onDataSourceChangeSubscribe);
+
+        this.selectRowSubscribe = this.dfs.selectRow$.subscribe((row: SelectedRow) => {
+            if (row) {
+                this.currentRowId = row.id;
+                // this.dg.selectedRow = row;
+            }
+            this.dg.selectChanged.emit(row);
+            console.log(this.dg);
+            this.app.tick();
+            // this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.selectRowSubscribe);
+
+        this.unselectRowSubscribe = this.dfs.unSelectRow$.subscribe((prevRow: SelectedRow) => {
+            this.currentRowId = undefined;
+            // this.dg.selectedRow = null;
+            this.dg.unSelect.emit(prevRow);
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.unselectRowSubscribe);
+
+        this.selectAllSubscribe = this.dfs.selectAll$.subscribe((rows: SelectedRow[]) => {
+            this.dg.selectAll.emit(rows);
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.selectAllSubscribe);
+
+        this.checkRowSubscribe = this.dfs.checkRow$.subscribe((row: SelectedRow) => {
+            this.dg.checked.emit(row);
+            this.dgs.onCheckedRowsCountChange();
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.checkRowSubscribe);
+
+        this.clearSelectionsSubscribe =  this.dfs.clearSelections$.subscribe(() => {
+            this.currentRowId = undefined;
+            // this.dg.selectedRow = null;
+
+            if (this.dg.checkOnSelect) {
+                this.dgs.onCheckedRowsCountChange();
+            }
+            this.dg.unSelectAll.emit();
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.clearSelectionsSubscribe);
+
+        this.uncheckRowSubscribe = this.dfs.unCheckRow$.subscribe((prevRow: SelectedRow) => {
+            this.dg.unChecked.emit(prevRow);
+            this.dgs.onCheckedRowsCountChange();
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.uncheckRowSubscribe);
+
+        this.checkAllSubscribe = this.dfs.checkAll$.subscribe((rows: SelectedRow[]) => {
+            this.dg.checkAll.emit(rows);
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.checkAllSubscribe);
+
+        this.clearCheckedsSubscribe =  this.dfs.clearCheckeds$.subscribe((rows: SelectedRow[]) => {
+            if (this.dg.selectOnCheck) {
                 this.currentRowId = undefined;
-                this.dg.selectedRow = null;
-                this.dg.unSelect.emit(prevRow);
-                this.cd.detectChanges();
-            })
-        );
-        this.dg.subscriptions.push(
-            this.dfs.selectAll$.subscribe((rows: SelectedRow[]) => {
-                this.dg.selectAll.emit(rows);
-                this.cd.detectChanges();
-            })
-        );
-
-        this.dg.subscriptions.push(
-            this.dfs.checkRow$.subscribe((row: SelectedRow) => {
-                this.dg.checked.emit(row);
-                this.dgs.onCheckedRowsCountChange();
-                this.cd.detectChanges();
-            })
-        );
-
-        this.dg.subscriptions.push(
-            this.dfs.clearSelections$.subscribe(() => {
-                this.currentRowId = undefined;
-                this.dg.selectedRow = null;
-
-                if (this.dg.checkOnSelect) {
-                    this.dgs.onCheckedRowsCountChange();
-                }
-                this.dg.unSelectAll.emit();
-                this.cd.detectChanges();
-            })
-        );
-        this.dg.subscriptions.push(
-            this.dfs.unCheckRow$.subscribe((prevRow: SelectedRow) => {
-                this.dg.unChecked.emit(prevRow);
-                this.dgs.onCheckedRowsCountChange();
-                this.cd.detectChanges();
-            })
-        );
-
-        this.dg.subscriptions.push(
-            this.dfs.checkAll$.subscribe((rows: SelectedRow[]) => {
-                this.dg.checkAll.emit(rows);
-                this.cd.detectChanges();
-            })
-        );
-
-        this.dg.subscriptions.push(
-            this.dfs.clearCheckeds$.subscribe((rows: SelectedRow[]) => {
-                if (this.dg.selectOnCheck) {
-                    this.currentRowId = undefined;
-                    this.dg.selectedRow = null;
-                }
-                this.dg.unCheckAll.emit(rows);
-                this.dgs.onCheckedRowsCountChange();
-                this.cd.detectChanges();
-            })
-        );
+                // this.dg.selectedRow = null;
+            }
+            this.dg.unCheckAll.emit(rows);
+            this.dgs.onCheckedRowsCountChange();
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.clearCheckedsSubscribe);
     }
+
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
             this.setWheelHeight();
+            this.listenSubjects();
             this.ps.update();
             this.cd.detectChanges();
         }
     }
 
     ngOnDestroy() {
+        this.destroySubscriptions();
     }
 
     updateRowHeight(list: number[]) {

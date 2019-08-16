@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-15 09:44:03
+ * @LastEditTime: 2019-08-16 16:54:22
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -62,7 +62,9 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         if (this.dg.editable) {
             this.cellclick = this.render.listen(this.el.nativeElement, 'click', (e) => this.onClickCell(e));
             if (this.column.editor) {
-                this.celldblclick = this.render.listen(this.el.nativeElement, 'dblclick', (e) => this.onDblClickCell(e));
+                this.celldblclick = this.render.listen(this.el.nativeElement, 'dblclick', (e) => {
+                    this.onDblClickCell(e);
+                });
                 this.el.nativeElement.editCell = () => this.openCellEditor();
             }
         }
@@ -94,18 +96,19 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         if (event.target['nodeName'] === 'INPUT') {
             return;
         }
-
+        this.render.addClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
         this.isSingleClick = true;
         this.clickTimer = setTimeout(() => {
             if (this.isSingleClick) {
                 // console.log('ClickCell', event);
-                this.dfs.selectRow(this.dr.rowIndex, this.rowData);
+                // this.dfs.selectRow(this.dr.rowIndex, this.rowData);
                 if (this.dg.editable && this.dg.editMode === 'cell') {
                     this.closeEditingCell();
                     if (!this.isDifferentCell()) {
                         return;
                     }
                     this.selectCell(this.column.field);
+                    this.render.removeClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
                     event.preventDefault();
                 }
             }
@@ -118,7 +121,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
             return;
         }
         this.isSingleClick = false;
-        this.dfs.selectRow(this.dr.rowIndex, this.rowData);
+        // this.dfs.selectRow(this.dr.rowIndex, this.rowData);
 
         clearTimeout(this.clickTimer);
         if (this.dg.editable && this.dg.editMode === 'cell') {
@@ -141,6 +144,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         this.dfs.editCell();
         setTimeout(() => {
             this.bindEditorInputEvent();
+            this.render.removeClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
         });
     }
 

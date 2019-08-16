@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 14:56:41
+ * @LastEditTime: 2019-08-16 15:13:50
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -11,15 +11,12 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener, Input } from '@
 @Component({
     selector: 'layout-row',
     template: `
-    <div #box class="d-flex flex-column">
-        <div class="north" [style.height.px]="northHeight">
+    <div #box class="d-flex flex-column" style="width: 100%; height: 300px;">
+        <div class="north" [style.minHeight.px]="northHeight">
             <ng-content select="[region=north]"></ng-content>
         </div>
         <div region="center" class="center flex-fill">
-            <ng-content select="[region=center]"></ng-content>
-        </div>
-        <div region="south" class="south" [style.height.px]="southHeight">
-            <ng-content select="[region=south]"></ng-content>
+            <ng-content></ng-content>
         </div>
     </div>
     `,

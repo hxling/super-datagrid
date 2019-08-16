@@ -1,12 +1,13 @@
+import { SimpleChanges, ChangeDetectorRef } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 19:21:54
+ * @LastEditTime: 2019-08-16 18:31:38
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, Injector, Inject, forwardRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, Injector, Inject, forwardRef, OnChanges } from '@angular/core';
 import { DataColumn } from '../../types';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridBodyComponent } from './datagrid-body.component';
@@ -16,7 +17,7 @@ import { DatagridBodyComponent } from './datagrid-body.component';
     selector: 'datagrid-rows',
     templateUrl: './datagrid-rows.component.html',
 })
-export class DatagridRowsComponent implements OnInit, AfterViewInit {
+export class DatagridRowsComponent implements OnInit, AfterViewInit, OnChanges {
 
     @Input() startRowIndex: number;
     @Input() data: any;
@@ -24,12 +25,20 @@ export class DatagridRowsComponent implements OnInit, AfterViewInit {
     @ViewChild('tableEl') tableEl: ElementRef;
 
     constructor(
+        private cd: ChangeDetectorRef,
         @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
         @Inject(forwardRef(() => DatagridBodyComponent)) public dgb: DatagridBodyComponent,
         public el: ElementRef, private injector: Injector) {
     }
 
     ngOnInit(): void {
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.data !== undefined && !changes.data.isFirstChange()) {
+            this.cd.markForCheck();
+            this.cd.detectChanges();
+        }
     }
 
     ngAfterViewInit() {

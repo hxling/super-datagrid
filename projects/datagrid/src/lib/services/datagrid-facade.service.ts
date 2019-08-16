@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 20:30:04
+ * @LastEditTime: 2019-08-16 18:22:33
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -37,6 +37,7 @@ export class DatagridFacadeService {
     private checkAllSubject = new Subject();
     private unCheckAllSubject =  new Subject();
     private selectAllSubject = new Subject();
+    private selectCellSubject = new Subject();
 
     error$ = this.errorSubject.asObservable();
     selectRow$ = this.selectRowSubject.asObservable();
@@ -50,6 +51,7 @@ export class DatagridFacadeService {
     checkAll$ = this.checkAllSubject.asObservable();
     unCheckAll$ = this.unCheckAllSubject.asObservable();
     selectAll$ = this.selectAllSubject.asObservable();
+    currentCell$ = this.selectCellSubject.asObservable();
 
 
     readonly state$ = this.store.asObservable().pipe(
@@ -94,13 +96,6 @@ export class DatagridFacadeService {
                 return this.unSelectRowSubject.asObservable();
             }
         }),
-        distinctUntilChanged()
-    );
-
-
-    readonly currentCell$ = this.store.asObservable().pipe(
-        filter( (state: any) => state),
-        map(state => state.currentCell),
         distinctUntilChanged()
     );
 
@@ -236,6 +231,10 @@ export class DatagridFacadeService {
 
     isCheckAll() {
         return  this._state.checkedRows.length === this._state.data.length;
+    }
+
+    getCurrentRow() {
+        return this._state.currentRow || undefined;
     }
 
     getSelections() {
@@ -486,13 +485,15 @@ export class DatagridFacadeService {
     setCurrentCell(rowIndex: number, rowData: any, field: string, cellRef?: any ) {
         if (!this.isCellSelected({rowIndex, field})) {
             const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData), cellRef };
-            this.updateState({currentCell});
+            this.updateState({currentCell}, false);
+            this.selectRow(rowIndex, rowData);
+            this.selectCellSubject.next(currentCell);
         }
     }
 
     cancelSelectCell() {
         if (this._state.currentCell) {
-            this.updateState({currentCell: null});
+            this.updateState({currentCell: null}, false);
         }
     }
 
@@ -508,7 +509,8 @@ export class DatagridFacadeService {
         if (this._state.currentCell) {
             if (!this._state.currentCell.isEditing) {
                 const cei = { ...this._state.currentCell, isEditing: true };
-                this.updateState({ currentCell: cei });
+                this.updateState({ currentCell: cei }, false);
+                this.selectCellSubject.next(cei);
             }
         }
     }
@@ -516,7 +518,8 @@ export class DatagridFacadeService {
     endEditCell() {
         if (this._state.currentCell && this._state.currentCell.isEditing) {
             const cei = { ...this._state.currentCell, isEditing: false };
-            this.updateState({ currentCell: cei });
+            this.updateState({ currentCell: cei }, false);
+            this.selectCellSubject.next(cei);
         }
     }
 

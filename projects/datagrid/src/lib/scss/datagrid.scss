@@ -15,6 +15,9 @@
         table-layout: fixed;
         border-collapse: separate;
     }
+    &-unselect {
+        user-select: none;
+    }
 
     &-full{
         position: relative;

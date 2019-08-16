@@ -2,14 +2,15 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-15 20:15:24
+ * @LastEditTime: 2019-08-16 15:58:09
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
 import { EditorTypes} from '@farris/ui-datagrid-editors';
 import { Utils } from '../utils';
+import { DatagridComponent } from '@farris/ui-datagrid';
 
 @Component({
     selector: 'cell-editor',
@@ -24,10 +25,12 @@ export class CellEditorComponent implements OnInit {
     total = 0;
     pageSize = 200;
     pageIndex = 1;
-
+    @ViewChild('box') box: ElementRef;
+    @ViewChild('dg') dg: DatagridComponent;
     constructor(private dds: DemoDataService) {}
 
     ngOnInit() {
+        this.onresize();
         const enumData = Utils.enumData();
         const enumOpts = { valueField: 'value', textField: 'label', data: enumData };
         this.columns = [
@@ -52,7 +55,15 @@ export class CellEditorComponent implements OnInit {
         }
         ];
 
-        this.total = 100;
-        this.items = this.dds.createData(100);
+        this.total = 50;
+        this.items = this.dds.createData(50);
+
+    }
+
+    @HostListener('window:resize')
+    onresize() {
+        const header = document.querySelector('.navbar-dark') as any;
+        const headerHeight = header.offsetHeight;
+        this.box.nativeElement.style.height = (window.innerHeight - headerHeight) + 'px';
     }
 }

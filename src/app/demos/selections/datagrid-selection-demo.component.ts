@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 18:17:30
+ * @LastEditTime: 2019-08-16 17:22:06
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -157,6 +157,7 @@ export class DatagridSelectionDemoComponent implements OnInit {
     // Events
     selectChanged($event) {
         console.log('当前选中的', $event);
+        console.log('Datagrid selectedRow:', this.dg.selectedRow);
     }
 
     unSelect($event) {

@@ -2,38 +2,31 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-15 19:57:09
+ * @LastEditTime: 2019-08-16 16:49:47
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
        
+ <div #box class="d-flex flex-column" style="width: 100%; height: 300px;">
+    <div class="north" style="height: 80px">
        
-<layout-row>
+        <div class="fluid-container">
+            <div class="row">
+                {{ dg.currentCell?.field }}
+            </div>
 
-    <div region="north">
-       
+            <div class="row">
+            {{ dg.selectedRow | json }}
+            </div>
+        </div>
 
-<div class="row">
-
-    {{ dg.currentCell?.field }}
-
-</div>
-
-
-<div class="row">
-{{ dg.selectedRow | json }}
-
-</div>
     </div>
+    <div region="center" class="center flex-fill">
+        <farris-datagrid [data]="items" [columns]="columns" #dg="datagrid" [fit]="true"
+            [editable]="true" [editMode]="'cell'" [showCheckbox]="false" [fitColumns]="true"
+            [showLineNumber] ="true" [striped]="true"  [total]="total"
+            [virtualized]="true" [pagination]="false">
+        </farris-datagrid>
 
-    <div region="center" style="height: 100%">
-        <farris-datagrid [data]="items" [columns]="columns" #dg [fit]="true"
-        [editable]="true" [editMode]="'cell'"[showCheckbox]="true"
-        [showLineNumber] ="true" [striped]="true"  [total]="total"
-        [virtualized]="true" [pagination]="false">
-    </farris-datagrid>
     </div>
-
-
-</layout-row>
-
+</div>

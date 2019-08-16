@@ -1,8 +1,9 @@
+import { AfterViewInit } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-15 20:14:23
+ * @LastEditTime: 2019-08-16 09:29:33
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -42,7 +43,7 @@ import { LookupGridComponent } from '@farris/ui-lookup';
     </div>
     `,
 })
-export class DatagridLookupComponent extends DatagridBaseEditorDirective implements OnInit {
+export class DatagridLookupComponent extends DatagridBaseEditorDirective implements OnInit, AfterViewInit {
 
     @ViewChild('lookup') lookup: LookupGridComponent;
 
@@ -52,8 +53,16 @@ export class DatagridLookupComponent extends DatagridBaseEditorDirective impleme
 
     ngOnInit(): void {
         super.ngOnInit();
-        this.inputElement = this.lookup.inputGroup.inputGroup.nativeElement;
+        this.inputElement = this.lookup.inputGroup.textbox.nativeElement;
         this.options = Object.assign(LookupDefaultOptions, this.options);
+    }
+
+    ngAfterViewInit() {
+        this.lookup.changeDetector.markForCheck();
+        setTimeout(() => {
+            this.lookup.changeDetector.detectChanges();
+            super.ngAfterViewInit();
+        });
     }
 
     onDialogClosed() {

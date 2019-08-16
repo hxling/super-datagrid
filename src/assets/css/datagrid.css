@@ -17,12 +17,18 @@ farris-datagrid {
   font-size: 14px;
   color: rgba(0, 0, 0, 0.75);
   background-color: #fff;
+  /**
+  * 拖动列宽
+  */
   /** 排序 */
   /** 折行 */
 }
 .f-datagrid table {
   table-layout: fixed;
   border-collapse: separate;
+}
+.f-datagrid-unselect {
+  user-select: none;
 }
 .f-datagrid-full {
   position: relative;

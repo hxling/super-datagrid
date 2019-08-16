@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-15 15:48:55
+ * @LastEditTime: 2019-08-16 19:03:31
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -10,7 +10,7 @@
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
     SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding,
-    AfterContentInit, NgZone, ElementRef, ViewChild, AfterViewInit
+    AfterContentInit, NgZone, ElementRef, ViewChild, AfterViewInit, ApplicationRef
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -250,6 +250,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         return this.dfs.getCheckeds();
     }
 
+    get selectedRow(): SelectedRow {
+        return this.dfs.getCurrentRow();
+    }
+
     ds = {
         index: 0,
         rows: [],
@@ -261,7 +265,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     restService: RestService;
     editors: {[key: string]: any} = {};
 
-    selectedRow: SelectedRow;
     currentCell: CellInfo;
     flatColumns: DataColumn[];
     footerWidth  = 0;
@@ -287,6 +290,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 private inject: Injector, private zone: NgZone,
                 private dfs: DatagridFacadeService,
                 private dgs: DatagridService,
+                private app: ApplicationRef,
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
 
         this.restService = this.inject.get<RestService>(DATAGRID_REST_SERVICEE, null);

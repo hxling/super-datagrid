@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 19:21:24
+ * @LastEditTime: 2019-08-16 18:21:07
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -17,6 +17,7 @@ import { DatagridComponent } from '../../datagrid.component';
     exportAs: 'gridRow'
 })
 export class DatagridRowDirective implements OnInit, AfterViewInit {
+    @Input() editable = false;
     @Input('grid-row') rowData: any;
     @Input() rowIndex: number;
     @Output() clickHandler = new EventEmitter();
@@ -30,7 +31,9 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.form = this.createControl();
+        if (this.editable) {
+            this.form = this.createControl();
+        }
         this.renderCustomStyle();
     }
 
@@ -81,10 +84,10 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
             const control = this.fb.control(
                 this.rowData[col.field],
                 {
-                    validators: this.bindValidations(col),
-                    updateOn: 'change'
+                    validators: this.bindValidations(col)
                 }
             );
+            // control.setValue(, { emitModelToViewChange: true });
             group.addControl(col.field, control);
         });
         return group;
