@@ -3,7 +3,7 @@ import { AfterViewInit, ApplicationRef } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-17 14:49:26
+ * @LastEditTime: 2019-08-17 17:09:17
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -40,6 +40,7 @@ import { LookupGridComponent } from '@farris/ui-lookup';
             (dialogClosed)="onDialogClosed()"
             (dialogOpened)="onDialogOpen()"
             (clear)="onClear($event)"
+            (loadSuccess)="onLoadSuccess()"
         ></farris-lookup-grid>
     </div>
     `,
@@ -56,6 +57,11 @@ export class DatagridLookupComponent extends DatagridBaseEditorDirective impleme
         super.ngOnInit();
         this.inputElement = this.lookup.inputGroup.textbox.nativeElement;
         this.options = Object.assign(LookupDefaultOptions, this.options);
+
+        if (this.options.loader) {
+            this.lookup['http'] =  this.lookup['http'] || {};
+            this.lookup['http'].getData = this.options.loader;
+        }
     }
 
     ngAfterViewInit() {
@@ -71,6 +77,10 @@ export class DatagridLookupComponent extends DatagridBaseEditorDirective impleme
     }
 
     onDialogOpen() {
+        this.lookup.changeDetector.detectChanges();
+    }
+
+    onLoadSuccess() {
         this.lookup.changeDetector.detectChanges();
     }
 

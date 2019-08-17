@@ -1,8 +1,9 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 15:58:09
+ * @LastEditTime: 2019-08-17 17:02:07
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -11,6 +12,7 @@ import { DemoDataService } from '../demo-data.service';
 import { EditorTypes} from '@farris/ui-datagrid-editors';
 import { Utils } from '../utils';
 import { DatagridComponent } from '@farris/ui-datagrid';
+import { debounceTime, map } from 'rxjs/operators';
 
 @Component({
     selector: 'cell-editor',
@@ -27,7 +29,7 @@ export class CellEditorComponent implements OnInit {
     pageIndex = 1;
     @ViewChild('box') box: ElementRef;
     @ViewChild('dg') dg: DatagridComponent;
-    constructor(private dds: DemoDataService) {}
+    constructor(private dds: DemoDataService, private http: HttpClient) {}
 
     ngOnInit() {
         this.onresize();
@@ -45,7 +47,12 @@ export class CellEditorComponent implements OnInit {
         },
             { field: 'addr', width: 170, title: '地址', editor: { type: EditorTypes.TEXTAREA, options: {}} },
             { field: 'company', width: 160, title: '公司' , editor: { type: EditorTypes.LOOKUP,  options: {
-                idField: 'id'
+                uri: '/assets/data/products.json',
+                loader: this.loadLookupData,
+                idField: 'Code',
+                singleSelect: true,
+                textField: 'Name',
+                valueField: 'Code'
             }}},
             { field: 'nianxin', width: 100, title: '年薪' , editor: { type: EditorTypes.TEXTBOX, options: {}},
             formatter: { type: 'number', options: { prefix: '￥', suffix: '元', precision: 2 } }
@@ -65,5 +72,51 @@ export class CellEditorComponent implements OnInit {
         const header = document.querySelector('.navbar-dark') as any;
         const headerHeight = header.offsetHeight;
         this.box.nativeElement.style.height = (window.innerHeight - headerHeight) + 'px';
+    }
+
+    loadLookupData = (url: string, params?: any) => {
+        let httpParams = new HttpParams();
+        if (params) {
+            if (params.pagination) {
+                httpParams = httpParams.set('pageIndex', params.pagination.pageIndex.toString());
+                httpParams = httpParams.set('pageSize', params.pagination.pageSize.toString());
+            }
+
+            if (params.condition) {
+                httpParams = httpParams.set('condition', JSON.stringify(params.condition));
+            }
+
+            if (params.search) {
+                httpParams = httpParams.set('search', JSON.stringify(params.search));
+            }
+        }
+
+        return this.http.get(url, {
+            params: httpParams
+        }).pipe(
+            debounceTime(20000),
+            map((data: any) => {
+                if (params) {
+                    let perPage = 20, start = 0, end = perPage + start;
+                    if (params.pagination) {
+                        perPage = params.pagination.pageSize;
+                        start = (params.pagination.pageIndex - 1) * perPage;
+                        end = start + perPage;
+                    }
+
+                    if (params.search && params.search.value) {
+                        data.items = (data.items as any).filter(item => {
+                            if (item[params.search.field] && item[params.search.field].indexOf(params.search.value) > -1) {
+                                return item;
+                            }
+                        });
+                    }
+                    data.total = data.items.length;
+                    data.items = data.items.slice(start, end);
+                    data['pageInfo'] = params.pagination;
+                }
+                return data;
+            })
+        );
     }
 }

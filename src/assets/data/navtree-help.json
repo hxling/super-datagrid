@@ -1,0 +1,94 @@
+{
+    "columns": [
+        {"title": "编号", "field": "Code", "width": 60},
+        {"title": "姓名", "field": "Name", "width": 80},
+        {"title": "年龄", "field": "Age", "width": 90},
+        {"title": "出生日期", "field": "birthday", "width": 140 },
+        {"title": "身份证号", "field": "idcode", "width": 120},
+        {"title": "邮编", "field": "postcode", "width": 120},
+        {"title": "地址", "field": "address", "width": 200}
+    ],
+    "items": [
+        {"Code": 1, "Name": "黄秀岭", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 2, "Name": "黄秀岭2", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 3, "Name": "黄秀岭3", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 4, "Name": "黄秀岭4", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 5, "Name": "黄秀岭5", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 6, "Name": "黄秀岭6", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 7, "Name": "黄秀岭7", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 8, "Name": "李三", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 9, "Name": "张四", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 10, "Name": "王五", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 11, "Name": "赵大", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 12, "Name": "周二", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 13, "Name": "黄秀岭8", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 14, "Name": "黄秀岭9", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 15, "Name": "黄秀岭10", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 16, "Name": "黄秀岭11", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 17, "Name": "黄秀岭12", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 18, "Name": "黄秀岭13", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 19, "Name": "黄秀岭14", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 20, "Name": "黄秀岭15", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 21, "Name": "黄秀岭a", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 22, "Name": "黄秀岭b", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 23, "Name": "黄秀岭c", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 24, "Name": "黄秀岭d", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 25, "Name": "黄秀岭e", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 26, "Name": "黄秀岭f", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 27, "Name": "黄秀岭g", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 28, "Name": "黄秀岭h", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"}
+    ],
+    "total": 28,
+    "pageInfo":{
+        "enablePager": true,
+        "pageIndex": 1,
+        "pageSize": 20,
+        "pageList": [10, 20, 30, 50]
+    },
+    "navigation": {
+        "width": 320,
+        "displayType": "TreeList",
+        "columns": [
+            {"title": "名称", "field": "name", "width": 80},
+            {"title": "编号", "field": "id", "width": 60}
+        ],
+        "items": [
+            { "data": { "id": 1, "name": "家用电器", "parentId": 0 }, "children": [
+                { "data": {"id": 2, "name": "电视", "parentId": 1 }, "children": [
+                    {"data": { "id": 3, "name": "曲面电视", "parentId": 2 }},
+                    {"data": { "id": 17, "name": "超薄电视", "parentId": 2 }},
+                    {"data": { "id": 4, "name": "OLED电视", "parentId": 2 }}
+                ]},
+                { "data": { "id": 5, "name": "空调", "parentId": 1 }, "children": [
+                    {"data": { "id": 6, "name": "柜式空调", "parentId": 5 }},
+                    {"data": { "id": 7, "name": "中央空调", "parentId": 5 }},
+                    {"data": { "id": 8, "name": "变频空调", "parentId": 5 }}
+                ]}
+            ]},
+            {"data": { "id": 9, "name": "电脑/办公", "parentId": 0 }, "children": [
+                {"data":  { "id": 10, "name": "电脑整机", "parentId": 9 }, "children": [
+                    {"data":{ "id": 11, "name": "笔记本", "parentId": 10 }},
+                    {"data":{ "id": 13, "name": "台式机", "parentId": 10 }}
+                ]},
+                {"data": { "id": 12, "name": "电脑配件", "parentId": 9 }, "children": [
+                    {"data":{ "id": 14, "name": "显示器", "parentId": 12 }},
+                    {"data":{ "id": 15, "name": "主板", "parentId": 12 }},
+                    {"data":{ "id": 16, "name": "显卡", "parentId": 12 }}
+                ]}
+            ]}
+        ],
+        "singleSelect": true,
+        "idField": "id",
+        "showFilterBar": true,
+        "pageInfo":{
+            "enablePager": true,
+            "pageIndex": 1,
+            "pageSize": 20,
+            "pageList": [10, 20, 30, 50]
+        },
+        "total": 28,
+        "treeInfo": {
+            "layerType": "parentId"
+        }
+    }
+}

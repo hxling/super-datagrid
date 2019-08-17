@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 16:59:11
+ * @LastEditTime: 2019-08-17 17:12:43
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -101,8 +101,8 @@ export interface CellInfo {
     isEditing?: boolean;
     rowData?: any;
     rowId?: any;
-    rowIndex: number;
-    field: string;
+    rowIndex?: number;
+    field?: string;
     cellRef?: any;
 }
 

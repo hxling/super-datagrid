@@ -1,8 +1,9 @@
+import { HttpClientModule } from '@angular/common/http';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-15 08:11:52
+ * @LastEditTime: 2019-08-17 16:36:38
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -60,6 +61,7 @@ import { HeaderGroupDemoComponent } from './demos/group-header/header-group.comp
     BrowserModule,
     CommonModule,
     FormsModule,
+    HttpClientModule,
     ReactiveFormsModule,
     ScrollbarModule,
     DatagridEditorsModule,
