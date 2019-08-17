@@ -3,7 +3,7 @@ import { AfterViewInit, ApplicationRef } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 19:14:10
+ * @LastEditTime: 2019-08-17 14:49:26
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -14,7 +14,7 @@ import { LookupGridComponent } from '@farris/ui-lookup';
 @Component({
     selector: 'grid-editor-lookup',
     template: `
-    <div [formGroup]="group">
+    <div [formGroup]="group" class="f-datagrid-cell-formgroup">
         <farris-lookup-grid #lookup
             [formControlName]="column.field"
             [uri]="options.uri"
@@ -39,6 +39,7 @@ import { LookupGridComponent } from '@farris/ui-lookup';
             [dictPicked]="options.dictPicked"
             (dialogClosed)="onDialogClosed()"
             (dialogOpened)="onDialogOpen()"
+            (clear)="onClear($event)"
         ></farris-lookup-grid>
     </div>
     `,
@@ -70,6 +71,10 @@ export class DatagridLookupComponent extends DatagridBaseEditorDirective impleme
     }
 
     onDialogOpen() {
+        this.lookup.changeDetector.detectChanges();
+    }
+
+    onClear(event: MouseEvent) {
         this.lookup.changeDetector.detectChanges();
     }
 }

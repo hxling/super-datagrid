@@ -173,6 +173,9 @@ farris-datagrid {
 }
 .f-datagrid-cell-formgroup {
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .f-datagrid-cell-editor {
   width: 100%;

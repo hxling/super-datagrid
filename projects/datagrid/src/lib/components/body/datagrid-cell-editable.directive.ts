@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 16:54:22
+ * @LastEditTime: 2019-08-17 14:10:52
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -27,7 +27,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     @Input('cell-editable') rowData: any;
     @Input() column: DataColumn;
 
-    private isSingleClick = true;
+    private isSingleClick: boolean;
     private clickTimer: any;
 
 
@@ -97,38 +97,38 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
             return;
         }
         this.render.addClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
-        this.isSingleClick = true;
-        this.clickTimer = setTimeout(() => {
-            if (this.isSingleClick) {
-                // console.log('ClickCell', event);
-                // this.dfs.selectRow(this.dr.rowIndex, this.rowData);
-                if (this.dg.editable && this.dg.editMode === 'cell') {
+
+        if (!this.isSingleClick) {
+            this.isSingleClick = true;
+            this.clickTimer = setTimeout(() => {
+                if (this.isSingleClick && this.dg.editable && this.dg.editMode === 'cell') {
                     this.closeEditingCell();
                     if (!this.isDifferentCell()) {
                         return;
                     }
+
                     this.selectCell(this.column.field);
                     this.render.removeClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
                     event.preventDefault();
                 }
-            }
-        }, this.dg.clickDelay);
-
+            }, this.dg.clickDelay);
+        }
     }
 
     private onDblClickCell(event: MouseEvent) {
         if (event.target['nodeName'] === 'INPUT') {
             return;
         }
-        this.isSingleClick = false;
-        // this.dfs.selectRow(this.dr.rowIndex, this.rowData);
-
-        clearTimeout(this.clickTimer);
         if (this.dg.editable && this.dg.editMode === 'cell') {
             this.closeEditingCell();
             setTimeout(() => {
                 this.openCellEditor();
             });
+        }
+        if (this.clickTimer) {
+            this.isSingleClick = false;
+            clearTimeout(this.clickTimer);
+            this.clickTimer = null;
         }
     }
 

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 07:57:01
+ * @LastEditTime: 2019-08-17 13:05:39
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -10,7 +10,7 @@
 
     <div [scrollbar]="psConfig" class="ps f-datagrid-body-wheel-area" #ps="ngxScrollbar"
         [ngStyle]="bodyStyle" (psXReachEnd)="onPsXReachEnd($event)"
-        (psScrollY)="onScrollToY($event)" (psYReachEnd)="onScrollYEnd($event)"
+        (psScrollY)="onScrollToY($event)"
         (psScrollX)="onScrollToX($event)" (psXReachStart)="onPsXReachStart($event)">
        
         <div [style.height]="wheelHeight+ 'px'" [style.width.px]="columnsGroup?.totalWidth">

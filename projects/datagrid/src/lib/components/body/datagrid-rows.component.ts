@@ -3,7 +3,7 @@ import { SimpleChanges, ChangeDetectorRef } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 18:31:38
+ * @LastEditTime: 2019-08-17 14:58:02
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -17,7 +17,7 @@ import { DatagridBodyComponent } from './datagrid-body.component';
     selector: 'datagrid-rows',
     templateUrl: './datagrid-rows.component.html',
 })
-export class DatagridRowsComponent implements OnInit, AfterViewInit, OnChanges {
+export class DatagridRowsComponent implements OnInit, AfterViewInit {
 
     @Input() startRowIndex: number;
     @Input() data: any;
@@ -34,12 +34,12 @@ export class DatagridRowsComponent implements OnInit, AfterViewInit, OnChanges {
     ngOnInit(): void {
     }
 
-    ngOnChanges(changes: SimpleChanges) {
-        if (changes.data !== undefined && !changes.data.isFirstChange()) {
-            this.cd.markForCheck();
-            this.cd.detectChanges();
-        }
-    }
+    // ngOnChanges(changes: SimpleChanges) {
+    //     if (changes.data !== undefined && !changes.data.isFirstChange()) {
+    //         this.cd.markForCheck();
+    //         this.cd.detectChanges();
+    //     }
+    // }
 
     ngAfterViewInit() {
         setTimeout(() => {

@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 18:58:41
+ * @LastEditTime: 2019-08-17 13:05:56
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -165,7 +165,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 // this.dg.selectedRow = row;
             }
             this.dg.selectChanged.emit(row);
-            console.log(this.dg);
+            // console.log(this.dg);
             this.app.tick();
             // this.cd.detectChanges();
         });
@@ -233,7 +233,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
             this.setWheelHeight();
-            this.listenSubjects();
             this.ps.update();
             this.cd.detectChanges();
         }
@@ -293,10 +292,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.scrollYMove(y);
         this.dg.scrollY.emit(y);
         this.dgs.onScrollMove(y, SCROLL_Y_ACTION);
-    }
-
-    onScrollYEnd($event: any) {
-        const y = $event.target.scrollTop;
     }
 
     onPsXReachStart($event: any) {
