@@ -183,7 +183,7 @@ farris-datagrid {
   border: 0;
 }
 .f-datagrid-cell-selected {
-  border: 1px solid #388fff !important;
+  border: 0px solid #388fff !important;
   background-color: #dce7ff !important;
 }
 .f-datagrid-cell-edit .f-datagrid-cell-content {

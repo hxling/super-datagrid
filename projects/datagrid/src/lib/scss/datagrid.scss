@@ -212,7 +212,7 @@
         }
 
         &-selected {
-            border: 1px solid $selected-cell-border-color!important;
+            border: 0px solid $selected-cell-border-color!important;
             background-color: $selected-cell-bgcolor!important;
         }
 

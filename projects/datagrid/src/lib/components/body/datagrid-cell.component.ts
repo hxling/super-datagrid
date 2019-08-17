@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 19:10:50
+ * @LastEditTime: 2019-08-17 15:05:44
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -23,12 +23,10 @@ import { ColumnFormatService } from '@farris/ui-common/column';
     selector: 'grid-body-cell',
     template: `
     <div class="f-datagrid-cell-content" #cellContainer [style.width.px]="column.width">
-
         <ng-container *ngIf="!isEditing && !column.template">
             <span *ngIf="column.formatter" [innerHtml]="formatData(column.field, rowData, column.formatter) | safe: 'html'"></span>
             <span *ngIf="!column.formatter">{{ value }}</span>
         </ng-container>
-
         <ng-container *ngIf="!isEditing && column.template" [ngTemplateOutlet]="column.template"
                         [ngTemplateOutletContext]="{$implicit: cellContext}"></ng-container>
         <ng-container #editorTemplate *ngIf="isEditing" cell-editor [column]="column" [group]="dr.form"></ng-container>

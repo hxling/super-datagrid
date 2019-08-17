@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-17 14:10:52
+ * @LastEditTime: 2019-08-17 15:13:58
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -66,6 +66,8 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
                     this.onDblClickCell(e);
                 });
                 this.el.nativeElement.editCell = () => this.openCellEditor();
+            } else {
+                this.clickTimer = 0;
             }
         }
 
@@ -109,6 +111,8 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
 
                     this.selectCell(this.column.field);
                     this.render.removeClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
+                    this.isSingleClick = false;
+                    clearTimeout(this.clickTimer);
                     event.preventDefault();
                 }
             }, this.dg.clickDelay);
