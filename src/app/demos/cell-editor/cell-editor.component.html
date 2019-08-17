@@ -13,6 +13,8 @@
         <div class="fluid-container">
             <div class="row">
                 {{ dg.currentCell?.field }}
+                <button (click)="dg.editable = true">编辑</button>
+                <button (click)="dg.editable = false">结束编辑</button>
             </div>
 
             <div class="row">

@@ -269,7 +269,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     flatColumns: DataColumn[];
     footerWidth  = 0;
 
-    clickDelay = 200;
+    clickDelay = 150;
     private resizeColumnInfo = {
         proxyLineEdge: 0,
         startWidth: 0,
@@ -279,6 +279,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     private ro: ResizeObserver | null = null;
     subscriptions: Subscription[] = [];
     realHeaderHeight = 0;
+    isSingleClick: boolean;
 
     docuemntCellClickEvents: any;
     documentCellClickHandler: any;
@@ -423,6 +424,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         if (changes.multiSort !== undefined && !changes.multiSort.isFirstChange()) {
             this.dfs.updateProperty('multiSort', changes.multiSort.currentValue);
+        }
+
+        if (changes.editable !== undefined && !changes.editable.isFirstChange()) {
+            this.dfs.updateProperty('editable', changes.editable.currentValue);
+            this.isSingleClick = null;
+            this.cd.detectChanges();
         }
 
         if (changes.pageIndex !== undefined && !changes.pageIndex.isFirstChange()) {
@@ -816,7 +823,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     //#region Resize Column
 
     private getResizeProxyPosLeft(e: MouseEvent) {
-        const target = event.target as any;
+        const target = e.target as any;
         const dgRect = this.getBoundingClientRect(this.dgContainer);
         const td = target.parentElement;
         const deltaEdge = td.offsetWidth - (e.pageX - td.getBoundingClientRect().left);

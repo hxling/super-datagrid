@@ -166,8 +166,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             }
             this.dg.selectChanged.emit(row);
             // console.log(this.dg);
+            this.cd.detectChanges();
             this.app.tick();
-            // this.cd.detectChanges();
         });
         this.subscriptions.push(this.selectRowSubscribe);
 

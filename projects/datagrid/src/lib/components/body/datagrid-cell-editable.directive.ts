@@ -26,8 +26,6 @@ import { DomHandler } from '../../services/domhandler';
 export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     @Input('cell-editable') rowData: any;
     @Input() column: DataColumn;
-
-    private isSingleClick: boolean;
     private clickTimer: any;
 
 
@@ -94,16 +92,19 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     }
 
     private onClickCell(event: any) {
+        if (!this.dg.editable) {
+            return;
+        }
         event.stopPropagation();
         if (event.target['nodeName'] === 'INPUT') {
             return;
         }
         this.render.addClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
 
-        if (!this.isSingleClick) {
-            this.isSingleClick = true;
+        if (!this.dg.isSingleClick) {
+            this.dg.isSingleClick = true;
             this.clickTimer = setTimeout(() => {
-                if (this.isSingleClick && this.dg.editable && this.dg.editMode === 'cell') {
+                if (this.dg.isSingleClick && this.dg.editable && this.dg.editMode === 'cell') {
                     this.closeEditingCell();
                     if (!this.isDifferentCell()) {
                         return;
@@ -111,7 +112,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
 
                     this.selectCell(this.column.field);
                     this.render.removeClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
-                    this.isSingleClick = false;
+                    this.dg.isSingleClick = false;
                     clearTimeout(this.clickTimer);
                     event.preventDefault();
                 }
@@ -130,7 +131,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
             });
         }
         if (this.clickTimer) {
-            this.isSingleClick = false;
+            this.dg.isSingleClick = false;
             clearTimeout(this.clickTimer);
             this.clickTimer = null;
         }
