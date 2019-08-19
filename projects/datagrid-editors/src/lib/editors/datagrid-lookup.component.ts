@@ -3,7 +3,7 @@ import { AfterViewInit, ApplicationRef } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-17 17:09:17
+ * @LastEditTime: 2019-08-19 15:42:36
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -18,6 +18,7 @@ import { LookupGridComponent } from '@farris/ui-lookup';
         <farris-lookup-grid #lookup
             [formControlName]="column.field"
             [uri]="options.uri"
+            [displayType]="'List'"
             [singleSelect]="options.singleSelect"
             [idField]="options.idField"
             [pageSize]="options.pageSize || 20"
@@ -59,21 +60,17 @@ export class DatagridLookupComponent extends DatagridBaseEditorDirective impleme
         this.options = Object.assign(LookupDefaultOptions, this.options);
 
         if (this.options.loader) {
-            this.lookup['http'] =  this.lookup['http'] || {};
-            this.lookup['http'].getData = this.options.loader;
+            this.lookup['http'] =  this.lookup['http'] || { getData: this.options.loader };
         }
     }
 
     ngAfterViewInit() {
-        this.lookup.changeDetector.markForCheck();
-        setTimeout(() => {
-            this.lookup.changeDetector.detectChanges();
-            super.ngAfterViewInit();
-        });
+        this.lookup.changeDetector.detectChanges();
+        super.ngAfterViewInit();
     }
 
     onDialogClosed() {
-        this.lookup.changeDetector.detectChanges();
+        // this.lookup.changeDetector.detectChanges();
     }
 
     onDialogOpen() {

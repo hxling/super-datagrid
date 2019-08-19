@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 19:03:31
+ * @LastEditTime: 2019-08-19 18:30:12
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -45,7 +45,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() version = '0.0.1';
 
     @HostBinding('style.position') pos = 'relative';
-    @HostBinding('class') hostCls = '';
+    @HostBinding('class.f-datagrid-full') hostCls = false;
 
     @Input() id = '';
     /** 显示边框 */
@@ -73,11 +73,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     set fit(val: boolean) {
         this._fit = val;
         if (this._fit) {
-            this.hostCls = 'f-datagrid-full';
-            this.el.nativeElement.parentElement.style.position = 'relative';
+            this.hostCls = true;
             this.calculateGridSize(val);
         } else {
-            this.hostCls = '';
+            this.hostCls = false;
         }
     }
     /** 如果为真，则自动展开/收缩列的大小以适合网格宽度并防止水平滚动。 */
@@ -195,7 +194,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() multiSort: boolean;
 
 
+    @Input() beforeEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
     @Output() beginEdit = new EventEmitter();
+    @Input() afterEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
     @Output() endEdit = new EventEmitter();
 
     @Output() scrollY = new EventEmitter();
@@ -223,7 +224,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Output() unCheckAll = new EventEmitter();
 
     @Output() columnSorted = new EventEmitter();
-
 
     @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
     @ViewChild('dgPager') dgPager: any;
@@ -374,6 +374,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
             this.ro.observe(this.el.nativeElement.parentElement);
         });
+
+        if (this.fit) {
+            if (this.el.nativeElement.parentElement) {
+                this.el.nativeElement.parentElement.style.position = 'relative';
+            }
+        }
     }
 
     ngAfterContentInit() {
@@ -474,6 +480,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (!this.beforeSortColumn) {
             this.beforeSortColumn = () => of(true);
         }
+
+        if (!this.beforeEdit) {
+            this.beforeEdit = () => of(true);
+        }
     }
 
     trackByRows = (index: number, row: any) => {
@@ -543,7 +553,23 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
     }
 
-    editCell(rowIndex: number, field: string) {
+    editCell(rowId: string, field: string) {
+        const rowIndex = this.dfs.findRowIndex(rowId);
+        if (rowIndex > -1) {
+            this.stopEdit();
+            const trId = 'row-' + rowIndex;
+            const trDom = this.el.nativeElement.querySelector('#' + trId);
+            if (trDom) {
+                const tdDom = trDom.querySelector(`[field="${field}"]`);
+                if (tdDom && tdDom['editCell']) {
+                    tdDom.editCell();
+                }
+            }
+        }
+    }
+
+    stopEdit() {
+        document.body.click();
     }
 
     private setPagerHeight() {
@@ -874,6 +900,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     //#endregion
+
+
 
     private canOperateCheckbox() {
         return this.multiSelect && this.showCheckbox;

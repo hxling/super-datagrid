@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-17 15:05:44
+ * @LastEditTime: 2019-08-19 15:16:23
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -32,7 +32,7 @@ import { ColumnFormatService } from '@farris/ui-common/column';
         <ng-container #editorTemplate *ngIf="isEditing" cell-editor [column]="column" [group]="dr.form"></ng-container>
     </div>
     `,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.Default
 })
 export class DatagridCellComponent implements OnInit, OnDestroy {
     @Input() width: number;
@@ -88,7 +88,10 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
                 this.isEditing = cell.isEditing;
                 if (!this.isEditing) {
                     this.updateValue();
+                } else {
+                    this.dr.form.controls[this.column.field].setValue(this.value);
                 }
+
                 if (!this.cd['destroyed']) {
                     this.cd.detectChanges();
                 }

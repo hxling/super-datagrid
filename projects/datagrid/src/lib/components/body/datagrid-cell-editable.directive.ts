@@ -2,12 +2,12 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-17 15:13:58
+ * @LastEditTime: 2019-08-19 18:21:29
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import { Directive, Input, ElementRef, Renderer2, OnInit, ContentChild, OnDestroy, Injector, forwardRef, Inject } from '@angular/core';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { DatagridService } from './../../services/datagrid.service';
 import { DatagridCellComponent } from './datagrid-cell.component';
 import { DatagridBodyComponent } from './datagrid-body.component';
@@ -17,6 +17,7 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
 import { CELL_SELECTED_CLS } from '../../types/constant';
 import { DomHandler } from '../../services/domhandler';
+import { Observable, timer, of } from 'rxjs';
 
 
 @Directive({
@@ -138,25 +139,51 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     }
 
     openCellEditor() {
-        if (!this.column.editor) {
+        if (!this.column.editor || !this.dg.editable) {
             return;
         }
 
-        if (this.isDifferentCell()) {
-            this.selectCell(this.column.field);
+        const beforeEditEvent = this.dg.beforeEdit(this.dr.rowIndex, this.rowData, this.column);
+        if (!beforeEditEvent || !beforeEditEvent.subscribe) {
+            console.warn('please return an Observable Type.');
+            return;
         }
 
-        this.dfs.editCell();
-        setTimeout(() => {
-            this.bindEditorInputEvent();
-            this.render.removeClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
+        beforeEditEvent.pipe(
+            switchMap( (flag: boolean) => {
+                if (flag) {
+                    if (this.isDifferentCell()) {
+                        this.selectCell(this.column.field);
+                    }
+                    this.dfs.editCell();
+                }
+                return of(flag);
+            })
+        ).subscribe( (flag) => {
+            if (flag) {
+                this.bindEditorInputEvent();
+                this.render.removeClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
+                this.dg.beginEdit.emit({ ediotr: this.dc.cellEditor, column: this.column, rowData: this.rowData });
+            }
         });
     }
 
     closeEditingCell() {
-        this.unBindEditorInputEvent();
-        this.dfs.endEditCell();
-        this.dgs.onEndCellEdit(this.dfs.getCurrentCell());
+
+        const afterEditEvent = this.dg.afterEdit(this.dr.rowIndex, this.rowData, this.column );
+        if (!afterEditEvent || !afterEditEvent.subscribe) {
+            console.warn('please return an Observable Type.');
+            return;
+        }
+
+        afterEditEvent.subscribe( (flag: boolean) => {
+            if (flag) {
+                this.dfs.endEditCell();
+                this.dgs.onEndCellEdit(this.dfs.getCurrentCell());
+                this.unBindEditorInputEvent();
+                this.dg.endEdit.emit();
+            }
+        });
     }
 
 

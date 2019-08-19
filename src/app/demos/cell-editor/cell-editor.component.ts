@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-17 17:02:07
+ * @LastEditTime: 2019-08-19 18:31:17
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -13,6 +13,7 @@ import { EditorTypes} from '@farris/ui-datagrid-editors';
 import { Utils } from '../utils';
 import { DatagridComponent } from '@farris/ui-datagrid';
 import { debounceTime, map } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
     selector: 'cell-editor',
@@ -52,7 +53,9 @@ export class CellEditorComponent implements OnInit {
                 idField: 'Code',
                 singleSelect: true,
                 textField: 'Name',
-                valueField: 'Code'
+                valueField: 'Code',
+                title: '人员选择',
+                pagination: true,
             }}},
             { field: 'nianxin', width: 100, title: '年薪' , editor: { type: EditorTypes.TEXTBOX, options: {}},
             formatter: { type: 'number', options: { prefix: '￥', suffix: '元', precision: 2 } }
@@ -102,6 +105,8 @@ export class CellEditorComponent implements OnInit {
                         perPage = params.pagination.pageSize;
                         start = (params.pagination.pageIndex - 1) * perPage;
                         end = start + perPage;
+
+                        data['pageInfo'] = params.pagination;
                     }
 
                     if (params.search && params.search.value) {
@@ -113,10 +118,33 @@ export class CellEditorComponent implements OnInit {
                     }
                     data.total = data.items.length;
                     data.items = data.items.slice(start, end);
-                    data['pageInfo'] = params.pagination;
                 }
                 return data;
             })
         );
+    }
+
+    beforeEdit = (index, rowdata, col) => {
+        console.log('Before Edit', rowdata, col);
+        return of(true);
+    }
+
+    beginEdit(res) {
+        console.log('Begin Edit', res);
+    }
+
+    afterEdit = (index, rowdata, col) => {
+        console.log('After Edit', rowdata);
+        return of(true);
+    }
+
+    endEdit(res) {
+        console.log('End Edit', res);
+    }
+
+    // edit cell
+    editCell($event: MouseEvent, rowId, field) {
+        this.dg.editCell('3', 'name');
+        $event.stopPropagation();
     }
 }

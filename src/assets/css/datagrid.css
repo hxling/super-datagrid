@@ -148,7 +148,7 @@ farris-datagrid {
 .f-datagrid-row-hover {
   cursor: pointer;
   background: #f3fbff !important;
-  color: black;
+  color: black !important;
   transition: background-color 0.1s ease-in;
 }
 .f-datagrid-row-selected {

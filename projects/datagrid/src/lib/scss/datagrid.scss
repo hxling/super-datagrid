@@ -165,7 +165,7 @@
         &-hover {
             cursor: pointer;
             background: $row-hover-bgcolor!important;
-            color: $row-hover-color;
+            color: $row-hover-color!important;
             transition: background-color 0.1s ease-in;
 
             .f-datagrid-cell { 

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-07-29 08:14:22
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 19:08:34
+ * @LastEditTime: 2019-08-19 09:10:31
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -32,7 +32,7 @@ export class GridCellEditorDirective implements OnInit {
     constructor(
         private resolver: ComponentFactoryResolver,
         private container: ViewContainerRef,
-        // private app: ApplicationRef,
+        private app: ApplicationRef,
         private fb: FormBuilder,
         @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent
     ) {
@@ -45,7 +45,7 @@ export class GridCellEditorDirective implements OnInit {
         this.componentRef = this.container.createComponent(factory);
         this.componentRef.instance.column = this.column;
         this.componentRef.instance.group = this.group;
-        this.componentRef.changeDetectorRef.reattach();
+        // this.app.attachView(this.componentRef.hostView);
         this.componentRef.changeDetectorRef.markForCheck();
         this.componentRef.changeDetectorRef.detectChanges();
         // this.app.tick();

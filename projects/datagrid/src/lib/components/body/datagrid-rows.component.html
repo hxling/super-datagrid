@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 11:52:58
+ * @LastEditTime: 2019-08-19 16:53:46
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -18,7 +18,7 @@
         [class.f-datagrid-row-selected]="dgb.currentRowId === row[dg.idField] || dgb.isSelected(row)"
         [class.f-datagrid-row-hover]="dg.rowHover && dgb.hoverRowIndex === hoverRow.rowIndex"
     >
-        <td [cell-editable]="row" [column]="col"
+        <td [cell-editable]="row" [column]="col" [attr.field]="col.field"
             class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columns; let ci = index;">
             <grid-body-cell [width]="col.width" [height]="dg.rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
         </td>
