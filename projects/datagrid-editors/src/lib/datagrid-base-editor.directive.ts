@@ -2,13 +2,13 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 11:07:01
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-15 11:38:45
+ * @LastEditTime: 2019-08-19 19:13:33
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
-import { Directive, OnInit, OnDestroy, AfterViewInit, Renderer2, ElementRef, Input } from '@angular/core';
+import { Directive, OnInit, OnDestroy, AfterViewInit, Renderer2, ElementRef, Input, Inject, forwardRef } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { DataColumn } from '@farris/ui-datagrid';
+import { DataColumn, DatagridComponent } from '@farris/ui-datagrid';
 
 @Directive({
     selector: 'datagrid-editor',
@@ -24,10 +24,14 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
     formControl: FormControl;
 
     inputElement: any;
+    /** 是否正在向serve 发送请求 */
+    pending = false;
+
 
     private clickEvent: any;
     private keyDownEvent: any;
     private dblClickEvent: any;
+
 
     constructor(public render: Renderer2, public el: ElementRef) {}
 

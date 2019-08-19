@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 18:30:12
+ * @LastEditTime: 2019-08-19 19:34:32
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -286,6 +286,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     documentCellKeydownEvents: any;
     documentCellKeydownHandler: any;
 
+    pending = false;
+
     constructor(public cd: ChangeDetectorRef,
                 public el: ElementRef,
                 private inject: Injector, private zone: NgZone,
@@ -494,11 +496,15 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.unbindDocumentEditListener();
         if (!this.documentCellClickHandler) {
             this.documentCellClickHandler = (event) => {
+                if (this.pending) {
+                    return false;
+                }
                 if (this.currentCell) {
                     if (Utils.hasDialogOpen()) {
                         return;
                     }
                     DomHandler.removeClass(this.currentCell.cellRef, CELL_SELECTED_CLS);
+
                     if (this.currentCell.isEditing) {
                         this.dfs.endEditCell();
                     }
@@ -553,7 +559,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
     }
 
-    editCell(rowId: string, field: string) {
+    editCell(rowId: any, field: string) {
         const rowIndex = this.dfs.findRowIndex(rowId);
         if (rowIndex > -1) {
             this.stopEdit();

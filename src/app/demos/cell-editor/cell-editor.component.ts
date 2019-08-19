@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 18:31:17
+ * @LastEditTime: 2019-08-19 19:36:05
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -144,7 +144,7 @@ export class CellEditorComponent implements OnInit {
 
     // edit cell
     editCell($event: MouseEvent, rowId, field) {
-        this.dg.editCell('3', 'name');
+        this.dg.editCell(rowId, 'name');
         $event.stopPropagation();
     }
 }

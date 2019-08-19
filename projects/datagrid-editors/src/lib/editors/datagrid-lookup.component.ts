@@ -1,9 +1,9 @@
-import { AfterViewInit, ApplicationRef } from '@angular/core';
+import { AfterViewInit, ApplicationRef, Inject, forwardRef } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 15:42:36
+ * @LastEditTime: 2019-08-19 19:14:04
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -11,6 +11,8 @@ import { Component, OnInit, Renderer2, ElementRef, ViewChild } from '@angular/co
 import { DatagridBaseEditorDirective } from '../datagrid-base-editor.directive';
 import { LookupDefaultOptions } from '../editor-default-options';
 import { LookupGridComponent } from '@farris/ui-lookup';
+import { RuntimeStateService } from '@farris/ui-common';
+import { DatagridComponent } from 'projects/datagrid/src/public-api';
 @Component({
     selector: 'grid-editor-lookup',
     template: `
@@ -50,8 +52,15 @@ export class DatagridLookupComponent extends DatagridBaseEditorDirective impleme
 
     @ViewChild('lookup') lookup: LookupGridComponent;
 
-    constructor(render: Renderer2, el: ElementRef) {
+    constructor(render: Renderer2, el: ElementRef, private rts: RuntimeStateService,
+                @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent) {
         super(render, el);
+        this.rts.state$.subscribe(state => {
+            if (state && state.form && state.form.lookup) {
+                this.pending = state.form.lookup.pending;
+                this.dg.pending = this.pending;
+            }
+        });
     }
 
     ngOnInit(): void {
