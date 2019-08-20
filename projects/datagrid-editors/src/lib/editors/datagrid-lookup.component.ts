@@ -3,7 +3,7 @@ import { AfterViewInit, ApplicationRef, Inject, forwardRef } from '@angular/core
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 19:14:04
+ * @LastEditTime: 2019-08-20 18:46:23
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -16,8 +16,8 @@ import { DatagridComponent } from 'projects/datagrid/src/public-api';
 @Component({
     selector: 'grid-editor-lookup',
     template: `
-    <div [formGroup]="group" class="f-datagrid-cell-formgroup">
-        <farris-lookup-grid #lookup
+    <div [formGroup]="group" class="f-datagrid-cell-formgroup farris-group-auto">
+        <farris-lookup-grid #lookup style="width: 100%"
             [formControlName]="column.field"
             [uri]="options.uri"
             [displayType]="'List'"

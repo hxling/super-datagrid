@@ -195,6 +195,7 @@ farris-datagrid {
   text-overflow: ellipsis;
   width: 100%;
   margin: 0;
+  padding: 0 1px;
   height: calc(36px - 3px);
   line-height: calc(36px - 3px);
 }

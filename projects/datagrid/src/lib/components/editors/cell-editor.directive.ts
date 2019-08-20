@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-07-29 08:14:22
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 09:10:31
+ * @LastEditTime: 2019-08-20 11:21:19
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -39,6 +39,12 @@ export class GridCellEditorDirective implements OnInit {
     }
 
     ngOnInit() {
+        if (this.column.editor) {
+            this.createCellEditor();
+        }
+    }
+
+    private createCellEditor() {
         const factory = this.resolver.resolveComponentFactory(
             this.dg.editors[this.column.editor.type]
         );

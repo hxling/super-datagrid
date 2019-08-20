@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 17:35:41
+ * @LastEditTime: 2019-08-20 14:33:48
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -12,21 +12,32 @@
        
         <div class="fluid-container">
             <div class="row">
-                {{ dg.currentCell?.field }}
+               
                 <button (click)="dg.editable = true">允许编辑</button>
                 <button (click)="dg.editable = false">禁用编辑</button>
                 <button (click)="editCell($event, 3, 'name')">编辑（第3行，name字段）</button>
+                <select [(ngModel)]="editMode">
+                    <option value="cell">Cell</option>
+                    <option value="row">Row</option>
+                </select>
             </div>
 
             <div class="row">
-            {{ dg.selectedRow | json }}
+            {{ dg.selectedRow?.data | json }} <br> {{ dg.currentCell?.field }}
             </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-primary" (click)="dg.editRow()">编辑</button>
+                </div>
+            </div>
+
         </div>
 
     </div>
     <div region="center" class="center flex-fill">
         <farris-datagrid [data]="items" [columns]="columns" #dg="datagrid" [fit]="true"
-            [editable]="true" [editMode]="'cell'" [showCheckbox]="false" [fitColumns]="true"
+            [editable]="true" [editMode]="editMode" [showCheckbox]="false" [fitColumns]="true"
             [showLineNumber] ="true" [striped]="true"  [total]="total"
             [virtualized]="true" [pagination]="false"
             [beforeEdit] = "beforeEdit"

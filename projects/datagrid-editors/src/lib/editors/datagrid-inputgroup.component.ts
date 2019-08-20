@@ -3,7 +3,7 @@ import { EventEmitter } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-15 08:30:10
+ * @LastEditTime: 2019-08-20 18:40:58
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -16,7 +16,7 @@ import { InputGroupComponent } from '@farris/ui-input-group';
     template: `
     <div [formGroup]="group" class="f-datagrid-cell-formgroup">
         <input-group #ig class="f-datagrid-cell-editor"
-            (clear)="clear.emit()"
+            (clear)="clear.emit()" style="width: 100%"
             [formControlName]="column.field"></input-group>
     </div>
     `,

@@ -1,14 +1,15 @@
+import { Subscription } from 'rxjs';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 15:16:23
+ * @LastEditTime: 2019-08-20 18:57:48
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import { Component, OnInit, Input, Output, EventEmitter,
     ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef,
-    OnDestroy, Injector, Inject, forwardRef, ApplicationRef } from '@angular/core';
+    OnDestroy, Injector, Inject, forwardRef, ApplicationRef, OnChanges, SimpleChanges } from '@angular/core';
 import { Utils } from '../../utils/utils';
 import { filter } from 'rxjs/operators';
 import { DataColumn } from '../../types/data-column';
@@ -42,7 +43,16 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
     @Input() rowData: any;
     @Input() rowIndex: number;
 
-    @Input() isEditing = false;
+    private _isEditing = false;
+    @Input() get isEditing() {
+        return this._isEditing;
+    }
+    set isEditing(v) {
+        this._isEditing = v;
+        if (!this.cd['destroyed']) {
+            this.cd.detectChanges();
+        }
+    }
     @Input() isSelected = false;
 
     @ViewChild('cellContainer') cellContainer: ElementRef;
@@ -57,6 +67,7 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
     cellStyler: any = {};
 
     private dfs: DatagridFacadeService;
+    private cellSubscription: Subscription;
     canEdit = () => this.dg.editable && this.dg.editMode === 'cell' && this.column.editor;
     constructor(
         private app: ApplicationRef,
@@ -79,7 +90,7 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
 
         this.buildCustomCellStyle();
 
-        this.dfs.currentCell$.pipe(
+        this.cellSubscription = this.dfs.currentCell$.pipe(
             filter((cell: CellInfo) => {
                 return cell && this.column.editor && cell.rowIndex === this.rowIndex && cell.field === this.column.field;
             })
@@ -107,7 +118,10 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        // this.isEditing$ = null;
+        if (this.cellSubscription) {
+            this.cellSubscription.unsubscribe();
+            this.cellSubscription = null;
+        }
     }
 
     private buildCustomCellStyle() {

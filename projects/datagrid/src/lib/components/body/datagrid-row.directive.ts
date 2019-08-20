@@ -1,16 +1,18 @@
+import { QueryList } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 18:21:07
+ * @LastEditTime: 2019-08-20 16:11:18
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Directive, Input, Output, EventEmitter, HostListener,
-    OnInit, ElementRef, AfterViewInit, Injector, Inject, forwardRef } from '@angular/core';
+    OnInit, ElementRef, AfterViewInit, Injector, Inject, forwardRef, ContentChildren } from '@angular/core';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
+import { DatagridCellComponent } from './datagrid-cell.component';
 
 @Directive({
     selector: '[grid-row]',
@@ -21,6 +23,8 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
     @Input('grid-row') rowData: any;
     @Input() rowIndex: number;
     @Output() clickHandler = new EventEmitter();
+
+    @ContentChildren(forwardRef(() => DatagridCellComponent),  { descendants: true }) cells: QueryList<DatagridCellComponent>;
 
     form = new FormGroup({});
     private dfs: DatagridFacadeService;
@@ -51,18 +55,14 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
 
     @HostListener('click', ['$event'])
     onRowClick(event: MouseEvent) {
+
         const rowId = this.dfs.primaryId(this.rowData);
         if (!this.dfs.isRowSelected(rowId)) {
-
+            this.dg.endRowEdit();
             this.dg.beforeSelect(this.rowIndex, this.rowData).subscribe( (canSelect: boolean) => {
                 if (canSelect) {
-                    // if (!this.dg.multiSelect || (this.dg.multiSelect && this.dg.onlySelectSelf)) {
-                    //     if (this.dg.selectedRow) {
-                    //         const rowid = this.dg.selectedRow.id;
-                    //         this.dfs.selectRecord(rowid, false);
-                    //     }
-                    // }
                     this.dfs.selectRow(this.rowIndex, this.rowData);
+                    this.dg.selectedRow.dr = this;
                     this.clickHandler.emit();
                 }
             });

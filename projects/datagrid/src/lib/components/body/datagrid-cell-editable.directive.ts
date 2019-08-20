@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 09:39:57
+ * @LastEditTime: 2019-08-20 16:07:38
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -17,7 +17,7 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
 import { CELL_SELECTED_CLS } from '../../types/constant';
 import { DomHandler } from '../../services/domhandler';
-import { Observable, timer, of } from 'rxjs';
+import { Observable, timer, of, Subscription } from 'rxjs';
 
 
 @Directive({
@@ -32,6 +32,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
 
     private cellclick: any;
     private celldblclick: any;
+    private bindCellEventSubscription: Subscription;
 
     private editorInputKeydownEvent: any;
 
@@ -80,7 +81,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
             }
         }
 
-        this.dgs.cellEdit$.pipe(
+        this.bindCellEventSubscription = this.dgs.cellEdit$.pipe(
             filter(() => {
                 const cell = this.dg.currentCell;
                 return cell.rowIndex === this.dr.rowIndex && cell.field === this.column.field;
@@ -100,10 +101,15 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         }
 
         this.unBindEditorInputEvent();
+
+        if (this.bindCellEventSubscription) {
+            this.bindCellEventSubscription.unsubscribe();
+            this.bindCellEventSubscription = null;
+        }
     }
 
     private onClickCell(event: any) {
-        if (!this.dg.editable) {
+        if (!this.dg.editable || (this.dg.editable && this.dg.editMode === 'row')) {
             return;
         }
         event.stopPropagation();
@@ -112,18 +118,18 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         }
         this.render.addClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
 
-        if (!this.dg.isSingleClick) {
+        if (!this.dg.isSingleClick && this.dg.editMode) {
             this.dg.isSingleClick = true;
             this.clickTimer = setTimeout(() => {
                 if (this.dg.isSingleClick && this.dg.editable && this.dg.editMode === 'cell') {
+                    this.dg.isSingleClick = false;
+                    clearTimeout(this.clickTimer);
                     if (!this.closeEditingCell() || !this.isDifferentCell()) {
                         return;
                     }
 
                     this.selectCell(this.column.field);
                     this.render.removeClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
-                    this.dg.isSingleClick = false;
-                    clearTimeout(this.clickTimer);
                     event.preventDefault();
                 }
             }, this.dg.clickDelay);
@@ -174,13 +180,14 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
             if (flag) {
                 this.bindEditorInputEvent();
                 this.render.removeClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
-                this.dg.beginEdit.emit({ ediotr: this.dc.cellEditor, column: this.column, rowData: this.rowData });
+                this.dg.selectedRow.editors = [this.editor];
+                this.dg.beginEdit.emit({ editor: this.dc.cellEditor, column: this.column, rowData: this.rowData });
             }
         });
     }
 
     closeEditingCell() {
-        if (!this.dg.isEditing()) {
+        if (!this.dg.isCellEditing()) {
             return true;
         }
 
@@ -205,6 +212,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
                 this.dfs.endEditCell();
                 this.dgs.onEndCellEdit(this.dfs.getCurrentCell());
                 this.unBindEditorInputEvent();
+                this.dg.selectedRow.editors = [];
                 this.dg.endEdit.emit({rowIndex: this.dr.rowIndex, rowData: this.rowData, column: this.column});
             }
         });

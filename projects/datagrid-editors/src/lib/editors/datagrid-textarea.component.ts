@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:44:30
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 09:16:23
+ * @LastEditTime: 2019-08-20 19:06:07
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -13,7 +13,7 @@ import { DatagridBaseEditorDirective } from '../datagrid-base-editor.directive';
     selector: 'grid-editor-textarea',
     template: `
     <div [formGroup]="group" class="f-datagrid-cell-formgroup">
-        <textarea #input class="form-control" [attr.rows]="rows"  [formControlName]="column.field"></textarea>
+        <textarea #input class="form-control" style="height: 100%" [formControlName]="column.field"></textarea>
     </div>
     `
 })

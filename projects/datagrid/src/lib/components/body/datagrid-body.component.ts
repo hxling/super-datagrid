@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-17 13:05:56
+ * @LastEditTime: 2019-08-20 19:09:50
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -141,7 +141,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                     this.showRightShadow = true;
                 }
 
-                this.cd.detectChanges();
+                if (!this.cd['destroyed']) {
+                    this.cd.detectChanges();
+                }
                 this.ps.update();
             }
         });
@@ -234,7 +236,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         if (changes.data && !changes.data.isFirstChange()) {
             this.setWheelHeight();
             this.ps.update();
-            this.cd.detectChanges();
+            if (!this.cd['destroyed']) {
+                this.cd.detectChanges();
+            }
         }
     }
 
@@ -288,6 +292,15 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     onScrollToY($event: any) {
+
+        if (this.dg.isRowEditing()) {
+            this.dg.endRowEdit();
+        }
+
+        if (this.dg.isCellEditing()) {
+            this.dg.endCellEdit();
+        }
+
         const y = $event.target.scrollTop;
         this.scrollYMove(y);
         this.dg.scrollY.emit(y);

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-17 17:12:43
+ * @LastEditTime: 2019-08-20 14:25:55
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -66,6 +66,8 @@ export interface SelectedRow {
     index: number;
     id: any;
     data: any;
+    dr?: any;
+    editors?: any[];
 }
 
 export const initDataGridState: FarrisDatagridState = {

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 11:07:01
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 19:13:33
+ * @LastEditTime: 2019-08-20 17:15:15
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -42,7 +42,7 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
             this.options = this.column.editor.options;
         }
 
-        console.log(this.formControl);
+        // console.log(this.formControl);
         // this.keyDownEvent = this.render.listen(this.el.nativeElement, 'keydown', (e: KeyboardEvent) => {
         //     e.stopPropagation();
         // });

@@ -1,13 +1,13 @@
-import { SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-17 14:58:02
+ * @LastEditTime: 2019-08-20 18:58:05
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, Injector, Inject, forwardRef, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, Injector, Inject, forwardRef } from '@angular/core';
 import { DataColumn } from '../../types';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridBodyComponent } from './datagrid-body.component';
@@ -34,19 +34,11 @@ export class DatagridRowsComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
     }
 
-    // ngOnChanges(changes: SimpleChanges) {
-    //     if (changes.data !== undefined && !changes.data.isFirstChange()) {
-    //         this.cd.markForCheck();
-    //         this.cd.detectChanges();
-    //     }
-    // }
-
     ngAfterViewInit() {
         setTimeout(() => {
             if (!this.dg.nowrap) {
                 const trheights = this.getTrDomHeight();
                 this.dgb.updateRowHeight(trheights);
-                // this.dgb.rowHeightList = trheights;
             }
         });
     }

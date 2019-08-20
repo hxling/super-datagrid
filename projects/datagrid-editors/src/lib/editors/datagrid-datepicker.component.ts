@@ -5,7 +5,7 @@ import { ShowType, FarrisDatepickerComponent } from '@farris/ui-datepicker';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:40:36
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-14 17:41:24
+ * @LastEditTime: 2019-08-20 18:46:20
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -13,9 +13,10 @@ import { ShowType, FarrisDatepickerComponent } from '@farris/ui-datepicker';
 @Component({
     selector: 'grid-editor-datepicker',
     template: `
-    <div [formGroup]="group" class="f-datagrid-cell-formgroup">
+    <div [formGroup]="group" class="f-datagrid-cell-formgroup farris-group-auto">
         <farris-datepicker
             #datepicker
+            style="width: 100%"
             [formControlName]="column.field"
             [readonly]="readonly"
             [editable]="editable"

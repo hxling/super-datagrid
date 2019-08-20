@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 09:46:19
+ * @LastEditTime: 2019-08-20 16:19:37
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -195,7 +195,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
 
     @Input() beforeEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
-    @Output() beginEdit = new EventEmitter<{ editor: any, rowData: any, column?: DataColumn }>();
+    @Output() beginEdit = new EventEmitter<{ editor?: any, rowIndex?: number, rowData: any, column?: DataColumn }>();
     @Input() afterEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
     @Output() endEdit = new EventEmitter<{rowIndex: number, rowData: any, column?: DataColumn}>();
 
@@ -563,7 +563,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     editCell(rowId: any, field: string) {
         const rowIndex = this.dfs.findRowIndex(rowId);
         if (rowIndex > -1) {
-            this.stopEdit();
+            this.endCellEdit();
             const trId = 'row-' + rowIndex;
             const trDom = this.el.nativeElement.querySelector('#' + trId);
             if (trDom) {
@@ -575,16 +575,97 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
     }
 
-    stopEdit() {
+    endCellEdit() {
         document.body.click();
     }
 
-    isEditing() {
-        if ( this.currentCell) {
+    isRowEditing() {
+        if (!this.selectedRow || this.selectedRow.index === -1) {
+            return false;
+        } else {
+            return this.selectedRow.editors && this.selectedRow.editors.length;
+        }
+    }
+
+    isCellEditing() {
+        if (this.currentCell) {
             return this.currentCell.isEditing;
         }
         return false;
+    }
 
+    getEditors() {
+        return this.selectedRow.editors;
+    }
+
+    editRow(rowId?: any) {
+        if (!this.editable) { return false; }
+
+        if (!this.selectedRow || this.selectedRow.index === -1) {
+            console.warn('Please select a row.');
+            return false;
+        }
+
+        const { index: rowIndex, data: rowData } = { ...this.selectedRow};
+
+        const beforeEditEvent = this.beforeEdit(rowIndex, rowData);
+        if (!beforeEditEvent || !beforeEditEvent.subscribe) {
+            console.warn('please return an Observable Type.');
+            return;
+        }
+
+        beforeEditEvent.subscribe( (flag: boolean) => {
+            if (flag) {
+                if (this.selectedRow.dr) {
+                    const cells = this.selectedRow.dr.cells;
+                    cells.forEach(cell => cell.isEditing = true);
+                    setTimeout(() => {
+                        const editors = cells.map( cell => {
+                            if (cell.cellEditor) {
+                                return cell.cellEditor.componentRef;
+                            }
+                        });
+                        this.selectedRow.editors = editors;
+                        this.beginEdit.emit({ rowIndex, rowData});
+                        this.cd.detectChanges();
+                    });
+                }
+            }
+        });
+
+    }
+
+    endRowEdit() {
+        if (!this.isRowEditing()) {
+            return;
+        }
+
+        if (!this.selectedRow || this.selectedRow.index === -1) {
+            console.warn('Please select a row.');
+            return;
+        }
+        const { index: rowIndex, data: rowData } = { ...this.selectedRow};
+        // blur
+        document.body.click();
+
+        if (this.pending) {
+            return;
+        }
+
+        const afterEditEvent = this.afterEdit(rowIndex, rowData);
+        if (!afterEditEvent || !afterEditEvent.subscribe) {
+            console.warn('please return an Observable Type.');
+            return;
+        }
+
+        afterEditEvent.subscribe( (flag: boolean) => {
+            if (flag) {
+                const cells = this.selectedRow.dr.cells;
+                cells.forEach(cell => cell.isEditing = false);
+                this.selectedRow.editors = null;
+                this.endEdit.emit({rowIndex, rowData});
+            }
+        });
     }
 
     private setPagerHeight() {
