@@ -14,7 +14,7 @@ import { InputGroupComponent } from '@farris/ui-input-group';
 @Component({
     selector: 'grid-editor-inputgroup',
     template: `
-    <div [formGroup]="group" class="f-datagrid-cell-formgroup">
+    <div [formGroup]="group" class="f-datagrid-cell-formgroup farris-group-auto">
         <input-group #ig class="f-datagrid-cell-editor"
             (clear)="clear.emit()" style="width: 100%"
             [formControlName]="column.field"></input-group>
