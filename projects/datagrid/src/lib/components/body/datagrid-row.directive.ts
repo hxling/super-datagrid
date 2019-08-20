@@ -3,7 +3,7 @@ import { QueryList } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 16:11:18
+ * @LastEditTime: 2019-08-20 19:21:51
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -30,7 +30,7 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
     private dfs: DatagridFacadeService;
     constructor(
         @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
-        private injector: Injector, private fb: FormBuilder, private el: ElementRef) {
+        private injector: Injector, private fb: FormBuilder, public el: ElementRef) {
         this.dfs = this.injector.get(DatagridFacadeService);
     }
 

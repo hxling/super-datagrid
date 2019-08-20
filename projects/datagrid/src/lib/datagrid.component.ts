@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 16:19:37
+ * @LastEditTime: 2019-08-20 19:46:50
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -286,6 +286,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     documentCellKeydownEvents: any;
     documentCellKeydownHandler: any;
 
+    documentRowKeydownHandler: any;
+
     pending = false;
 
     constructor(public cd: ChangeDetectorRef,
@@ -320,10 +322,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 this.editors[ed.name] = ed.value;
             });
         }
-
         const currentCellSubscription = this.dfs.currentCell$.subscribe( cell => {
             this.currentCell = cell;
+            this.unbindMoveSelectRowEvent();
             this.bindDocumentEditListener();
+        });
+
+        this.dfs.selectRow$.subscribe( () => {
+            if (!this.currentCell) {
+                this.bindDocumentMoveSelectRowEvent();
+            }
         });
 
         this.subscriptions.push(currentCellSubscription);
@@ -461,6 +469,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (this.ro) {
             this.ro.disconnect();
         }
+
+        if (this.documentRowKeydownHandler) {
+            this.documentRowKeydownHandler();
+        }
     }
 
     private initBeforeEvents() {
@@ -492,7 +504,29 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         return row[this.idField];
     }
 
-    bindDocumentEditListener() {
+    private unbindMoveSelectRowEvent() {
+        if (this.documentRowKeydownHandler) {
+            this.documentRowKeydownHandler();
+            this.documentRowKeydownHandler = null;
+        }
+    }
+
+    private bindDocumentMoveSelectRowEvent() {
+        this.unbindMoveSelectRowEvent();
+        this.unbindDocumentEditListener();
+        this.documentRowKeydownHandler = this.render2.listen(document, 'keydown', (e: KeyboardEvent) => {
+            switch (e.keyCode) {
+                case 40:
+                    this.selectNextRow();
+                    break;
+                case 38:
+                    this.selectPrevRow();
+                    break;
+            }
+        });
+    }
+
+    private bindDocumentEditListener() {
         this.unbindDocumentEditListener();
         if (!this.documentCellClickHandler) {
             this.documentCellClickHandler = (event) => {
@@ -525,7 +559,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
     }
 
-    unbindDocumentEditListener() {
+    private unbindDocumentEditListener() {
         if (this.documentCellClickHandler) {
             this.docuemntCellClickEvents();
             this.documentCellClickHandler = null;
@@ -536,6 +570,41 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.documentCellKeydownHandler = null;
         }
     }
+
+    private onKeyDownEvent(e: any) {
+        const keyCode = e.keyCode;
+        if (this.currentCell && !this.currentCell.isEditing) {
+            switch (keyCode) {
+                case 13: // Enter
+                    const fn = this.currentCell.cellRef['editCell'];
+                    if (fn) {
+                        fn.apply(this.currentCell.cellRef);
+                    }
+                    break;
+                case 40: // ↓
+                    this.selectNextCell('down');
+                    break;
+                case 38: // ↑
+                    this.selectNextCell('up');
+                    break;
+                case 39: // →
+                    this.selectNextCell('right');
+                    break;
+                case 37: // ←
+                    this.selectNextCell('left');
+                    break;
+                case 9: // Tab
+                    if (e.shiftKey) {
+                        this.selectNextCell('left');
+                    } else {
+                        this.selectNextCell('right');
+                    }
+                    e.preventDefault();
+                    break;
+            }
+        }
+    }
+
 
     private unsubscribes() {
         this.subscriptions.forEach(ss => {
@@ -557,6 +626,23 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (nextTd) {
             nextTd['click'].apply(nextTd);
             return nextTd;
+        }
+    }
+
+    selectNextRow() {
+        if (this.selectedRow) {
+            const tr = this.selectedRow.dr.el.nativeElement;
+            if (tr.nextElementSibling) {
+                tr.nextElementSibling.click();
+            }
+        }
+    }
+    selectPrevRow() {
+        if (this.selectedRow) {
+            const tr = this.selectedRow.dr.el.nativeElement;
+            if (tr.previousElementSibling) {
+                tr.previousElementSibling.click();
+            }
         }
     }
 
@@ -700,40 +786,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             }
         }
         return td;
-    }
-
-    private onKeyDownEvent(e: any) {
-        const keyCode = e.keyCode;
-        if (this.currentCell && !this.currentCell.isEditing) {
-            switch (keyCode) {
-                case 13: // Enter
-                    const fn = this.currentCell.cellRef['editCell'];
-                    if (fn) {
-                        fn.apply(this.currentCell.cellRef);
-                    }
-                    break;
-                case 40: // ↓
-                    this.selectNextCell('down');
-                    break;
-                case 38: // ↑
-                    this.selectNextCell('up');
-                    break;
-                case 39: // →
-                    this.selectNextCell('right');
-                    break;
-                case 37: // ←
-                    this.selectNextCell('left');
-                    break;
-                case 9: // Tab
-                    if (e.shiftKey) {
-                        this.selectNextCell('left');
-                    } else {
-                        this.selectNextCell('right');
-                    }
-                    e.preventDefault();
-                    break;
-            }
-        }
     }
 
     loadData(data?: any) {
