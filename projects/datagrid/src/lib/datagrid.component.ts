@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 19:34:32
+ * @LastEditTime: 2019-08-20 09:46:19
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -195,9 +195,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
 
     @Input() beforeEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
-    @Output() beginEdit = new EventEmitter();
+    @Output() beginEdit = new EventEmitter<{ editor: any, rowData: any, column?: DataColumn }>();
     @Input() afterEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
-    @Output() endEdit = new EventEmitter();
+    @Output() endEdit = new EventEmitter<{rowIndex: number, rowData: any, column?: DataColumn}>();
 
     @Output() scrollY = new EventEmitter();
 
@@ -506,7 +506,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                     DomHandler.removeClass(this.currentCell.cellRef, CELL_SELECTED_CLS);
 
                     if (this.currentCell.isEditing) {
-                        this.dfs.endEditCell();
+                        // this.dfs.endEditCell();
+                        this.currentCell.cellRef.closeEdit();
                     }
                     this.dfs.cancelSelectCell();
                     this.unbindDocumentEditListener();
@@ -576,6 +577,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     stopEdit() {
         document.body.click();
+    }
+
+    isEditing() {
+        if ( this.currentCell) {
+            return this.currentCell.isEditing;
+        }
+        return false;
+
     }
 
     private setPagerHeight() {

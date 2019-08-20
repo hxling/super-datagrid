@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 19:43:03
+ * @LastEditTime: 2019-08-20 09:39:57
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -74,6 +74,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
                     this.onDblClickCell(e);
                 });
                 this.el.nativeElement.editCell = () => this.openCellEditor();
+                this.el.nativeElement.closeEdit = () => this.closeEditingCell();
             } else {
                 this.clickTimer = 0;
             }
@@ -130,7 +131,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     }
 
     private onDblClickCell(event: MouseEvent) {
-        if (event.target['nodeName'] === 'INPUT') {
+        if (event.target['nodeName'] === 'INPUT' || event.target['nodeName'] === 'TEXTAREA') {
             return;
         }
         if (this.dg.editable && this.dg.editMode === 'cell') {
@@ -179,6 +180,10 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     }
 
     closeEditingCell() {
+        if (!this.dg.isEditing()) {
+            return true;
+        }
+
         if (this.editor) {
             this.editor.inputElement.blur();
 
@@ -200,7 +205,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
                 this.dfs.endEditCell();
                 this.dgs.onEndCellEdit(this.dfs.getCurrentCell());
                 this.unBindEditorInputEvent();
-                this.dg.endEdit.emit();
+                this.dg.endEdit.emit({rowIndex: this.dr.rowIndex, rowData: this.rowData, column: this.column});
             }
         });
 
