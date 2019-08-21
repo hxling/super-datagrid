@@ -14,6 +14,7 @@
       "kebab-case"
     ],
     "variable-name":false,
-    "no-string-literal":false
+    "no-string-literal":false,
+    "max-line-length":false
   }
 }

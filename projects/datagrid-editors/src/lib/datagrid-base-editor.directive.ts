@@ -2,13 +2,13 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 11:07:01
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 17:15:15
+ * @LastEditTime: 2019-08-21 10:50:42
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
-import { Directive, OnInit, OnDestroy, AfterViewInit, Renderer2, ElementRef, Input, Inject, forwardRef } from '@angular/core';
+import { Directive, OnInit, OnDestroy, AfterViewInit, Renderer2, ElementRef, Input} from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { DataColumn, DatagridComponent } from '@farris/ui-datagrid';
+import { DataColumn } from '@farris/ui-datagrid';
 
 @Directive({
     selector: 'datagrid-editor',
@@ -33,7 +33,8 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
     private dblClickEvent: any;
 
 
-    constructor(public render: Renderer2, public el: ElementRef) {}
+    constructor(public render: Renderer2, public el: ElementRef) {
+    }
 
     ngOnInit(): void {
 

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 16:07:38
+ * @LastEditTime: 2019-08-21 09:27:52
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -263,7 +263,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         this.clearCellSelectedClass();
         this.render.addClass(tdElement, CELL_SELECTED_CLS);
 
-        this.dfs.setCurrentCell(this.dr.rowIndex, this.rowData, field, tdElement);
+        this.dfs.setCurrentCell(this.dr, field, tdElement);
         this.moveScrollbar(tdElement);
     }
 

@@ -3,7 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-17 16:36:38
+ * @LastEditTime: 2019-08-21 10:55:39
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -16,7 +16,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { InputGroupModule} from '@farris/ui-input-group';
+import { InputGroupModule } from '@farris/ui-input-group';
 
 import { DatagridEditorsModule, EditorProviders } from '@farris/ui-datagrid-editors';
 import { DatagridModule, ScrollbarModule } from '@farris/ui-datagrid';
@@ -38,44 +38,43 @@ import { HeaderGroupDemoComponent } from './demos/group-header/header-group.comp
 
 
 @NgModule({
-  declarations: [
+    declarations: [
+        AppComponent,
+        AppHomeComponent,
+        ScrollBarLoadComponent,
+        PageScrollComponent,
+        AllDataLoadOnceComponent,
+        ShowLineNumberComponent,
+        NormalDatagridComponent,
+        CellEditorComponent,
+        VirtualLoadDemoComponent,
+        ScrollbarLoadDemoComponent,
+        CustomCellComponent,
+        FitColumnsComponent,
+        DatagridSelectionDemoComponent,
+        LayoutRowComponent,
+        HeaderGroupDemoComponent
 
-    AppComponent,
-    AppHomeComponent,
-    ScrollBarLoadComponent,
-    PageScrollComponent,
-    AllDataLoadOnceComponent,
-    ShowLineNumberComponent,
-    NormalDatagridComponent,
-    CellEditorComponent,
-    VirtualLoadDemoComponent,
-    ScrollbarLoadDemoComponent,
-    CustomCellComponent,
-    FitColumnsComponent,
-    DatagridSelectionDemoComponent,
-    LayoutRowComponent,
-    HeaderGroupDemoComponent
-
-  ],
-  imports: [
-    BrowserModule,
-    CommonModule,
-    FormsModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    ScrollbarModule,
-    DatagridEditorsModule,
-    DatagridModule.forRoot([
-      ...EditorProviders,
-    ]),
-    FarrisDatePickerModule,
-    InputGroupModule,
-    AppRoutingModule
-  ],
-  entryComponents: [
-  ],
-  providers: [
-  ],
-  bootstrap: [AppComponent]
+    ],
+    imports: [
+        BrowserModule,
+        CommonModule,
+        FormsModule,
+        HttpClientModule,
+        ReactiveFormsModule,
+        ScrollbarModule,
+        DatagridEditorsModule,
+        DatagridModule.forRoot([
+            ...EditorProviders
+        ]),
+        FarrisDatePickerModule,
+        InputGroupModule,
+        AppRoutingModule
+    ],
+    entryComponents: [
+    ],
+    providers: [
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -177,6 +177,13 @@ farris-datagrid {
   align-items: center;
   justify-content: center;
 }
+.f-datagrid-cell-formgroup datagrid-tooltip {
+  height: 100%;
+  width: 100%;
+}
+.f-datagrid-cell-formgroup .ng-invalid {
+  border: 1px solid red;
+}
 .f-datagrid-cell-editor {
   width: 100%;
   height: calc(36px - 3px);

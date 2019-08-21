@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 11:49:09
+ * @LastEditTime: 2019-08-21 09:27:31
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -14,6 +14,7 @@ import { map, distinctUntilChanged, filter, switchMap, auditTime } from 'rxjs/op
 import { DataColumn, ColumnGroup } from '../types';
 import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow } from './state';
 import { VirtualizedLoaderService } from './virtualized-loader.service';
+import { DatagridRow } from '../types/datagrid-row';
 // import { orderBy } from 'lodash-es';
 
 @Injectable()
@@ -481,11 +482,13 @@ export class DatagridFacadeService {
         this._state.selectOnCheck = flag;
     }
 
-    setCurrentCell(rowIndex: number, rowData: any, field: string, cellRef?: any ) {
+    setCurrentCell(dr: DatagridRow, field: string, cellRef?: any ) {
+        const { rowIndex, rowData } = {...dr};
         if (!this.isCellSelected({rowIndex, field})) {
             const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData), cellRef };
             this.updateState({currentCell}, false);
             this.selectRow(rowIndex, rowData);
+            this._state.currentRow.dr = dr;
             this.selectCellSubject.next(currentCell);
         }
     }

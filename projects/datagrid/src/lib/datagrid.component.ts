@@ -1,8 +1,9 @@
+import { FormGroup } from '@angular/forms';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 19:46:50
+ * @LastEditTime: 2019-08-21 20:05:48
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -21,9 +22,10 @@ import { DatagridColumnDirective } from './components/columns/datagrid-column.di
 import { DataResult, CellInfo, SelectedRow } from './services/state';
 import { RestService, DATAGRID_REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
-import { GRID_EDITORS, CELL_SELECTED_CLS } from './types/constant';
+import { GRID_EDITORS, CELL_SELECTED_CLS, GRID_VALIDATORS } from './types/constant';
 import { DomHandler } from './services/domhandler';
 import { Utils } from './utils/utils';
+import { DatagridValidator } from './types/datagrid-validator';
 
 // styleUrls: [
 //     './scss/index.scss'
@@ -264,6 +266,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     pagerOpts: any = { };
     restService: RestService;
     editors: {[key: string]: any} = {};
+    validators: DatagridValidator[] = [];
 
     currentCell: CellInfo;
     flatColumns: DataColumn[];
@@ -316,12 +319,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         });
         this.subscriptions.push(columnGroupSubscription);
 
-        const Editors = this.inject.get<any[]>(GRID_EDITORS, []);
-        if (Editors.length) {
-            Editors.forEach(ed => {
-                this.editors[ed.name] = ed.value;
-            });
-        }
+        this.initEditorAndValidator();
+
         const currentCellSubscription = this.dfs.currentCell$.subscribe( cell => {
             this.currentCell = cell;
             this.unbindMoveSelectRowEvent();
@@ -336,6 +335,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         this.subscriptions.push(currentCellSubscription);
     }
+
 
     ngOnInit() {
         this.pagerOpts = {
@@ -362,7 +362,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     ngAfterViewInit(): void {
         this.setPagerHeight();
-        // this.setHeaderHeight();
         this.initState();
 
         if (!this.data || !this.data.length) {
@@ -472,6 +471,57 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         if (this.documentRowKeydownHandler) {
             this.documentRowKeydownHandler();
+        }
+    }
+
+
+    /** 初始编辑器与验证器 */
+    private initEditorAndValidator() {
+        const Editors = this.inject.get<any[]>(GRID_EDITORS, []);
+        if (Editors.length) {
+            Editors.forEach(ed => {
+                this.editors[ed.name] = ed.value;
+            });
+        }
+        const _validators = this.inject.get<any[]>(GRID_VALIDATORS, []);
+        if (_validators && _validators.length) {
+           this.validators = _validators;
+        }
+    }
+
+    private setPagerHeight() {
+        if (!this.pagination) {
+            this.pagerHeight = 0;
+        } else {
+            if (this.pagerHeight < this.dgPager.outerHeight) {
+                this.pagerHeight = this.dgPager.outerHeight;
+            }
+        }
+    }
+
+    private initState() {
+        this.data = this.data || [];
+        this.dfs.initState({...this, fitColumns: this.fitColumns, fit: this.fit});
+    }
+
+    private setFitColumns(fitColumns = true) {
+        if (this.columns) {
+            this.dfs.fitColumns(fitColumns);
+        }
+    }
+
+    private calculateGridSize(fit = true) {
+        if (fit) {
+            const parent = this.el.nativeElement.parentElement;
+            const cmpRect = parent.getBoundingClientRect();
+
+            const padding = this.getElementPadding(parent);
+            const border = this.getElementBorderWidth(parent);
+
+            this.width = cmpRect.width - border.left - border.right - padding.left - padding.right;
+            this.height = cmpRect.height - border.top - border.bottom - padding.top - padding.bottom;
+            this.dfs.resize({width: this.width, height: this.height});
+            // this.refresh();
         }
     }
 
@@ -646,25 +696,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
     }
 
-    editCell(rowId: any, field: string) {
-        const rowIndex = this.dfs.findRowIndex(rowId);
-        if (rowIndex > -1) {
-            this.endCellEdit();
-            const trId = 'row-' + rowIndex;
-            const trDom = this.el.nativeElement.querySelector('#' + trId);
-            if (trDom) {
-                const tdDom = trDom.querySelector(`[field="${field}"]`);
-                if (tdDom && tdDom['editCell']) {
-                    tdDom.editCell();
-                }
-            }
-        }
-    }
-
-    endCellEdit() {
-        document.body.click();
-    }
-
     isRowEditing() {
         if (!this.selectedRow || this.selectedRow.index === -1) {
             return false;
@@ -682,6 +713,25 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     getEditors() {
         return this.selectedRow.editors;
+    }
+
+    editCell(rowId: any, field: string) {
+        const rowIndex = this.dfs.findRowIndex(rowId);
+        if (rowIndex > -1) {
+            this.endCellEdit();
+            const trId = 'row-' + rowIndex;
+            const trDom = this.el.nativeElement.querySelector('#' + trId);
+            if (trDom) {
+                const tdDom = trDom.querySelector(`[field="${field}"]`);
+                if (tdDom && tdDom['editCell']) {
+                    tdDom.editCell();
+                }
+            }
+        }
+    }
+
+    endCellEdit() {
+        document.body.click();
     }
 
     editRow(rowId?: any) {
@@ -723,25 +773,32 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     endRowEdit() {
         if (!this.isRowEditing()) {
-            return;
+            return { canEnd: true };
         }
 
         if (!this.selectedRow || this.selectedRow.index === -1) {
             console.warn('Please select a row.');
             return;
         }
-        const { index: rowIndex, data: rowData } = { ...this.selectedRow};
+        const { index: rowIndex, data: rowData, dr } = { ...this.selectedRow};
         // blur
         document.body.click();
 
         if (this.pending) {
-            return;
+            return { canEnd: false };
         }
+
+        const rowForm = dr.form as FormGroup;
+        rowForm.markAsTouched();
+        if (rowForm.invalid) {
+            return { canEnd: false };
+        }
+
 
         const afterEditEvent = this.afterEdit(rowIndex, rowData);
         if (!afterEditEvent || !afterEditEvent.subscribe) {
             console.warn('please return an Observable Type.');
-            return;
+            return { canEnd: false };
         }
 
         afterEditEvent.subscribe( (flag: boolean) => {
@@ -752,16 +809,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 this.endEdit.emit({rowIndex, rowData});
             }
         });
-    }
-
-    private setPagerHeight() {
-        if (!this.pagination) {
-            this.pagerHeight = 0;
-        } else {
-            if (this.pagerHeight < this.dgPager.outerHeight) {
-                this.pagerHeight = this.dgPager.outerHeight;
-            }
-        }
     }
 
     private findNextCell(field: string, dir: MoveDirection) {
@@ -872,32 +919,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.pageSizeChanged.emit({pageSize, pageIndex: this.pageIndex});
     }
 
-
-    private initState() {
-        this.data = this.data || [];
-        this.dfs.initState({...this, fitColumns: this.fitColumns, fit: this.fit});
-    }
-
-    private setFitColumns(fitColumns = true) {
-        if (this.columns) {
-            this.dfs.fitColumns(fitColumns);
-        }
-    }
-
-    private calculateGridSize(fit = true) {
-        if (fit) {
-            const parent = this.el.nativeElement.parentElement;
-            const cmpRect = parent.getBoundingClientRect();
-
-            const padding = this.getElementPadding(parent);
-            const border = this.getElementBorderWidth(parent);
-
-            this.width = cmpRect.width - border.left - border.right - padding.left - padding.right;
-            this.height = cmpRect.height - border.top - border.bottom - padding.top - padding.bottom;
-            this.dfs.resize({width: this.width, height: this.height});
-            // this.refresh();
-        }
-    }
 
     showLoading() {
         this.loading = true;

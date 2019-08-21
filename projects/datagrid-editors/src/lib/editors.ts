@@ -1,9 +1,8 @@
-import { Provider } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 16:22:23
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-15 15:11:34
+ * @LastEditTime: 2019-08-21 10:50:45
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -36,5 +35,5 @@ export const EditorProviders = [
     { provide: GRID_EDITORS, useValue: { name: EditorTypes.DATEPICKER, value: DatagridDatepickerComponent }, multi: true },
     { provide: GRID_EDITORS, useValue: { name: EditorTypes.INPUTGROUP, value: DatagridInputGroupComponent }, multi: true },
     { provide: GRID_EDITORS, useValue: { name: EditorTypes.SELECT, value: DatagridSelectComponent }, multi: true },
-    { provide: GRID_EDITORS, useValue: { name: EditorTypes.LOOKUP, value:DatagridLookupComponent }, multi: true}
+    { provide: GRID_EDITORS, useValue: { name: EditorTypes.LOOKUP, value: DatagridLookupComponent }, multi: true}
 ];

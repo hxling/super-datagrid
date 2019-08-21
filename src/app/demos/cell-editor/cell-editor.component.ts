@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 19:11:45
+ * @LastEditTime: 2019-08-21 19:37:07
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -47,17 +47,34 @@ export class CellEditorComponent implements OnInit {
             { field: 'maray', width: 70, title: '婚否', editor: { type: EditorTypes.CHECKBOX, options: {}},
             formatter: { type: 'boolean', options: { trueText: '已婚', falseText: '未婚' }}
         },
-            { field: 'addr', width: 170, title: '地址', editor: { type: EditorTypes.TEXTAREA, options: {}} },
-            { field: 'company', width: 160, title: '公司' , editor: { type: EditorTypes.LOOKUP,  options: {
-                uri: '/assets/data/products.json',
-                loader: this.loadLookupData,
-                idField: 'Code',
-                singleSelect: true,
-                textField: 'Name',
-                valueField: 'Code',
-                title: '人员选择',
-                pagination: true,
-            }}},
+            { field: 'addr', width: 170, title: '地址', editor: {
+                    type: EditorTypes.TEXTAREA,
+                    options: {},
+                    validators: [
+                        {type: 'required', messager: '该字段不能为空！'}
+                    ]
+                }
+            },
+            { field: 'company', width: 160, title: '公司' , editor: {
+                type: EditorTypes.LOOKUP,
+                options: {
+                    uri: '/assets/data/products.json',
+                    loader: this.loadLookupData,
+                    idField: 'Code',
+                    singleSelect: true,
+                    textField: 'Name',
+                    valueField: 'Code',
+                    title: '人员选择',
+                    pagination: true,
+                },
+                validators: [
+                    { type: 'required', messager: '必填' },
+                    // { type: 'min', value: 0, messager: '最小值不能小于0'},
+                    // { type: 'max', value: 10, messager: '最大值不能小于10'},
+                    // { type: 'minLength', value: 10, messager: '最小值不能小于0'},
+                    // { type: 'maxLength', value: 100, messager: '最小值不能小于0'}
+                ]
+        }},
             { field: 'nianxin', width: 100, title: '年薪' , editor: { type: EditorTypes.TEXTBOX, options: {}},
             formatter: { type: 'number', options: { prefix: '￥', suffix: '元', precision: 2 } }
         },

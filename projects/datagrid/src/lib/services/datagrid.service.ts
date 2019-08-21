@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 12:49:47
+ * @LastEditTime: 2019-08-21 20:07:37
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -40,6 +40,8 @@ export class DatagridService {
     /** 结束单元编辑 */
     private endCellEdit = new Subject();
     private changeCheckedRows = new Subject();
+    /** 结束行编辑 */
+    // private endRowEdit = new BehaviorSubject(true);
 
     public scorll$ = this.scorllSubject.asObservable();
     public scrollX$ = this.scorll$.pipe(
@@ -58,6 +60,8 @@ export class DatagridService {
     public cellEdit$ = this.editCellSubject.asObservable();
     public endCellEdit$ = this.endCellEdit.asObservable();
     public checkedRowsTotalChanged$ = this.changeCheckedRows.asObservable();
+
+    // public endRowEdit$ = this.endRowEdit.asObservable();
 
     constructor() { }
 

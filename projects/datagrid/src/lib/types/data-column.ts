@@ -2,12 +2,13 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 15:15:30
+ * @LastEditTime: 2019-08-21 11:06:43
  * @Company: Inspur
  * @Version: v0.0.1
  */
 import { TemplateRef } from '@angular/core';
 import { ColumnFormatter } from '@farris/ui-common/column';
+import { DatagridValidator } from './datagrid-validator';
 
 export interface CustomStyle {
     cls?: string;
@@ -56,6 +57,7 @@ export interface DataColumn {
 export interface GridEditor {
     type: string;
     options?: any;
+    validators?: DatagridValidator[]
 }
 
 export interface ColumnGroup {

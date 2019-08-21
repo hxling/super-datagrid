@@ -1,9 +1,11 @@
+
+import { DatagridService } from './../../services/datagrid.service';
 import { QueryList } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 19:21:51
+ * @LastEditTime: 2019-08-21 20:06:35
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -13,12 +15,16 @@ import { Directive, Input, Output, EventEmitter, HostListener,
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridCellComponent } from './datagrid-cell.component';
+import { DatagridRow } from '../../types/datagrid-row';
+import { switchMap, filter } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { DatagridValidator } from '../../types/datagrid-validator';
 
 @Directive({
     selector: '[grid-row]',
     exportAs: 'gridRow'
 })
-export class DatagridRowDirective implements OnInit, AfterViewInit {
+export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow {
     @Input() editable = false;
     @Input('grid-row') rowData: any;
     @Input() rowIndex: number;
@@ -26,11 +32,22 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
 
     @ContentChildren(forwardRef(() => DatagridCellComponent),  { descendants: true }) cells: QueryList<DatagridCellComponent>;
 
+    // private endRowEdit$ = this.dgs.endRowEdit$.pipe(
+    //     switchMap((flag: boolean) => {
+    //         if (!flag) {
+    //             return of(flag);
+    //         } else {
+    //             return this.dg.beforeSelect(this.rowIndex, this.rowData);
+    //         }
+    //     })
+    // );
+
     form = new FormGroup({});
     private dfs: DatagridFacadeService;
     constructor(
         @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
-        private injector: Injector, private fb: FormBuilder, public el: ElementRef) {
+        private injector: Injector, private fb: FormBuilder, public el: ElementRef,
+        private dgs: DatagridService) {
         this.dfs = this.injector.get(DatagridFacadeService);
     }
 
@@ -58,14 +75,16 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
 
         const rowId = this.dfs.primaryId(this.rowData);
         if (!this.dfs.isRowSelected(rowId)) {
-            this.dg.endRowEdit();
-            this.dg.beforeSelect(this.rowIndex, this.rowData).subscribe( (canSelect: boolean) => {
-                if (canSelect) {
-                    this.dfs.selectRow(this.rowIndex, this.rowData);
-                    this.dg.selectedRow.dr = this;
-                    this.clickHandler.emit();
-                }
-            });
+            const canendedit = this.dg.endRowEdit();
+            if (canendedit.canEnd) {
+                this.dg.beforeSelect(this.rowIndex, this.rowData).subscribe( (canSelect: boolean) => {
+                    if (canSelect) {
+                        this.dfs.selectRow(this.rowIndex, this.rowData);
+                        this.dg.selectedRow.dr = this;
+                        this.clickHandler.emit();
+                    }
+                });
+            }
         } else {
             if (!this.dg.keepSelect) {
                 this.dg.beforeUnselect(this.rowIndex, this.rowData).subscribe((canUnselect: boolean) => {
@@ -84,7 +103,7 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
             const control = this.fb.control(
                 this.rowData[col.field],
                 {
-                    validators: this.bindValidations(col)
+                    validators: this.bindValidations(col.editor.validators)
                 }
             );
             // control.setValue(, { emitModelToViewChange: true });
@@ -93,11 +112,40 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
         return group;
     }
 
-    private bindValidations(col) {
-        return [
-            Validators.required,
-            Validators.maxLength(10),
-            Validators.minLength(3)
-        ];
+    private bindValidations(validators: DatagridValidator[]) {
+        const validations = [];
+        if (validators && validators.length) {
+
+            validators.forEach((v: DatagridValidator) => {
+                let validation = null;
+                switch (v.type) {
+                    case 'required':
+                        validation = Validators.required;
+                        break;
+                    case 'min':
+                        validation = Validators.min(v.value);
+                        break;
+                    case 'max':
+                        validation = Validators.max(v.value);
+                        break;
+                    case 'minLength':
+                        validation = Validators.minLength(v.value);
+                        break;
+                    case 'maxLength':
+                        validation = Validators.maxLength(v.value);
+                        break;
+                    case 'email':
+                        validation = Validators.email;
+                        break;
+                    case 'requiredTrue':
+                        validation = Validators.requiredTrue;
+                        break;
+                }
+                if (validation) {
+                    validations.push(validation);
+                }
+            });
+        }
+        return validations;
     }
 }

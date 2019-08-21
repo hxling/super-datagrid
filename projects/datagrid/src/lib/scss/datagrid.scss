@@ -204,6 +204,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
+
+            datagrid-tooltip {
+                height: 100%;
+                width: 100%;
+            }
+
+            textarea.ng-invalid {
+                border: 1px solid red;
+            }
         }
         &-editor{
             width: 100%;
