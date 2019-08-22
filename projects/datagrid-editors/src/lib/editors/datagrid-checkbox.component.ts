@@ -2,11 +2,11 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:44:10
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-17 14:49:37
+ * @LastEditTime: 2019-08-22 19:06:09
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
-import { Component, OnInit, Renderer2, ElementRef, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, NgZone, ViewChild, Injector } from '@angular/core';
 import { DatagridBaseEditorDirective } from '../datagrid-base-editor.directive';
 
 @Component({
@@ -23,9 +23,11 @@ export class DatagridCheckboxComponent extends DatagridBaseEditorDirective imple
     checked: boolean;
     @ViewChild('chk') chk: ElementRef;
 
-    constructor(render: Renderer2, el: ElementRef, private ngzone: NgZone) {
-        super(render, el);
-    }
+    constructor(
+        render: Renderer2, el: ElementRef, private ngzone: NgZone, public injector: Injector
+       ) {
+    super(render, el, injector);
+}
 
     ngOnInit(): void {
         super.ngOnInit();

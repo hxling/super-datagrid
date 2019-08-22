@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 10:56:11
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 15:59:54
+ * @LastEditTime: 2019-08-22 19:02:00
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -22,7 +22,6 @@ import { DatagridInputGroupComponent } from './editors/datagrid-inputgroup.compo
 import { DatagridSelectComponent } from './editors/datagrid-select.component';
 import { DatagridLookupComponent } from './editors/datagrid-lookup.component';
 import { DatagridTooltipComponent } from './tooltip/tooltip.component';
-
 const editorComponents = [
     DatagridTextboxComponent,
     DatagridTextareaComponent,
@@ -54,6 +53,9 @@ const editorComponents = [
     ],
     entryComponents: [
         ...editorComponents
+    ],
+    providers: [
+
     ]
 })
 export class DatagridEditorsModule {

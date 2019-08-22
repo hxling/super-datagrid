@@ -1,11 +1,10 @@
 
-import { DatagridService } from './../../services/datagrid.service';
-import { QueryList } from '@angular/core';
+import { QueryList, ChangeDetectorRef } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 20:06:35
+ * @LastEditTime: 2019-08-22 08:10:10
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -16,8 +15,6 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridCellComponent } from './datagrid-cell.component';
 import { DatagridRow } from '../../types/datagrid-row';
-import { switchMap, filter } from 'rxjs/operators';
-import { of } from 'rxjs';
 import { DatagridValidator } from '../../types/datagrid-validator';
 
 @Directive({
@@ -32,22 +29,12 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
 
     @ContentChildren(forwardRef(() => DatagridCellComponent),  { descendants: true }) cells: QueryList<DatagridCellComponent>;
 
-    // private endRowEdit$ = this.dgs.endRowEdit$.pipe(
-    //     switchMap((flag: boolean) => {
-    //         if (!flag) {
-    //             return of(flag);
-    //         } else {
-    //             return this.dg.beforeSelect(this.rowIndex, this.rowData);
-    //         }
-    //     })
-    // );
-
     form = new FormGroup({});
     private dfs: DatagridFacadeService;
     constructor(
         @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
         private injector: Injector, private fb: FormBuilder, public el: ElementRef,
-        private dgs: DatagridService) {
+        private cd: ChangeDetectorRef) {
         this.dfs = this.injector.get(DatagridFacadeService);
     }
 
@@ -76,7 +63,8 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
         const rowId = this.dfs.primaryId(this.rowData);
         if (!this.dfs.isRowSelected(rowId)) {
             const canendedit = this.dg.endRowEdit();
-            if (canendedit.canEnd) {
+
+            if (!canendedit || canendedit.canEnd) {
                 this.dg.beforeSelect(this.rowIndex, this.rowData).subscribe( (canSelect: boolean) => {
                     if (canSelect) {
                         this.dfs.selectRow(this.rowIndex, this.rowData);

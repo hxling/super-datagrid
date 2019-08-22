@@ -2,35 +2,33 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-21 14:38:04
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 19:44:45
+ * @LastEditTime: 2019-08-22 19:00:01
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
-import { Component, OnDestroy, ViewEncapsulation, Input, HostListener, ElementRef, HostBinding } from '@angular/core';
+import { Component, OnDestroy, ViewEncapsulation, Input, HostListener, ElementRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { DomHandler, ValidatorMessagerService, DatagridComponent } from '@farris/ui-datagrid';
+import { DomHandler } from '@farris/ui-datagrid';
 
 @Component({
     selector: 'datagrid-tooltip',
     template: `
     <ng-content></ng-content>
     `,
-    styleUrls: [ './tooltip.css'],
-    providers: [
-        ValidatorMessagerService
-    ],
     encapsulation: ViewEncapsulation.None
 })
 export class DatagridTooltipComponent implements OnDestroy {
 
-    @Input() tooltipPosition: 'top' | 'bottom' | 'left' | 'right' = 'right';
+    @Input() tooltipPosition: 'top' | 'bottom' | 'left' | 'right' | 'top-left' = 'right';
     @Input() control: FormControl;
     @Input() positionStyle: string;
     @Input() tooltipStyleClass: string;
+    @Input() message: string;
+
+    @Input() cls = '';
+    @Input() type: 'danger' | 'success' | 'info' | 'warning' = 'danger';
 
     // @HostBinding('style.width') cmpWidth = '100%';
-
-    errorMessage: string;
 
     container: any;
 
@@ -67,23 +65,23 @@ export class DatagridTooltipComponent implements OnDestroy {
         }
     }
 
-    constructor(private el: ElementRef, private vms: ValidatorMessagerService, private dg: DatagridComponent) {
+    constructor(private el: ElementRef) {
     }
 
     showErrMsg(): void {
-        this.errorMessage = this.getErrorMsg();
-        if (this.errorMessage !== null && this.errorMessage !== undefined) {
+        // this.errorMessage = this.getErrorMsg();
+        if (this.message !== null && this.message !== undefined) {
             this.show();
         }
     }
 
-    getErrorMsg(): string {
-        let errMsg = '';
-        Object.keys(this.control.errors).map(key => {
-            errMsg = this.vms.getValidatorErrorMessage(key, this.dg.validators );
-        });
-        return errMsg;
-    }
+    // getErrorMsg(): string {
+    //     let errMsg = '';
+    //     Object.keys(this.control.errors).map(key => {
+    //         errMsg = this.vms.getValidatorErrorMessage(key, this.dg.validators );
+    //     });
+    //     return errMsg;
+    // }
 
     hide() {
         this.ngOnDestroy();
@@ -94,7 +92,7 @@ export class DatagridTooltipComponent implements OnDestroy {
         if (!this.container) {
             this.create();
         } else {
-            DomHandler.findSingle(this.container, '.ui-tooltip-text').innerText = this.errorMessage;
+            DomHandler.findSingle(this.container, '.f-tooltip-text').innerText = this.message;
         }
 
         const boxEl = this.el.nativeElement.parentElement;
@@ -127,6 +125,11 @@ export class DatagridTooltipComponent implements OnDestroy {
                 left = targetLeft + (DomHandler.getOuterWidth(boxEl) - DomHandler.getOuterWidth(this.container)) / 2;
                 top = targetTop + DomHandler.getOuterHeight(boxEl);
                 break;
+
+            case 'top-left':
+                left = targetLeft;
+                top = targetTop - DomHandler.getOuterHeight(this.container);
+                break;
         }
 
         this.container.style.left = left + 'px';
@@ -137,7 +140,7 @@ export class DatagridTooltipComponent implements OnDestroy {
     }
 
     create() {
-        let styleClass = 'ui-widget ui-tooltip ui-tooltip-' + this.tooltipPosition;
+        let styleClass = 'f-tooltip ' + this.getThemeCls() + ' f-tooltip-' + this.tooltipPosition + ' ' + this.cls;
         this.container = document.createElement('div');
         if (this.tooltipStyleClass) {
             styleClass += ' ' + this.tooltipStyleClass;
@@ -145,12 +148,12 @@ export class DatagridTooltipComponent implements OnDestroy {
         this.container.className = styleClass;
 
         const tooltipArrow = document.createElement('div');
-        tooltipArrow.className = 'ui-tooltip-arrow';
+        tooltipArrow.className = 'f-tooltip-arrow ';
         this.container.appendChild(tooltipArrow);
 
         const tooltipText = document.createElement('div');
-        tooltipText.className = 'ui-tooltip-text ui-shadow ui-corner-all';
-        tooltipText.innerHTML = this.errorMessage;
+        tooltipText.className = 'f-tooltip-text ';
+        tooltipText.innerHTML = this.message;
 
         if (this.positionStyle) {
             this.container.style.position = this.positionStyle;
@@ -161,6 +164,15 @@ export class DatagridTooltipComponent implements OnDestroy {
         document.body.appendChild(this.container);
 
     }
+
+    private getThemeCls() {
+        if (this.type) {
+            return 'f-tooltip-' + this.type;
+        }
+        return '';
+    }
+
+
 
     ngOnDestroy() {
         if (this.container && this.container.parentElement) {

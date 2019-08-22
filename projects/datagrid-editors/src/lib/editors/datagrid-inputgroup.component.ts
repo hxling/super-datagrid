@@ -1,9 +1,9 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, Injector } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 18:40:58
+ * @LastEditTime: 2019-08-22 19:06:33
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -29,9 +29,11 @@ export class DatagridInputGroupComponent extends DatagridBaseEditorDirective imp
     @Output() clear = new EventEmitter();
     @Output() clickHandle = new EventEmitter();
 
-    constructor(render: Renderer2, el: ElementRef) {
-        super(render, el);
-    }
+    constructor(
+        render: Renderer2, el: ElementRef, public injector: Injector
+       ) {
+    super(render, el, injector);
+}
 
     ngOnInit(): void {
         this.inputElement = this.ig.textbox.nativeElement;

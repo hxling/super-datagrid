@@ -1,8 +1,9 @@
+import { ValidatorMessagerService } from './services/validator-messager.service';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 15:58:58
+ * @LastEditTime: 2019-08-22 19:02:25
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -75,7 +76,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         {
             provide: SCROLLBAR_CONFIG,
             useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
-        }
+        },
+        ValidatorMessagerService
     ],
     exports: [
         DatagridComponent,

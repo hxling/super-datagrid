@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 20:05:48
+ * @LastEditTime: 2019-08-22 10:03:26
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -753,8 +753,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         beforeEditEvent.subscribe( (flag: boolean) => {
             if (flag) {
                 if (this.selectedRow.dr) {
-                    const cells = this.selectedRow.dr.cells;
-                    cells.forEach(cell => cell.isEditing = true);
+                    const cells = this.selectedRow.dr.cells.toArray();
+                    if (!cells || !cells.length) {
+                        return;
+                    }
+
+                    cells.forEach(cell => {
+                        if (cell.column.editor) {
+                            cell.isEditing = true;
+                        }
+                    });
                     setTimeout(() => {
                         const editors = cells.map( cell => {
                             if (cell.cellEditor) {
@@ -806,6 +814,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 const cells = this.selectedRow.dr.cells;
                 cells.forEach(cell => cell.isEditing = false);
                 this.selectedRow.editors = null;
+
+                if (this.selectedRow.dr.form) {
+                    this.selectedRow.dr.rowData = Object.assign(this.selectedRow.dr.rowData, this.selectedRow.dr.form.value);
+                    // this.selectedRow.dr.cd.detectChanges();
+                    this.dfs.updateRow(this.selectedRow.dr.rowData);
+                    this.cd.detectChanges();
+                }
+
                 this.endEdit.emit({rowIndex, rowData});
             }
         });

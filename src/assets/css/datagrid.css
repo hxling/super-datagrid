@@ -181,7 +181,7 @@ farris-datagrid {
   height: 100%;
   width: 100%;
 }
-.f-datagrid-cell-formgroup .ng-invalid {
+.f-datagrid-cell-formgroup textarea.ng-invalid {
   border: 1px solid red;
 }
 .f-datagrid-cell-editor {
@@ -336,6 +336,86 @@ farris-datagrid {
 }
 .f-datagrid-footer table {
   table-layout: fixed;
+}
+.f-tooltip {
+  position: absolute;
+  display: none;
+  padding: 0.25em 0.5em;
+  max-width: 12.5em;
+  line-height: 32PX;
+  border-radius: 5px;
+}
+.f-tooltip-right, .f-tooltip-left {
+  padding: 0 0.25em;
+}
+.f-tooltip-top, .f-tooltip-bottom, .f-tooltip-top-left, .f-tooltip-bottom-left {
+  padding: 0.25em 0;
+}
+.f-tooltip-default {
+  background-color: #4c4c4c;
+  color: #ffffff;
+  border: 1px solid #4c4c4c;
+}
+.f-tooltip-text {
+  padding: 0.125em 0.5em;
+  white-space: pre-line;
+  border-radius: 5px;
+  box-shadow: 1px 1px 2px #9d9d9d;
+}
+.f-tooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+}
+.f-tooltip-right .f-tooltip-arrow {
+  top: 50%;
+  left: 0;
+  margin-top: -0.25em;
+  border-width: 0.25em 0.25em 0.25em 0;
+  border-right-color: #4c4c4c;
+}
+.f-tooltip-left .f-tooltip-arrow {
+  top: 50%;
+  right: 0;
+  margin-top: -0.25em;
+  border-width: 0.25em 0 0.25em 0.25em;
+  border-left-color: #4c4c4c;
+}
+.f-tooltip-top .f-tooltip-arrow, .f-tooltip-bottom .f-tooltip-arrow {
+  left: 50%;
+  margin-left: -0.25em;
+  border-width: 0.25em 0.25em 0;
+  border-top-color: #4c4c4c;
+}
+.f-tooltip-top .f-tooltip-arrow {
+  bottom: 0;
+}
+.f-tooltip-bottom .f-tooltip-arrow {
+  top: 0;
+}
+.f-tooltip-top-left .f-tooltip-arrow, .f-tooltip-bottom-left .f-tooltip-arrow {
+  left: 10px;
+  margin-left: -0.25em;
+  border-width: 0.25em 0.25em 0;
+}
+.f-tooltip-top-left .f-tooltip-arrow {
+  bottom: 0;
+}
+.f-tooltip-bottom-left .f-tooltip-arrow {
+  top: 0;
+}
+.f-tooltip-danger.f-tooltip-top-left .f-tooltip-arrow, .f-tooltip-danger.f-tooltip-top .f-tooltip-arrow {
+  border-top-color: #f5c6cb;
+}
+.f-tooltip-arrow {
+  border-top-color: #f5c6cb;
+}
+.f-tooltip-danger .f-tooltip-text {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
 }
 
 /*

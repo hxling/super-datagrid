@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 18:57:48
+ * @LastEditTime: 2019-08-22 10:12:56
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -62,7 +62,11 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
     @Output() cellDblClick = new EventEmitter();
 
     cellContext: any = {};
-    value: any;
+    get value() {
+        if (this.rowData && this.column && this.column.field) {
+            return Utils.getValue(this.column.field, this.rowData);
+        }
+    }
 
     cellStyler: any = {};
 
@@ -142,9 +146,6 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
     updateValue() {
         if (this.dr.form) {
             Object.assign(this.rowData, this.dr.form.value);
-        }
-        if (this.rowData && this.column && this.column.field) {
-            this.value = Utils.getValue(this.column.field, this.rowData);
         }
     }
 }

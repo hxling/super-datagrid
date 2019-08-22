@@ -1,9 +1,9 @@
-import { AfterViewInit, ApplicationRef, Inject, forwardRef } from '@angular/core';
+import { AfterViewInit, ApplicationRef, Inject, forwardRef, Injector } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 18:46:23
+ * @LastEditTime: 2019-08-22 19:07:00
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -53,8 +53,8 @@ export class DatagridLookupComponent extends DatagridBaseEditorDirective impleme
     @ViewChild('lookup') lookup: LookupGridComponent;
 
     constructor(render: Renderer2, el: ElementRef, private rts: RuntimeStateService,
-                @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent) {
-        super(render, el);
+                injector: Injector) {
+        super(render, el, injector);
         this.rts.state$.subscribe(state => {
             if (state && state.form && state.form.lookup) {
                 this.pending = state.form.lookup.pending;

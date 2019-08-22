@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 19:37:07
+ * @LastEditTime: 2019-08-22 19:50:38
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -51,7 +51,9 @@ export class CellEditorComponent implements OnInit {
                     type: EditorTypes.TEXTAREA,
                     options: {},
                     validators: [
-                        {type: 'required', messager: '该字段不能为空！'}
+                        {type: 'required', messager: '该字段不能为空！'},
+                        {type: 'minLength', value: 10 , messager: '字符不得小于10个！'},
+                        {type: 'maxLength', value: 11 , messager: '字符不得大于11个！'},
                     ]
                 }
             },

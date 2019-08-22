@@ -1,0 +1,110 @@
+$danger-color: #721c24;
+$danger-bgcolor: #f8d7da;
+$danger-border-color: #f5c6cb;
+
+
+&-tooltip {
+    position:absolute;
+    display:none;
+    padding: .25em .5em;
+    max-width: 12.5em;
+    line-height: 32PX;
+    border-radius: 5px;
+
+    &-right, &-left {
+        padding: 0 .25em;
+    }
+
+    &-top, &-bottom, &-top-left, &-bottom-left {
+        padding:.25em 0;
+    }
+
+    &-default {
+        background-color: rgb(76, 76, 76);
+        color: #ffffff;
+        border: 1px solid rgb(76, 76, 76);
+    }
+
+    &-text {
+        padding: .125em .5em;
+        white-space: pre-line;
+        border-radius: 5px;
+        box-shadow: 1px 1px 2px #9d9d9d;
+    }
+
+    &-arrow {
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-color: transparent;
+        border-style: solid;
+        
+    }
+
+    &-right &-arrow {
+        top: 50%;
+        left: 0;
+        margin-top: -.25em;
+        border-width: .25em .25em .25em 0;
+        border-right-color: rgb(76, 76, 76);
+    }
+
+    &-left &-arrow {
+        top: 50%;
+        right: 0;
+        margin-top: -.25em;
+        border-width: .25em 0 .25em .25em;
+        border-left-color: rgb(76, 76, 76);
+    }
+
+    &-top, &-bottom {
+        .f-tooltip-arrow {
+            left: 50%;
+            margin-left: -.25em;
+            border-width: .25em .25em 0;
+            border-top-color: rgb(76, 76, 76);
+        }
+    }
+        
+    &-top &-arrow {
+        bottom: 0;
+    }
+
+    &-bottom &-arrow {
+        top: 0;
+    }
+
+    &-top-left, &-bottom-left {
+        .f-tooltip-arrow {
+            left: 10px;
+            margin-left: -.25em;
+            border-width: .25em .25em 0;
+            // border-top-color: rgb(76, 76, 76);
+        }
+    }
+
+    &-top-left &-arrow {
+        bottom: 0;
+    }
+
+    &-bottom-left &-arrow {
+        top: 0;
+    }
+
+    &-danger.f-tooltip-top-left, &-danger.f-tooltip-top  {
+        .f-tooltip-arrow {
+            border-top-color: $danger-border-color;
+        }
+    }
+
+    &-arrow {
+        border-top-color: $danger-border-color;
+    }
+
+    &-danger &-text {
+        color: $danger-color;
+        background-color: $danger-bgcolor;
+        border-color: $danger-border-color;
+    }
+
+}

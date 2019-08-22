@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 09:27:31
+ * @LastEditTime: 2019-08-22 10:02:58
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -524,6 +524,11 @@ export class DatagridFacadeService {
             this.updateState({ currentCell: cei }, false);
             this.selectCellSubject.next(cei);
         }
+    }
+
+    updateRow(row: any) {
+        const id = this.primaryId(row);
+        Object.assign(this.findRow(id), row);
     }
 
     getCurrentCellInfo() {

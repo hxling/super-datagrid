@@ -1,11 +1,11 @@
-import { Component, OnInit, Renderer2, ElementRef, NgZone, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, NgZone, Input, ViewChild, Injector } from '@angular/core';
 import { DatagridBaseEditorDirective } from './../datagrid-base-editor.directive';
 import { ShowType, FarrisDatepickerComponent } from '@farris/ui-datepicker';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:40:36
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 18:46:20
+ * @LastEditTime: 2019-08-22 19:06:20
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -61,9 +61,11 @@ export class DatagridDatepickerComponent extends DatagridBaseEditorDirective imp
 
     @ViewChild('datepicker') datepicker: FarrisDatepickerComponent;
 
-    constructor(render: Renderer2, el: ElementRef, private ngzone: NgZone) {
-        super(render, el);
-    }
+    constructor(
+        render: Renderer2, el: ElementRef, private ngzone: NgZone, public injector: Injector
+       ) {
+    super(render, el, injector);
+}
 
     ngOnInit(): void {
         super.ngOnInit();
