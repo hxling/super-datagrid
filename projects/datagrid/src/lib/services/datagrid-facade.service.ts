@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-23 16:43:12
+ * @LastEditTime: 2019-08-23 18:28:28
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -855,11 +855,25 @@ export class DatagridFacadeService {
             this._state.originalData = cloneDeep(this._state.data);
         }
     }
-    rejectChanges() {
+    rejectChanges(rowid = null) {
         const changes = this._state.changes;
         if (changes) {
-            this._state.data = cloneDeep(this._state.originalData);
-            this._state.changes = null;
+            if (!rowid) {
+                this._state.data = cloneDeep(this._state.originalData);
+                this._state.changes = null;
+                // this.refresh();
+            } else {
+                const rowChanges =  this._state.changes['' + rowid];
+                if (rowChanges) {
+                    const orgiRow = this._state.originalData.find(r => this.primaryId(r) === rowid);
+                    this._state.data.forEach(r => {
+                        if (this.primaryId(r) === rowid) {
+                            r = cloneDeep(orgiRow);
+                        }
+                    });
+                }
+            }
+
             this.refresh();
         }
     }

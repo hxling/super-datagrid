@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-23 17:12:39
+ * @LastEditTime: 2019-08-23 18:29:42
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -827,6 +827,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         });
     }
 
+    cancelEdit(rowId: any) {
+        this.dfs.rejectChanges(rowId);
+    }
+
     private findNextCell(field: string, dir: MoveDirection) {
         let td = null;
         if (this.currentCell && this.currentCell.cellElement) {
@@ -1086,6 +1090,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     //#endregion
 
+    //#region Changes
     getChanges() {
         return this.dfs.getChanges();
     }
@@ -1096,14 +1101,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     rejectChanges() {
         this.dfs.rejectChanges();
-        setTimeout(() => {
-            this.app.tick();
-            if (this.selectRow) {
-                this.selectRow(this.selectedRow.id);
-            }
-        });
+        // setTimeout(() => {
+        //     this.app.tick();
+        //     if (this.selectRow) {
+        //         this.selectRow(this.selectedRow.id);
+        //     }
+        // });
     }
-
+    //#endregion
 
     private canOperateCheckbox() {
         return this.multiSelect && this.showCheckbox;

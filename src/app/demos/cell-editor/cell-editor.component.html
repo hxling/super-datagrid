@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-23 14:12:41
+ * @LastEditTime: 2019-08-23 18:32:39
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -31,6 +31,7 @@
             <div class="row">
                 <div class="col-12">
                     <button class="btn btn-primary" (click)="dg.editRow()">编辑</button>
+                    <button class="btn btn-danger" (click)="dg.cancelEdit()">取消编辑</button>
                     <button class="btn btn-primary" (click)="getChanges()">变更集</button>
                     <button class="btn btn-success" (click)="acceptChanges()">应用变更集</button>
                     <button class="btn btn-default" (click)="rejectChanges()">取消变更集</button>
