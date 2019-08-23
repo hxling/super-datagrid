@@ -2,13 +2,13 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 11:07:01
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-22 19:36:48
+ * @LastEditTime: 2019-08-23 13:59:58
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import { Directive, OnInit, OnDestroy, AfterViewInit, Renderer2, ElementRef, Input, Injector} from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { DataColumn, DatagridComponent, ValidatorMessagerService } from '@farris/ui-datagrid';
+import { DataColumn, DatagridComponent, ValidatorMessagerService, DatagridFacadeService, DatagridRowDirective } from '@farris/ui-datagrid';
 
 @Directive({
     selector: 'datagrid-editor',
@@ -34,10 +34,15 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
     private dblClickEvent: any;
     vms: ValidatorMessagerService;
     dg: DatagridComponent;
+    dfs: DatagridFacadeService;
     validators = [];
+    get dr(): DatagridRowDirective {
+        return this.dg.selectedRow.dr;
+    }
     constructor(public render: Renderer2, public el: ElementRef, public injector: Injector) {
         this.vms = this.injector.get(ValidatorMessagerService);
         this.dg = this.injector.get(DatagridComponent);
+        this.dfs = this.injector.get(DatagridFacadeService);
     }
 
     ngOnInit(): void {
@@ -58,7 +63,15 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
         //     e.stopPropagation();
         //     e.preventDefault();
         // });
-        this.formControl.valueChanges.subscribe( () => {
+        this.formControl.valueChanges.subscribe( (val: any) => {
+            // console.log(val, this.formControl, this.group);
+            // 记录变更集
+            if (!this.formControl.pristine) {
+                const rowId = this.dr.rowId;
+                const keyField = this.dg.idField;
+                const changeData = { [keyField]: rowId, [this.column.field]: val };
+                this.dfs.appendChanges(changeData);
+            }
             this.setErrorMessage();
         });
     }

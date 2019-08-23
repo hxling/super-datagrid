@@ -1,8 +1,9 @@
+import { FormControl } from '@angular/forms';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 09:27:52
+ * @LastEditTime: 2019-08-23 18:17:49
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -17,7 +18,8 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
 import { CELL_SELECTED_CLS } from '../../types/constant';
 import { DomHandler } from '../../services/domhandler';
-import { Observable, timer, of, Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
+import { Utils } from '../../utils/utils';
 
 
 @Directive({
@@ -41,6 +43,13 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
             const _editor = this.dc.cellEditor.componentRef.instance;
             this.dg.pending = _editor.pending;
             return _editor;
+        }
+        return null;
+    }
+
+    get formControl() {
+        if (this.editor) {
+            return this.editor.formControl as FormControl;
         }
         return null;
     }
@@ -181,6 +190,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
                 this.bindEditorInputEvent();
                 this.render.removeClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
                 this.dg.selectedRow.editors = [this.editor];
+                this.formControl.setValue(this.dc.value);
                 this.dg.beginEdit.emit({ editor: this.dc.cellEditor, column: this.column, rowData: this.rowData });
             }
         });
@@ -191,11 +201,19 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
             return true;
         }
 
-        if (this.editor) {
-            this.editor.inputElement.blur();
+        if (this.dg.currentCell) {
+            const dc = this.dg.currentCell.cellRef as DatagridCellComponent;
+            if (dc && dc.cellEditor) {
+                const editor = dc.cellEditor.componentRef.instance;
+                editor.inputElement.blur();
 
-            if (this.editor.pending) {
-                return false;
+                if (editor.pending) {
+                    return false;
+                }
+
+                if (editor.formControl && editor.formControl.invalid) {
+                    return false;
+                }
             }
         }
 
@@ -209,15 +227,28 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
 
         afterEditEvent.subscribe( (flag: boolean) => {
             if (flag) {
+                this.dc.updateValue();
                 this.dfs.endEditCell();
                 this.dgs.onEndCellEdit(this.dfs.getCurrentCell());
                 this.unBindEditorInputEvent();
                 this.dg.selectedRow.editors = [];
+
                 this.dg.endEdit.emit({rowIndex: this.dr.rowIndex, rowData: this.rowData, column: this.column});
             }
         });
 
         return true;
+    }
+
+    cancelCellEditing() {
+        if (this.editor && this.dg.selectedRow.index > -1) {
+            if (this.formControl) {
+                this.dfs.resetRow(this.dg.selectedRow.id);
+                this.dc.rowData = this.dg.selectedRow.data;
+                this.formControl.reset(Utils.getValue(this.column.field, this.dc.rowData));
+                this.closeEditingCell();
+            }
+        }
     }
 
 
@@ -243,8 +274,10 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
 
         switch (keyCode) {
             case 13:  // Enter
-            case 27: // ESC
                 this.closeEditingCell();
+                break;
+            case 27: // ESC
+                this.cancelCellEditing();
                 break;
             case 9: // Tab
                 this.dg.clickDelay = 0;
@@ -306,7 +339,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         const fieldIndex = this.dfs.getColumnIndex(this.column.field);
         if (fieldIndex + 1 < this.dgb.columnsGroup.normalColumns.length) {
             const nextColumn = this.dgb.columnsGroup.normalColumns[fieldIndex + 1];
-            const nextTd = this.dg.currentCell.cellRef.nextElementSibling;
+            const nextTd = this.dg.currentCell.cellElement.nextElementSibling;
 
             this.selectCell(nextColumn.field, nextTd);
             nextTd.focus();
@@ -324,7 +357,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         const fieldIndex = this.dfs.getColumnIndex(this.column.field);
         if (fieldIndex - 1 >= 0) {
             const nextColumn = this.dgb.columnsGroup.normalColumns[fieldIndex - 1];
-            const nextTd = this.dg.currentCell.cellRef.previousElementSibling;
+            const nextTd = this.dg.currentCell.cellElement.previousElementSibling;
             this.selectCell(nextColumn.field, nextTd);
             nextTd.focus();
             if (nextColumn.editor) {
@@ -336,7 +369,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
 
     private clearCellSelectedClass() {
         if (this.dg.currentCell) {
-            DomHandler.removeClass(this.dg.currentCell.cellRef, CELL_SELECTED_CLS);
+            DomHandler.removeClass(this.dg.currentCell.cellElement, CELL_SELECTED_CLS);
         }
     }
 }

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 14:25:55
+ * @LastEditTime: 2019-08-23 15:56:13
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -13,6 +13,8 @@ export interface Action {
     payload?: any;
 }
 
+export interface RowDataChanges {[id: string]: any; }
+
 export interface FarrisDatagridState {
     [key: string]: any;
     width?: number;
@@ -20,6 +22,7 @@ export interface FarrisDatagridState {
     rowHeight?: number;
     idField?: string;
     data?: any;
+    originalData?: any;
     headerHeight?: number;
     pageIndex?: number;
     pageSize?: number;
@@ -49,6 +52,7 @@ export interface FarrisDatagridState {
     sortOrder?: string;
     multiSort?: boolean;
     remoteSort?: boolean;
+    changes: RowDataChanges;
 }
 
 export interface VirtualizedState {
@@ -96,7 +100,8 @@ export const initDataGridState: FarrisDatagridState = {
     sortName: undefined,
     sortOrder: undefined,
     multiSort: false,
-    remoteSort: true
+    remoteSort: true,
+    changes: null
 };
 
 export interface CellInfo {
@@ -105,6 +110,7 @@ export interface CellInfo {
     rowId?: any;
     rowIndex?: number;
     field?: string;
+    cellElement?: any;
     cellRef?: any;
 }
 

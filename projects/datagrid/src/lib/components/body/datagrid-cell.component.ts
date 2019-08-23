@@ -3,13 +3,13 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-22 10:12:56
+ * @LastEditTime: 2019-08-23 18:18:13
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import { Component, OnInit, Input, Output, EventEmitter,
     ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef,
-    OnDestroy, Injector, Inject, forwardRef, ApplicationRef, OnChanges, SimpleChanges } from '@angular/core';
+    OnDestroy, Injector, Inject, forwardRef} from '@angular/core';
 import { Utils } from '../../utils/utils';
 import { filter } from 'rxjs/operators';
 import { DataColumn } from '../../types/data-column';
@@ -74,10 +74,9 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
     private cellSubscription: Subscription;
     canEdit = () => this.dg.editable && this.dg.editMode === 'cell' && this.column.editor;
     constructor(
-        private app: ApplicationRef,
         @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
         @Inject(forwardRef(() => DatagridRowDirective)) public dr: DatagridRowDirective,
-        private el: ElementRef, private cd: ChangeDetectorRef, private injector: Injector,
+        private el: ElementRef, public cd: ChangeDetectorRef, private injector: Injector,
         public colFormatSer: ColumnFormatService
     ) {
         this.dfs = this.injector.get(DatagridFacadeService);
@@ -101,23 +100,13 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
         ).subscribe((cell: CellInfo) => {
             if (cell && this.column.editor) {
                 this.isEditing = cell.isEditing;
-                if (!this.isEditing) {
-                    this.updateValue();
-                } else {
-                    this.dr.form.controls[this.column.field].setValue(this.value);
-                }
+                cell.cellRef = this;
 
                 if (!this.cd['destroyed']) {
                     this.cd.detectChanges();
                 }
-
-                // this.app.tick();
             }
         });
-
-        // this.dr.form.valueChanges.subscribe( val => {
-        //     this.updateValue();
-        // });
 
     }
 
@@ -145,7 +134,8 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
 
     updateValue() {
         if (this.dr.form) {
-            Object.assign(this.rowData, this.dr.form.value);
+            this.rowData = Object.assign(this.rowData, this.dr.form.value);
+            this.cd.detectChanges();
         }
     }
 }

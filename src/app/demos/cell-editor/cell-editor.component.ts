@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-22 19:50:38
+ * @LastEditTime: 2019-08-23 14:13:12
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -170,5 +170,18 @@ export class CellEditorComponent implements OnInit {
 
     editRow() {
         this.dg.editRow();
+    }
+
+    getChanges() {
+        const changes =  this.dg.getChanges();
+        console.log('变更集', changes);
+    }
+
+    acceptChanges() {
+        this.dg.acceptChanges();
+    }
+
+    rejectChanges() {
+        this.dg.rejectChanges();
     }
 }

@@ -4,7 +4,7 @@ import { QueryList, ChangeDetectorRef } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-22 08:10:10
+ * @LastEditTime: 2019-08-23 18:18:27
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -29,6 +29,12 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
 
     @ContentChildren(forwardRef(() => DatagridCellComponent),  { descendants: true }) cells: QueryList<DatagridCellComponent>;
 
+    get rowId() {
+        if (this.rowData) {
+            return this.dfs.primaryId(this.rowData);
+        }
+        return null;
+    }
     form = new FormGroup({});
     private dfs: DatagridFacadeService;
     constructor(
@@ -94,7 +100,6 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
                     validators: this.bindValidations(col.editor.validators)
                 }
             );
-            // control.setValue(, { emitModelToViewChange: true });
             group.addControl(col.field, control);
         });
         return group;

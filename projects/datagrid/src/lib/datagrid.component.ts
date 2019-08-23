@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-22 10:03:26
+ * @LastEditTime: 2019-08-23 17:12:39
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -587,11 +587,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                     if (Utils.hasDialogOpen()) {
                         return;
                     }
-                    DomHandler.removeClass(this.currentCell.cellRef, CELL_SELECTED_CLS);
+                    DomHandler.removeClass(this.currentCell.cellElement, CELL_SELECTED_CLS);
 
                     if (this.currentCell.isEditing) {
                         // this.dfs.endEditCell();
-                        this.currentCell.cellRef.closeEdit();
+                        this.currentCell.cellElement.closeEdit();
                     }
                     this.dfs.cancelSelectCell();
                     this.unbindDocumentEditListener();
@@ -626,9 +626,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (this.currentCell && !this.currentCell.isEditing) {
             switch (keyCode) {
                 case 13: // Enter
-                    const fn = this.currentCell.cellRef['editCell'];
+                    const fn = this.currentCell.cellElement['editCell'];
                     if (fn) {
-                        fn.apply(this.currentCell.cellRef);
+                        fn.apply(this.currentCell.cellElement);
                     }
                     break;
                 case 40: // ↓
@@ -735,7 +735,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     editRow(rowId?: any) {
-        if (!this.editable) { return false; }
+        if (!this.editable || this.editMode !== 'row') { return false; }
 
         if (!this.selectedRow || this.selectedRow.index === -1) {
             console.warn('Please select a row.');
@@ -829,9 +829,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     private findNextCell(field: string, dir: MoveDirection) {
         let td = null;
-        if (this.currentCell && this.currentCell.cellRef) {
+        if (this.currentCell && this.currentCell.cellElement) {
             const cellIndex = this.dfs.getColumnIndex(field);
-            const currCellEl = this.currentCell.cellRef;
+            const currCellEl = this.currentCell.cellElement;
             if (dir === 'up') {
                 const prevTr = currCellEl.parentElement.previousElementSibling;
                 if (prevTr) {
@@ -881,6 +881,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             return this.restService.getData(this.url, params);
         }
         return of(undefined);
+    }
+
+    refresh() {
+        this.dfs.refresh();
     }
 
 
@@ -957,10 +961,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 this.render2.setStyle(dom, k, cs.style[k]);
             });
         }
-    }
-
-    refresh() {
-        this.cd.detectChanges();
     }
 
     getBoundingClientRect(el: ElementRef) {
@@ -1086,6 +1086,23 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     //#endregion
 
+    getChanges() {
+        return this.dfs.getChanges();
+    }
+
+    acceptChanges() {
+        this.dfs.acceptChanges();
+    }
+
+    rejectChanges() {
+        this.dfs.rejectChanges();
+        setTimeout(() => {
+            this.app.tick();
+            if (this.selectRow) {
+                this.selectRow(this.selectedRow.id);
+            }
+        });
+    }
 
 
     private canOperateCheckbox() {

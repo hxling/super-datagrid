@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-22 10:02:58
+ * @LastEditTime: 2019-08-23 16:43:12
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -12,10 +12,10 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
 import { map, distinctUntilChanged, filter, switchMap, auditTime } from 'rxjs/operators';
 import { DataColumn, ColumnGroup } from '../types';
-import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow } from './state';
+import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow, RowDataChanges } from './state';
 import { VirtualizedLoaderService } from './virtualized-loader.service';
 import { DatagridRow } from '../types/datagrid-row';
-// import { orderBy } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 
 @Injectable()
 export class DatagridFacadeService {
@@ -147,6 +147,7 @@ export class DatagridFacadeService {
 
     initState(state: Partial<FarrisDatagridState>) {
         this.updateState(state, false);
+        this._state.originalData = cloneDeep(this._state.data);
         this.initColumns();
 
         this.gridSizeSubject.next(this._state);
@@ -156,6 +157,15 @@ export class DatagridFacadeService {
     loadData(data: any) {
         this.updateState({ data }, false);
         this.updateVirthualRows(this._state.virtual.scrollTop || 0);
+    }
+    /** 复原指定行的数据 */
+    resetRow(rowId: any) {
+        const origData = this._state.originalData;
+        if (origData) {
+            const origRowData = origData.find(r => this.primaryId(r) === rowId);
+            this.getCurrentRow().data = cloneDeep(origRowData);
+            this.updateRow(origRowData);
+        }
     }
 
     loadDataForVirtual(data: any) {
@@ -482,10 +492,10 @@ export class DatagridFacadeService {
         this._state.selectOnCheck = flag;
     }
 
-    setCurrentCell(dr: DatagridRow, field: string, cellRef?: any ) {
+    setCurrentCell(dr: DatagridRow, field: string, cellElement?: any ) {
         const { rowIndex, rowData } = {...dr};
         if (!this.isCellSelected({rowIndex, field})) {
-            const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData), cellRef };
+            const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData), cellElement };
             this.updateState({currentCell}, false);
             this.selectRow(rowIndex, rowData);
             this._state.currentRow.dr = dr;
@@ -531,12 +541,8 @@ export class DatagridFacadeService {
         Object.assign(this.findRow(id), row);
     }
 
-    getCurrentCellInfo() {
-        return this._state.currentCell;
-    }
-
     isCellSelected(cellInfo: CellInfo) {
-        const cc = this.getCurrentCellInfo();
+        const cc = this.getCurrentCell();
         if (!cc) {
             return false;
         } else {
@@ -812,4 +818,59 @@ export class DatagridFacadeService {
     }
 
 
+    //#region 变更集
+
+    private hasRowChanges(rowid: any) {
+        const _changes = this._state.changes;
+        if (!_changes) {
+            return false;
+        }
+        return _changes[rowid];
+    }
+
+    appendChanges(changes: RowDataChanges) {
+        if (!changes) {
+            return;
+        }
+        const id = changes[this._state.idField];
+        if (!id) {
+            return;
+        }
+        const _id = '' + id;
+        if (!this.hasRowChanges(_id)) {
+            this._state.changes = this._state.changes || {};
+            this._state.changes[_id] = changes;
+        } else {
+            this._state.changes[_id] = Object.assign(this._state.changes[_id], changes);
+        }
+    }
+
+    acceptChanges() {
+        const changes = this._state.changes;
+        if (changes) {
+            const keys = Object.keys(changes);
+            keys.forEach(id => {
+                this.updateRow(changes[id]);
+            });
+            this._state.originalData = cloneDeep(this._state.data);
+        }
+    }
+    rejectChanges() {
+        const changes = this._state.changes;
+        if (changes) {
+            this._state.data = cloneDeep(this._state.originalData);
+            this._state.changes = null;
+            this.refresh();
+        }
+    }
+
+    getChanges() {
+        return this._state.changes;
+    }
+
+    refresh() {
+        this.loadData(this._state.data);
+    }
+
+    //#endregion
 }
