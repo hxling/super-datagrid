@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-23 14:13:12
+ * @LastEditTime: 2019-08-24 11:37:59
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -41,8 +41,9 @@ export class CellEditorComponent implements OnInit {
             { field: 'id', width: 100, title: 'ID' },
             { field: 'name', width: 130, title: '姓名', editor: { type: EditorTypes.TEXTBOX, options: {}}},
             { field: 'sex', width: 70, title: '性别', editor: {type: 'input-group'} },
-            { field: 'birthday', width: 120, title: '出生日期', editor: { type: EditorTypes.DATEPICKER, options: {}},
-            formatter: { type: 'datetime', options: { format: 'YYYY-MM-DD' }}
+            { field: 'birthday', width: 120, title: '出生日期', editor: {
+                type: EditorTypes.DATEPICKER, options: {}
+            }, formatter: { type: 'datetime', options: { format: 'YYYY-MM-DD' }}
         },
             { field: 'maray', width: 70, title: '婚否', editor: { type: EditorTypes.CHECKBOX, options: {}},
             formatter: { type: 'boolean', options: { trueText: '已婚', falseText: '未婚' }}
@@ -183,5 +184,16 @@ export class CellEditorComponent implements OnInit {
 
     rejectChanges() {
         this.dg.rejectChanges();
+    }
+
+    cancelEdit($event: MouseEvent) {
+        this.dg.cancelEdit(this.dg.selectedRow.id);
+        $event.stopPropagation();
+        return false;
+
+    }
+
+    cancelEdited($event: MouseEvent) {
+        console.log('取消编辑');
     }
 }

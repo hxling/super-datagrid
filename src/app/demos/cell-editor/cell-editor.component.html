@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-23 18:32:39
+ * @LastEditTime: 2019-08-24 11:38:50
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -15,7 +15,7 @@
                
                 <button (click)="dg.editable = true">允许编辑</button>
                 <button (click)="dg.editable = false">禁用编辑</button>
-                <button (click)="editCell($event, 3, 'name')">编辑（第3行，name字段）</button>
+                <button (click)="editCell($event, 3, 'name')">编辑单元格（第3行，name字段）</button>
                 <select [(ngModel)]="editMode">
                     <option value="cell">Cell</option>
                     <option value="row">Row</option>
@@ -31,7 +31,7 @@
             <div class="row">
                 <div class="col-12">
                     <button class="btn btn-primary" (click)="dg.editRow()">编辑</button>
-                    <button class="btn btn-danger" (click)="dg.cancelEdit()">取消编辑</button>
+                    <button class="btn btn-danger" (click)="cancelEdit($event)">取消编辑</button>
                     <button class="btn btn-primary" (click)="getChanges()">变更集</button>
                     <button class="btn btn-success" (click)="acceptChanges()">应用变更集</button>
                     <button class="btn btn-default" (click)="rejectChanges()">取消变更集</button>
@@ -50,6 +50,7 @@
             (beginEdit) = "beginEdit($event)"
             [afterEdit] = "afterEdit"
             (endEdit)= "endEdit($event)"
+            (cancelEdited)="cancelEdited($event)"
             >
         </farris-datagrid>
     </div>

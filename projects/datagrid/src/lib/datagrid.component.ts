@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-23 18:29:42
+ * @LastEditTime: 2019-08-24 17:38:51
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -105,6 +105,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() clickToEdit = false;
 
     private _lockPagination = false;
+    /** 锁定分页条，锁定后页码点击无效 */
     @Input() get lockPagination() {
         return this._lockPagination;
     }
@@ -144,10 +145,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() multiSelect = false;
     /** 启用多选时，是否显示checkbox */
     @Input() showCheckbox = false;
+    /** 显示全选checkbox */
     @Input() showAllCheckbox = true;
     /** 当启用多选时，点击行选中，只允许且只有一行被选中。 */
     @Input() onlySelectSelf = true;
+    /** 启用多选且显示checkbox, 选中行同时钩选 */
     @Input() checkOnSelect = true;
+    /** 启用多选且显示checkbox, 钩选后选中行 */
     @Input() selectOnCheck = true;
 
     /**
@@ -164,8 +168,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() url: string;
     /** 数据源 */
     @Input() data: any[];
+    /** 页脚数据 */
     @Input() footerData: any[] = [];
-
+    /** 验证不通过时可以结束编辑 */
+    @Input() endEditByInvalid = true;
 
     /** 数据为空时显示的信息 */
     @Input() emptyMsg = '';
@@ -178,7 +184,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() virtualized = true;
     /** 是否启用异步加载数据 */
     @Input() virtualizedAsyncLoad = false;
-
+    /** 行样式 */
     @Input() rowStyler: (rowData, rowIndex?: number) => {cls?: string, style?: any};
     /** 编辑方式： row(整行编辑)、cell(单元格编辑)；默认为 row */
     @Input() editMode: 'row'| 'cell' = 'row';
@@ -200,6 +206,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Output() beginEdit = new EventEmitter<{ editor?: any, rowIndex?: number, rowData: any, column?: DataColumn }>();
     @Input() afterEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
     @Output() endEdit = new EventEmitter<{rowIndex: number, rowData: any, column?: DataColumn}>();
+    @Output() cancelEdited = new EventEmitter();
 
     @Output() scrollY = new EventEmitter();
 
@@ -336,6 +343,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.subscriptions.push(currentCellSubscription);
     }
 
+    //#region Ng Event
 
     ngOnInit() {
         this.pagerOpts = {
@@ -474,7 +482,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
     }
 
+    //#endregion
 
+    //#region Init
     /** 初始编辑器与验证器 */
     private initEditorAndValidator() {
         const Editors = this.inject.get<any[]>(GRID_EDITORS, []);
@@ -553,6 +563,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     trackByRows = (index: number, row: any) => {
         return row[this.idField];
     }
+
+    //#endregion
+
+    //#region 快捷键
 
     private unbindMoveSelectRowEvent() {
         if (this.documentRowKeydownHandler) {
@@ -671,30 +685,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
     }
 
-    selectNextCell( dir: MoveDirection) {
-        const nextTd = this.findNextCell(this.currentCell.field, dir);
-        if (nextTd) {
-            nextTd['click'].apply(nextTd);
-            return nextTd;
-        }
-    }
+    //#endregion
 
-    selectNextRow() {
-        if (this.selectedRow) {
-            const tr = this.selectedRow.dr.el.nativeElement;
-            if (tr.nextElementSibling) {
-                tr.nextElementSibling.click();
-            }
-        }
-    }
-    selectPrevRow() {
-        if (this.selectedRow) {
-            const tr = this.selectedRow.dr.el.nativeElement;
-            if (tr.previousElementSibling) {
-                tr.previousElementSibling.click();
-            }
-        }
-    }
+    //#region Editing
 
     isRowEditing() {
         if (!this.selectedRow || this.selectedRow.index === -1) {
@@ -709,6 +702,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             return this.currentCell.isEditing;
         }
         return false;
+    }
+
+    isEditing() {
+        if (this.editMode === 'row') {
+            return this.isRowEditing();
+        } else {
+            return this.isCellEditing();
+        }
     }
 
     getEditors() {
@@ -768,8 +769,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                             if (cell.cellEditor) {
                                 return cell.cellEditor.componentRef;
                             }
-                        });
+                        }).filter(editor => editor);
                         this.selectedRow.editors = editors;
+
+                        if (editors && editors.length) {
+                            editors[0].instance.inputElement.focus();
+                        }
+
                         this.beginEdit.emit({ rowIndex, rowData});
                         this.cd.detectChanges();
                     });
@@ -798,7 +804,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         const rowForm = dr.form as FormGroup;
         rowForm.markAsTouched();
-        if (rowForm.invalid) {
+        if (rowForm.invalid && !this.endEditByInvalid) {
             return { canEnd: false };
         }
 
@@ -811,13 +817,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         afterEditEvent.subscribe( (flag: boolean) => {
             if (flag) {
-                const cells = this.selectedRow.dr.cells;
-                cells.forEach(cell => cell.isEditing = false);
-                this.selectedRow.editors = null;
+                this.closeAllCellEditor();
 
                 if (this.selectedRow.dr.form) {
                     this.selectedRow.dr.rowData = Object.assign(this.selectedRow.dr.rowData, this.selectedRow.dr.form.value);
-                    // this.selectedRow.dr.cd.detectChanges();
                     this.dfs.updateRow(this.selectedRow.dr.rowData);
                     this.cd.detectChanges();
                 }
@@ -828,32 +831,30 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     cancelEdit(rowId: any) {
+
+        if (!this.isEditing()) {
+            return;
+        }
+
+        this.closeAllCellEditor();
         this.dfs.rejectChanges(rowId);
+
+        this.cd.detectChanges();
+        this.cancelEdited.emit();
     }
 
-    private findNextCell(field: string, dir: MoveDirection) {
-        let td = null;
-        if (this.currentCell && this.currentCell.cellElement) {
-            const cellIndex = this.dfs.getColumnIndex(field);
-            const currCellEl = this.currentCell.cellElement;
-            if (dir === 'up') {
-                const prevTr = currCellEl.parentElement.previousElementSibling;
-                if (prevTr) {
-                    td = prevTr.children[cellIndex];
-                }
-            } else if (dir === 'down') {
-                const nextTr = currCellEl.parentElement.nextElementSibling;
-                if (nextTr) {
-                    td = nextTr.children[cellIndex];
-                }
-            } else if (dir === 'left') {
-                td = currCellEl.previousElementSibling;
-            } else if (dir === 'right') {
-                td = currCellEl.nextElementSibling;
-            }
+    private closeAllCellEditor() {
+        const cells = this.selectedRow.dr.cells;
+        cells.forEach(cell => cell.isEditing = false);
+        if (this.currentCell) {
+            this.currentCell.isEditing = false;
         }
-        return td;
+        this.selectedRow.editors = null;
     }
+
+    //#endregion
+
+    //#region Load Data
 
     loadData(data?: any) {
         this.closeLoading();
@@ -902,6 +903,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         });
     }
 
+//#endregion
+
+    //#region Pagination
+
     setPageIndex(pageIndex: number) {
         // console.log(this.dgPager.pagination);
         this.pageIndex = pageIndex;
@@ -943,7 +948,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.pageSizeChanged.emit({pageSize, pageIndex: this.pageIndex});
     }
 
+//#endregion
 
+    //#region Loading
     showLoading() {
         this.loading = true;
         this.cd.detectChanges();
@@ -952,6 +959,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     closeLoading() {
         this.loading = false;
         this.cd.detectChanges();
+    }
+    //#endregion
+
+    //#region Dom
+
+    private replacePX2Empty(strNum: string) {
+        if (strNum) {
+            return Number.parseInt(strNum.replace('px', ''), 10);
+        }
+        return 0;
     }
 
     renderCustomStyle(cs: CustomStyle, dom: any) {
@@ -989,6 +1006,60 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             right: this.replacePX2Empty(style.borderRightWidth),
             left: this.replacePX2Empty(style.borderLeftWidth)
         };
+    }
+    //#endregion
+
+    //#region Select
+    private canOperateCheckbox() {
+        return this.multiSelect && this.showCheckbox;
+    }
+    private findNextCell(field: string, dir: MoveDirection) {
+        let td = null;
+        if (this.currentCell && this.currentCell.cellElement) {
+            const cellIndex = this.dfs.getColumnIndex(field);
+            const currCellEl = this.currentCell.cellElement;
+            if (dir === 'up') {
+                const prevTr = currCellEl.parentElement.previousElementSibling;
+                if (prevTr) {
+                    td = prevTr.children[cellIndex];
+                }
+            } else if (dir === 'down') {
+                const nextTr = currCellEl.parentElement.nextElementSibling;
+                if (nextTr) {
+                    td = nextTr.children[cellIndex];
+                }
+            } else if (dir === 'left') {
+                td = currCellEl.previousElementSibling;
+            } else if (dir === 'right') {
+                td = currCellEl.nextElementSibling;
+            }
+        }
+        return td;
+    }
+
+    selectNextCell( dir: MoveDirection) {
+        const nextTd = this.findNextCell(this.currentCell.field, dir);
+        if (nextTd) {
+            nextTd['click'].apply(nextTd);
+            return nextTd;
+        }
+    }
+
+    selectNextRow() {
+        if (this.selectedRow) {
+            const tr = this.selectedRow.dr.el.nativeElement;
+            if (tr.nextElementSibling) {
+                tr.nextElementSibling.click();
+            }
+        }
+    }
+    selectPrevRow() {
+        if (this.selectedRow) {
+            const tr = this.selectedRow.dr.el.nativeElement;
+            if (tr.previousElementSibling) {
+                tr.previousElementSibling.click();
+            }
+        }
     }
 
     selectRow(id: any) {
@@ -1034,6 +1105,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     clearCheckeds() {
         this.dfs.clearCheckeds();
     }
+
+    //#endregion
 
     //#region Resize Column
 
@@ -1110,14 +1183,4 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
     //#endregion
 
-    private canOperateCheckbox() {
-        return this.multiSelect && this.showCheckbox;
-    }
-
-    private replacePX2Empty(strNum: string) {
-        if (strNum) {
-            return Number.parseInt(strNum.replace('px', ''), 10);
-        }
-        return 0;
-    }
 }

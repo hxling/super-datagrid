@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 11:06:43
+ * @LastEditTime: 2019-08-24 15:51:37
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -52,6 +52,12 @@ export interface DataColumn {
     rowspan?: number;
     colspan?: number;
     index?: number;
+    footer?: {
+        formatter?: (value, rowData, rowIndex) => any | ColumnFormatter;
+        styler?: (value, rowData, rowIndex) => CustomStyle;
+        /** 文本对齐方式 */
+        align?: 'left' | 'center' | 'right';
+    };
 }
 
 export interface GridEditor {

@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-23 18:17:49
+ * @LastEditTime: 2019-08-24 17:31:36
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -211,7 +211,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
                     return false;
                 }
 
-                if (editor.formControl && editor.formControl.invalid) {
+                if (editor.formControl && editor.formControl.invalid && !this.dg.endEditByInvalid) {
                     return false;
                 }
             }
@@ -346,6 +346,21 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
             if (nextColumn.editor) {
                 this.dfs.editCell();
                 this.dgs.onCellEdit(nextTd);
+            }
+        } else {
+            // next row's first cell to editing
+            const nextTr = this.dg.currentCell.cellElement.parentElement.nextElementSibling;
+            if (nextTr && nextTr.tagName === 'TR' ) {
+                // nextTr.children.find(td => td.editCell).editCell();
+                let firstEditor = false;
+                let i = 0;
+                while (!firstEditor) {
+                    firstEditor = !!nextTr.children[i].editCell;
+                    if (!firstEditor) {
+                        i++;
+                    }
+                }
+                nextTr.children[i].editCell();
             }
         }
     }

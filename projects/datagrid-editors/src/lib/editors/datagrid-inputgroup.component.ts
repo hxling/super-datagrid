@@ -3,7 +3,7 @@ import { EventEmitter, Injector } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-22 19:06:33
+ * @LastEditTime: 2019-08-24 10:05:03
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -36,6 +36,7 @@ export class DatagridInputGroupComponent extends DatagridBaseEditorDirective imp
 }
 
     ngOnInit(): void {
+        super.ngOnInit();
         this.inputElement = this.ig.textbox.nativeElement;
     }
 }

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-23 18:28:28
+ * @LastEditTime: 2019-08-24 15:53:35
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -813,7 +813,6 @@ export class DatagridFacadeService {
 
     clientSort() {
         const sortedData = this._state.data.sort(this._sort.bind(this));
-        // const sortedData = orderBy(this._state.data, this._state.sortName.split(','), this._state.sortOrder.split(','));
         this.loadData(sortedData);
     }
 
