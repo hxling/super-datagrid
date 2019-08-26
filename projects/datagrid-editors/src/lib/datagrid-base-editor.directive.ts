@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 11:07:01
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-23 13:59:58
+ * @LastEditTime: 2019-08-26 18:50:17
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -55,9 +55,9 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
         this.validators = (this.dg.validators || []).concat(this.column.editor.validators);
 
         // console.log(this.formControl);
-        // this.keyDownEvent = this.render.listen(this.el.nativeElement, 'keydown', (e: KeyboardEvent) => {
-        //     e.stopPropagation();
-        // });
+        this.clickEvent = this.render.listen(this.el.nativeElement, 'click', (e: Event) => {
+            e.stopPropagation();
+        });
 
         // this.dblClickEvent = this.render.listen(this.el.nativeElement, 'dblclick', (e: MouseEvent) => {
         //     e.stopPropagation();

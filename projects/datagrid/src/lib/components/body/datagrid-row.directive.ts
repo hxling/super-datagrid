@@ -1,10 +1,10 @@
 
-import { QueryList, ChangeDetectorRef } from '@angular/core';
+import { QueryList, Renderer2 } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-23 18:18:27
+ * @LastEditTime: 2019-08-26 14:11:46
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -37,10 +37,12 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
     }
     form = new FormGroup({});
     private dfs: DatagridFacadeService;
+    private documentRowDblclickEvent: any = null;
+
     constructor(
         @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
         private injector: Injector, private fb: FormBuilder, public el: ElementRef,
-        private cd: ChangeDetectorRef) {
+        private render: Renderer2) {
         this.dfs = this.injector.get(DatagridFacadeService);
     }
 
@@ -65,7 +67,6 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
 
     @HostListener('click', ['$event'])
     onRowClick(event: MouseEvent) {
-
         const rowId = this.dfs.primaryId(this.rowData);
         if (!this.dfs.isRowSelected(rowId)) {
             const canendedit = this.dg.endRowEdit();
@@ -87,6 +88,20 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
                     }
                 });
             }
+        }
+    }
+
+    @HostListener('mouseenter', ['$event'])
+    onMouseEnter($event: MouseEvent) {
+        if (this.dg.editMode === 'row') {
+            this.bindRowDblClickEvent();
+        }
+    }
+
+    @HostListener('mouseleave', ['$event'])
+    onMouseLeave($event: MouseEvent) {
+        if (this.dg.editMode === 'row') {
+            this.unbindRowDblclickEvent();
         }
     }
 
@@ -140,5 +155,26 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
             });
         }
         return validations;
+    }
+
+    private bindRowDblClickEvent() {
+        if (!this.documentRowDblclickEvent) {
+            this.unbindRowDblclickEvent();
+            this.documentRowDblclickEvent = this.render.listen(document, 'dblclick', this.dblclickRowEvent.bind(this));
+        }
+    }
+
+    private unbindRowDblclickEvent() {
+        if (this.documentRowDblclickEvent) {
+            this.documentRowDblclickEvent();
+            this.documentRowDblclickEvent = null;
+        }
+    }
+
+    private dblclickRowEvent(evnet: MouseEvent) {
+        const rowid = this.dg.selectedRow.id;
+        this.dg.editRow(rowid);
+        event.stopPropagation();
+        event.preventDefault();
     }
 }

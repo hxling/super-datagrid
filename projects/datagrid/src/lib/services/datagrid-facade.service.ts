@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-24 15:53:35
+ * @LastEditTime: 2019-08-26 15:35:32
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -355,7 +355,7 @@ export class DatagridFacadeService {
         if (this._state.data && this._state.data.length) {
             let index = -1;
             const data = this._state.data.find( (n, i) => {
-                const r = this.primaryId(n) === id;
+                const r = this.primaryId(n) == id;
                 if (r) {
                     index = i;
                 }

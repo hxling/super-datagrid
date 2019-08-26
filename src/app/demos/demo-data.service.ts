@@ -3,7 +3,7 @@ import { Utils } from './utils';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-07-29 08:14:22
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 18:24:14
+ * @LastEditTime: 2019-08-26 08:39:24
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -81,6 +81,7 @@ export class DemoDataService implements RestService {
                 sex: Utils.getXingBie(),
                 birthday: Utils.getFullDate(),
                 maray: ['', true, false][Utils.randomNum(0, 2)],
+                city: '',
                 addr: this.buildLongText(i, `天齐大道${7000 + i}号`),
                 company: Utils.getCompany(),
                 nianxin: Math.round(Math.random() * 10000) * 12,

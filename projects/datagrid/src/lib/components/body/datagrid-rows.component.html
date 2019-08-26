@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 16:53:46
+ * @LastEditTime: 2019-08-26 15:03:44
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -10,7 +10,7 @@
     <colgroup>
         <col *ngFor="let col of columns" [width]="col.width + 'px'"/>
     </colgroup>
-    <tr class="f-datagrid-body-row" [row-hover]="row"  #hoverRow="rowHover" [attr.id]="'row-'+ dr.rowIndex "
+    <tr class="f-datagrid-body-row" [row-hover]="row"  #hoverRow="rowHover" [attr.id]="'row-'+ dr.rowId "
         [grid-row]="row" [editable]="dg.editable" [rowIndex]="startRowIndex + i" #dr="gridRow" [formGroup]="dr.form"
         *ngFor="let row of data ; trackBy: dg.trackByRows; let i = index; odd as odd"
         [class.f-datagrid-row-odd]="odd && dg.striped"

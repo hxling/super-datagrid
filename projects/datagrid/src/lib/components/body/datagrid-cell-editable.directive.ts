@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-24 17:31:36
+ * @LastEditTime: 2019-08-26 10:17:00
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -201,10 +201,11 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
             return true;
         }
 
+        let currentCell = null;
         if (this.dg.currentCell) {
-            const dc = this.dg.currentCell.cellRef as DatagridCellComponent;
-            if (dc && dc.cellEditor) {
-                const editor = dc.cellEditor.componentRef.instance;
+            currentCell = this.dg.currentCell.cellRef as DatagridCellComponent;
+            if (currentCell && currentCell.cellEditor) {
+                const editor = currentCell.cellEditor.componentRef.instance;
                 editor.inputElement.blur();
 
                 if (editor.pending) {
@@ -227,7 +228,9 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
 
         afterEditEvent.subscribe( (flag: boolean) => {
             if (flag) {
-                this.dc.updateValue();
+                if (currentCell) {
+                    currentCell.updateValue();
+                }
                 this.dfs.endEditCell();
                 this.dgs.onEndCellEdit(this.dfs.getCurrentCell());
                 this.unBindEditorInputEvent();

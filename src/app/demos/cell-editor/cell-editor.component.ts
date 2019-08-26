@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-24 11:37:59
+ * @LastEditTime: 2019-08-26 18:52:57
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -12,7 +12,7 @@ import { DemoDataService } from '../demo-data.service';
 import { EditorTypes} from '@farris/ui-datagrid-editors';
 import { Utils } from '../utils';
 import { DatagridComponent } from '@farris/ui-datagrid';
-import { debounceTime, map } from 'rxjs/operators';
+import { debounceTime, map, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 @Component({
@@ -42,12 +42,27 @@ export class CellEditorComponent implements OnInit {
             { field: 'name', width: 130, title: '姓名', editor: { type: EditorTypes.TEXTBOX, options: {}}},
             { field: 'sex', width: 70, title: '性别', editor: {type: 'input-group'} },
             { field: 'birthday', width: 120, title: '出生日期', editor: {
-                type: EditorTypes.DATEPICKER, options: {}
-            }, formatter: { type: 'datetime', options: { format: 'YYYY-MM-DD' }}
-        },
+                    type: EditorTypes.DATEPICKER, options: {}
+                },
+                formatter: { type: 'datetime', options: { format: 'YYYY-MM-DD' }}
+            },
             { field: 'maray', width: 70, title: '婚否', editor: { type: EditorTypes.CHECKBOX, options: {}},
-            formatter: { type: 'boolean', options: { trueText: '已婚', falseText: '未婚' }}
-        },
+                formatter: { type: 'boolean', options: { trueText: '已婚', falseText: '未婚' }}
+            },
+            { field: 'city', width: 100, title: '所在城市', editor: {
+                type: EditorTypes.LOOKUP,
+                options: {
+                    uri: '/assets/data/bigdata-city.json',
+                    loader: this.loadLookupTreeData,
+                    idField: 'id',
+                    singleSelect: true,
+                    textField: 'name.dfName',
+                    valueField: 'id',
+                    title: '城市区域',
+                    pagination: false,
+                    displayType: 'TREELIST'
+                }
+            }},
             { field: 'addr', width: 170, title: '地址', editor: {
                     type: EditorTypes.TEXTAREA,
                     options: {},
@@ -58,33 +73,35 @@ export class CellEditorComponent implements OnInit {
                     ]
                 }
             },
-            { field: 'company', width: 160, title: '公司' , editor: {
-                type: EditorTypes.LOOKUP,
-                options: {
-                    uri: '/assets/data/products.json',
-                    loader: this.loadLookupData,
-                    idField: 'Code',
-                    singleSelect: true,
-                    textField: 'Name',
-                    valueField: 'Code',
-                    title: '人员选择',
-                    pagination: true,
-                },
-                validators: [
-                    { type: 'required', messager: '必填' },
-                    // { type: 'min', value: 0, messager: '最小值不能小于0'},
-                    // { type: 'max', value: 10, messager: '最大值不能小于10'},
-                    // { type: 'minLength', value: 10, messager: '最小值不能小于0'},
-                    // { type: 'maxLength', value: 100, messager: '最小值不能小于0'}
-                ]
-        }},
-            { field: 'nianxin', width: 100, title: '年薪' , editor: { type: EditorTypes.TEXTBOX, options: {}},
+            { field: 'company', width: 160, title: '公司' ,
+                editor: {
+                    type: EditorTypes.LOOKUP,
+                    options: {
+                        uri: '/assets/data/products.json',
+                        loader: this.loadLookupData,
+                        idField: 'Code',
+                        singleSelect: true,
+                        textField: 'Name',
+                        valueField: 'Code',
+                        title: '人员选择',
+                        pagination: true,
+                        displayType: 'LIST'
+                    },
+                    validators: [
+                        { type: 'required', messager: '必填' },
+                        // { type: 'min', value: 0, messager: '最小值不能小于0'},
+                        // { type: 'max', value: 10, messager: '最大值不能小于10'},
+                        // { type: 'minLength', value: 10, messager: '最小值不能小于0'},
+                        // { type: 'maxLength', value: 100, messager: '最小值不能小于0'}
+                    ]
+            }
+        },
+        { field: 'nianxin', width: 100, title: '年薪' , editor: { type: EditorTypes.TEXTBOX, options: {}},
             formatter: { type: 'number', options: { prefix: '￥', suffix: '元', precision: 2 } }
         },
-            { field: 'zhiwei', width: 140, title: '职位' , editor: { type: EditorTypes.SELECT, options: enumOpts},
+        { field: 'zhiwei', width: 140, title: '职位' , editor: { type: EditorTypes.SELECT, options: enumOpts},
             formatter: {type: 'enum', options: enumOpts}
-        }
-        ];
+        }];
 
         this.total = 50;
         this.items = this.dds.createData(50);
@@ -96,6 +113,67 @@ export class CellEditorComponent implements OnInit {
         const header = document.querySelector('.navbar-dark') as any;
         const headerHeight = header.offsetHeight;
         this.box.nativeElement.style.height = (window.innerHeight - headerHeight) + 'px';
+    }
+
+    loadLookupTreeData = (url: string) => {
+        return this.http.get(url).pipe(
+            switchMap( (d: any) => {
+                const start = new Date().getMilliseconds();
+                const treeResult = this.makeTree(d);
+                const end =  new Date().getMilliseconds();
+                console.log(`start:${start}, end: ${end}; count: ${ end - start }`);
+                const r = {
+                    displayType: 'TREELIST',
+                    columns: [
+                        {  field: 'name.dfName', title: '名称', width: 200  },
+                        {  field: 'code.dfCode', title: '编号', width: 100  },
+                        // {  field: 'fullName', title: '全称', width: 200  },
+                        {  field: 'countryOrRegion.countryOrRegion.countryOrRegion_Name.dfName', title: '国家', width: 200  }
+                        // {  field: 'countryOrRegion.countryOrRegion.countryOrRegion', title: '国家ID', width: 200  }
+                    ],
+                    items: d,
+                    treeInfo: {
+                        layerType: 'pathcode',
+                        loadDataType: 'all',
+                        pathField: 'path',
+                        layerField: 'layer',
+                        dataField: 'treeInfo',
+                        isDetailField: 'isDetail'
+                    }
+                };
+                return of(r);
+            })
+        );
+    }
+
+
+    private makeTree(data) {
+        const r = data.filter(t => t.treeInfo.layer === 1).map(t => {
+            return {
+                data: t,
+                children: [],
+                expanded: false
+            };
+        });
+
+        r.forEach(e => {
+            const childs = data.filter( c =>  c.treeInfo.path.substr(0, 4) === e.data.treeInfo.path );
+            e.children = this.makeTreeChildren(childs, e.data.treeInfo);
+        });
+
+        return r;
+    }
+
+    private makeTreeChildren(childs, treeInfo) {
+        const pLayer = treeInfo.layer + 1;
+        const pPathLen = treeInfo.layer * 4;
+        return childs.filter( c => c.treeInfo.layer === pLayer && c.treeInfo.path.substr(0, pPathLen) === treeInfo.path).map( d => {
+            return {
+                data: d,
+                children: this.makeTreeChildren(childs, d.treeInfo),
+                expanded: false
+            };
+        });
     }
 
     loadLookupData = (url: string, params?: any) => {
@@ -118,7 +196,7 @@ export class CellEditorComponent implements OnInit {
         return this.http.get(url, {
             params: httpParams
         }).pipe(
-            debounceTime(20000),
+            debounceTime(2000),
             map((data: any) => {
                 if (params) {
                     let perPage = 20, start = 0, end = perPage + start;

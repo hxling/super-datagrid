@@ -3,7 +3,7 @@ import { AfterViewInit, ApplicationRef, Inject, forwardRef, Injector } from '@an
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-22 19:07:00
+ * @LastEditTime: 2019-08-26 18:57:50
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -12,7 +12,6 @@ import { DatagridBaseEditorDirective } from '../datagrid-base-editor.directive';
 import { LookupDefaultOptions } from '../editor-default-options';
 import { LookupGridComponent } from '@farris/ui-lookup';
 import { RuntimeStateService } from '@farris/ui-common';
-import { DatagridComponent } from 'projects/datagrid/src/public-api';
 @Component({
     selector: 'grid-editor-lookup',
     template: `
@@ -20,7 +19,7 @@ import { DatagridComponent } from 'projects/datagrid/src/public-api';
         <farris-lookup-grid #lookup style="width: 100%"
             [formControlName]="column.field"
             [uri]="options.uri"
-            [displayType]="'List'"
+            [displayType]="options.displayType"
             [singleSelect]="options.singleSelect"
             [idField]="options.idField"
             [pageSize]="options.pageSize || 20"

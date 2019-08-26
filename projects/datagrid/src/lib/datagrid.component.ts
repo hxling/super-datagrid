@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-24 17:38:51
+ * @LastEditTime: 2019-08-26 19:00:09
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -296,7 +296,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     documentCellKeydownEvents: any;
     documentCellKeydownHandler: any;
 
+    // 行选中键盘事件
     documentRowKeydownHandler: any;
+    // 行编辑快捷键
+    documentRowEditKeydownHanlder: any;
+    // document 单击时结束行编辑
+    documentClickEndRowEditHandler: any;
 
     pending = false;
 
@@ -738,6 +743,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     editRow(rowId?: any) {
         if (!this.editable || this.editMode !== 'row') { return false; }
 
+        if (rowId) {
+            this.selectRow(rowId);
+        }
+
+
         if (!this.selectedRow || this.selectedRow.index === -1) {
             console.warn('Please select a row.');
             return false;
@@ -775,6 +785,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                         if (editors && editors.length) {
                             editors[0].instance.inputElement.focus();
                         }
+
+                        // 绑定键盘事件
+                        this.bindRowEditorKeydownEvent();
 
                         this.beginEdit.emit({ rowIndex, rowData});
                         this.cd.detectChanges();
@@ -850,6 +863,96 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.currentCell.isEditing = false;
         }
         this.selectedRow.editors = null;
+
+        // 取消键盘事件
+        this.unbindRowEditorKeydownEvent();
+    }
+
+    private rowEditTabKeydwonEvent(e: any) {
+        const keyCode = e.which || e.keyCode;
+
+        if (keyCode === 9) {
+            const td = e.target.closest('td');
+            const tr = e.target.closest('tr');
+            const nextTd = td.nextElementSibling;
+
+            const hasNoEditor = (_td: any) => {
+                return  !_td.querySelector('input') && !_td.querySelector('textarea') && !_td.querySelector('select');
+            };
+
+            const editNextRow = () => {
+                const nextTr = tr.nextElementSibling;
+                if (nextTr) {
+                    nextTr.click();
+                    const nextRowid = nextTr.getAttribute('id').replace('row-', '');
+                    if (nextRowid) {
+                        this.editRow(nextRowid);
+                    }
+                }
+            };
+
+            if (nextTd) {
+                if (hasNoEditor(nextTd)) {
+                    const tds = tr.querySelectorAll('td');
+                    let tdIdx = -1;
+                    tds.forEach((t, i) => {
+                        if (t === nextTd) {
+                            tdIdx = i;
+                        }
+                    });
+                    let nextTrEdit = true;
+                    while (tdIdx < tds.length) {
+                        const _ntd = tds[tdIdx];
+                        if (hasNoEditor(_ntd)) {
+                            tdIdx++;
+                        } else {
+                            nextTrEdit = false;
+                            break;
+                        }
+                    }
+
+                    if (nextTrEdit) {
+                        editNextRow();
+                    }
+                }
+            } else {
+                editNextRow();
+            }
+        }
+
+        e.stopPropagation();
+    }
+
+    private bindRowEditorKeydownEvent() {
+        if (!this.documentRowEditKeydownHanlder) {
+            this.documentRowEditKeydownHanlder = this.render2.listen(document, 'keydown', this.rowEditTabKeydwonEvent.bind(this));
+        }
+        this.documentClickEndRowEditHandler = this.render2.listen(document, 'click', (e: Event) => {
+            if (this.pending) {
+                return false;
+            }
+            if (Utils.hasDialogOpen()) {
+                return;
+            }
+
+            if (this.isRowEditing()) {
+
+                // this.endRowEdit();
+            }
+        });
+    }
+
+    private unbindRowEditorKeydownEvent() {
+        // 取消键盘事件
+        if (this.documentRowEditKeydownHanlder) {
+            this.documentRowEditKeydownHanlder();
+            this.documentRowEditKeydownHanlder = null;
+        }
+
+        if (this.documentClickEndRowEditHandler) {
+            this.documentClickEndRowEditHandler();
+            this.documentClickEndRowEditHandler = null;
+        }
     }
 
     //#endregion
@@ -903,7 +1006,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         });
     }
 
-//#endregion
+    //#endregion
 
     //#region Pagination
 
@@ -948,7 +1051,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.pageSizeChanged.emit({pageSize, pageIndex: this.pageIndex});
     }
 
-//#endregion
+    //#endregion
 
     //#region Loading
     showLoading() {
@@ -1063,7 +1166,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     selectRow(id: any) {
-        if (id && (!this.selectedRow || this.selectedRow.id !== id)) {
+        if (id && (!this.selectedRow || this.selectedRow.id != id)) {
             this.dfs.selectRecord(id);
         }
     }
