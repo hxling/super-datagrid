@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 16:22:23
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 10:50:45
+ * @LastEditTime: 2019-08-26 19:33:22
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -15,6 +15,7 @@ import { DatagridDatepickerComponent } from './editors/datagrid-datepicker.compo
 import { DatagridInputGroupComponent } from './editors/datagrid-inputgroup.component';
 import { DatagridSelectComponent } from './editors/datagrid-select.component';
 import { DatagridLookupComponent } from './editors/datagrid-lookup.component';
+import { DatagridNumberSpinnerComponent } from './editors/datagrid-numberspinner.component';
 
 
 export const EditorTypes = {
@@ -24,7 +25,8 @@ export const EditorTypes = {
     DATEPICKER: 'datepicker',
     INPUTGROUP: 'input-group',
     SELECT: 'select',
-    LOOKUP: 'lookup'
+    LOOKUP: 'lookup',
+    NUMBERBOX: 'numberbox'
 };
 
 
@@ -35,5 +37,6 @@ export const EditorProviders = [
     { provide: GRID_EDITORS, useValue: { name: EditorTypes.DATEPICKER, value: DatagridDatepickerComponent }, multi: true },
     { provide: GRID_EDITORS, useValue: { name: EditorTypes.INPUTGROUP, value: DatagridInputGroupComponent }, multi: true },
     { provide: GRID_EDITORS, useValue: { name: EditorTypes.SELECT, value: DatagridSelectComponent }, multi: true },
-    { provide: GRID_EDITORS, useValue: { name: EditorTypes.LOOKUP, value: DatagridLookupComponent }, multi: true}
+    { provide: GRID_EDITORS, useValue: { name: EditorTypes.LOOKUP, value: DatagridLookupComponent }, multi: true},
+    { provide: GRID_EDITORS, useValue: { name: EditorTypes.NUMBERBOX, value: DatagridNumberSpinnerComponent }, multi: true}
 ];

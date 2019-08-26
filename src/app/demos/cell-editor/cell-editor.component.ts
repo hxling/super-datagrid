@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-26 18:52:57
+ * @LastEditTime: 2019-08-26 19:33:49
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -96,7 +96,7 @@ export class CellEditorComponent implements OnInit {
                     ]
             }
         },
-        { field: 'nianxin', width: 100, title: '年薪' , editor: { type: EditorTypes.TEXTBOX, options: {}},
+        { field: 'nianxin', width: 100, title: '年薪' , editor: { type: EditorTypes.NUMBERBOX, options: {}},
             formatter: { type: 'number', options: { prefix: '￥', suffix: '元', precision: 2 } }
         },
         { field: 'zhiwei', width: 140, title: '职位' , editor: { type: EditorTypes.SELECT, options: enumOpts},
