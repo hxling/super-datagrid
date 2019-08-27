@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-26 19:33:49
+ * @LastEditTime: 2019-08-27 11:12:05
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -38,7 +38,7 @@ export class CellEditorComponent implements OnInit {
         const enumData = Utils.enumData();
         const enumOpts = { valueField: 'value', textField: 'label', data: enumData };
         this.columns = [
-            { field: 'id', width: 100, title: 'ID' },
+            { field: 'id', width: 100, title: 'ID', fixed: 'left' },
             { field: 'name', width: 130, title: '姓名', editor: { type: EditorTypes.TEXTBOX, options: {}}},
             { field: 'sex', width: 70, title: '性别', editor: {type: 'input-group'} },
             { field: 'birthday', width: 120, title: '出生日期', editor: {

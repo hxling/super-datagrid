@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 17:13:35
+ * @LastEditTime: 2019-08-27 11:26:03
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -19,6 +19,10 @@
                         <td *ngIf="dg.showLineNumber" class="f-datagrid-header-cell" [style.height.px]="height" [style.width.px]="dg?.lineNumberWidth"> </td>
                         <td *ngIf="dg.showCheckbox" class="f-datagrid-header-cell f-datagrid-header-checkbox" [style.height.px]="height" style="width: 36px; text-align: center">
                             <datagrid-header-checkbox #chkAll *ngIf="dg.showAllCheckbox"></datagrid-header-checkbox>
+                        </td>
+                        <td class="f-datagrid-header-cell" *ngFor="let col of columnsGroup?.leftFixed" [attr.align]="col.halign"
+                            [style.height.px]="height" [style.width.px]="col.width">
+                            <div class="f-datagrid-header-cell-content" [style.width.px]="col.width" >{{ col.title }}</div>
                         </td>
                     </tr>
                 </thead>
@@ -58,7 +62,7 @@
                 <tr class="f-datagrid-header-row" *ngFor="let cols of columns">
                     
                     <ng-container *ngFor="let col of cols">
-                        <ng-container *ngIf="col.colspan">
+                        <ng-container *ngIf="col.colspan && !col.fixed">
                             <td [resize-column]="col" class="f-datagrid-header-cell f-datagrid-header-cell-group" 
                                 [attr.align]="col.halign"
                                 [attr.colspan]="col.colspan">
@@ -67,7 +71,7 @@
                                 </div>
                             </td>
                         </ng-container>
-                        <ng-container *ngIf="!col.colspan">
+                        <ng-container *ngIf="!col.colspan && !col.fixed">
                             <td [resize-column]="col" class="f-datagrid-header-cell" 
                                 [attr.align]="col.halign" 
                                 [attr.field]="col.field"

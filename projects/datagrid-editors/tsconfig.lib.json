@@ -18,7 +18,7 @@
     ],
     "paths": {
       "@farris/ui-datagrid": [
-        "dist/@farris/ui-datagrid/*"
+        "dist/@farris/ui-datagrid"
       ]
     }
   },
