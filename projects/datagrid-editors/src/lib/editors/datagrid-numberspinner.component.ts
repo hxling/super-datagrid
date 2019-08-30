@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-26 19:36:30
+ * @LastEditTime: 2019-08-30 15:07:04
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -14,7 +14,9 @@ import { DatagridBaseEditorDirective } from '../datagrid-base-editor.directive';
     selector: 'grid-editor-numberspinner',
     template: `
     <div [formGroup]="group" class="f-datagrid-cell-formgroup farris-group-auto">
-        <farris-number-spinner #num [formControlName]="column.field" style="width: 100%"></farris-number-spinner>
+        <datagrid-tooltip [control]="group.get(column.field)" [tooltipPosition]="'top-left'" [message]="errorMessage">
+            <farris-number-spinner #num [formControlName]="column.field" style="width: 100%"></farris-number-spinner>
+        </datagrid-tooltip>
     </div>
     `,
 })

@@ -2,16 +2,11 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-23 15:56:13
+ * @LastEditTime: 2019-08-30 14:33:57
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import { ColumnGroup, DataColumn } from './../types';
-
-export interface Action {
-    type: string;
-    payload?: any;
-}
 
 export interface RowDataChanges {[id: string]: any; }
 

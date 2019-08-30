@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-27 11:12:05
+ * @LastEditTime: 2019-08-30 16:13:53
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -11,15 +11,27 @@ import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular
 import { DemoDataService } from '../demo-data.service';
 import { EditorTypes} from '@farris/ui-datagrid-editors';
 import { Utils } from '../utils';
-import { DatagridComponent } from '@farris/ui-datagrid';
+import { DatagridComponent, GRID_VALIDATORS } from '@farris/ui-datagrid';
 import { debounceTime, map, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { ValidatorFn, AbstractControl } from '@angular/forms';
+
+
+export function forbiddenNameValidator(rowData): ValidatorFn {
+    return (control: AbstractControl): {[key: string]: any} | null => {
+        // const forbidden = nameRe.test(control.value);
+        console.log(rowData);
+        return true ? { 'validator_NianXin' : {value: control.value}} : null;
+    };
+}
+
 
 @Component({
     selector: 'cell-editor',
     templateUrl: './cell-editor.component.html',
     providers: [
-        DemoDataService
+        DemoDataService,
+        { provide: GRID_VALIDATORS, useValue: { name: 'validator_NianXin', value: forbiddenNameValidator }, multi: true}
     ]
 })
 export class CellEditorComponent implements OnInit {
@@ -70,6 +82,7 @@ export class CellEditorComponent implements OnInit {
                         {type: 'required', messager: '该字段不能为空！'},
                         {type: 'minLength', value: 10 , messager: '字符不得小于10个！'},
                         {type: 'maxLength', value: 11 , messager: '字符不得大于11个！'},
+                        { type: 'pattern', value: '[a-zA-Z ]*', messager: '只能输入英文字符' }
                     ]
                 }
             },
@@ -96,7 +109,14 @@ export class CellEditorComponent implements OnInit {
                     ]
             }
         },
-        { field: 'nianxin', width: 100, title: '年薪' , editor: { type: EditorTypes.NUMBERBOX, options: {}},
+        { field: 'nianxin', width: 100, title: '年薪' ,
+            editor: {
+                type: EditorTypes.NUMBERBOX, options: {},
+                validators: [
+                    {type: 'validator_NianXin', messager: '与当前职位不匹配。' }
+
+                ]
+            },
             formatter: { type: 'number', options: { prefix: '￥', suffix: '元', precision: 2 } }
         },
         { field: 'zhiwei', width: 140, title: '职位' , editor: { type: EditorTypes.SELECT, options: enumOpts},

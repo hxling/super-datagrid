@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-24 15:51:37
+ * @LastEditTime: 2019-08-30 14:47:44
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -63,7 +63,7 @@ export interface DataColumn {
 export interface GridEditor {
     type: string;
     options?: any;
-    validators?: DatagridValidator[]
+    validators?: DatagridValidator[];
 }
 
 export interface ColumnGroup {

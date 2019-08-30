@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 11:07:01
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-26 18:50:17
+ * @LastEditTime: 2019-08-30 16:11:48
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -24,7 +24,7 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
     formControl: FormControl;
 
     inputElement: any;
-    /** 是否正在向serve 发送请求 */
+    /** 是否正在向server 发送请求 */
     pending = false;
 
     errorMessage: string;
@@ -52,7 +52,7 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
             this.options = this.column.editor.options;
         }
 
-        this.validators = (this.dg.validators || []).concat(this.column.editor.validators);
+        this.validators = this.column.editor.validators;
 
         // console.log(this.formControl);
         this.clickEvent = this.render.listen(this.el.nativeElement, 'click', (e: Event) => {

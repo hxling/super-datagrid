@@ -1,9 +1,9 @@
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ValidatorFn } from '@angular/forms';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-26 19:00:09
+ * @LastEditTime: 2019-08-30 14:54:01
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -273,7 +273,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     pagerOpts: any = { };
     restService: RestService;
     editors: {[key: string]: any} = {};
-    validators: DatagridValidator[] = [];
+    validators: {name: string, value: ValidatorFn}[] = [];
 
     currentCell: CellInfo;
     flatColumns: DataColumn[];
@@ -500,8 +500,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
         const _validators = this.inject.get<any[]>(GRID_VALIDATORS, []);
         if (_validators && _validators.length) {
-           this.validators = _validators;
+            // _validators.forEach(vr => {
+            //     this.validators[vr.name] = vr.value;
+            // });
+            this.validators = _validators;
         }
+
+        console.log('validators', this.validators);
     }
 
     private setPagerHeight() {

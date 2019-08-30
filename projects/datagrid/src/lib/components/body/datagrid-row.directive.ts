@@ -4,7 +4,7 @@ import { QueryList, Renderer2 } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-26 14:11:46
+ * @LastEditTime: 2019-08-30 14:54:50
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -148,9 +148,20 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
                     case 'requiredTrue':
                         validation = Validators.requiredTrue;
                         break;
+                    case 'pattern':
+                        validation = Validators.pattern(v.value);
+                        break;
                 }
                 if (validation) {
                     validations.push(validation);
+                } else {
+                    if (this.dg.validators && this.dg.validators.length) {
+                        const vfn = this.dg.validators.find(vr => vr.name === v.type);
+                        if (vfn) {
+                            validation = vfn.value(this.rowData);
+                            validations.push(validation);
+                        }
+                    }
                 }
             });
         }

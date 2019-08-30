@@ -180,6 +180,9 @@ farris-datagrid {
 .f-datagrid-cell-formgroup datagrid-tooltip {
   height: 100%;
   width: 100%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
 }
 .f-datagrid-cell-formgroup textarea.ng-invalid {
   border: 1px solid red;

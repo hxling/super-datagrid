@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-26 10:17:00
+ * @LastEditTime: 2019-08-30 16:05:29
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -209,6 +209,10 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
                 editor.inputElement.blur();
 
                 if (editor.pending) {
+                    return false;
+                }
+
+                if (editor.formControl.pending) {
                     return false;
                 }
 
