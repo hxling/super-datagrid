@@ -2,12 +2,13 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 11:59:05
+ * @LastEditTime: 2019-08-30 14:47:44
  * @Company: Inspur
  * @Version: v0.0.1
  */
 import { TemplateRef } from '@angular/core';
-
+import { ColumnFormatter } from '@farris/ui-common/column';
+import { DatagridValidator } from './datagrid-validator';
 
 export interface CustomStyle {
     cls?: string;
@@ -15,6 +16,7 @@ export interface CustomStyle {
         [key: string]: string;
     };
 }
+
 
 export type MoveDirection = 'left' | 'right' | 'up' | 'down';
 
@@ -25,10 +27,10 @@ export interface DataColumn {
     /** 记录原始定义宽度 */
     originalWidth?: number;
     /** 标题对齐方式 */
-    hAlign?: 'left' | 'center' | 'right';
+    halign?: 'left' | 'center' | 'right';
     /** 文本对齐方式 */
     align?: 'left' | 'center' | 'right';
-    formatter?: (value, rowData, rowIndex) => CustomStyle;
+    formatter?: (value, rowData, rowIndex) => any | ColumnFormatter;
     styler?: (value, rowData, rowIndex) => CustomStyle;
     left?: number;
     /** 是否固定 */
@@ -44,15 +46,24 @@ export interface DataColumn {
     /** True to allow the column can be sorted. */
     sortable?: boolean;
     order?: 'asc' | 'desc';
-    sorter?: (r1: any, r2: any) => boolean;
+    sorter?: (r1: any, r2: any) => 0 | 1 | -1;
     /** True to allow the column can be resized. */
     resizable?: boolean;
+    rowspan?: number;
+    colspan?: number;
+    index?: number;
+    footer?: {
+        formatter?: (value, rowData, rowIndex) => any | ColumnFormatter;
+        styler?: (value, rowData, rowIndex) => CustomStyle;
+        /** 文本对齐方式 */
+        align?: 'left' | 'center' | 'right';
+    };
 }
 
 export interface GridEditor {
     type: string;
-    bindField?: string;
     options?: any;
+    validators?: DatagridValidator[];
 }
 
 export interface ColumnGroup {

@@ -1,10 +1,17 @@
+import { Subscription } from 'rxjs';
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-12 07:47:12
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-20 19:09:50
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import {
     Component, OnInit, Input, ViewChild, Renderer2,
     ElementRef, OnDestroy, ChangeDetectorRef,
-    OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone, AfterViewInit
+    OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone, Injector, forwardRef, Inject, Optional, ApplicationRef
 } from '@angular/core';
-
-import { Subscription } from 'rxjs';
 
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { ScrollbarDirective } from '../../scrollbar/scrollbar.directive';
@@ -55,10 +62,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     private scrollTimer: any = null;
 
-    gridsize$ = this.dfs.gridSize$;
-    selectedRow$ = this.dfs.selectRow$;
-    unSelectRow$ = this.dfs.unSelectRow$;
-
     currentRowId = undefined;
 
     private _hoverRowIndex = -1;
@@ -70,38 +73,66 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.cd.detectChanges();
     }
 
-    // set rowHeightList(list: number[]) {
-    //     this.wheelHeight = list.reduce((r, c) => r + c , 0);
-    //     if (this.fixedLeftEl) {
-    //         const trdoms = this.fixedLeftEl.nativeElement.querySelectorAll('.fixed-left-row');
-    //         trdoms.forEach( (tr, i) => tr.style.height = list[i] + 'px' );
-    //     }
-    //     this.cd.detectChanges();
-    // }
+    private gridSizeSubscribe: Subscription;
+    private columnResizeSubscribe: Subscription;
+    private onDataSourceChangeSubscribe: Subscription;
+    private selectRowSubscribe: Subscription;
+    private unselectRowSubscribe: Subscription;
+    private selectAllSubscribe: Subscription;
+    private Subscribe: Subscription;
+    private checkRowSubscribe: Subscription;
+    private clearSelectionsSubscribe: Subscription;
+    private checkAllSubscribe: Subscription;
+    private uncheckRowSubscribe: Subscription;
+    private clearCheckedsSubscribe: Subscription;
 
+    private subscriptions = [];
+
+    private dfs: DatagridFacadeService;
+    private dgs: DatagridService;
     constructor(
-        private cd: ChangeDetectorRef, private el: ElementRef,
-        private dfs: DatagridFacadeService, public dg: DatagridComponent,
-        private render: Renderer2, private dgs: DatagridService, private zone: NgZone) {
+        private injector: Injector,
+        private app: ApplicationRef,
+        @Optional() public dg: DatagridComponent,
+        private cd: ChangeDetectorRef, private el: ElementRef
+    ) {
+        this.dfs = this.injector.get(DatagridFacadeService);
+        this.dgs = this.injector.get(DatagridService);
     }
 
     ngOnInit(): void {
         this.listenSubjects();
     }
 
+    private destroySubscriptions() {
+        if (this.subscriptions && this.subscriptions.length) {
+            this.subscriptions.forEach((sub: Subscription) => {
+                if (sub) {
+                    sub.unsubscribe();
+                    sub = null;
+                }
+            });
+
+            this.subscriptions = [];
+        }
+    }
+
     private listenSubjects() {
-        const initSubscrition = this.gridsize$.subscribe(state => {
+        this.destroySubscriptions();
+
+        this.gridSizeSubscribe = this.dfs.gridSize$.subscribe(state => {
             if (state) {
-                this.top = state.headerHeight;
+                this.top = this.dg.realHeaderHeight;
                 const pagerHeight = state.pagerHeight;
-                this.height = state.height - this.top - pagerHeight;
+                const footerHeight = this.dg.showFooter ? this.dg.footerHeight * this.dg.footerData.length : 0;
+                this.height = state.height - this.top - pagerHeight - footerHeight;
                 this.width = state.width;
                 this.rowHeight = state.rowHeight;
 
                 this.updateColumnSize(state.columnsGroup);
 
                 this.setWheelHeight();
-                this.fixedRightScrollLeft = this.width - this.rightFixedWidth;
+                this.fixedRightScrollLeft = this.scrollLeft + this.width - this.rightFixedWidth;
                 this.bodyStyle = this.getBodyStyle();
                 this.maxScrollLeft = this.colsWidth + this.leftFixedWidth;
                 if (this.colsWidth + this.leftFixedWidth === this.fixedRightScrollLeft) {
@@ -110,111 +141,109 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                     this.showRightShadow = true;
                 }
 
-                this.cd.detectChanges();
+                if (!this.cd['destroyed']) {
+                    this.cd.detectChanges();
+                }
                 this.ps.update();
             }
         });
-        this.dg.subscriptions.push(initSubscrition);
 
-        this.dg.subscriptions.push(
-            this.dfs.columnResize$.subscribe((cg: ColumnGroup) => {
-                this.updateColumnSize(cg);
-                this.cd.detectChanges();
-            })
-        );
+        this.subscriptions.push(this.gridSizeSubscribe);
 
-        this.dg.subscriptions.push(
-            this.dgs.onDataSourceChange.subscribe(() => {
-                this.ps.scrollToTop();
-            })
-        );
+        this.columnResizeSubscribe = this.dfs.columnResize$.subscribe((cg: ColumnGroup) => {
+            this.updateColumnSize(cg);
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.columnResizeSubscribe);
 
-        this.dg.subscriptions.push(
-            this.selectedRow$.subscribe((row: SelectedRow) => {
-                if (row) {
-                    this.currentRowId = row.id;
-                    this.dg.selectedRow = row;
-                }
-                this.dg.selectChanged.emit(row);
-                this.cd.detectChanges();
-            })
-        );
-        this.dg.subscriptions.push(
-            this.unSelectRow$.subscribe((prevRow: SelectedRow) => {
+        this.onDataSourceChangeSubscribe = this.dgs.onDataSourceChange.subscribe(() => {
+            this.ps.scrollToTop();
+        });
+        this.subscriptions.push(this.onDataSourceChangeSubscribe);
+
+        this.selectRowSubscribe = this.dfs.selectRow$.subscribe((row: SelectedRow) => {
+            if (row) {
+                this.currentRowId = row.id;
+                // this.dg.selectedRow = row;
+            }
+            this.dg.selectChanged.emit(row);
+            // console.log(this.dg);
+            this.cd.detectChanges();
+            this.app.tick();
+        });
+        this.subscriptions.push(this.selectRowSubscribe);
+
+        this.unselectRowSubscribe = this.dfs.unSelectRow$.subscribe((prevRow: SelectedRow) => {
+            this.currentRowId = undefined;
+            // this.dg.selectedRow = null;
+            this.dg.unSelect.emit(prevRow);
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.unselectRowSubscribe);
+
+        this.selectAllSubscribe = this.dfs.selectAll$.subscribe((rows: SelectedRow[]) => {
+            this.dg.selectAll.emit(rows);
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.selectAllSubscribe);
+
+        this.checkRowSubscribe = this.dfs.checkRow$.subscribe((row: SelectedRow) => {
+            this.dg.checked.emit(row);
+            this.dgs.onCheckedRowsCountChange();
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.checkRowSubscribe);
+
+        this.clearSelectionsSubscribe =  this.dfs.clearSelections$.subscribe(() => {
+            this.currentRowId = undefined;
+            // this.dg.selectedRow = null;
+
+            if (this.dg.checkOnSelect) {
+                this.dgs.onCheckedRowsCountChange();
+            }
+            this.dg.unSelectAll.emit();
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.clearSelectionsSubscribe);
+
+        this.uncheckRowSubscribe = this.dfs.unCheckRow$.subscribe((prevRow: SelectedRow) => {
+            this.dg.unChecked.emit(prevRow);
+            this.dgs.onCheckedRowsCountChange();
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.uncheckRowSubscribe);
+
+        this.checkAllSubscribe = this.dfs.checkAll$.subscribe((rows: SelectedRow[]) => {
+            this.dg.checkAll.emit(rows);
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.checkAllSubscribe);
+
+        this.clearCheckedsSubscribe =  this.dfs.clearCheckeds$.subscribe((rows: SelectedRow[]) => {
+            if (this.dg.selectOnCheck) {
                 this.currentRowId = undefined;
-                this.dg.selectedRow = null;
-                this.dg.unSelect.emit(prevRow);
-                this.cd.detectChanges();
-            })
-        );
-        this.dg.subscriptions.push(
-            this.dfs.selectAll$.subscribe((rows: SelectedRow[]) => {
-                this.dg.selectAll.emit(rows);
-                this.cd.detectChanges();
-            })
-        );
-
-        this.dg.subscriptions.push(
-            this.dfs.checkRow$.subscribe((row: SelectedRow) => {
-                this.dg.checked.emit(row);
-                this.dgs.onCheckedRowsCountChange();
-                this.cd.detectChanges();
-            })
-        );
-
-        this.dg.subscriptions.push(
-            this.dfs.clearSelections$.subscribe(() => {
-                this.currentRowId = undefined;
-                this.dg.selectedRow = null;
-
-                if (this.dg.checkOnSelect) {
-                    this.dgs.onCheckedRowsCountChange();
-                }
-                this.dg.unSelectAll.emit();
-                this.cd.detectChanges();
-            })
-        );
-        this.dg.subscriptions.push(
-            this.dfs.unCheckRow$.subscribe((prevRow: SelectedRow) => {
-                this.dg.unChecked.emit(prevRow);
-                this.dgs.onCheckedRowsCountChange();
-                this.cd.detectChanges();
-            })
-        );
-
-        this.dg.subscriptions.push(
-            this.dfs.checkAll$.subscribe((rows: SelectedRow[]) => {
-                this.dg.checkAll.emit(rows);
-                this.cd.detectChanges();
-            })
-        );
-
-        this.dg.subscriptions.push(
-            this.dfs.clearCheckeds$.subscribe((rows: SelectedRow[]) => {
-                if (this.dg.selectOnCheck) {
-                    this.currentRowId = undefined;
-                    this.dg.selectedRow = null;
-                }
-                this.dg.unCheckAll.emit(rows);
-                this.dgs.onCheckedRowsCountChange();
-                this.cd.detectChanges();
-            })
-        );
+                // this.dg.selectedRow = null;
+            }
+            this.dg.unCheckAll.emit(rows);
+            this.dgs.onCheckedRowsCountChange();
+            this.cd.detectChanges();
+        });
+        this.subscriptions.push(this.clearCheckedsSubscribe);
     }
+
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.data && !changes.data.isFirstChange()) {
             this.setWheelHeight();
             this.ps.update();
-            this.cd.detectChanges();
+            if (!this.cd['destroyed']) {
+                this.cd.detectChanges();
+            }
         }
     }
 
     ngOnDestroy() {
-        // if (this.rowHoverSubscription) {
-        //     this.rowHoverSubscription.unsubscribe();
-        //     this.rowHoverSubscription = null;
-        // }
+        this.destroySubscriptions();
     }
 
     updateRowHeight(list: number[]) {
@@ -263,14 +292,19 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     onScrollToY($event: any) {
+
+        if (this.dg.isRowEditing()) {
+            this.dg.endRowEdit();
+        }
+
+        if (this.dg.isCellEditing()) {
+            this.dg.endCellEdit();
+        }
+
         const y = $event.target.scrollTop;
         this.scrollYMove(y);
         this.dg.scrollY.emit(y);
         this.dgs.onScrollMove(y, SCROLL_Y_ACTION);
-    }
-
-    onScrollYEnd($event: any) {
-        const y = $event.target.scrollTop;
     }
 
     onPsXReachStart($event: any) {

@@ -1,5 +1,13 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-13 19:22:29
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { DatagridComponent } from './../../datagrid.component';
-import { Component, OnInit, Input, DoCheck, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, DoCheck, ViewChild, ElementRef, Injector, Inject, forwardRef } from '@angular/core';
 import { DatagridFacadeService } from './../../services/datagrid-facade.service';
 
 @Component({
@@ -29,7 +37,11 @@ export class DatagridCheckboxComponent implements OnInit {
 
     @Input() indeterminate = false;
     @ViewChild('chk') chk: ElementRef;
-    constructor(private dfs: DatagridFacadeService, private dg: DatagridComponent) { }
+
+    private dfs: DatagridFacadeService;
+    constructor(private injector: Injector, @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent) {
+        this.dfs = this.injector.get(DatagridFacadeService);
+    }
 
     ngOnInit(): void {
         if (this.indeterminate) {

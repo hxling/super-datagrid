@@ -1,8 +1,9 @@
+import { FormGroup, ValidatorFn } from '@angular/forms';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 14:02:10
+ * @LastEditTime: 2019-08-30 14:54:01
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -10,7 +11,7 @@
 import { Component, OnInit, Input, ViewEncapsulation,
     ContentChildren, QueryList, Output, EventEmitter, Renderer2, OnDestroy, OnChanges,
     SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, Injector, HostBinding,
-    AfterContentInit, NgZone, ElementRef, ViewChild, AfterViewInit
+    AfterContentInit, NgZone, ElementRef, ViewChild, AfterViewInit, ApplicationRef
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -21,53 +22,32 @@ import { DatagridColumnDirective } from './components/columns/datagrid-column.di
 import { DataResult, CellInfo, SelectedRow } from './services/state';
 import { RestService, DATAGRID_REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
-import { GRID_EDITORS, CELL_SELECTED_CLS } from './types/constant';
+import { GRID_EDITORS, CELL_SELECTED_CLS, GRID_VALIDATORS } from './types/constant';
 import { DomHandler } from './services/domhandler';
+import { Utils } from './utils/utils';
+import { DatagridValidator } from './types/datagrid-validator';
 
 // styleUrls: [
 //     './scss/index.scss'
 // ],
 
-
 @Component({
     selector: 'farris-datagrid',
-    template: `
-    <div class="f-datagrid" [class.f-datagrid-bordered]="showBorder" [class.f-datagrid-wrap]="!nowrap"
-        [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
-        <datagrid-header #header [columnsGroup]="colGroup" [height]="headerHeight"></datagrid-header>
-        <datagrid-body [columnsGroup]="colGroup" [data]="ds.rows | paginate: pagerOpts"
-                [startRowIndex]="ds.index" [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom"></datagrid-body>
-        <datagrid-pager *ngIf="pagination" #dgPager [showPageList]="showPageList"
-            [id]="pagerOpts.id" (pageChange)="onPageChange($event)"
-            (pageSizeChange)="onPageSizeChange($event)"></datagrid-pager>
-    </div>
-    <datagrid-loading *ngIf="loading"></datagrid-loading>
-    `,
+    templateUrl: './datagrid.component.html',
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         DatagridFacadeService,
-        DatagridService
+        DatagridService,
     ],
-    exportAs: 'datagrid',
-    styles: [
-        `
-        .f-datagrid-wrap .f-datagrid-cell-content {
-            white-space: normal;
-            word-break: break-all;
-            word-spacing: normal;
-            height: auto;
-            line-height: 24px;
-        }
-        `
-    ],
-    encapsulation: ViewEncapsulation.None,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    exportAs: 'datagrid'
 })
 export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterContentInit, AfterViewInit {
     @Input() auther = `Lucas Huang - QQ:1055818239`;
     @Input() version = '0.0.1';
 
     @HostBinding('style.position') pos = 'relative';
-    @HostBinding('class') hostCls = '';
+    @HostBinding('class.f-datagrid-full') hostCls = false;
 
     @Input() id = '';
     /** 显示边框 */
@@ -78,8 +58,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() width = 800;
     /** 高度 */
     @Input() height = 400;
+    /** 显示表头 */
+    @Input() showHeader = true;
     /** 表头高度 */
-    @Input() headerHeight = 36;
+    @Input() headerHeight = 40;
+    /** 显示页脚 */
+    @Input() showFooter = false;
+    @Input() footerHeight = 36;
     /** 行高 */
     @Input() rowHeight = 36;
     /** 填充容器 */
@@ -90,11 +75,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     set fit(val: boolean) {
         this._fit = val;
         if (this._fit) {
-            this.hostCls = 'f-datagrid-full';
-            this.el.nativeElement.parentElement.style.position = 'relative';
+            this.hostCls = true;
             this.calculateGridSize(val);
         } else {
-            this.hostCls = '';
+            this.hostCls = false;
         }
     }
     /** 如果为真，则自动展开/收缩列的大小以适合网格宽度并防止水平滚动。 */
@@ -108,10 +92,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     @Input() disabled = false;
-    @Input() lockPagination = false;
 
-    /** 显示表头 */
-    @Input() showHeader = true;
     /** 可拖动列设置列宽 */
     @Input() resizeColumn = true;
     /** 显示行号 */
@@ -123,6 +104,17 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 允许编辑时，单击进入编辑状态 */
     @Input() clickToEdit = false;
 
+    private _lockPagination = false;
+    /** 锁定分页条，锁定后页码点击无效 */
+    @Input() get lockPagination() {
+        return this._lockPagination;
+    }
+    set lockPagination(val: boolean) {
+        this._lockPagination = val;
+        if (this.dgPager) {
+            this.dgPager[val ? 'lock' : 'unlock']();
+        }
+    }
     /** 分页信息 */
     @Input() pagination = true;
     /** 每页记录数 */
@@ -153,10 +145,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() multiSelect = false;
     /** 启用多选时，是否显示checkbox */
     @Input() showCheckbox = false;
+    /** 显示全选checkbox */
     @Input() showAllCheckbox = true;
     /** 当启用多选时，点击行选中，只允许且只有一行被选中。 */
     @Input() onlySelectSelf = true;
+    /** 启用多选且显示checkbox, 选中行同时钩选 */
     @Input() checkOnSelect = true;
+    /** 启用多选且显示checkbox, 钩选后选中行 */
     @Input() selectOnCheck = true;
 
     /**
@@ -173,19 +168,23 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() url: string;
     /** 数据源 */
     @Input() data: any[];
+    /** 页脚数据 */
+    @Input() footerData: any[] = [];
+    /** 验证不通过时可以结束编辑 */
+    @Input() endEditByInvalid = true;
 
     /** 数据为空时显示的信息 */
     @Input() emptyMsg = '';
     /** 列集合 */
-    @Input() columns: DataColumn[];
-    @Input() fields: DataColumn[];
+    @Input() columns: any;
+    @Input() fields: any;
     /** 数据折行，默认值：true,即在一行显示，不折行。 */
     @Input() nowrap = true;
     /** 虚拟加载 */
     @Input() virtualized = true;
     /** 是否启用异步加载数据 */
     @Input() virtualizedAsyncLoad = false;
-
+    /** 行样式 */
     @Input() rowStyler: (rowData, rowIndex?: number) => {cls?: string, style?: any};
     /** 编辑方式： row(整行编辑)、cell(单元格编辑)；默认为 row */
     @Input() editMode: 'row'| 'cell' = 'row';
@@ -203,8 +202,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() multiSort: boolean;
 
 
-    @Output() beginEdit = new EventEmitter();
-    @Output() endEdit = new EventEmitter();
+    @Input() beforeEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
+    @Output() beginEdit = new EventEmitter<{ editor?: any, rowIndex?: number, rowData: any, column?: DataColumn }>();
+    @Input() afterEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
+    @Output() endEdit = new EventEmitter<{rowIndex: number, rowData: any, column?: DataColumn}>();
+    @Output() cancelEdited = new EventEmitter();
 
     @Output() scrollY = new EventEmitter();
 
@@ -232,13 +234,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     @Output() columnSorted = new EventEmitter();
 
-
     @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
     @ViewChild('dgPager') dgPager: any;
-    @ViewChild('header') dgHeader: any;
+    @ViewChild('resizeProxy') resizeProxy: ElementRef;
+    @ViewChild('resizeProxyBg') resizeProxyBg: ElementRef;
+    @ViewChild('datagridContainer') dgContainer: ElementRef;
 
     colGroup: ColumnGroup;
-    data$ = this.dfs.data$;
 
     private _loading = false;
     get loading() {
@@ -257,6 +259,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         return this.dfs.getCheckeds();
     }
 
+    get selectedRow(): SelectedRow {
+        return this.dfs.getCurrentRow();
+    }
+
     ds = {
         index: 0,
         rows: [],
@@ -267,30 +273,49 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     pagerOpts: any = { };
     restService: RestService;
     editors: {[key: string]: any} = {};
+    validators: {name: string, value: ValidatorFn}[] = [];
 
-    selectedRow: SelectedRow;
     currentCell: CellInfo;
+    flatColumns: DataColumn[];
+    footerWidth  = 0;
 
-    clickDelay = 200;
+    clickDelay = 150;
+    private resizeColumnInfo = {
+        proxyLineEdge: 0,
+        startWidth: 0,
+        startX: 0
+    };
 
     private ro: ResizeObserver | null = null;
     subscriptions: Subscription[] = [];
+    realHeaderHeight = 0;
+    isSingleClick: boolean;
 
     docuemntCellClickEvents: any;
     documentCellClickHandler: any;
     documentCellKeydownEvents: any;
     documentCellKeydownHandler: any;
 
-    constructor(private dfs: DatagridFacadeService,
-                private dgs: DatagridService,
-                public cd: ChangeDetectorRef,
+    // 行选中键盘事件
+    documentRowKeydownHandler: any;
+    // 行编辑快捷键
+    documentRowEditKeydownHanlder: any;
+    // document 单击时结束行编辑
+    documentClickEndRowEditHandler: any;
+
+    pending = false;
+
+    constructor(public cd: ChangeDetectorRef,
                 public el: ElementRef,
                 private inject: Injector, private zone: NgZone,
+                private dfs: DatagridFacadeService,
+                private dgs: DatagridService,
+                private app: ApplicationRef,
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
 
         this.restService = this.inject.get<RestService>(DATAGRID_REST_SERVICEE, null);
 
-        const dataSubscription = this.data$.subscribe( (dataSource: any) => {
+        const dataSubscription = this.dfs.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
             this.cd.detectChanges();
             this.loadSuccess.emit(this.ds.rows);
@@ -298,24 +323,32 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.subscriptions.push(dataSubscription);
 
         const columnGroupSubscription = this.dfs.columnGroup$.subscribe(cg => {
-            this.colGroup = cg;
+            if (cg) {
+                this.colGroup = cg;
+                this.footerWidth = cg.totalWidth;
+                this.cd.detectChanges();
+            }
         });
         this.subscriptions.push(columnGroupSubscription);
 
-        const Editors = this.inject.get<any[]>(GRID_EDITORS, []);
-        if (Editors.length) {
-            Editors.forEach(ed => {
-                this.editors[ed.name] = ed.value;
-            });
-        }
+        this.initEditorAndValidator();
 
         const currentCellSubscription = this.dfs.currentCell$.subscribe( cell => {
             this.currentCell = cell;
+            this.unbindMoveSelectRowEvent();
             this.bindDocumentEditListener();
+        });
+
+        this.dfs.selectRow$.subscribe( () => {
+            if (!this.currentCell) {
+                this.bindDocumentMoveSelectRowEvent();
+            }
         });
 
         this.subscriptions.push(currentCellSubscription);
     }
+
+    //#region Ng Event
 
     ngOnInit() {
         this.pagerOpts = {
@@ -330,20 +363,20 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.columns = this.fields;
         }
 
-        this.zone.runOutsideAngular(() => {
-            this.ro = new ResizeObserver(() => {
-                this.calculateGridSize(this.fit);
-            });
+        if (this.columns && this.columns.length) {
+            if (!Array.isArray(this.columns[0])) {
+                this.columns = [ this.columns ];
+            }
+        }
 
-            this.ro.observe(this.el.nativeElement.parentElement);
-        });
+        this.flatColumns = this.columns['flat']().filter(col => !col.colspan);
+        this.realHeaderHeight = this.columns.length * this.headerHeight;
     }
 
     ngAfterViewInit(): void {
-        this.setHeaderHeight();
         this.setPagerHeight();
-
         this.initState();
+
         if (!this.data || !this.data.length) {
             this.fetchData(1, this.pageSize).subscribe( res => {
                 if (!res) {
@@ -355,6 +388,20 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
 
         this.initBeforeEvents();
+
+        this.zone.runOutsideAngular(() => {
+            this.ro = new ResizeObserver(() => {
+                this.calculateGridSize(this.fit);
+            });
+
+            this.ro.observe(this.el.nativeElement.parentElement);
+        });
+
+        if (this.fit) {
+            if (this.el.nativeElement.parentElement) {
+                this.el.nativeElement.parentElement.style.position = 'relative';
+            }
+        }
     }
 
     ngAfterContentInit() {
@@ -407,6 +454,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.dfs.updateProperty('multiSort', changes.multiSort.currentValue);
         }
 
+        if (changes.editable !== undefined && !changes.editable.isFirstChange()) {
+            this.dfs.updateProperty('editable', changes.editable.currentValue);
+            this.isSingleClick = null;
+            this.cd.detectChanges();
+        }
+
         if (changes.pageIndex !== undefined && !changes.pageIndex.isFirstChange()) {
             this.dfs.updateProperty('pageIndex', changes.pageIndex.currentValue);
             this.pagerOpts = Object.assign(this.pagerOpts, {
@@ -427,6 +480,68 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         if (this.ro) {
             this.ro.disconnect();
+        }
+
+        if (this.documentRowKeydownHandler) {
+            this.documentRowKeydownHandler();
+        }
+    }
+
+    //#endregion
+
+    //#region Init
+    /** 初始编辑器与验证器 */
+    private initEditorAndValidator() {
+        const Editors = this.inject.get<any[]>(GRID_EDITORS, []);
+        if (Editors.length) {
+            Editors.forEach(ed => {
+                this.editors[ed.name] = ed.value;
+            });
+        }
+        const _validators = this.inject.get<any[]>(GRID_VALIDATORS, []);
+        if (_validators && _validators.length) {
+            // _validators.forEach(vr => {
+            //     this.validators[vr.name] = vr.value;
+            // });
+            this.validators = _validators;
+        }
+
+        console.log('validators', this.validators);
+    }
+
+    private setPagerHeight() {
+        if (!this.pagination) {
+            this.pagerHeight = 0;
+        } else {
+            if (this.pagerHeight < this.dgPager.outerHeight) {
+                this.pagerHeight = this.dgPager.outerHeight;
+            }
+        }
+    }
+
+    private initState() {
+        this.data = this.data || [];
+        this.dfs.initState({...this, fitColumns: this.fitColumns, fit: this.fit});
+    }
+
+    private setFitColumns(fitColumns = true) {
+        if (this.columns) {
+            this.dfs.fitColumns(fitColumns);
+        }
+    }
+
+    private calculateGridSize(fit = true) {
+        if (fit) {
+            const parent = this.el.nativeElement.parentElement;
+            const cmpRect = parent.getBoundingClientRect();
+
+            const padding = this.getElementPadding(parent);
+            const border = this.getElementBorderWidth(parent);
+
+            this.width = cmpRect.width - border.left - border.right - padding.left - padding.right;
+            this.height = cmpRect.height - border.top - border.bottom - padding.top - padding.bottom;
+            this.dfs.resize({width: this.width, height: this.height});
+            // this.refresh();
         }
     }
 
@@ -449,20 +564,58 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (!this.beforeSortColumn) {
             this.beforeSortColumn = () => of(true);
         }
+
+        if (!this.beforeEdit) {
+            this.beforeEdit = () => of(true);
+        }
     }
 
     trackByRows = (index: number, row: any) => {
         return row[this.idField];
     }
 
-    bindDocumentEditListener() {
+    //#endregion
+
+    //#region 快捷键
+
+    private unbindMoveSelectRowEvent() {
+        if (this.documentRowKeydownHandler) {
+            this.documentRowKeydownHandler();
+            this.documentRowKeydownHandler = null;
+        }
+    }
+
+    private bindDocumentMoveSelectRowEvent() {
+        this.unbindMoveSelectRowEvent();
+        this.unbindDocumentEditListener();
+        this.documentRowKeydownHandler = this.render2.listen(document, 'keydown', (e: KeyboardEvent) => {
+            switch (e.keyCode) {
+                case 40:
+                    this.selectNextRow();
+                    break;
+                case 38:
+                    this.selectPrevRow();
+                    break;
+            }
+        });
+    }
+
+    private bindDocumentEditListener() {
         this.unbindDocumentEditListener();
         if (!this.documentCellClickHandler) {
             this.documentCellClickHandler = (event) => {
+                if (this.pending) {
+                    return false;
+                }
                 if (this.currentCell) {
-                    DomHandler.removeClass(this.currentCell.cellRef, CELL_SELECTED_CLS);
+                    if (Utils.hasDialogOpen()) {
+                        return;
+                    }
+                    DomHandler.removeClass(this.currentCell.cellElement, CELL_SELECTED_CLS);
+
                     if (this.currentCell.isEditing) {
-                        this.dfs.endEditCell();
+                        // this.dfs.endEditCell();
+                        this.currentCell.cellElement.closeEdit();
                     }
                     this.dfs.cancelSelectCell();
                     this.unbindDocumentEditListener();
@@ -480,7 +633,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
     }
 
-    unbindDocumentEditListener() {
+    private unbindDocumentEditListener() {
         if (this.documentCellClickHandler) {
             this.docuemntCellClickEvents();
             this.documentCellClickHandler = null;
@@ -492,78 +645,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
     }
 
-    private unsubscribes() {
-        this.subscriptions.forEach(ss => {
-            if (ss) {
-                ss.unsubscribe();
-                ss = null;
-            }
-        });
-
-        this.subscriptions = [];
-
-        if (this.docuemntCellClickEvents) {
-            this.docuemntCellClickEvents();
-        }
-    }
-
-    selectNextCell( dir: MoveDirection) {
-        const nextTd = this.findNextCell(this.currentCell.field, dir);
-        if (nextTd) {
-            nextTd['click'].apply(nextTd);
-            return nextTd;
-        }
-    }
-
-    editCell(rowIndex: number, field: string) {
-    }
-
-    private setPagerHeight() {
-        if (!this.pagination) {
-            this.pagerHeight = 0;
-        } else {
-            if (this.pagerHeight < this.dgPager.outerHeight) {
-                this.pagerHeight = this.dgPager.outerHeight;
-            }
-        }
-    }
-
-    private setHeaderHeight() {
-        this.headerHeight = this.dgHeader.height;
-    }
-
-    private findNextCell(field: string, dir: MoveDirection) {
-        let td = null;
-        if (this.currentCell && this.currentCell.cellRef) {
-            const cellIndex = this.dfs.getColumnIndex(field);
-            const currCellEl = this.currentCell.cellRef;
-            if (dir === 'up') {
-                const prevTr = currCellEl.parentElement.previousElementSibling;
-                if (prevTr) {
-                    td = prevTr.children[cellIndex];
-                }
-            } else if (dir === 'down') {
-                const nextTr = currCellEl.parentElement.nextElementSibling;
-                if (nextTr) {
-                    td = nextTr.children[cellIndex];
-                }
-            } else if (dir === 'left') {
-                td = currCellEl.previousElementSibling;
-            } else if (dir === 'right') {
-                td = currCellEl.nextElementSibling;
-            }
-        }
-        return td;
-    }
-
     private onKeyDownEvent(e: any) {
         const keyCode = e.keyCode;
         if (this.currentCell && !this.currentCell.isEditing) {
             switch (keyCode) {
                 case 13: // Enter
-                    const fn = this.currentCell.cellRef['editCell'];
+                    const fn = this.currentCell.cellElement['editCell'];
                     if (fn) {
-                        fn.apply(this.currentCell.cellRef);
+                        fn.apply(this.currentCell.cellElement);
                     }
                     break;
                 case 40: // ↓
@@ -589,6 +678,291 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             }
         }
     }
+
+
+    private unsubscribes() {
+        this.subscriptions.forEach(ss => {
+            if (ss) {
+                ss.unsubscribe();
+                ss = null;
+            }
+        });
+
+        this.subscriptions = [];
+
+        if (this.docuemntCellClickEvents) {
+            this.docuemntCellClickEvents();
+        }
+    }
+
+    //#endregion
+
+    //#region Editing
+
+    isRowEditing() {
+        if (!this.selectedRow || this.selectedRow.index === -1) {
+            return false;
+        } else {
+            return this.selectedRow.editors && this.selectedRow.editors.length;
+        }
+    }
+
+    isCellEditing() {
+        if (this.currentCell) {
+            return this.currentCell.isEditing;
+        }
+        return false;
+    }
+
+    isEditing() {
+        if (this.editMode === 'row') {
+            return this.isRowEditing();
+        } else {
+            return this.isCellEditing();
+        }
+    }
+
+    getEditors() {
+        return this.selectedRow.editors;
+    }
+
+    editCell(rowId: any, field: string) {
+        const rowIndex = this.dfs.findRowIndex(rowId);
+        if (rowIndex > -1) {
+            this.endCellEdit();
+            const trId = 'row-' + rowIndex;
+            const trDom = this.el.nativeElement.querySelector('#' + trId);
+            if (trDom) {
+                const tdDom = trDom.querySelector(`[field="${field}"]`);
+                if (tdDom && tdDom['editCell']) {
+                    tdDom.editCell();
+                }
+            }
+        }
+    }
+
+    endCellEdit() {
+        document.body.click();
+    }
+
+    editRow(rowId?: any) {
+        if (!this.editable || this.editMode !== 'row') { return false; }
+
+        if (rowId) {
+            this.selectRow(rowId);
+        }
+
+
+        if (!this.selectedRow || this.selectedRow.index === -1) {
+            console.warn('Please select a row.');
+            return false;
+        }
+
+        const { index: rowIndex, data: rowData } = { ...this.selectedRow};
+
+        const beforeEditEvent = this.beforeEdit(rowIndex, rowData);
+        if (!beforeEditEvent || !beforeEditEvent.subscribe) {
+            console.warn('please return an Observable Type.');
+            return;
+        }
+
+        beforeEditEvent.subscribe( (flag: boolean) => {
+            if (flag) {
+                if (this.selectedRow.dr) {
+                    const cells = this.selectedRow.dr.cells.toArray();
+                    if (!cells || !cells.length) {
+                        return;
+                    }
+
+                    cells.forEach(cell => {
+                        if (cell.column.editor) {
+                            cell.isEditing = true;
+                        }
+                    });
+                    setTimeout(() => {
+                        const editors = cells.map( cell => {
+                            if (cell.cellEditor) {
+                                return cell.cellEditor.componentRef;
+                            }
+                        }).filter(editor => editor);
+                        this.selectedRow.editors = editors;
+
+                        if (editors && editors.length) {
+                            editors[0].instance.inputElement.focus();
+                        }
+
+                        // 绑定键盘事件
+                        this.bindRowEditorKeydownEvent();
+
+                        this.beginEdit.emit({ rowIndex, rowData});
+                        this.cd.detectChanges();
+                    });
+                }
+            }
+        });
+
+    }
+
+    endRowEdit() {
+        if (!this.isRowEditing()) {
+            return { canEnd: true };
+        }
+
+        if (!this.selectedRow || this.selectedRow.index === -1) {
+            console.warn('Please select a row.');
+            return;
+        }
+        const { index: rowIndex, data: rowData, dr } = { ...this.selectedRow};
+        // blur
+        document.body.click();
+
+        if (this.pending) {
+            return { canEnd: false };
+        }
+
+        const rowForm = dr.form as FormGroup;
+        rowForm.markAsTouched();
+        if (rowForm.invalid && !this.endEditByInvalid) {
+            return { canEnd: false };
+        }
+
+
+        const afterEditEvent = this.afterEdit(rowIndex, rowData);
+        if (!afterEditEvent || !afterEditEvent.subscribe) {
+            console.warn('please return an Observable Type.');
+            return { canEnd: false };
+        }
+
+        afterEditEvent.subscribe( (flag: boolean) => {
+            if (flag) {
+                this.closeAllCellEditor();
+
+                if (this.selectedRow.dr.form) {
+                    this.selectedRow.dr.rowData = Object.assign(this.selectedRow.dr.rowData, this.selectedRow.dr.form.value);
+                    this.dfs.updateRow(this.selectedRow.dr.rowData);
+                    this.cd.detectChanges();
+                }
+
+                this.endEdit.emit({rowIndex, rowData});
+            }
+        });
+    }
+
+    cancelEdit(rowId: any) {
+
+        if (!this.isEditing()) {
+            return;
+        }
+
+        this.closeAllCellEditor();
+        this.dfs.rejectChanges(rowId);
+
+        this.cd.detectChanges();
+        this.cancelEdited.emit();
+    }
+
+    private closeAllCellEditor() {
+        const cells = this.selectedRow.dr.cells;
+        cells.forEach(cell => cell.isEditing = false);
+        if (this.currentCell) {
+            this.currentCell.isEditing = false;
+        }
+        this.selectedRow.editors = null;
+
+        // 取消键盘事件
+        this.unbindRowEditorKeydownEvent();
+    }
+
+    private rowEditTabKeydwonEvent(e: any) {
+        const keyCode = e.which || e.keyCode;
+
+        if (keyCode === 9) {
+            const td = e.target.closest('td');
+            const tr = e.target.closest('tr');
+            const nextTd = td.nextElementSibling;
+
+            const hasNoEditor = (_td: any) => {
+                return  !_td.querySelector('input') && !_td.querySelector('textarea') && !_td.querySelector('select');
+            };
+
+            const editNextRow = () => {
+                const nextTr = tr.nextElementSibling;
+                if (nextTr) {
+                    nextTr.click();
+                    const nextRowid = nextTr.getAttribute('id').replace('row-', '');
+                    if (nextRowid) {
+                        this.editRow(nextRowid);
+                    }
+                }
+            };
+
+            if (nextTd) {
+                if (hasNoEditor(nextTd)) {
+                    const tds = tr.querySelectorAll('td');
+                    let tdIdx = -1;
+                    tds.forEach((t, i) => {
+                        if (t === nextTd) {
+                            tdIdx = i;
+                        }
+                    });
+                    let nextTrEdit = true;
+                    while (tdIdx < tds.length) {
+                        const _ntd = tds[tdIdx];
+                        if (hasNoEditor(_ntd)) {
+                            tdIdx++;
+                        } else {
+                            nextTrEdit = false;
+                            break;
+                        }
+                    }
+
+                    if (nextTrEdit) {
+                        editNextRow();
+                    }
+                }
+            } else {
+                editNextRow();
+            }
+        }
+
+        e.stopPropagation();
+    }
+
+    private bindRowEditorKeydownEvent() {
+        if (!this.documentRowEditKeydownHanlder) {
+            this.documentRowEditKeydownHanlder = this.render2.listen(document, 'keydown', this.rowEditTabKeydwonEvent.bind(this));
+        }
+        this.documentClickEndRowEditHandler = this.render2.listen(document, 'click', (e: Event) => {
+            if (this.pending) {
+                return false;
+            }
+            if (Utils.hasDialogOpen()) {
+                return;
+            }
+
+            if (this.isRowEditing()) {
+
+                // this.endRowEdit();
+            }
+        });
+    }
+
+    private unbindRowEditorKeydownEvent() {
+        // 取消键盘事件
+        if (this.documentRowEditKeydownHanlder) {
+            this.documentRowEditKeydownHanlder();
+            this.documentRowEditKeydownHanlder = null;
+        }
+
+        if (this.documentClickEndRowEditHandler) {
+            this.documentClickEndRowEditHandler();
+            this.documentClickEndRowEditHandler = null;
+        }
+    }
+
+    //#endregion
+
+    //#region Load Data
 
     loadData(data?: any) {
         this.closeLoading();
@@ -622,6 +996,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         return of(undefined);
     }
 
+    refresh() {
+        this.dfs.refresh();
+    }
+
 
     reload() {
         this.fetchData(1, this.pageSize).subscribe(res => {
@@ -632,6 +1010,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             }
         });
     }
+
+    //#endregion
+
+    //#region Pagination
 
     setPageIndex(pageIndex: number) {
         // console.log(this.dgPager.pagination);
@@ -674,33 +1056,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.pageSizeChanged.emit({pageSize, pageIndex: this.pageIndex});
     }
 
+    //#endregion
 
-    private initState() {
-        this.data = this.data || [];
-        this.dfs.initState({...this, fitColumns: this.fitColumns, fit: this.fit});
-    }
-
-    private setFitColumns(fitColumns = true) {
-        if (this.columns) {
-            this.dfs.fitColumns(fitColumns);
-        }
-    }
-
-    private calculateGridSize(fit = true) {
-        if (fit) {
-            const parent = this.el.nativeElement.parentElement;
-            const cmpRect = parent.getBoundingClientRect();
-
-            const padding = this.getElementPadding(parent);
-            const border = this.getElementBorderWidth(parent);
-
-            this.width = cmpRect.width - border.left - border.right - padding.left - padding.right;
-            this.height = cmpRect.height - border.top - border.bottom - padding.top - padding.bottom;
-            this.dfs.resize({width: this.width, height: this.height});
-            // this.refresh();
-        }
-    }
-
+    //#region Loading
     showLoading() {
         this.loading = true;
         this.cd.detectChanges();
@@ -709,6 +1067,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     closeLoading() {
         this.loading = false;
         this.cd.detectChanges();
+    }
+    //#endregion
+
+    //#region Dom
+
+    private replacePX2Empty(strNum: string) {
+        if (strNum) {
+            return Number.parseInt(strNum.replace('px', ''), 10);
+        }
+        return 0;
     }
 
     renderCustomStyle(cs: CustomStyle, dom: any) {
@@ -722,10 +1090,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 this.render2.setStyle(dom, k, cs.style[k]);
             });
         }
-    }
-
-    refresh() {
-        this.cd.detectChanges();
     }
 
     getBoundingClientRect(el: ElementRef) {
@@ -751,9 +1115,63 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             left: this.replacePX2Empty(style.borderLeftWidth)
         };
     }
+    //#endregion
+
+    //#region Select
+    private canOperateCheckbox() {
+        return this.multiSelect && this.showCheckbox;
+    }
+    private findNextCell(field: string, dir: MoveDirection) {
+        let td = null;
+        if (this.currentCell && this.currentCell.cellElement) {
+            const cellIndex = this.dfs.getColumnIndex(field);
+            const currCellEl = this.currentCell.cellElement;
+            if (dir === 'up') {
+                const prevTr = currCellEl.parentElement.previousElementSibling;
+                if (prevTr) {
+                    td = prevTr.children[cellIndex];
+                }
+            } else if (dir === 'down') {
+                const nextTr = currCellEl.parentElement.nextElementSibling;
+                if (nextTr) {
+                    td = nextTr.children[cellIndex];
+                }
+            } else if (dir === 'left') {
+                td = currCellEl.previousElementSibling;
+            } else if (dir === 'right') {
+                td = currCellEl.nextElementSibling;
+            }
+        }
+        return td;
+    }
+
+    selectNextCell( dir: MoveDirection) {
+        const nextTd = this.findNextCell(this.currentCell.field, dir);
+        if (nextTd) {
+            nextTd['click'].apply(nextTd);
+            return nextTd;
+        }
+    }
+
+    selectNextRow() {
+        if (this.selectedRow) {
+            const tr = this.selectedRow.dr.el.nativeElement;
+            if (tr.nextElementSibling) {
+                tr.nextElementSibling.click();
+            }
+        }
+    }
+    selectPrevRow() {
+        if (this.selectedRow) {
+            const tr = this.selectedRow.dr.el.nativeElement;
+            if (tr.previousElementSibling) {
+                tr.previousElementSibling.click();
+            }
+        }
+    }
 
     selectRow(id: any) {
-        if (id && (!this.selectedRow || this.selectedRow.id !== id)) {
+        if (id && (!this.selectedRow || this.selectedRow.id != id)) {
             this.dfs.selectRecord(id);
         }
     }
@@ -796,14 +1214,81 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.dfs.clearCheckeds();
     }
 
-    private canOperateCheckbox() {
-        return this.multiSelect && this.showCheckbox;
+    //#endregion
+
+    //#region Resize Column
+
+    private getResizeProxyPosLeft(e: MouseEvent) {
+        const target = e.target as any;
+        const dgRect = this.getBoundingClientRect(this.dgContainer);
+        const td = target.parentElement;
+        const deltaEdge = td.offsetWidth - (e.pageX - td.getBoundingClientRect().left);
+        this.resizeColumnInfo.proxyLineEdge = deltaEdge;
+        this.resizeColumnInfo.startWidth = td.offsetWidth;
+        this.resizeColumnInfo.startX = e.pageX;
+        return e.pageX - dgRect.left - 1 + deltaEdge;
     }
 
-    private replacePX2Empty(strNum: string) {
-        if (strNum) {
-            return Number.parseInt(strNum.replace('px', ''), 10);
+    private toggleResizeProxy(show = true) {
+        let display = 'block';
+        if (!show) {
+            display = 'none';
         }
-        return 0;
+        this.render2.setStyle(this.resizeProxyBg.nativeElement, 'display', display);
+        this.render2.setStyle(this.resizeProxy.nativeElement, 'display', display);
     }
+
+    onColumnResizeBegin(e: MouseEvent) {
+        if (this.resizeProxy) {
+            const proxy = this.resizeProxy.nativeElement;
+            const proxyPosLeft = this.getResizeProxyPosLeft(e);
+            this.render2.setStyle(proxy, 'left', proxyPosLeft + 'px');
+            this.toggleResizeProxy();
+        }
+    }
+    onColumnResize(e: MouseEvent) {
+        const proxy = this.resizeProxy.nativeElement;
+        const dgRect = this.getBoundingClientRect(this.dgContainer);
+        const proxyPosLeft = e.pageX - dgRect.left - 1 + this.resizeColumnInfo.proxyLineEdge;
+        this.render2.setStyle(proxy, 'left', proxyPosLeft + 'px');
+        e.stopPropagation();
+        e.preventDefault();
+    }
+    onColumnResizeEnd(e: MouseEvent, col: DataColumn) {
+        const proxy = this.resizeProxy.nativeElement;
+        this.toggleResizeProxy(false);
+        this.resizeColumnInfo.proxyLineEdge = 0;
+
+        const newColWidth = this.resizeColumnInfo.startWidth + e.pageX - this.resizeColumnInfo.startX;
+
+        col.width = newColWidth;
+        this.dfs.resizeColumns();
+    }
+
+    restituteColumnsSize() {
+        this.dfs.resizeColumns(true);
+    }
+
+    //#endregion
+
+    //#region Changes
+    getChanges() {
+        return this.dfs.getChanges();
+    }
+
+    acceptChanges() {
+        this.dfs.acceptChanges();
+    }
+
+    rejectChanges() {
+        this.dfs.rejectChanges();
+        // setTimeout(() => {
+        //     this.app.tick();
+        //     if (this.selectRow) {
+        //         this.selectRow(this.selectedRow.id);
+        //     }
+        // });
+    }
+    //#endregion
+
 }

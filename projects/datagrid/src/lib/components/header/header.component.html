@@ -1,16 +1,28 @@
+<!--
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:53
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-27 11:26:03
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ -->
 <!--表头-->
-<div class="f-datagrid-header" [style.min-width.px]="dg.width" #header>
+<div class="f-datagrid-header" [style.min-width.px]="dg?.width" [style.min-height.px]="height" #header>
 
     <!--左侧固定列-->
-    <ng-container *ngIf="columnsGroup?.leftFixed && columnsGroup?.leftFixed.length  || dg.showLineNumber || dg.showCheckbox ">
+    <ng-container *ngIf="columnsGroup?.leftFixed && columnsGroup?.leftFixed.length  || dg?.showLineNumber || dg?.showCheckbox ">
         <div #fixedLeft class="f-datagrid-header-fixed-left" [style.width.px]="columnsGroup?.leftFixedWidth" [style.height.px]="height"> 
             <!-- 行号 -->
-            <table cellpadding="0" cellspacing="0" >
+            <table cellpadding="0" cellspacing="0" border="0">
                 <thead>
                     <tr class="f-datagrid-header-row">
-                        <td *ngIf="dg.showLineNumber" class="f-datagrid-header-cell" [style.height.px]="height" [style.width.px]="dg.lineNumberWidth"> </td>
+                        <td *ngIf="dg.showLineNumber" class="f-datagrid-header-cell" [style.height.px]="height" [style.width.px]="dg?.lineNumberWidth"> </td>
                         <td *ngIf="dg.showCheckbox" class="f-datagrid-header-cell f-datagrid-header-checkbox" [style.height.px]="height" style="width: 36px; text-align: center">
                             <datagrid-header-checkbox #chkAll *ngIf="dg.showAllCheckbox"></datagrid-header-checkbox>
+                        </td>
+                        <td class="f-datagrid-header-cell" *ngFor="let col of columnsGroup?.leftFixed" [attr.align]="col.halign"
+                            [style.height.px]="height" [style.width.px]="col.width">
+                            <div class="f-datagrid-header-cell-content" [style.width.px]="col.width" >{{ col.title }}</div>
                         </td>
                     </tr>
                 </thead>
@@ -30,32 +42,71 @@
         <table cellpadding="0" cellspacing="0">
             <thead>
                 <tr class="f-datagrid-header-row">
-                    <td class="f-datagrid-header-cell" *ngFor="let col of columnsGroup.rightFixed" [attr.align]="col.hAlign"
+                    <td class="f-datagrid-header-cell" *ngFor="let col of columnsGroup.rightFixed" [attr.align]="col.halign"
                     [style.height.px]="height" [style.width.px]="col.width">
-                    <div class="f-datagrid-header-cell-content">{{ col.title }}</div></td>
+                    <div class="f-datagrid-header-cell-content" [style.width.px]="col.width" >{{ col.title }}</div></td>
                 </tr>
             </thead>
         </table>
     </div>
 
-    <div #headerContainer [style.left.px]="columnsGroup?.leftFixedWidth" [style.width.px]="columnsGroup?.normalWidth"  style="position: absolute;">
-        <table style="width:100%"  cellpadding="0" cellspacing="0">
+    <div #headerContainer [style.left.px]="columnsGroup?.leftFixedWidth" [style.width.px]="columnsGroup?.normalWidth"  
+    style="position: absolute;">
+        <table style="width:100%"  cellpadding="0" cellspacing="0" border="0">
+            <colgroup>
+                <ng-container *ngFor="let col of columnsGroup?.normalColumns">
+                    <col [width]="col.width + 'px'">
+                </ng-container>
+            </colgroup>
             <thead>
-                <tr class="f-datagrid-header-row">
-                    <td class="f-datagrid-header-cell" [attr.align]="col.hAlign" [style.width.px]="col.width" [style.height.px]="height" *ngFor="let col of columnsGroup?.normalColumns">
-                        <div class="f-datagrid-header-cell-content">
-                            {{ col.title }}
-                            <ng-container *ngIf="col.sortable">
-                                <span class="f-datagrid-sort" [class.f-datagrid-sort-asc]="col.order === 'asc'" [class.f-datagrid-sort-desc]="col.order === 'desc'"
-                                    (click)="onSortColumnClick($event, col)" 
-                                    *ngIf="col.order">{{ col.order === 'asc'? '↑' : '↓' }}  </span>
-                                <span class="f-datagrid-sort" (click)="onSortColumnClick($event, col)" *ngIf="!col.order"> ⇵ </span>
-                            </ng-container>
-                        </div>
-                    </td>
+                <tr class="f-datagrid-header-row" *ngFor="let cols of columns">
+                    
+                    <ng-container *ngFor="let col of cols">
+                        <ng-container *ngIf="col.colspan && !col.fixed">
+                            <td [resize-column]="col" class="f-datagrid-header-cell f-datagrid-header-cell-group" 
+                                [attr.align]="col.halign"
+                                [attr.colspan]="col.colspan">
+                                <div class="f-datagrid-header-cell-content" >
+                                    {{ col.title }}
+                                </div>
+                            </td>
+                        </ng-container>
+                        <ng-container *ngIf="!col.colspan && !col.fixed">
+                            <td [resize-column]="col" class="f-datagrid-header-cell" 
+                                [attr.align]="col.halign" 
+                                [attr.field]="col.field"
+                                [attr.rowspan]="col.rowspan">
+                                <div class="f-datagrid-header-cell-content" [style.width.px]="col.width">
+                                    {{ col.title }}
+                                    <ng-container *ngIf="col.sortable">
+                                        <span class="f-datagrid-sort" [class.f-datagrid-sort-asc]="col.order === 'asc'" [class.f-datagrid-sort-desc]="col.order === 'desc'"
+                                            (click)="onSortColumnClick($event, col)" 
+                                            *ngIf="col.order">{{ col.order === 'asc'? '↑' : '↓' }}  </span>
+                                        <span class="f-datagrid-sort" (click)="onSortColumnClick($event, col)" *ngIf="!col.order"> ⇵ </span>
+                                    </ng-container>
+                                </div>
+                            </td>
+                        </ng-container>
+                    </ng-container>
                 </tr>
             </thead>
         </table>
         
     </div>
 </div>
+
+
+<!--  [style.height.px]="(col.rowspan || 1) * dg.headerHeight" 
+<td [resize-column]="col" class="f-datagrid-header-cell" 
+[attr.align]="col.halign" [style.width.px]="col.width" 
+[style.height.px]="height" *ngFor="let col of columnsGroup?.normalColumns">
+<div class="f-datagrid-header-cell-content">
+{{ col.title }}
+<ng-container *ngIf="col.sortable">
+<span class="f-datagrid-sort" [class.f-datagrid-sort-asc]="col.order === 'asc'" [class.f-datagrid-sort-desc]="col.order === 'desc'"
+    (click)="onSortColumnClick($event, col)" 
+    *ngIf="col.order">{{ col.order === 'asc'? '↑' : '↓' }}  </span>
+<span class="f-datagrid-sort" (click)="onSortColumnClick($event, col)" *ngIf="!col.order"> ⇵ </span>
+</ng-container>
+</div>
+</td> -->

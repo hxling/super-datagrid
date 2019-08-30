@@ -1,6 +1,15 @@
+import { Subscription } from 'rxjs';
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:53
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-23 18:18:13
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { Component, OnInit, Input, Output, EventEmitter,
-    ViewChild, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef,
-    OnDestroy, ComponentFactoryResolver, NgZone, ViewRef } from '@angular/core';
+    ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef,
+    OnDestroy, Injector, Inject, forwardRef} from '@angular/core';
 import { Utils } from '../../utils/utils';
 import { filter } from 'rxjs/operators';
 import { DataColumn } from '../../types/data-column';
@@ -9,18 +18,22 @@ import { DatagridComponent } from '../../datagrid.component';
 import { DatagridRowDirective } from './datagrid-row.directive';
 import { CellInfo } from '../../services/state';
 import { GridCellEditorDirective } from '../editors/cell-editor.directive';
+import { ColumnFormatService } from '@farris/ui-common/column';
 
 @Component({
     selector: 'grid-body-cell',
     template: `
     <div class="f-datagrid-cell-content" #cellContainer [style.width.px]="column.width">
-        <span *ngIf="!isEditing && !column.template">{{ value }}</span>
+        <ng-container *ngIf="!isEditing && !column.template">
+            <span *ngIf="column.formatter" [innerHtml]="formatData(column.field, rowData, column.formatter) | safe: 'html'"></span>
+            <span *ngIf="!column.formatter">{{ value }}</span>
+        </ng-container>
         <ng-container *ngIf="!isEditing && column.template" [ngTemplateOutlet]="column.template"
                         [ngTemplateOutletContext]="{$implicit: cellContext}"></ng-container>
         <ng-container #editorTemplate *ngIf="isEditing" cell-editor [column]="column" [group]="dr.form"></ng-container>
     </div>
     `,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.Default
 })
 export class DatagridCellComponent implements OnInit, OnDestroy {
     @Input() width: number;
@@ -30,7 +43,16 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
     @Input() rowData: any;
     @Input() rowIndex: number;
 
-    @Input() isEditing = false;
+    private _isEditing = false;
+    @Input() get isEditing() {
+        return this._isEditing;
+    }
+    set isEditing(v) {
+        this._isEditing = v;
+        if (!this.cd['destroyed']) {
+            this.cd.detectChanges();
+        }
+    }
     @Input() isSelected = false;
 
     @ViewChild('cellContainer') cellContainer: ElementRef;
@@ -40,16 +62,25 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
     @Output() cellDblClick = new EventEmitter();
 
     cellContext: any = {};
-    value: any;
+    get value() {
+        if (this.rowData && this.column && this.column.field) {
+            return Utils.getValue(this.column.field, this.rowData);
+        }
+    }
 
     cellStyler: any = {};
 
+    private dfs: DatagridFacadeService;
+    private cellSubscription: Subscription;
     canEdit = () => this.dg.editable && this.dg.editMode === 'cell' && this.column.editor;
     constructor(
-        private dfs: DatagridFacadeService, public dr: DatagridRowDirective,
-        private render2: Renderer2, private el: ElementRef,
-        private dg: DatagridComponent, private cfr: ComponentFactoryResolver,
-        private cd: ChangeDetectorRef, private zone: NgZone) { }
+        @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
+        @Inject(forwardRef(() => DatagridRowDirective)) public dr: DatagridRowDirective,
+        private el: ElementRef, public cd: ChangeDetectorRef, private injector: Injector,
+        public colFormatSer: ColumnFormatService
+    ) {
+        this.dfs = this.injector.get(DatagridFacadeService);
+    }
 
     ngOnInit(): void {
         this.cellContext = {
@@ -62,30 +93,28 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
 
         this.buildCustomCellStyle();
 
-        this.dfs.currentCell$.pipe(
+        this.cellSubscription = this.dfs.currentCell$.pipe(
             filter((cell: CellInfo) => {
                 return cell && this.column.editor && cell.rowIndex === this.rowIndex && cell.field === this.column.field;
             })
         ).subscribe((cell: CellInfo) => {
             if (cell && this.column.editor) {
                 this.isEditing = cell.isEditing;
-                if (!this.isEditing) {
-                    this.updateValue();
-                }
+                cell.cellRef = this;
+
                 if (!this.cd['destroyed']) {
                     this.cd.detectChanges();
                 }
             }
         });
 
-        // this.dr.form.valueChanges.subscribe( val => {
-        //     this.updateValue();
-        // });
-
     }
 
     ngOnDestroy() {
-        // this.isEditing$ = null;
+        if (this.cellSubscription) {
+            this.cellSubscription.unsubscribe();
+            this.cellSubscription = null;
+        }
     }
 
     private buildCustomCellStyle() {
@@ -98,13 +127,15 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
         }
     }
 
+    formatData(field: any, data: any, formatter: any) {
+        const value = Utils.getValue(field, data);
+        return this.colFormatSer.format(value, data, formatter);
+    }
 
     updateValue() {
         if (this.dr.form) {
-            Object.assign(this.rowData, this.dr.form.value);
-        }
-        if (this.rowData && this.column && this.column.field) {
-            this.value = Utils.getValue(this.column.field, this.rowData);
+            this.rowData = Object.assign(this.rowData, this.dr.form.value);
+            this.cd.detectChanges();
         }
     }
 }

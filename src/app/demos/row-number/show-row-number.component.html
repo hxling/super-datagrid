@@ -1,3 +1,11 @@
+<!--
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-07-29 08:14:22
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-16 18:27:01
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ -->
         
 <div class="row" style="padding: 20px 0; margin-top: 120px">        
 
@@ -7,6 +15,10 @@
         [pagination]="false" [pageSize]= "pageSize" [pageIndex]="pageIndex"  [total]="total"
     ></farris-datagrid>
     
+</div>
+
+<div class="row">
+    {{ getselectedRow() | json }}
 </div>
 
 <ng-template #nameCellTemplate let-ctx>

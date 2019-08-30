@@ -9,7 +9,7 @@ export class DatagridColumnDirective implements OnInit, AfterContentInit {
     @Input() field: string;
     @Input() title: string;
     @Input() width: number;
-    @Input() hAlign: 'left' | 'center' |'right' = 'left';
+    @Input() halign: 'left' | 'center' |'right' = 'left';
     @Input() align: 'left' | 'center' |'right' = 'left';
     @Input() formatter: (value, rowData, rowIndex) => any;
     @Input() readonly = true;

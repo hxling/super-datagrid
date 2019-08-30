@@ -1,0 +1,97 @@
+{
+    "columns": [
+        {"title": "编号", "field": "Code", "width": 60},
+        {"title": "姓名", "field": "Name", "width": 80},
+        {"title": "年龄", "field": "Age", "width": 90},
+        {"title": "出生日期", "field": "birthday", "width": 140 },
+        {"title": "身份证号", "field": "idcode", "width": 120},
+        {"title": "邮编", "field": "postcode", "width": 120},
+        {"title": "地址", "field": "address", "width": 200}
+    ],
+    "items": [
+        {"Code": 1, "Name": "黄秀岭", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 2, "Name": "黄秀岭2", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 3, "Name": "黄秀岭3", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 4, "Name": "黄秀岭4", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 5, "Name": "黄秀岭5", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 6, "Name": "黄秀岭6", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 7, "Name": "黄秀岭7", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 8, "Name": "李三", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 9, "Name": "张四", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 10, "Name": "王五", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 11, "Name": "赵大", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 12, "Name": "周二", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 13, "Name": "黄秀岭8", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 14, "Name": "黄秀岭9", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 15, "Name": "黄秀岭10", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 16, "Name": "黄秀岭11", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 17, "Name": "黄秀岭12", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 18, "Name": "黄秀岭13", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 19, "Name": "黄秀岭14", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 20, "Name": "黄秀岭15", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 21, "Name": "黄秀岭a", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 22, "Name": "黄秀岭b", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 23, "Name": "黄秀岭c", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 24, "Name": "黄秀岭d", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 25, "Name": "黄秀岭e", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 26, "Name": "黄秀岭f", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 27, "Name": "黄秀岭g", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+        {"Code": 28, "Name": "黄秀岭h", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"}
+    ],
+    "total": 28,
+    "pageInfo":{
+        "enablePager": true,
+        "pageIndex": 1,
+        "pageSize": 20,
+        "pageList": [10, 20, 30, 50]
+    },
+    "navigation": {
+        "width": 320,
+        "displayType": "List",
+        "columns": [
+            {"title": "编号", "field": "Code", "width": 60},
+            {"title": "姓名", "field": "Name", "width": 80}
+        ],
+        "items": [
+            {"Code": 1, "Name": "黄秀岭", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 2, "Name": "黄秀岭2", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 3, "Name": "黄秀岭3", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 4, "Name": "黄秀岭4", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 5, "Name": "黄秀岭5", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 6, "Name": "黄秀岭6", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 7, "Name": "黄秀岭7", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 8, "Name": "李三", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 9, "Name": "张四", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 10, "Name": "王五", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 11, "Name": "赵大", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 12, "Name": "周二", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 13, "Name": "黄秀岭8", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 14, "Name": "黄秀岭9", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 15, "Name": "黄秀岭10", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 16, "Name": "黄秀岭11", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 17, "Name": "黄秀岭12", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 18, "Name": "黄秀岭13", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 19, "Name": "黄秀岭14", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 20, "Name": "黄秀岭15", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 21, "Name": "黄秀岭a", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 22, "Name": "黄秀岭b", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 23, "Name": "黄秀岭c", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 24, "Name": "黄秀岭d", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 25, "Name": "黄秀岭e", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 26, "Name": "黄秀岭f", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 27, "Name": "黄秀岭g", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"},
+            {"Code": 28, "Name": "黄秀岭h", "Age": 20, "birthday": "1998-5-6", "idcode": "没有权限查看", "postcode": "05310000", "address": "地球"}
+        ],
+        "singleSelect": true,
+        "idField": "Code",
+        "showFilterBar": true,
+        "pageInfo":{
+            "enablePager": true,
+            "pageIndex": 1,
+            "pageSize": 20,
+            "pageList": [10, 20, 30, 50]
+        },
+        
+        "total": 28
+    }
+}

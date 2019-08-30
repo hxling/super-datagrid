@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 14:45:44
+ * @LastEditTime: 2019-08-26 15:35:32
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -12,9 +12,10 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
 import { map, distinctUntilChanged, filter, switchMap, auditTime } from 'rxjs/operators';
 import { DataColumn, ColumnGroup } from '../types';
-import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow } from './state';
+import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow, RowDataChanges } from './state';
 import { VirtualizedLoaderService } from './virtualized-loader.service';
-// import { orderBy } from 'lodash-es';
+import { DatagridRow } from '../types/datagrid-row';
+import { cloneDeep } from 'lodash-es';
 
 @Injectable()
 export class DatagridFacadeService {
@@ -37,6 +38,7 @@ export class DatagridFacadeService {
     private checkAllSubject = new Subject();
     private unCheckAllSubject =  new Subject();
     private selectAllSubject = new Subject();
+    private selectCellSubject = new Subject();
 
     error$ = this.errorSubject.asObservable();
     selectRow$ = this.selectRowSubject.asObservable();
@@ -50,13 +52,14 @@ export class DatagridFacadeService {
     checkAll$ = this.checkAllSubject.asObservable();
     unCheckAll$ = this.unCheckAllSubject.asObservable();
     selectAll$ = this.selectAllSubject.asObservable();
+    currentCell$ = this.selectCellSubject.asObservable();
 
 
     readonly state$ = this.store.asObservable().pipe(
         filter( (state: any) => state)
     );
 
-    readonly columnGroup$ = this.store.asObservable().pipe(
+    readonly columnGroup$ = this.gridSizeSubject.asObservable().pipe(
         filter( (state: any) => state),
         map((state: FarrisDatagridState) => state.columnsGroup),
         distinctUntilChanged()
@@ -94,13 +97,6 @@ export class DatagridFacadeService {
                 return this.unSelectRowSubject.asObservable();
             }
         }),
-        distinctUntilChanged()
-    );
-
-
-    readonly currentCell$ = this.store.asObservable().pipe(
-        filter( (state: any) => state),
-        map(state => state.currentCell),
         distinctUntilChanged()
     );
 
@@ -143,7 +139,6 @@ export class DatagridFacadeService {
         return this._state.virtual;
     }
 
-
     getPageInfo() {
         const { pageIndex, pageSize } = {...this._state};
         return { pageIndex, pageSize };
@@ -152,15 +147,25 @@ export class DatagridFacadeService {
 
     initState(state: Partial<FarrisDatagridState>) {
         this.updateState(state, false);
+        this._state.originalData = cloneDeep(this._state.data);
         this.initColumns();
 
-        this.updateVirthualRows(0);
         this.gridSizeSubject.next(this._state);
+        this.updateVirthualRows(0);
     }
 
     loadData(data: any) {
         this.updateState({ data }, false);
-        this.updateVirthualRows(this._state.virtual.scrollTop);
+        this.updateVirthualRows(this._state.virtual.scrollTop || 0);
+    }
+    /** 复原指定行的数据 */
+    resetRow(rowId: any) {
+        const origData = this._state.originalData;
+        if (origData) {
+            const origRowData = origData.find(r => this.primaryId(r) === rowId);
+            this.getCurrentRow().data = cloneDeep(origRowData);
+            this.updateRow(origRowData);
+        }
     }
 
     loadDataForVirtual(data: any) {
@@ -236,6 +241,10 @@ export class DatagridFacadeService {
 
     isCheckAll() {
         return  this._state.checkedRows.length === this._state.data.length;
+    }
+
+    getCurrentRow() {
+        return this._state.currentRow || undefined;
     }
 
     getSelections() {
@@ -346,7 +355,7 @@ export class DatagridFacadeService {
         if (this._state.data && this._state.data.length) {
             let index = -1;
             const data = this._state.data.find( (n, i) => {
-                const r = this.primaryId(n) === id;
+                const r = this.primaryId(n) == id;
                 if (r) {
                     index = i;
                 }
@@ -483,16 +492,21 @@ export class DatagridFacadeService {
         this._state.selectOnCheck = flag;
     }
 
-    setCurrentCell(rowIndex: number, rowData: any, field: string, cellRef?: any ) {
+    setCurrentCell(dr: DatagridRow, field: string, cellElement?: any ) {
+        const { rowIndex, rowData } = {...dr};
         if (!this.isCellSelected({rowIndex, field})) {
-            const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData), cellRef };
-            this.updateState({currentCell});
+            const currentCell = {...this._state.currentCell, rowIndex, rowData, field, rowId: this.primaryId(rowData), cellElement };
+            this.updateState({currentCell}, false);
+            this.selectRow(rowIndex, rowData);
+            this._state.currentRow.dr = dr;
+            this.selectCellSubject.next(currentCell);
         }
     }
 
     cancelSelectCell() {
         if (this._state.currentCell) {
-            this.updateState({currentCell: null});
+            this.updateState({currentCell: null}, false);
+            this.selectCellSubject.next(null);
         }
     }
 
@@ -508,7 +522,8 @@ export class DatagridFacadeService {
         if (this._state.currentCell) {
             if (!this._state.currentCell.isEditing) {
                 const cei = { ...this._state.currentCell, isEditing: true };
-                this.updateState({ currentCell: cei });
+                this.updateState({ currentCell: cei }, false);
+                this.selectCellSubject.next(cei);
             }
         }
     }
@@ -516,22 +531,27 @@ export class DatagridFacadeService {
     endEditCell() {
         if (this._state.currentCell && this._state.currentCell.isEditing) {
             const cei = { ...this._state.currentCell, isEditing: false };
-            this.updateState({ currentCell: cei });
+            this.updateState({ currentCell: cei }, false);
+            this.selectCellSubject.next(cei);
         }
     }
 
-    getCurrentCellInfo() {
-        return this._state.currentCell;
+    updateRow(row: any) {
+        const id = this.primaryId(row);
+        Object.assign(this.findRow(id), row);
     }
 
     isCellSelected(cellInfo: CellInfo) {
-        const cc = this.getCurrentCellInfo();
+        const cc = this.getCurrentCell();
         if (!cc) {
             return false;
         } else {
             return cc.rowIndex === cellInfo.rowIndex && cc.field === cellInfo.field;
         }
     }
+
+
+
 
     protected updateState(state: Partial<FarrisDatagridState>, emit = true) {
         const newState = { ...this._state, ...state };
@@ -564,13 +584,13 @@ export class DatagridFacadeService {
         this.gridSizeSubject.next(this._state);
     }
 
-    initColumns() {
-        const columns = this._state.columns;
-        if (columns && columns.length) {
 
-            const leftFixedCols = this.getFixedCols();
+    initColumns() {
+        const columns = this._state.flatColumns;
+        if (columns && columns.length) {
+            const leftFixedCols = this.getFixedCols('left');
             const rightFixedCols = this.getFixedCols('right');
-            const normalCols = columns.filter(col => !col.fixed);
+            const normalCols = this.getFixedCols();
 
             columns.forEach(c => {
                 c.originalWidth = c.width;
@@ -603,6 +623,108 @@ export class DatagridFacadeService {
                 return colgroup.rightFixed.findIndex(n => n.field === field);
             }
         }
+    }
+
+    resizeColumns(restitute = false) {
+        const colgroup = this._state.columnsGroup;
+        this.initColumnsWidth(colgroup, restitute);
+        if (this._state.fitColumns) {
+            this.setFitColumnsWidth(colgroup, restitute);
+        }
+        this.updateState({ columnsGroup:  {...colgroup} }, false);
+        this.gridSizeSubject.next(this._state);
+    }
+
+    getColumn(fieldName: string) {
+        return this._state.flatColumns.find(n => n.field === fieldName);
+    }
+
+    private setFitColumnsWidth(colgroup: ColumnGroup, restitute = false) {
+        if (!colgroup) {
+            return;
+        }
+        colgroup.normalWidth = this._state.width - colgroup.leftFixedWidth;
+        const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
+            if (!restitute) {
+                return totalWidth += col.width;
+            } else {
+                return totalWidth += col.originalWidth;
+            }
+        }, 0);
+
+        colgroup.normalColumns.forEach( col => {
+            if (!restitute) {
+                col.width = Math.floor( col.width / minWidth * colgroup.normalWidth );
+            } else {
+                col.width = Math.floor( col.originalWidth / minWidth * colgroup.normalWidth );
+            }
+        });
+
+        colgroup.totalWidth = colgroup.leftFixedWidth + colgroup.rightFixedWidth + colgroup.normalWidth;
+    }
+
+    private getFixedCols(direction: 'left' | 'right' | '' = '') {
+        let cols = [];
+        if (!direction) {
+            cols = this._state.flatColumns.filter(col => !col.fixed);
+        } else {
+            cols = this._state.flatColumns.filter(col => col.fixed === direction);
+        }
+
+
+        return cols.sort((a, b) => {
+            if (a.index > b.index) {
+                return 1;
+            } else if (a.index < b.index) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+    }
+
+    private initColumnsWidth(colgroup: ColumnGroup,  restitute = false) {
+        let offset = 0;
+        offset = this._state.showLineNumber ? offset + this._state.lineNumberWidth : offset;
+
+        offset = this._state.showCheckbox ? offset + this._state.checkboxColumnWidth : offset;
+
+        const leftColsWidth = colgroup.leftFixed.reduce((r, c) => {
+            c.left = r;
+            if (!restitute) {
+                return r + c.width;
+            } else {
+                return r + c.originalWidth;
+            }
+        }, offset);
+
+        colgroup.leftFixedWidth = leftColsWidth;
+        colgroup.rightFixedWidth = 0;
+        if (colgroup.rightFixed && colgroup.rightFixed.length) {
+            colgroup.rightFixedWidth = colgroup.rightFixed.reduce((r, c) => {
+                if (!restitute) {
+                    return r + c.width;
+                } else {
+                    return r + c.originalWidth;
+                }
+            }, 0);
+        }
+
+        if (this._state.columns && this._state.columns.length) {
+            const i =  0;
+            const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
+                col.left = totalWidth;
+                if (!restitute) {
+                    return totalWidth += col.width;
+                } else {
+                    return totalWidth + col.originalWidth;
+                }
+            }, i);
+
+            colgroup.normalWidth = minWidth;
+        }
+
+        colgroup.totalWidth = leftColsWidth + colgroup.rightFixedWidth + colgroup.normalWidth;
     }
 
     showCheckbox(isShow = true) {
@@ -677,7 +799,11 @@ export class DatagridFacadeService {
         for (let i = 0; i < sortFields.length; i++) {
             const sn = sortFields[i];
             const so = orders[i];
-            r = this.compare(r1[sn], r2[sn]) * (so === 'asc' ? 1 : -1);
+
+            const col = this.getColumn(sn);
+
+            const orderby = col.sorter  ||  this.compare;
+            r = orderby(r1[sn], r2[sn]) * (so === 'asc' ? 1 : -1);
             if (r !== 0) {
                 return r;
             }
@@ -687,60 +813,77 @@ export class DatagridFacadeService {
 
     clientSort() {
         const sortedData = this._state.data.sort(this._sort.bind(this));
-        // const sortedData = orderBy(this._state.data, this._state.sortName.split(','), this._state.sortOrder.split(','));
         this.loadData(sortedData);
     }
 
 
-    private setFitColumnsWidth(colgroup: ColumnGroup) {
-        if (!colgroup) {
+    //#region 变更集
+
+    private hasRowChanges(rowid: any) {
+        const _changes = this._state.changes;
+        if (!_changes) {
+            return false;
+        }
+        return _changes[rowid];
+    }
+
+    appendChanges(changes: RowDataChanges) {
+        if (!changes) {
             return;
         }
-        colgroup.normalWidth = this._state.width - colgroup.leftFixedWidth;
-        const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
-            return totalWidth += col.originalWidth;
-        }, 0);
-
-        colgroup.normalColumns.forEach( col => {
-            col.width = Math.floor( col.originalWidth / minWidth * colgroup.normalWidth );
-        });
-
-        colgroup.totalWidth = colgroup.leftFixedWidth + colgroup.rightFixedWidth + colgroup.normalWidth;
-    }
-
-    private getFixedCols(direction: 'left' | 'right' = 'left') {
-        return this._state.columns.filter(col => col.fixed === direction);
-    }
-
-    private initColumnsWidth(colgroup: ColumnGroup) {
-        let offset = 0;
-        offset = this._state.showLineNumber ? offset + this._state.lineNumberWidth : offset;
-
-        offset = this._state.showCheckbox ? offset + this._state.checkboxColumnWidth : offset;
-
-        const leftColsWidth = colgroup.leftFixed.reduce((r, c) => {
-            c.left = r;
-            return r + c.width;
-        }, offset);
-
-        colgroup.leftFixedWidth = leftColsWidth;
-        colgroup.rightFixedWidth = 0;
-        if (colgroup.rightFixed && colgroup.rightFixed.length) {
-            colgroup.rightFixedWidth = colgroup.rightFixed.reduce((r, c) => {
-                return r + c.width;
-            }, 0);
+        const id = changes[this._state.idField];
+        if (!id) {
+            return;
         }
-
-        if (this._state.columns && this._state.columns.length) {
-            const i =  0;
-            const minWidth = colgroup.normalColumns.reduce((totalWidth, col) => {
-                col.left = totalWidth;
-                return totalWidth += col.width;
-            }, i);
-
-            colgroup.normalWidth = minWidth;
+        const _id = '' + id;
+        if (!this.hasRowChanges(_id)) {
+            this._state.changes = this._state.changes || {};
+            this._state.changes[_id] = changes;
+        } else {
+            this._state.changes[_id] = Object.assign(this._state.changes[_id], changes);
         }
-
-        colgroup.totalWidth = leftColsWidth + colgroup.rightFixedWidth + colgroup.normalWidth;
     }
+
+    acceptChanges() {
+        const changes = this._state.changes;
+        if (changes) {
+            const keys = Object.keys(changes);
+            keys.forEach(id => {
+                this.updateRow(changes[id]);
+            });
+            this._state.originalData = cloneDeep(this._state.data);
+        }
+    }
+    rejectChanges(rowid = null) {
+        const changes = this._state.changes;
+        if (changes) {
+            if (!rowid) {
+                this._state.data = cloneDeep(this._state.originalData);
+                this._state.changes = null;
+                // this.refresh();
+            } else {
+                const rowChanges =  this._state.changes['' + rowid];
+                if (rowChanges) {
+                    const orgiRow = this._state.originalData.find(r => this.primaryId(r) === rowid);
+                    this._state.data.forEach(r => {
+                        if (this.primaryId(r) === rowid) {
+                            r = cloneDeep(orgiRow);
+                        }
+                    });
+                }
+            }
+
+            this.refresh();
+        }
+    }
+
+    getChanges() {
+        return this._state.changes;
+    }
+
+    refresh() {
+        this.loadData(this._state.data);
+    }
+
+    //#endregion
 }

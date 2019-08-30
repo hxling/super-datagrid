@@ -1,22 +1,57 @@
-        
-<div class="row" style="padding: 20px 0; margin-top: 120px">        
+<!--
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-24 11:38:50
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ -->
+       
+ <div #box class="d-flex flex-column" style="width: 100%; height: 300px;">
+    <div class="north" style="height: 80px">
+       
+        <div class="fluid-container">
+            <div class="row">
+               
+                <button (click)="dg.editable = true">允许编辑</button>
+                <button (click)="dg.editable = false">禁用编辑</button>
+                <button (click)="editCell($event, 3, 'name')">编辑单元格（第3行，name字段）</button>
+                <select [(ngModel)]="editMode">
+                    <option value="cell">Cell</option>
+                    <option value="row">Row</option>
+                </select>
 
-    <farris-datagrid [data]="items" [columns]="columns" #dg
-        [editable]="true" [editMode]="'cell'"[showCheckbox]="true"
-        [showLineNumber] ="true" [striped]="true"  [total]="total"
-        [virtualized]="true" [pagination]="false">
-    </farris-datagrid>
-    
+                {{ dg.currentCell?.field }}
+            </div>
+
+            <div class="row">
+            {{ dg.selectedRow?.data | json }} <br>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-primary" (click)="dg.editRow()">编辑</button>
+                    <button class="btn btn-danger" (click)="cancelEdit($event)">取消编辑</button>
+                    <button class="btn btn-primary" (click)="getChanges()">变更集</button>
+                    <button class="btn btn-success" (click)="acceptChanges()">应用变更集</button>
+                    <button class="btn btn-default" (click)="rejectChanges()">取消变更集</button>
+                </div>
+            </div>
+
+        </div>
+
     </div>
-
-<div class="row">
-
-    {{ dg.currentCell?.field }}
-
-</div>
-
-
-<div class="row">
-{{ dg.selectedRow | json }}
-
+    <div region="center" class="center flex-fill">
+        <farris-datagrid [data]="items" [columns]="columns" #dg="datagrid" [fit]="true"
+            [editable]="true" [editMode]="editMode" [showCheckbox]="false" [fitColumns]="true"
+            [showLineNumber] ="true" [striped]="true"  [total]="total"
+            [virtualized]="true" [pagination]="false"
+            [beforeEdit] = "beforeEdit"
+            (beginEdit) = "beginEdit($event)"
+            [afterEdit] = "afterEdit"
+            (endEdit)= "endEdit($event)"
+            (cancelEdited)="cancelEdited($event)"
+            >
+        </farris-datagrid>
+    </div>
 </div>

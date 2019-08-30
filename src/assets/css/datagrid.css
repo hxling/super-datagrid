@@ -1,0 +1,540 @@
+@charset "UTF-8";
+* {
+  box-sizing: border-box;
+}
+
+farris-datagrid {
+  position: absolute;
+}
+
+.f-datagrid {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.75);
+  background-color: #fff;
+  /**
+  * 拖动列宽
+  */
+  /** 排序 */
+  /** 折行 */
+}
+.f-datagrid table {
+  table-layout: fixed;
+  border-collapse: separate;
+}
+.f-datagrid-unselect {
+  user-select: none;
+}
+.f-datagrid-full {
+  position: relative;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex: 1;
+  height: 100%;
+}
+.f-datagrid-header {
+  z-index: 2;
+  position: relative;
+  height: 40px;
+  color: #000;
+  background-color: #fafafa;
+  font-weight: 400;
+  overflow: hidden;
+  width: 100%;
+  border-bottom: 1px solid #e9e9e9;
+  transition: all 0.15s ease;
+}
+.f-datagrid-header table {
+  width: 100%;
+}
+.f-datagrid-header .f-datagrid-cell-group-left-shadow, .f-datagrid-header .f-datagrid-cell-group-right-shadow {
+  height: 40px;
+}
+.f-datagrid-header-row {
+  background-color: #fafafa;
+}
+.f-datagrid-header-cell {
+  height: 40px;
+  overflow: hidden;
+  white-space: normal;
+}
+.f-datagrid-header-cell-content {
+  padding-left: 5px;
+}
+.f-datagrid-header-cell:hover {
+  background: #e6e6e6;
+}
+.f-datagrid-header-cell-resize {
+  background-clip: padding-box;
+  position: relative;
+}
+.f-datagrid-header-cell-resize .column-resize-bar {
+  display: block;
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  margin: 0;
+  width: 0.5em;
+  height: 100%;
+  padding: 0;
+  cursor: e-resize;
+  border: 1px solid transparent;
+}
+.f-datagrid-header-cell-group {
+  border-bottom: 1px solid #e9e9e9 !important;
+}
+.f-datagrid-header-fixed-left, .f-datagrid-header-fixed-right {
+  position: absolute;
+  z-index: 4;
+  background: #fff;
+}
+.f-datagrid-body {
+  position: absolute;
+  overflow: hidden;
+  z-index: 0;
+  left: 0;
+}
+.f-datagrid-body-wheel-area {
+  overflow: hidden;
+  position: relative;
+}
+.f-datagrid-body-fixed-left {
+  position: absolute;
+  z-index: 1;
+  background: #fff;
+}
+.f-datagrid-body-fixed-left .f-datagrid-row-hover .f-datagrid-cell-rownumber,
+.f-datagrid-body-fixed-left .f-datagrid-row-selected .f-datagrid-cell-rownumber {
+  background-color: #ededed !important;
+}
+.f-datagrid-body-fixed-right {
+  position: absolute;
+  width: 200px;
+  background: #fff;
+  z-index: 999;
+  overflow: hidden;
+}
+.f-datagrid-body-row {
+  overflow: hidden;
+  height: 36px;
+  width: 100%;
+  top: 0;
+  transition: all 0.15s ease;
+}
+.f-datagrid-table tr td:last-child {
+  border-right-width: 0;
+}
+.f-datagrid-row {
+  overflow: hidden;
+  height: 36px;
+  width: 100%;
+  top: 0;
+  border-bottom: 1px solid #e9e9e9;
+  background-color: #fff;
+  transition: all 0.15s ease;
+}
+.f-datagrid-row-body .f-datagrid-cell-group-left-shadow,
+.f-datagrid-row-body .f-datagrid-cell-group-right-shadow {
+  height: 36px;
+}
+.f-datagrid-row-hover {
+  cursor: pointer;
+  background: #f3fbff !important;
+  color: black !important;
+  transition: background-color 0.1s ease-in;
+}
+.f-datagrid-row-selected {
+  background-color: #E6F7FF;
+  color: #222;
+  border-color: #e9e9e9;
+}
+.f-datagrid-virtual-row {
+  overflow: hidden;
+  pointer-events: none;
+  background-color: transparent !important;
+  border-width: 0;
+  width: 1px;
+}
+.f-datagrid-cell {
+  height: 36px;
+  border-style: solid;
+  border-width: 0 0 1px;
+  border-color: #e9e9e9;
+  overflow: hidden;
+  white-space: normal;
+}
+.f-datagrid-cell-formgroup {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.f-datagrid-cell-formgroup datagrid-tooltip {
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+.f-datagrid-cell-formgroup textarea.ng-invalid {
+  border: 1px solid red;
+}
+.f-datagrid-cell-editor {
+  width: 100%;
+  height: calc(36px - 3px);
+  border: 0;
+}
+.f-datagrid-cell-selected {
+  border: 0px solid #388fff !important;
+  background-color: #dce7ff !important;
+}
+.f-datagrid-cell-edit .f-datagrid-cell-content {
+  padding: 0;
+}
+.f-datagrid-cell-content {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  margin: 0;
+  padding: 0 1px;
+  height: calc(36px - 3px);
+  line-height: calc(36px - 3px);
+}
+.f-datagrid-cell-content > span {
+  padding: 0 5px;
+  display: block;
+}
+.f-datagrid-cell-rownumber {
+  background-color: #fafafa !important;
+  color: #000 !important;
+  text-align: center;
+}
+.f-datagrid-cell-rownumber .f-datagrid-cell-content {
+  padding: 0;
+  text-align: center;
+}
+.f-datagrid-cell-rownumber.rownumber-selected {
+  background-color: #d9d9d9 !important;
+}
+.f-datagrid-pager {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3.5rem;
+  border-top: 1px solid #ccc;
+  background: #fff;
+}
+.f-datagrid-pager .pagination {
+  margin: 0;
+  padding: 0;
+  height: 3.5rem;
+  align-items: center;
+}
+.f-datagrid .ps--active-x > .ps__rail-x,
+.f-datagrid .ps--active-y > .ps__rail-y {
+  z-index: 999;
+}
+.f-datagrid-body-fixed-left > .ps__rail-x,
+.f-datagrid-body-fixed-left > .ps__rail-y {
+  display: none !important;
+}
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-selected {
+  color: rgba(0, 0, 0, 0.75);
+  background-color: #E6F7FF !important;
+  color: #222;
+}
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-odd {
+  background-color: #FCFDFE;
+  color: rgba(0, 0, 0, 0.75);
+}
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-odd .f-datagrid-cell {
+  background-color: transparent;
+  border-color: #e9e9e9;
+}
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-even {
+  background-color: #fff;
+}
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-even .f-datagrid-cell {
+  background-color: transparent;
+}
+.f-datagrid-bordered {
+  border: 1px solid #e9e9e9;
+}
+.f-datagrid-bordered .f-datagrid-cell {
+  border-width: 0 1px 1px 0;
+}
+.f-datagrid-bordered .f-datagrid-body-fixed-right {
+  border-left: 1px solid #e9e9e9;
+}
+.f-datagrid-bordered .f-datagrid-header-cell {
+  border: 1px solid #e9e9e9;
+  border-width: 0 1px 0 0;
+}
+.f-datagrid-bordered .f-datagrid-header tr td:last-child {
+  border-right: 1px solid #e9e9e9;
+}
+.f-datagrid-bordered .f-datagrid-header-fixed-right {
+  border-left: 1px solid #e9e9e9;
+}
+.f-datagrid-bordered .f-datagrid-header-fixed-left tr td:last-child {
+  border-right: 1px solid #e9e9e9;
+}
+.f-datagrid-resize-proxy {
+  width: 1px;
+  border-left: 1px dashed #939292;
+  left: 0px;
+  display: none;
+  position: absolute;
+  height: 100%;
+  z-index: 99;
+}
+.f-datagrid-resize-bg {
+  z-index: 98;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  position: absolute;
+  display: none;
+}
+.f-datagrid-sort {
+  float: right;
+  width: 20px;
+  text-align: center;
+  cursor: pointer;
+  opacity: 0.65;
+}
+.f-datagrid-sort:hover {
+  color: blue;
+  opacity: 1;
+}
+.f-datagrid-sort-asc, .f-datagrid-sort-desc {
+  opacity: 1;
+}
+.f-datagrid-wrap .f-datagrid-cell-content {
+  white-space: normal;
+  word-break: break-all;
+  word-spacing: normal;
+  height: auto;
+  line-height: 24px;
+}
+.f-datagrid-footer {
+  background: #fff;
+  z-index: 97;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  min-height: 36px;
+  border-top: 1px solid #ccc;
+}
+.f-datagrid-footer table {
+  table-layout: fixed;
+}
+.f-tooltip {
+  position: absolute;
+  display: none;
+  padding: 0.25em 0.5em;
+  max-width: 12.5em;
+  line-height: 32PX;
+  border-radius: 5px;
+}
+.f-tooltip-right, .f-tooltip-left {
+  padding: 0 0.25em;
+}
+.f-tooltip-top, .f-tooltip-bottom, .f-tooltip-top-left, .f-tooltip-bottom-left {
+  padding: 0.25em 0;
+}
+.f-tooltip-default {
+  background-color: #4c4c4c;
+  color: #ffffff;
+  border: 1px solid #4c4c4c;
+}
+.f-tooltip-text {
+  padding: 0.125em 0.5em;
+  white-space: pre-line;
+  border-radius: 5px;
+  box-shadow: 1px 1px 2px #9d9d9d;
+}
+.f-tooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+}
+.f-tooltip-right .f-tooltip-arrow {
+  top: 50%;
+  left: 0;
+  margin-top: -0.25em;
+  border-width: 0.25em 0.25em 0.25em 0;
+  border-right-color: #4c4c4c;
+}
+.f-tooltip-left .f-tooltip-arrow {
+  top: 50%;
+  right: 0;
+  margin-top: -0.25em;
+  border-width: 0.25em 0 0.25em 0.25em;
+  border-left-color: #4c4c4c;
+}
+.f-tooltip-top .f-tooltip-arrow, .f-tooltip-bottom .f-tooltip-arrow {
+  left: 50%;
+  margin-left: -0.25em;
+  border-width: 0.25em 0.25em 0;
+  border-top-color: #4c4c4c;
+}
+.f-tooltip-top .f-tooltip-arrow {
+  bottom: 0;
+}
+.f-tooltip-bottom .f-tooltip-arrow {
+  top: 0;
+}
+.f-tooltip-top-left .f-tooltip-arrow, .f-tooltip-bottom-left .f-tooltip-arrow {
+  left: 10px;
+  margin-left: -0.25em;
+  border-width: 0.25em 0.25em 0;
+}
+.f-tooltip-top-left .f-tooltip-arrow {
+  bottom: 0;
+}
+.f-tooltip-bottom-left .f-tooltip-arrow {
+  top: 0;
+}
+.f-tooltip-danger.f-tooltip-top-left .f-tooltip-arrow, .f-tooltip-danger.f-tooltip-top .f-tooltip-arrow {
+  border-top-color: #f5c6cb;
+}
+.f-tooltip-arrow {
+  border-top-color: #f5c6cb;
+}
+.f-tooltip-danger .f-tooltip-text {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+/*
+* Container style
+*/
+.ps {
+  overflow: hidden !important;
+  overflow-anchor: none;
+  -ms-overflow-style: none;
+  touch-action: auto;
+  -ms-touch-action: auto;
+}
+
+/*
+ * Scrollbar rail styles
+ */
+.ps__rail-x {
+  display: none;
+  opacity: 0;
+  transition: background-color 0.2s linear, opacity 0.2s linear;
+  -webkit-transition: background-color 0.2s linear, opacity 0.2s linear;
+  height: 15px;
+  /* there must be 'bottom' or 'top' for ps__rail-x */
+  bottom: 0px;
+  /* please don't change 'position' */
+  position: absolute;
+}
+
+.ps__rail-y {
+  display: none;
+  opacity: 0;
+  transition: background-color 0.2s linear, opacity 0.2s linear;
+  -webkit-transition: background-color 0.2s linear, opacity 0.2s linear;
+  width: 15px;
+  /* there must be 'right' or 'left' for ps__rail-y */
+  right: 0;
+  /* please don't change 'position' */
+  position: absolute;
+}
+
+.ps--active-x > .ps__rail-x,
+.ps--active-y > .ps__rail-y {
+  display: block;
+  background-color: transparent;
+}
+
+.ps:hover > .ps__rail-x,
+.ps:hover > .ps__rail-y,
+.ps--focus > .ps__rail-x,
+.ps--focus > .ps__rail-y,
+.ps--scrolling-x > .ps__rail-x,
+.ps--scrolling-y > .ps__rail-y {
+  opacity: 0.6;
+}
+
+.ps .ps__rail-x:hover,
+.ps .ps__rail-y:hover,
+.ps .ps__rail-x:focus,
+.ps .ps__rail-y:focus,
+.ps .ps__rail-x.ps--clicking,
+.ps .ps__rail-y.ps--clicking {
+  background-color: #eee;
+  opacity: 0.9;
+}
+
+/*
+ * Scrollbar thumb styles
+ */
+.ps__thumb-x {
+  background-color: #aaa;
+  border-radius: 6px;
+  transition: background-color 0.2s linear, height 0.2s ease-in-out;
+  -webkit-transition: background-color 0.2s linear, height 0.2s ease-in-out;
+  height: 6px;
+  /* there must be 'bottom' for ps__thumb-x */
+  bottom: 2px;
+  /* please don't change 'position' */
+  position: absolute;
+}
+
+.ps__thumb-y {
+  background-color: #aaa;
+  border-radius: 6px;
+  transition: background-color 0.2s linear, width 0.2s ease-in-out;
+  -webkit-transition: background-color 0.2s linear, width 0.2s ease-in-out;
+  width: 6px;
+  /* there must be 'right' for ps__thumb-y */
+  right: 2px;
+  /* please don't change 'position' */
+  position: absolute;
+}
+
+.ps__rail-x:hover > .ps__thumb-x,
+.ps__rail-x:focus > .ps__thumb-x,
+.ps__rail-x.ps--clicking .ps__thumb-x {
+  background-color: #999;
+  height: 11px;
+}
+
+.ps__rail-y:hover > .ps__thumb-y,
+.ps__rail-y:focus > .ps__thumb-y,
+.ps__rail-y.ps--clicking .ps__thumb-y {
+  background-color: #999;
+  width: 11px;
+}
+
+/* MS supports */
+@supports (-ms-overflow-style: none) {
+  .ps {
+    overflow: auto !important;
+  }
+}
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .ps {
+    overflow: auto !important;
+  }
+}
+
+/*# sourceMappingURL=datagrid.css.map */

@@ -1,26 +1,55 @@
-import { FormBuilder, FormGroup } from '@angular/forms';
+
+import { QueryList, Renderer2 } from '@angular/core';
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-12 07:47:12
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-30 14:54:50
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Directive, Input, Output, EventEmitter, HostListener,
-    OnInit, ElementRef, Renderer2, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+    OnInit, ElementRef, AfterViewInit, Injector, Inject, forwardRef, ContentChildren } from '@angular/core';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { DatagridComponent } from '../../datagrid.component';
+import { DatagridCellComponent } from './datagrid-cell.component';
+import { DatagridRow } from '../../types/datagrid-row';
+import { DatagridValidator } from '../../types/datagrid-validator';
 
 @Directive({
     selector: '[grid-row]',
     exportAs: 'gridRow'
 })
-export class DatagridRowDirective implements OnInit, AfterViewInit {
+export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow {
+    @Input() editable = false;
     @Input('grid-row') rowData: any;
     @Input() rowIndex: number;
     @Output() clickHandler = new EventEmitter();
 
-    form = new FormGroup({});
+    @ContentChildren(forwardRef(() => DatagridCellComponent),  { descendants: true }) cells: QueryList<DatagridCellComponent>;
 
-    constructor(public dg: DatagridComponent, private dfs: DatagridFacadeService,
-                private cd: ChangeDetectorRef,
-                private fb: FormBuilder, private el: ElementRef, private render: Renderer2) {}
+    get rowId() {
+        if (this.rowData) {
+            return this.dfs.primaryId(this.rowData);
+        }
+        return null;
+    }
+    form = new FormGroup({});
+    private dfs: DatagridFacadeService;
+    private documentRowDblclickEvent: any = null;
+
+    constructor(
+        @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
+        private injector: Injector, private fb: FormBuilder, public el: ElementRef,
+        private render: Renderer2) {
+        this.dfs = this.injector.get(DatagridFacadeService);
+    }
 
     ngOnInit() {
-        this.form = this.createControl();
+        if (this.editable) {
+            this.form = this.createControl();
+        }
         this.renderCustomStyle();
     }
 
@@ -40,19 +69,17 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
     onRowClick(event: MouseEvent) {
         const rowId = this.dfs.primaryId(this.rowData);
         if (!this.dfs.isRowSelected(rowId)) {
+            const canendedit = this.dg.endRowEdit();
 
-            this.dg.beforeSelect(this.rowIndex, this.rowData).subscribe( (canSelect: boolean) => {
-                if (canSelect) {
-                    // if (!this.dg.multiSelect || (this.dg.multiSelect && this.dg.onlySelectSelf)) {
-                    //     if (this.dg.selectedRow) {
-                    //         const rowid = this.dg.selectedRow.id;
-                    //         this.dfs.selectRecord(rowid, false);
-                    //     }
-                    // }
-                    this.dfs.selectRow(this.rowIndex, this.rowData);
-                    this.clickHandler.emit();
-                }
-            });
+            if (!canendedit || canendedit.canEnd) {
+                this.dg.beforeSelect(this.rowIndex, this.rowData).subscribe( (canSelect: boolean) => {
+                    if (canSelect) {
+                        this.dfs.selectRow(this.rowIndex, this.rowData);
+                        this.dg.selectedRow.dr = this;
+                        this.clickHandler.emit();
+                    }
+                });
+            }
         } else {
             if (!this.dg.keepSelect) {
                 this.dg.beforeUnselect(this.rowIndex, this.rowData).subscribe((canUnselect: boolean) => {
@@ -64,16 +91,101 @@ export class DatagridRowDirective implements OnInit, AfterViewInit {
         }
     }
 
+    @HostListener('mouseenter', ['$event'])
+    onMouseEnter($event: MouseEvent) {
+        if (this.dg.editMode === 'row') {
+            this.bindRowDblClickEvent();
+        }
+    }
+
+    @HostListener('mouseleave', ['$event'])
+    onMouseLeave($event: MouseEvent) {
+        if (this.dg.editMode === 'row') {
+            this.unbindRowDblclickEvent();
+        }
+    }
+
     createControl() {
         const group = this.fb.group({});
-        this.dg.columns.forEach(col => {
+        this.dg.flatColumns.forEach(col => {
             if (!col.editor) {return; }
             const control = this.fb.control(
                 this.rowData[col.field],
-                // this.bindValidations(field.validations || [])
+                {
+                    validators: this.bindValidations(col.editor.validators)
+                }
             );
             group.addControl(col.field, control);
         });
         return group;
+    }
+
+    private bindValidations(validators: DatagridValidator[]) {
+        const validations = [];
+        if (validators && validators.length) {
+
+            validators.forEach((v: DatagridValidator) => {
+                let validation = null;
+                switch (v.type) {
+                    case 'required':
+                        validation = Validators.required;
+                        break;
+                    case 'min':
+                        validation = Validators.min(v.value);
+                        break;
+                    case 'max':
+                        validation = Validators.max(v.value);
+                        break;
+                    case 'minLength':
+                        validation = Validators.minLength(v.value);
+                        break;
+                    case 'maxLength':
+                        validation = Validators.maxLength(v.value);
+                        break;
+                    case 'email':
+                        validation = Validators.email;
+                        break;
+                    case 'requiredTrue':
+                        validation = Validators.requiredTrue;
+                        break;
+                    case 'pattern':
+                        validation = Validators.pattern(v.value);
+                        break;
+                }
+                if (validation) {
+                    validations.push(validation);
+                } else {
+                    if (this.dg.validators && this.dg.validators.length) {
+                        const vfn = this.dg.validators.find(vr => vr.name === v.type);
+                        if (vfn) {
+                            validation = vfn.value(this.rowData);
+                            validations.push(validation);
+                        }
+                    }
+                }
+            });
+        }
+        return validations;
+    }
+
+    private bindRowDblClickEvent() {
+        if (!this.documentRowDblclickEvent) {
+            this.unbindRowDblclickEvent();
+            this.documentRowDblclickEvent = this.render.listen(document, 'dblclick', this.dblclickRowEvent.bind(this));
+        }
+    }
+
+    private unbindRowDblclickEvent() {
+        if (this.documentRowDblclickEvent) {
+            this.documentRowDblclickEvent();
+            this.documentRowDblclickEvent = null;
+        }
+    }
+
+    private dblclickRowEvent(evnet: MouseEvent) {
+        const rowid = this.dg.selectedRow.id;
+        this.dg.editRow(rowid);
+        event.stopPropagation();
+        event.preventDefault();
     }
 }

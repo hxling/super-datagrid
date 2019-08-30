@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 13:53:21
+ * @LastEditTime: 2019-08-16 17:22:06
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -33,7 +33,8 @@ export class DatagridSelectionDemoComponent implements OnInit {
     showRowNumber = true;
     useStripe = true;
     wrap = false;
-    
+    fitColumns = true;
+
     remoteSort = true;
     multiSort = false;
     // 多选
@@ -66,7 +67,7 @@ export class DatagridSelectionDemoComponent implements OnInit {
         { field: 'maray', width: 70, title: '婚否', sortable: true},
         { field: 'addr', width: 170, title: '地址'},
         { field: 'company', width: 100, title: '公司'},
-        { field: 'nianxin', width: 70, title: '年薪', sortable: true},
+        { field: 'nianxin', width: 70, title: '年薪', sortable: true, order:'asc'},
         { field: 'zhiwei', width: 100, title: '职位'}
     ];
 
@@ -156,6 +157,7 @@ export class DatagridSelectionDemoComponent implements OnInit {
     // Events
     selectChanged($event) {
         console.log('当前选中的', $event);
+        console.log('Datagrid selectedRow:', this.dg.selectedRow);
     }
 
     unSelect($event) {

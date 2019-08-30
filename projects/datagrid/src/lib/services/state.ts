@@ -1,9 +1,14 @@
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-12 07:47:12
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-30 14:33:57
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { ColumnGroup, DataColumn } from './../types';
 
-export interface Action {
-    type: string;
-    payload?: any;
-}
+export interface RowDataChanges {[id: string]: any; }
 
 export interface FarrisDatagridState {
     [key: string]: any;
@@ -12,12 +17,14 @@ export interface FarrisDatagridState {
     rowHeight?: number;
     idField?: string;
     data?: any;
+    originalData?: any;
     headerHeight?: number;
     pageIndex?: number;
     pageSize?: number;
     pagerHeight?: number;
     pagination?: boolean;
-    columns: DataColumn[];
+    columns: Array<DataColumn> | Array<DataColumn>[];
+    flatColumns?: Array<DataColumn>;
     fitColumns: boolean;
     showLineNumber?: boolean;
     showCheckbox?: boolean;
@@ -40,6 +47,7 @@ export interface FarrisDatagridState {
     sortOrder?: string;
     multiSort?: boolean;
     remoteSort?: boolean;
+    changes: RowDataChanges;
 }
 
 export interface VirtualizedState {
@@ -57,6 +65,8 @@ export interface SelectedRow {
     index: number;
     id: any;
     data: any;
+    dr?: any;
+    editors?: any[];
 }
 
 export const initDataGridState: FarrisDatagridState = {
@@ -85,19 +95,22 @@ export const initDataGridState: FarrisDatagridState = {
     sortName: undefined,
     sortOrder: undefined,
     multiSort: false,
-    remoteSort: true
+    remoteSort: true,
+    changes: null
 };
 
 export interface CellInfo {
     isEditing?: boolean;
     rowData?: any;
     rowId?: any;
-    rowIndex: number;
-    field: string;
+    rowIndex?: number;
+    field?: string;
+    cellElement?: any;
     cellRef?: any;
 }
 
 export interface DataResult {
+    footer?: any[];
     items: any[];
     total?: number;
     pageIndex?: number;

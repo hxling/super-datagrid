@@ -1,9 +1,18 @@
+import { ValidatorMessagerService } from './services/validator-messager.service';
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:53
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-22 19:02:25
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
 import { NgModule, ModuleWithProviders, Provider } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
-import { GRID_EDITORS } from './types/constant';
+import { DataColumnModule } from '@farris/ui-common/column';
 
 import { DatagridComponent } from './datagrid.component';
 import { NgxPaginationModule } from './pagination/ngx-pagination.module';
@@ -17,8 +26,6 @@ import { DatagridBodyComponent } from './components/body/datagrid-body.component
 import { DatagridCellEditorDirective } from './components/columns/column-cell-edit.directive';
 import { DatagridColumnDirective } from './components/columns/datagrid-column.directive';
 import { GridCellEditorDirective } from './components/editors/cell-editor.directive';
-import { DatagridEditorComponent } from './components/editors/grid-editor.component';
-import { TextboxEditorComponent } from './components/editors/textbox-editor.component';
 import { ScrollbarModule } from './scrollbar/scrollbar.module';
 import { ScrollbarConfigInterface, SCROLLBAR_CONFIG } from './scrollbar/scrollbar.interfaces';
 
@@ -26,8 +33,9 @@ import { DatagridRowHoverDirective } from './components/body/datagrid-row-hover.
 import { DatagridRowsComponent } from './components/body/datagrid-rows.component';
 import { DatagridCheckboxComponent } from './components/checkbox/datagrid-checkbox.component';
 import { DatagridHeaderCheckboxComponent } from './components/checkbox/datagrid-header-checkbox.component';
-
-
+import { DatagridResizeColumnDirective } from './components/header/datagrid-resize-column.directive';
+import { SafePipe } from './utils/safe.pipe';
+import { DatagridFooterComponent } from './components/footer/datagrid-footer.component';
 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
@@ -41,15 +49,19 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         ReactiveFormsModule,
         HttpClientModule,
         NgxPaginationModule,
-        ScrollbarModule
+        ScrollbarModule,
+        DataColumnModule.forRoot()
     ],
     declarations: [
+        SafePipe,
+        DatagridComponent,
         DatagridHeaderComponent,
+        DatagridFooterComponent,
+        DatagridResizeColumnDirective,
         DatagridCellEditableDirective,
         DatagridCellComponent,
         DatagridRowDirective,
         DatagridBodyComponent,
-        DatagridComponent,
         DatagridPagerComponent,
         DatagridCellEditorDirective,
         DatagridColumnDirective,
@@ -58,31 +70,26 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DataGridLoadingComponent,
         DatagridCheckboxComponent,
         DatagridHeaderCheckboxComponent,
-        GridCellEditorDirective,
-        DatagridEditorComponent,
-        TextboxEditorComponent
+        GridCellEditorDirective
     ],
     providers: [
         {
             provide: SCROLLBAR_CONFIG,
             useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
         },
-        {
-            provide: GRID_EDITORS, useValue: {name: 'textbox', value: TextboxEditorComponent }, multi: true
-        }
+        ValidatorMessagerService
     ],
     exports: [
         DatagridComponent,
         DatagridHeaderComponent,
         DatagridColumnDirective,
         DatagridCellEditorDirective,
-        DatagridEditorComponent,
-        TextboxEditorComponent,
         DatagridCellEditableDirective,
-        DatagridRowHoverDirective
+        DatagridRowHoverDirective,
+        DatagridResizeColumnDirective
     ],
     entryComponents: [
-        TextboxEditorComponent
+
     ]
 })
 export class DatagridModule {

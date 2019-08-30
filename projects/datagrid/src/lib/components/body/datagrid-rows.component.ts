@@ -1,7 +1,13 @@
-import { DatagridFacadeService } from './../../services/datagrid-facade.service';
-import { DatagridService } from './../../services/datagrid.service';
-
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
+/*
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-20 18:58:05
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ */
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, Injector, Inject, forwardRef } from '@angular/core';
 import { DataColumn } from '../../types';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridBodyComponent } from './datagrid-body.component';
@@ -18,8 +24,12 @@ export class DatagridRowsComponent implements OnInit, AfterViewInit {
     @Input() columns: DataColumn[];
     @ViewChild('tableEl') tableEl: ElementRef;
 
-    constructor(public dg: DatagridComponent, public dgb: DatagridBodyComponent, public el: ElementRef,
-                private dgs: DatagridService, private dfs: DatagridFacadeService) { }
+    constructor(
+        private cd: ChangeDetectorRef,
+        @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
+        @Inject(forwardRef(() => DatagridBodyComponent)) public dgb: DatagridBodyComponent,
+        public el: ElementRef, private injector: Injector) {
+    }
 
     ngOnInit(): void {
     }
@@ -29,7 +39,6 @@ export class DatagridRowsComponent implements OnInit, AfterViewInit {
             if (!this.dg.nowrap) {
                 const trheights = this.getTrDomHeight();
                 this.dgb.updateRowHeight(trheights);
-                // this.dgb.rowHeightList = trheights;
             }
         });
     }

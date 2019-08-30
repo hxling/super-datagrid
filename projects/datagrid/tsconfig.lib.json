@@ -15,7 +15,12 @@
     "lib": [
       "dom",
       "es2018"
-    ]
+    ],
+    "paths": {
+      "@farris/ui-datagrid-editors": [
+        "dist/@farris/ui-datagrid-editors"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "annotateForClosureCompiler": true,

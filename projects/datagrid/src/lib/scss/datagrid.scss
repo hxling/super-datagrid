@@ -1,19 +1,22 @@
 
 
 &-datagrid {
- 
-    border: 1px solid $border-color;
-    position: relative;
-    overflow: hidden;
-    font-size: 14px;
     display: flex;
     flex: 1;
     width: 100%;
     height: 100%;
-    
+    position: relative;
+    overflow: hidden;
+    font-size: 14px;
+    color: $grid-text-color;
+    background-color: $grid-bgcolor;
+   
     table {
         table-layout: fixed;
         border-collapse: separate;
+    }
+    &-unselect {
+        user-select: none;
     }
 
     &-full{
@@ -31,7 +34,9 @@
         z-index: 2;
         position: relative;
         height: $header-cell-height;
+        color: $header-color;
         background-color: $header-bgcolor;
+        font-weight: 400;
         overflow: hidden;
         width: 100%;
         border-bottom: 1px solid $border-color;
@@ -50,28 +55,43 @@
         }
 
         &-cell {
-            height: 36px;
-            border-style: solid;
-            border-width: 0 1px 0 0;
-            border-color: #CBCBCB;
+            height: $header-cell-height;
             overflow: hidden;
             white-space: normal;
+            
             &-content {
                 padding-left: 5px;
             }
-        }
+
+            &:hover {
+                background: $header-hover-bgcolor;
+            }
+
+            &-resize {
+                background-clip: padding-box;
+                position: relative;
+
+                .column-resize-bar {
+                    display: block;
+                    position: absolute!important;
+                    top: 0;
+                    right: 0;
+                    margin: 0;
+                    width: .5em;
+                    height: 100%;
+                    padding: 0;
+                    cursor: e-resize;
+                    border: 1px solid transparent;
+                }
+            }
+
+            &-group {
+                border-bottom: 1px solid $border-color!important;
+            }
         
-        tr td:last-child {
-            border-right: 0;
         }
-
-        &-fixed-left {
-            position: absolute;
-            z-index: 4;
-            background: #fff;
-        }
-
-        &-fixed-right {
+   
+        &-fixed-left, &-fixed-right {
             position: absolute;
             z-index: 4;
             background: #fff;
@@ -83,6 +103,7 @@
         overflow: hidden;
         z-index: 0;
         left: 0;
+
         &-wheel-area {
             overflow:hidden; 
             position: relative;
@@ -91,6 +112,7 @@
         &-fixed-left {
             position: absolute;
             z-index: 1;
+            background: #fff;
 
             .f-datagrid-row-hover ,
             .f-datagrid-row-selected {
@@ -103,7 +125,7 @@
         &-fixed-right {
             position: absolute;
             width: 200px;
-            background: red;
+            background: #fff;
             z-index: 999;
             overflow: hidden;
         }
@@ -113,8 +135,6 @@
             height: $cell-height;
             width: 100%;
             top: 0;
-            border-bottom: 1px solid $border-color;
-            background-color: #fff;
             transition: all .15s ease
         }
 
@@ -126,12 +146,6 @@
         }
     }
 
-    &-sort {
-        float: right;
-        width: 20px;
-        text-align: center;
-    }
-
     &-row {
         overflow: hidden;
         height: $cell-height;
@@ -140,8 +154,10 @@
         border-bottom: 1px solid $border-color;
         background-color: #fff;
         transition: all .15s ease;
+
         &-body {
-            .f-datagrid-cell-group-left-shadow, .f-datagrid-cell-group-right-shadow {
+            .f-datagrid-cell-group-left-shadow,
+            .f-datagrid-cell-group-right-shadow {
                 height:$cell-height;
             }
         }
@@ -149,20 +165,20 @@
         &-hover {
             cursor: pointer;
             background: $row-hover-bgcolor!important;
-            color: $row-hover-color;
+            color: $row-hover-color!important;
             transition: background-color 0.1s ease-in;
 
-            .f-datagrid-cell {
-                background: transparent;
+            .f-datagrid-cell { 
+                //background: transparent;
             }
         }
 
         &-selected {
             background-color: $selected-row-bgcolor;
             color: $selected-row-color;
-    
+            border-color: #e9e9e9;
             .f-datagrid-cell {
-                background-color: transparent;
+                // background-color: transparent;
             }
         }
     }
@@ -174,40 +190,32 @@
         border-width: 0;
         width:1px;
     }
-
-    &-strip {
-        .f-datagrid-body {
-            .f-datagrid-row-selected {
-                background-color: $selected-row-bgcolor!important;
-                color: $selected-row-color;
-            }
-
-            .f-datagrid-row-odd {
-                background-color: $row-odd-bgcolor;
-                .f-datagrid-cell {
-                    background-color: transparent;
-                }
-            }
-            .f-datagrid-row-even {
-                background-color: $row-even-bgcolor;
-                .f-datagrid-cell {
-                    background-color: transparent;
-                }
-            }
-        }
-    }
-
   
     &-cell {
         height: $cell-height;
         border-style: solid;
-        border-width: 0;
+        border-width: 0 0 1px;
         border-color: $border-color;
         overflow: hidden;
         white-space: normal;
 
         &-formgroup {
             height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            datagrid-tooltip {
+                height: 100%;
+                width: 100%;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+            }
+
+            textarea.ng-invalid {
+                border: 1px solid red;
+            }
         }
         &-editor{
             width: 100%;
@@ -216,7 +224,7 @@
         }
 
         &-selected {
-            border: 1px solid $selected-cell-border-color!important;
+            border: 0px solid $selected-cell-border-color!important;
             background-color: $selected-cell-bgcolor!important;
         }
 
@@ -232,11 +240,13 @@
             text-overflow: ellipsis;
             width: 100%;
             margin: 0;
+            padding: 0 1px;
             height: calc(#{$cell-height} - 3px);
             line-height: calc(#{$cell-height} - 3px);
 
             &>span {
-                padding: 5px;
+                padding: 0 5px;
+                display: block;
             }
         }
 
@@ -256,7 +266,65 @@
     
     }
 
+    &-pager {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: $pager-height;
+        border-top: 1px solid #ccc;
+        background:$pager-bgcolor;
+
+        .pagination {
+            margin: 0;
+            padding: 0;
+            height: $pager-height;
+            align-items: center;
+        }
+    }
+
+
+    .ps--active-x > .ps__rail-x,
+    .ps--active-y > .ps__rail-y {
+        z-index: 999;
+    }
+    
+    &-body-fixed-left {
+        >.ps__rail-x,
+        >.ps__rail-y {
+            display: none !important;
+        }
+    }
+
+    &-strip {
+        .f-datagrid-body {
+            .f-datagrid-row-selected {
+                color: $grid-text-color;
+                background-color: $selected-row-bgcolor!important;
+                color: $selected-row-color;
+            }
+
+            .f-datagrid-row-odd {
+                background-color: $row-odd-bgcolor;
+                color: $grid-text-color;
+                .f-datagrid-cell {
+                    background-color: transparent;
+                    border-color: $grid-border-color
+                }
+            }
+            .f-datagrid-row-even {
+                background-color: $row-even-bgcolor;
+                .f-datagrid-cell {
+                    background-color: transparent;
+                }
+            }
+        }
+    }
+
+
     &-bordered {
+        border: 1px solid $grid-border-color;
+
         .f-datagrid-cell {
             border-width: 0 1px 1px 0;
         }
@@ -267,6 +335,15 @@
         }
 
         .f-datagrid-header {
+            &-cell {
+                border: 1px solid $grid-border-color;
+                border-width: 0 1px 0 0;
+            }
+
+            tr td:last-child {
+                border-right: 1px solid $border-color;
+            }
+
             &-fixed-right {
                 border-left: 1px solid $border-color;
             }
@@ -278,27 +355,62 @@
         }
     }
 
+    /**
+    * 拖动列宽
+    */
+    &-resize-proxy {
+        width: 1px;
+        border-left: 1px dashed $resize-proxy-border-color;
+        left: 0px;
+        display: none;
+        position: absolute;
+        height: 100%;
+        z-index: 99;
+    }
+    
+    &-resize-bg{
+        z-index: 98;width: 100%;height: 100%;
+        background: transparent;position: absolute; display: none;
+    }
 
-    &-pager {
+    /** 排序 */
+    &-sort {
+        float: right;
+        width: 20px;
+        text-align: center;
+        cursor: pointer;
+        opacity: .65;
+
+        &:hover {
+            color: blue;
+            opacity: 1;
+        }
+        &-asc, &-desc {
+            opacity: 1;
+        }
+    }
+
+    /** 折行 */
+    &-wrap &-cell-content {
+        white-space: normal;
+        word-break: break-all;
+        word-spacing: normal;
+        height: auto;
+        line-height: 24px;
+    }
+
+    &-footer {
+        background: #fff;
+        z-index: 97;
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 40px;
-        border-top: 1px solid #ccc;
-        background: #fafafa;
-    }
+        min-height: 36px;
+        border-top:1px solid #ccc;
 
-
-
-
-    .ps--active-x > .ps__rail-x, .ps--active-y > .ps__rail-y {
-        z-index: 999;
-    }
-    
-    &-body-fixed-left {
-        >.ps__rail-x, >.ps__rail-y {
-            display: none !important;
+        table {
+            table-layout: fixed;
         }
     }
 }

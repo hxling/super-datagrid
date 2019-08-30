@@ -1,8 +1,9 @@
+import { HeaderGroupDemoComponent } from './demos/group-header/header-group.component';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 14:58:07
+ * @LastEditTime: 2019-08-14 09:45:14
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -32,6 +33,8 @@ const routes: Routes = [
     { path: 'custom-cell', component: CustomCellComponent },
     { path: 'fit-columns', component: FitColumnsComponent },
     { path: 'selection', component: DatagridSelectionDemoComponent},
+    { path: 'header-group', component: HeaderGroupDemoComponent},
+    { path: 'lazy-load', loadChildren: './demos2/demos2.module#Demos2Module' },
     { path: '', component: PageScrollComponent}
 ];
 

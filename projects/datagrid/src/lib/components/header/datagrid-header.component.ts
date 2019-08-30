@@ -2,12 +2,14 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 14:16:19
- * @Company: Inspur
+ * @LastEditTime: 2019-08-14 08:46:34
+ * @QQ: 1055818239
  * @Version: v0.0.1
  */
+
+import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef,
+    AfterViewInit, ViewEncapsulation, Injector, Inject, forwardRef, Optional } from '@angular/core';
 import { DataColumn } from './../../types/data-column';
-import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { ColumnGroup } from '../../types/data-column';
 import { DatagridService } from '../../services/datagrid.service';
 import { SCROLL_X_ACTION, FIXED_LEFT_SHADOW_CLS, SCROLL_X_REACH_START_ACTION, FIXED_RIGHT_SHADOW_CLS } from '../../types/constant';
@@ -18,30 +20,15 @@ import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 @Component({
     selector: 'datagrid-header',
     templateUrl: './header.component.html',
-    styles: [`
-        .f-datagrid-sort {
-            float: right;
-            width: 20px;
-            text-align: center;
-            cursor: pointer;
-            opacity: .65;
-        }
-
-        .f-datagrid-sort:hover {
-            color: blue;
-            opacity: 1;
-        }
-        .f-datagrid-sort-asc, .f-datagrid-sort-desc {
-            opacity: 1;
-        }
-    `]
+    encapsulation: ViewEncapsulation.None
 })
 export class DatagridHeaderComponent implements OnInit, AfterViewInit {
     @Input() height = 36;
+    @Input() columns = [];
     @Input() columnsGroup: ColumnGroup;
 
     @ViewChild('header') header: ElementRef;
-    @ViewChild('headerContainer') headerContainer: ElementRef;
+    @ViewChild('headerContainer') headerColumnsTable: ElementRef;
     @ViewChild('fixedLeft') fixedLeft: ElementRef;
 
     private _chkall: DatagridHeaderCheckboxComponent;
@@ -61,11 +48,18 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
         }
     }
 
-    constructor( private dgs: DatagridService, private dfs: DatagridFacadeService,
-                 private render2: Renderer2, public dg: DatagridComponent) {
+    private dgs: DatagridService;
+    private dfs: DatagridFacadeService;
+
+    constructor(
+        private render2: Renderer2, private injector: Injector,
+        @Optional() public dg: DatagridComponent ) {
+        this.dfs = this.injector.get(DatagridFacadeService);
+        this.dgs = this.injector.get(DatagridService);
+
         this.dgs.scorll$.subscribe((d: any) => {
             if (d.type === SCROLL_X_ACTION) {
-                this.render2.setStyle(this.headerContainer.nativeElement,  'transform', `translate3d(-${d.x}px, 0px, 0px)` );
+                this.render2.setStyle(this.headerColumnsTable.nativeElement,  'transform', `translate3d(-${d.x}px, 0px, 0px)` );
                 if (this.fixedLeft) {
                     this.render2.addClass(this.fixedLeft.nativeElement, FIXED_LEFT_SHADOW_CLS);
                 }
@@ -100,15 +94,16 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
         });
     }
 
-    private setHeight() {
-        const offsetHeight = this.header.nativeElement.offsetHeight;
-        if (this.height < offsetHeight) {
-            this.height = offsetHeight;
-        }
-    }
+    // setHeight() {
+    //     const offsetHeight =  Math.max(this.headerColumnsTable.nativeElement.offsetHeight, this.dg.headerHeight);
+    //     if (this.height < offsetHeight) {
+    //         this.height = offsetHeight;
+    //         this.header.nativeElement.style.height = this.height + 'px';
+    //     }
+    // }
 
     ngAfterViewInit() {
-        this.setHeight();
+        // this.setHeight();
     }
 
     onSortColumnClick(e: MouseEvent, col: DataColumn) {
@@ -152,14 +147,16 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
 
         this.dg.sortName = sortFields.join(',');
         this.dg.sortOrder = sortOrders.join(',');
-
         this.dfs.setSortInfo(this.dg.sortName, this.dg.sortOrder);
+
         this.dg.beforeSortColumn(this.dg.sortName, this.dg.sortOrder).subscribe(() => {
             if (this.dg.remoteSort) {
                 this.dg.reload();
             } else {
                 this.dfs.clientSort();
             }
+
+            this.dg.columnSorted.emit(col);
         });
 
     }

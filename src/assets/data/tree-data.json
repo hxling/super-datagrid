@@ -1,0 +1,453 @@
+[
+    {
+        "data": {
+            "name": "AABB_2008/09/01",
+            "size": "als",
+            "type": "passed",
+            "age": 30,
+            "birthday": "1986-12-13",
+            "photo": "http://img.bqatj.com/img/03803b86d98b2af7.jpg",
+            "single": false,
+            "xueli": "1001"
+        },
+        "children": [],
+        "selectable": false,
+        "icon": "k-icon k-i-unlink-horizontal",
+        "type": "k-icon k-i-lock",
+        "expandedIcon": "k-icon k-i-unlock"
+    },
+    {
+        "data": {
+            "name": "AABB_Cloud",
+            "size": "20mb",
+            "type": "rejected",
+            "age": 23,
+            "birthday": "1989-12-13",
+            "photo": "http://img.bqatj.com/img/048b739a78cf8269.jpg",
+            "single": true,
+            "xueli": "1004"
+        },
+        "children": [
+            {
+                "data": {
+                    "name": "AABB_2009/03/04",
+                    "size": "10mb",
+                    "type": "review",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/1405390bcaae5fec.jpg",
+                    "single": true,
+                    "xueli": "1006"
+                },
+                "icon": "k-icon k-i-unlink-horizontal",
+                "type": "k-icon k-i-lock",
+                "expandedIcon": "k-icon k-i-unlock",
+                "leaf": false
+            },
+            {
+                "data": {
+                    "name": "AABB_backup-2.zip",
+                    "size": "10mb",
+                    "type": "Zip",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/17fb52837112782a.jpg",
+                    "single": true,
+                    "xueli": "1006"
+                },
+                "icon": "k-icon k-i-unlink-horizontal",
+                "type": "k-icon k-i-lock",
+                "expandedIcon": "k-icon k-i-unlock"
+            }
+        ],
+        "selectable": false,
+        "type": "k-icon k-i-lock",
+        "expandedIcon": "k-icon k-i-unlock"
+    },
+    {
+        "data": {
+            "name": "AABB_Desktop",
+            "size": "150kb",
+            "type": "Folder",
+            "age": 52,
+            "birthday": "1989-01-13",
+            "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+            "single": true,
+            "xueli": "1006"
+        },
+        "children": [
+            {
+                "data": {
+                    "name": "AABB_note-meeting.txt",
+                    "size": "50kb",
+                    "type": "Text",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": true,
+                    "xueli": "1006"
+                }
+            },
+            {
+                "data": {
+                    "name": "AABB_note-todo.txt",
+                    "size": "100kb",
+                    "type": "Text",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": false,
+                    "xueli": "1006"
+                }
+            }
+        ],
+        "selectable": true,
+        "type": "k-icon k-i-lock",
+        "expandedIcon": "k-icon k-i-unlock"
+    },
+    {
+        "data": {
+            "name": "AABB_Documents",
+            "size": "75kb",
+            "type": "Folder",
+            "age": 52,
+            "birthday": "1989-01-13",
+            "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+            "single": true,
+            "xueli": "1006"
+        },
+        "children": [
+            {
+                "data": {
+                    "name": "AABB_Work",
+                    "size": "55k",
+                    "type": "Folder",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": false,
+                    "xueli": "1006"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "name": "AABB_Expenses.doc",
+                            "size": "30kb",
+                            "type": "Document",
+                            "age": 52,
+                            "birthday": "1989-01-13",
+                            "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                            "single": true,
+                            "xueli": "1006"
+                        }
+                    },
+                    {
+                        "data": {
+                            "name": "AABB_Resume.doc",
+                            "size": "25kb",
+                            "type": "Resume",
+                            "age": 52,
+                            "birthday": "1989-01-13",
+                            "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                            "single": false,
+                            "xueli": "1006"
+                        }
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "name": "AABB_Home",
+                    "size": "20k",
+                    "type": "Folder",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": true,
+                    "xueli": "1006"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "name": "AABB_Invoices",
+                            "size": "20kb",
+                            "type": "Text",
+                            "age": 52,
+                            "birthday": "1989-01-13",
+                            "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                            "single": false,
+                            "xueli": "1006"
+                        },
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "data": {
+            "name": "AABB_Downloads",
+            "size": "25mb",
+            "type": "Folder",
+            "age": 52,
+            "birthday": "1989-01-13",
+            "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+            "single": false,
+            "xueli": "1006"
+        },
+        "children": [
+            {
+                "data": {
+                    "name": "AABB_Spanish",
+                    "size": "10mb",
+                    "type": "Folder",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": false,
+                    "xueli": "1006"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "name": "AABB_tutorial-a1.txt",
+                            "size": "5mb",
+                            "type": "Text",
+                            "age": 52,
+                            "birthday": "1989-01-13",
+                            "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                            "single": true,
+                            "xueli": "1006"
+                        }
+                    },
+                    {
+                        "data": {
+                            "name": "AABB_tutorial-a2.txt",
+                            "size": "5mb",
+                            "type": "Text",
+                            "age": 52,
+                            "birthday": "1989-01-13",
+                            "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                            "single": true,
+                            "xueli": "1006"
+                        }
+                    }
+                ]
+            },
+            {
+                "data": {
+                    "name": "AABB_Travel",
+                    "size": "15mb",
+                    "type": "Text",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": false,
+                    "xueli": "1006"
+                },
+                "children": [
+                    {
+                        "data": {
+                            "name": "AABB_Hotel.pdf",
+                            "size": "10mb",
+                            "type": "PDF",
+                            "age": 52,
+                            "birthday": "1989-01-13",
+                            "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                            "single": true,
+                            "xueli": "1006"
+                        }
+                    },
+                    {
+                        "data": {
+                            "name": "AABB_Flight.pdf",
+                            "size": "5mb",
+                            "type": "PDF",
+                            "age": 52,
+                            "birthday": "1989-01-13",
+                            "photo": "http://img.bqatj.com/img/2da6f4c4784d7615.jpg",
+                            "single": false,
+                            "xueli": "1006"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "data": {
+            "name": "AABB_Main",
+            "size": "50m",
+            "type": "Folder",
+            "age": 52,
+            "birthday": "1989-01-13",
+            "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+            "single": false,
+            "xueli": "1006"
+        },
+        "children": [
+            {
+                "data": {
+                    "name": "AABB_bin",
+                    "size": "50b",
+                    "type": "Link",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": true,
+                    "xueli": "1006"
+                }
+            },
+            {
+                "data": {
+                    "name": "AABB_etc",
+                    "size": "10kb",
+                    "type": "Link",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": false,
+                    "xueli": "1006"
+                }
+            },
+            {
+                "data": {
+                    "name": "AABB_var",
+                    "size": "10kb",
+                    "type": "Link",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/3ad342aadb005340.jpg",
+                    "single": true,
+                    "xueli": "1006"
+                }
+            }
+        ]
+    },
+    {
+        "data": {
+            "name": "AABB_Other",
+            "size": "5mb",
+            "type": "Folder",
+            "age": 52,
+            "birthday": "1989-01-13",
+            "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+            "single": false,
+            "xueli": "1006"
+        },
+        "children": [
+            {
+                "data": {
+                    "name": "AABB_todo.txt",
+                    "size": "3mb",
+                    "type": "Text",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": true,
+                    "xueli": "1002"
+                }
+            },
+            {
+                "data": {
+                    "name": "AABB_logo.png",
+                    "size": "2mb",
+                    "type": "Picture",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo":"http://img.bqatj.com/img/6a565e357333fb75.jpg",
+                    "single": false,
+                    "xueli": "1006"
+                }
+            }
+        ]
+    },
+    {
+        "data": {
+            "name": "AABB_Pictures",
+            "size": "150kb",
+            "type": "Folder",
+            "age": 52,
+            "birthday": "1989-01-13",
+            "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+            "single": true,
+            "xueli": "1003"
+        },
+        "children": [
+            {
+                "data": {
+                    "name": "AABB_barcelona.jpg",
+                    "size": "90kb",
+                    "type": "Picture",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo":"http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": true,
+                    "xueli": "1006"
+                }
+            },
+            {
+                "data": {
+                    "name": "AABB_primeng.png",
+                    "size": "30kb",
+                    "type": "Picture",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo":"http://img.bqatj.com/img/50d8dd82ac30c2d9.jpg",
+                    "single": false,
+                    "xueli": "1006"
+                }
+            },
+            {
+                "data": {
+                    "name": "AABB_prime.jpg",
+                    "size": "30kb",
+                    "type": "Picture",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo":"http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": true,
+                    "xueli": "1006"
+                }
+            }
+        ]
+    },
+    {
+        "data": {
+            "name": "AABB_Videos",
+            "size": "1500m",
+            "type": "Folder",
+            "age": 52,
+            "birthday": "1989-01-13",
+            "photo": "http://img.bqatj.com/img/50d8dd82ac30c2d9.jpg",
+            "single": false,
+            "xueli": "1006"
+        },
+        "children": [
+            {
+                "data": {
+                    "name": "AABB_primefaces.mkv",
+                    "size": "1000mb",
+                    "type": "Video",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": true,
+                    "xueli": "1006"
+                }
+            },
+            {
+                "data": {
+                    "name": "AABB_intro.avi",
+                    "size": "500mb",
+                    "type": "Video",
+                    "age": 52,
+                    "birthday": "1989-01-13",
+                    "photo": "http://img.bqatj.com/img/1a75bf5bb100d2b0.jpg",
+                    "single": false,
+                    "xueli": "1006"
+                }
+            }
+        ]
+    }
+]

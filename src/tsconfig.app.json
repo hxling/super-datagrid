@@ -6,6 +6,9 @@
     "paths": {
       "@farris/ui-datagrid": [
         "projects/datagrid/src/public-api.ts"
+      ],
+      "@farris/ui-datagrid-editors": [
+        "projects/datagrid-editors/src/public-api.ts"
       ]
     }
   },

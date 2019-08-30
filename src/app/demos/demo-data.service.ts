@@ -3,7 +3,7 @@ import { Utils } from './utils';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-07-29 08:14:22
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-09 15:01:40
+ * @LastEditTime: 2019-08-26 08:39:24
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -78,16 +78,32 @@ export class DemoDataService implements RestService {
             arr.push({
                 id: k,
                 name: Utils.userNames[Utils.randomNum(0, 19)],
-                sex: '男',
-                birthday: (2000 + i) + '-01-01',
+                sex: Utils.getXingBie(),
+                birthday: Utils.getFullDate(),
                 maray: ['', true, false][Utils.randomNum(0, 2)],
+                city: '',
                 addr: this.buildLongText(i, `天齐大道${7000 + i}号`),
-                company: `inspur`,
+                company: Utils.getCompany(),
                 nianxin: Math.round(Math.random() * 10000) * 12,
-                zhiwei: 'CEO&CPU'
+                zhiwei: Utils.getZhiWei()
             });
         }
         this.data = arr;
+        return arr;
+    }
+
+    createFooterData() {
+        const arr = [];
+        arr.push({
+            id: '合计',
+            nianxin: '￥123456'
+        });
+
+        arr.push({
+            name: '总记录数：',
+            sex: '100条'
+        });
+
         return arr;
     }
 

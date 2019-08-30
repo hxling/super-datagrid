@@ -1,8 +1,16 @@
+<!--
+ * @Author: 疯狂秀才(Lucas Huang)
+ * @Date: 2019-08-06 07:43:07
+ * @LastEditors: 疯狂秀才(Lucas Huang)
+ * @LastEditTime: 2019-08-27 12:49:19
+ * @QQ: 1055818239
+ * @Version: v0.0.1
+ -->
 <div  class="f-datagrid-body" [ngStyle]="bodyStyle" [style.top.px]="top">
 
     <div [scrollbar]="psConfig" class="ps f-datagrid-body-wheel-area" #ps="ngxScrollbar"
         [ngStyle]="bodyStyle" (psXReachEnd)="onPsXReachEnd($event)"
-        (psScrollY)="onScrollToY($event)" (psYReachEnd)="onScrollYEnd($event)"
+        (psScrollY)="onScrollToY($event)"
         (psScrollX)="onScrollToX($event)" (psXReachStart)="onPsXReachStart($event)">
        
         <div [style.height]="wheelHeight+ 'px'" [style.width.px]="columnsGroup?.totalWidth">
@@ -11,25 +19,35 @@
                 *ngIf="dg.showLineNumber || dg.showCheckbox " [style.transform]="'translate3d('+ scrollLeft +'px, '+ topHideHeight +'px, 0px)'"
                 [style.width.px]="leftFixedWidth" [style.height.px]="wheelHeight - topHideHeight">
 
-                <table style="width: 100%" cellpadding="0" cellspacing="0">
+                <table style="width: 100%" cellpadding="0" cellspacing="0" >
+                    <colgroup>
+                        <col [width]="dg.lineNumberWidth + 'px'" *ngIf="dg.showLineNumber"/>
+                        <col width="36px" *ngIf="dg.showCheckbox"/>
+                        <col *ngFor="let col of columnsGroup?.leftFixed" [width]="col.width + 'px'"/>
+                    </colgroup>
                     <tr class="f-datagrid-body-row fixed-left-row" [style.height.px]="rowHeight"
                         *ngFor="let row of data;trackBy: dg.trackByRows; let i=index; odd as odd"
                         [class.f-datagrid-row-odd]="odd && dg.striped"
                         [class.f-datagrid-row-even]="!odd && dg.striped"
                         [class.f-datagrid-row-selected]="currentRowId === row[dg.idField] "
+                        [class.f-datagrid-row-hover]="dg.rowHover && hoverRowIndex === hoverRow.rowIndex"
+                        [grid-row]="row" [row-hover]="row" [rowIndex]="startRowIndex + i"  #hoverRow="rowHover" 
                         >
-                        <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" [style.width.px]="dg.lineNumberWidth">
+                        <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" >
                             {{ dg.pageSize * (dg.pageIndex-1) + startRowIndex + i + 1 }}
                         </td>
 
-                        <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox" style="width: 36px; text-align: center;">
+                        <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox" style="text-align: center"><!-- style="width: 36px; text-align: center;"-->
                             <datagrid-checkbox [rowData]="row" [rowIndex]="startRowIndex + i" [checked]="isChecked(row)"></datagrid-checkbox>
                         </td>
-
+                        
+                        <td [cell-editable]="row" [column]="col" [attr.field]="col.field"
+                            class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columnsGroup?.leftFixed; let ci = index;">
+                            <grid-body-cell [width]="col.width" [height]="dg.rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
+                        </td>
                     </tr>
                 </table>
             </div>
-            
 
             <div #fixedRight class="f-datagrid-body-fixed-right" [style.width.px]="rightFixedWidth" 
                 *ngIf="columnsGroup?.rightFixed && columnsGroup?.rightFixed.length"
