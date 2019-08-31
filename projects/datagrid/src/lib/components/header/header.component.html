@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-27 11:26:03
+ * @LastEditTime: 2019-08-30 18:12:48
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -27,13 +27,6 @@
                     </tr>
                 </thead>
             </table>
-
-            <!--
-            <div class="f-datagrid-cell-header" *ngFor="let col of leftFixedCols">
-                <xui-datagrid-cell [width]="col.width" [left]="col.left" [height]="height">
-                    {{col.title}}
-                </xui-datagrid-cell>
-            </div> -->
         </div>
     </ng-container>
 
@@ -94,19 +87,3 @@
         
     </div>
 </div>
-
-
-<!--  [style.height.px]="(col.rowspan || 1) * dg.headerHeight" 
-<td [resize-column]="col" class="f-datagrid-header-cell" 
-[attr.align]="col.halign" [style.width.px]="col.width" 
-[style.height.px]="height" *ngFor="let col of columnsGroup?.normalColumns">
-<div class="f-datagrid-header-cell-content">
-{{ col.title }}
-<ng-container *ngIf="col.sortable">
-<span class="f-datagrid-sort" [class.f-datagrid-sort-asc]="col.order === 'asc'" [class.f-datagrid-sort-desc]="col.order === 'desc'"
-    (click)="onSortColumnClick($event, col)" 
-    *ngIf="col.order">{{ col.order === 'asc'? '↑' : '↓' }}  </span>
-<span class="f-datagrid-sort" (click)="onSortColumnClick($event, col)" *ngIf="!col.order"> ⇵ </span>
-</ng-container>
-</div>
-</td> -->

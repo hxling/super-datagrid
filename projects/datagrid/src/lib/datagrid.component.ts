@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-30 14:54:01
+ * @LastEditTime: 2019-08-31 14:29:43
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -19,13 +19,13 @@ import { of, Subscription, Observable } from 'rxjs';
 import { DataColumn, CustomStyle, MoveDirection, ColumnGroup } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DatagridColumnDirective } from './components/columns/datagrid-column.directive';
-import { DataResult, CellInfo, SelectedRow } from './services/state';
+import { CellInfo, SelectedRow } from './services/state';
 import { RestService, DATAGRID_REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
 import { GRID_EDITORS, CELL_SELECTED_CLS, GRID_VALIDATORS } from './types/constant';
 import { DomHandler } from './services/domhandler';
 import { Utils } from './utils/utils';
-import { DatagridValidator } from './types/datagrid-validator';
+import { ColumnFormatService } from '@farris/ui-common/column';
 
 // styleUrls: [
 //     './scss/index.scss'
@@ -304,6 +304,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     documentClickEndRowEditHandler: any;
 
     pending = false;
+    public colFormatSer: ColumnFormatService;
 
     constructor(public cd: ChangeDetectorRef,
                 public el: ElementRef,
@@ -314,7 +315,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
 
         this.restService = this.inject.get<RestService>(DATAGRID_REST_SERVICEE, null);
-
+        this.colFormatSer = this.inject.get(ColumnFormatService);
         const dataSubscription = this.dfs.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
             this.cd.detectChanges();
@@ -383,6 +384,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                     return;
                 }
                 this.total = res.total;
+
+                if (res.footer) {
+                    this.footerData = res.footer;
+                }
+
                 this.loadData(res.items);
             });
         }
@@ -1115,6 +1121,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             left: this.replacePX2Empty(style.borderLeftWidth)
         };
     }
+
+    formatData(field: any, data: any, formatter: any) {
+        const value = this.getFieldValue(field, data);
+        return this.colFormatSer.format(value, data, formatter);
+    }
+
+    getFieldValue(field, rowData) {
+        return Utils.getValue(field, rowData);
+    }
+
     //#endregion
 
     //#region Select

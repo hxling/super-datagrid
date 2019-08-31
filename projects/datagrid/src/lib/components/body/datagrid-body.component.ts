@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 19:09:50
+ * @LastEditTime: 2019-08-31 17:03:48
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -46,6 +46,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     fixedRightScrollLeft = 0;
     maxScrollLeft = 0;
     showRightShadow = false;
+    footerHeight = 0;
 
     @Input() columnsGroup: ColumnGroup;
     // 虚拟加载
@@ -124,8 +125,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             if (state) {
                 this.top = this.dg.realHeaderHeight;
                 const pagerHeight = state.pagerHeight;
-                const footerHeight = this.dg.showFooter ? this.dg.footerHeight * this.dg.footerData.length : 0;
-                this.height = state.height - this.top - pagerHeight - footerHeight;
+                this.footerHeight = this.dg.showFooter ? this.dg.footerHeight * this.dg.footerData.length : 0;
+                this.height = state.height - this.top - pagerHeight - this.footerHeight;
                 this.width = state.width;
                 this.rowHeight = state.rowHeight;
 
@@ -266,6 +267,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         if (this.dg.nowrap) {
             this.wheelHeight = this.dg.pagination ?
             this.dg.pageSize * this.rowHeight : this.dg.total * this.rowHeight;
+            this.footerHeight = this.dg.showFooter ? this.dg.footerHeight * this.dg.footerData.length : 0;
+            if (this.dg.showFooter) {
+                this.wheelHeight = this.wheelHeight - this.footerHeight;
+            }
         }
     }
 
