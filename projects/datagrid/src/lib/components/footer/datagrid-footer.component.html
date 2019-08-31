@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 15:02:10
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-31 15:14:38
+ * @LastEditTime: 2019-08-31 17:17:11
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -10,10 +10,15 @@
     <!-- 你瞅啥？ 瞅你咋地！！！ -->
     <div #fixedLeft class="f-datagrid-body-fixed-left" [style.width.px]="columnsGroup?.leftFixedWidth" [style.height.px]="height" *ngIf="columnsGroup?.leftFixed && columnsGroup?.leftFixed.length  || dg?.showLineNumber || dg?.showCheckbox "> 
         <table cellpadding="0" cellspacing="0" border="0">
+            <colgroup>
+                <col [width]="dg.lineNumberWidth + 'px'" *ngIf="dg.showLineNumber"/>
+                <col width="36px" *ngIf="dg.showCheckbox"/>
+                <col *ngFor="let col of columnsGroup?.leftFixed" [width]="col.width + 'px'"/>
+            </colgroup>
             <tbody>
                 <tr class="f-datagrid-body-row fixed-left-row" [style.height.px]="36" *ngFor="let row of data;trackBy: dg.trackByRows">
-                    <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber"  [style.width.px]="dg?.lineNumberWidth"></td>
-                    <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox" style="text-align: center; width: 36px"></td>
+                    <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" ></td>
+                    <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox" style="text-align: center"></td>
                     
                     <td [attr.field]="col.field" class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columnsGroup?.leftFixed; let ci = index;">
                         <div class="f-datagrid-cell-content" [style.width.px]="col.width">

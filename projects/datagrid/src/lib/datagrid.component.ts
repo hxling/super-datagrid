@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-31 14:29:43
+ * @LastEditTime: 2019-08-31 18:07:12
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -64,7 +64,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() headerHeight = 40;
     /** 显示页脚 */
     @Input() showFooter = false;
-    @Input() footerHeight = 36;
+    @Input() footerRowHeight = 36;
     /** 行高 */
     @Input() rowHeight = 36;
     /** 填充容器 */
@@ -169,7 +169,15 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 数据源 */
     @Input() data: any[];
     /** 页脚数据 */
-    @Input() footerData: any[] = [];
+    private _footerData = [];
+    @Input() get footerData() {
+        return this._footerData;
+    }
+    set footerData(rows) {
+        this._footerData = rows;
+        this.footerHeight = this.showFooter ? this.footerRowHeight * rows.length : 0;
+    }
+
     /** 验证不通过时可以结束编辑 */
     @Input() endEditByInvalid = true;
 
@@ -278,6 +286,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     currentCell: CellInfo;
     flatColumns: DataColumn[];
     footerWidth  = 0;
+    footerHeight = 0;
 
     clickDelay = 150;
     private resizeColumnInfo = {

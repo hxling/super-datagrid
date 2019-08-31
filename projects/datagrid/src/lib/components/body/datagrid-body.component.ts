@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-31 17:03:48
+ * @LastEditTime: 2019-08-31 18:21:47
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -46,7 +46,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     fixedRightScrollLeft = 0;
     maxScrollLeft = 0;
     showRightShadow = false;
-    footerHeight = 0;
+    @Input() footerHeight = 0;
 
     @Input() columnsGroup: ColumnGroup;
     // 虚拟加载
@@ -125,8 +125,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             if (state) {
                 this.top = this.dg.realHeaderHeight;
                 const pagerHeight = state.pagerHeight;
-                this.footerHeight = this.dg.showFooter ? this.dg.footerHeight * this.dg.footerData.length : 0;
-                this.height = state.height - this.top - pagerHeight - this.footerHeight;
+                this.height = state.height - this.top - pagerHeight;
                 this.width = state.width;
                 this.rowHeight = state.rowHeight;
 
@@ -159,6 +158,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
         this.onDataSourceChangeSubscribe = this.dgs.onDataSourceChange.subscribe(() => {
             this.ps.scrollToTop();
+            this.bodyStyle = this.getBodyStyle();
         });
         this.subscriptions.push(this.onDataSourceChangeSubscribe);
 
@@ -241,6 +241,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
                 this.cd.detectChanges();
             }
         }
+
+        if (changes.footerHeight !== undefined && !changes.footerHeight.isFirstChange()) {
+            this.setWheelHeight();
+        }
     }
 
     ngOnDestroy() {
@@ -265,19 +269,15 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     private setWheelHeight() {
         if (this.dg.nowrap) {
-            this.wheelHeight = this.dg.pagination ?
-            this.dg.pageSize * this.rowHeight : this.dg.total * this.rowHeight;
-            this.footerHeight = this.dg.showFooter ? this.dg.footerHeight * this.dg.footerData.length : 0;
-            if (this.dg.showFooter) {
-                this.wheelHeight = this.wheelHeight - this.footerHeight;
-            }
+            this.wheelHeight = this.dg.pagination ? this.dg.pageSize * this.rowHeight : this.dg.total * this.rowHeight;
+            this.wheelHeight = this.wheelHeight - this.footerHeight;
         }
     }
 
     private getBodyStyle() {
         return {
             width: `${this.width}px`,
-            height: `${this.height}px`
+            height: `${this.height - this.footerHeight}px`
         };
     }
 
