@@ -4,7 +4,7 @@ import { QueryList, Renderer2 } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-30 14:54:50
+ * @LastEditTime: 2019-09-06 16:05:36
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -67,7 +67,13 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
 
     @HostListener('click', ['$event'])
     onRowClick(event: MouseEvent) {
+
+        if (this.dg.disabled) {
+            return;
+        }
+
         const rowId = this.dfs.primaryId(this.rowData);
+
         if (!this.dfs.isRowSelected(rowId)) {
             const canendedit = this.dg.endRowEdit();
 

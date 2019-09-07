@@ -3,7 +3,7 @@ import { ValidatorMessagerService } from './services/validator-messager.service'
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-22 19:02:25
+ * @LastEditTime: 2019-09-06 08:35:29
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -36,11 +36,15 @@ import { DatagridHeaderCheckboxComponent } from './components/checkbox/datagrid-
 import { DatagridResizeColumnDirective } from './components/header/datagrid-resize-column.directive';
 import { SafePipe } from './utils/safe.pipe';
 import { DatagridFooterComponent } from './components/footer/datagrid-footer.component';
+/** 兼容下老版本 */
+import { TextboxEditorComponent } from './components/editors/text-editor.component';
 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
     minScrollbarLength: 20
 };
+
+
 
 @NgModule({
     imports: [
@@ -70,7 +74,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DataGridLoadingComponent,
         DatagridCheckboxComponent,
         DatagridHeaderCheckboxComponent,
-        GridCellEditorDirective
+        GridCellEditorDirective,
+        TextboxEditorComponent
     ],
     providers: [
         {
@@ -86,7 +91,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DatagridCellEditorDirective,
         DatagridCellEditableDirective,
         DatagridRowHoverDirective,
-        DatagridResizeColumnDirective
+        DatagridResizeColumnDirective,
+        TextboxEditorComponent
     ],
     entryComponents: [
 

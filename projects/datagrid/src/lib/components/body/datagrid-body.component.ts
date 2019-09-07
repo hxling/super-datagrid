@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-31 18:21:47
+ * @LastEditTime: 2019-09-04 17:13:45
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -159,6 +159,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.onDataSourceChangeSubscribe = this.dgs.onDataSourceChange.subscribe(() => {
             this.ps.scrollToTop();
             this.bodyStyle = this.getBodyStyle();
+            // this.app.tick();
+            this.cd.detectChanges();
         });
         this.subscriptions.push(this.onDataSourceChangeSubscribe);
 

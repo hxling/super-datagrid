@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 18:17:19
+ * @LastEditTime: 2019-09-06 16:03:44
  * @Company: Inspur
  * @Version: v0.0.1
  -->
@@ -13,6 +13,11 @@
                 <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
                     <input id="chk_rowHover" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useRowHover">
                     <label for="chk_rowHover" class="custom-control-label">启用 rowHover </label>
+                </div>
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_disabledSelect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="disabledSelect">
+                    <label for="chk_disabledSelect" class="custom-control-label">禁止选中行 </label>
                 </div>
 
                 <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
@@ -141,6 +146,7 @@
             [sortOrder]="'asc'"
 
             [nowrap]="true"
+            [disabled]="disabledSelect"
 
             [beforeSelect]="onBeforeSelect"
             [beforeUnselect]="onBeforeUnselect"

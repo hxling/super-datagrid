@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-31 18:07:12
+ * @LastEditTime: 2019-09-05 07:42:11
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -38,7 +38,7 @@ import { ColumnFormatService } from '@farris/ui-common/column';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         DatagridFacadeService,
-        DatagridService,
+        DatagridService
     ],
     exportAs: 'datagrid'
 })

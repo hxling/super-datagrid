@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-16 17:22:06
+ * @LastEditTime: 2019-09-06 16:04:06
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -34,6 +34,7 @@ export class DatagridSelectionDemoComponent implements OnInit {
     useStripe = true;
     wrap = false;
     fitColumns = true;
+    disabledSelect = false;
 
     remoteSort = true;
     multiSort = false;
@@ -67,7 +68,7 @@ export class DatagridSelectionDemoComponent implements OnInit {
         { field: 'maray', width: 70, title: '婚否', sortable: true},
         { field: 'addr', width: 170, title: '地址'},
         { field: 'company', width: 100, title: '公司'},
-        { field: 'nianxin', width: 70, title: '年薪', sortable: true, order:'asc'},
+        { field: 'nianxin', width: 70, title: '年薪', sortable: true, order: 'asc'},
         { field: 'zhiwei', width: 100, title: '职位'}
     ];
 
