@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-06 16:03:44
+ * @LastEditTime: 2019-09-13 11:13:40
  * @Company: Inspur
  * @Version: v0.0.1
  -->
@@ -41,6 +41,24 @@
                 </div>
 
                 <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_showCheckbox" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showCheckbox">
+                    <label for="chk_showCheckbox" class="custom-control-label"> 显示复选框 </label>
+                </div>
+
+                
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_checkonselect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="checkonselect">
+                    <label for="chk_checkonselect" class="custom-control-label"> 选中并钩选 </label>
+                </div>
+
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_selectoncheck" type="checkbox" #chk class="custom-control-input" [(ngModel)]="selectoncheck">
+                    <label for="chk_selectoncheck" class="custom-control-label"> 钩选并选中 </label>
+                </div>
+
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
                     <input id="chk_MultiSelect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useMultiSelect">
                     <label for="chk_MultiSelect" class="custom-control-label"> 启用多选 </label>
                 </div>
@@ -52,27 +70,13 @@
                 </div>
                 
 
-                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                    <input id="chk_showCheckbox" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="showCheckbox">
-                    <label for="chk_showCheckbox" class="custom-control-label"> 显示复选框 </label>
-                </div>
+                
 
                 <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
                     <input id="chk_showAllCheckbox" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="showAllCheckbox">
                     <label for="chk_showAllCheckbox" class="custom-control-label"> 显示全选 </label>
                 </div>
 
-
-                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                    <input id="chk_checkonselect" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="checkonselect">
-                    <label for="chk_checkonselect" class="custom-control-label"> 选中并钩选 </label>
-                </div>
-
-
-                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                    <input id="chk_selectoncheck" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="selectoncheck">
-                    <label for="chk_selectoncheck" class="custom-control-label"> 钩选并选中 </label>
-                </div>
 
                 <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
                     <input id="chk_remoteSort" type="checkbox" #chk class="custom-control-input" [(ngModel)]="remoteSort">
