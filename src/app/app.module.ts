@@ -3,7 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 10:55:39
+ * @LastEditTime: 2019-09-16 10:56:18
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -35,6 +35,8 @@ import { FitColumnsComponent } from './demos/fitcolumns/fit-columns.component';
 import { DatagridSelectionDemoComponent } from './demos/selections/datagrid-selection-demo.component';
 import { LayoutRowComponent } from './demos/layout/layout-row.component';
 import { HeaderGroupDemoComponent } from './demos/group-header/header-group.component';
+import { ListCardDemoComponent } from './demos/list-card/list-card-demo.component';
+import { LayoutColumnComponent } from './demos/layout/layout-column.component';
 
 
 @NgModule({
@@ -53,8 +55,9 @@ import { HeaderGroupDemoComponent } from './demos/group-header/header-group.comp
         FitColumnsComponent,
         DatagridSelectionDemoComponent,
         LayoutRowComponent,
-        HeaderGroupDemoComponent
-
+        HeaderGroupDemoComponent,
+        ListCardDemoComponent,
+        LayoutColumnComponent
     ],
     imports: [
         BrowserModule,

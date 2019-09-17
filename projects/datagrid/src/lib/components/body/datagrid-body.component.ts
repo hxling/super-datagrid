@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-04 17:13:45
+ * @LastEditTime: 2019-09-17 19:13:58
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -103,6 +103,13 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     ngOnInit(): void {
         this.listenSubjects();
+
+        this.dgs.showGridHeader.subscribe(headerHeight => {
+            this.top = headerHeight;
+            this.height = this.dg.height - this.top - this.dg.pagerHeight;
+            this.bodyStyle = this.getBodyStyle();
+            this.cd.detectChanges();
+        });
     }
 
     private destroySubscriptions() {
@@ -123,7 +130,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
         this.gridSizeSubscribe = this.dfs.gridSize$.subscribe(state => {
             if (state) {
-                this.top = this.dg.realHeaderHeight;
+                this.top = this.dg.showHeader ? this.dg.realHeaderHeight : 0;
                 const pagerHeight = state.pagerHeight;
                 this.height = state.height - this.top - pagerHeight;
                 this.width = state.width;

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-13 11:13:40
+ * @LastEditTime: 2019-09-17 18:58:14
  * @Company: Inspur
  * @Version: v0.0.1
  -->
@@ -10,6 +10,10 @@
     <div region="north" class="north" style="height: 160px;background: #edfff5; border: 1px solid green; border-bottom: none;">
         <div class="fluid-container" style="margin: 15px;">
             <div class="row">
+                    <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                            <input id="chk_showHeader" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showHeader">
+                            <label for="chk_showHeader" class="custom-control-label">显示表头 </label>
+                        </div>
                 <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
                     <input id="chk_rowHover" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useRowHover">
                     <label for="chk_rowHover" class="custom-control-label">启用 rowHover </label>
@@ -140,6 +144,7 @@
             [selectOnCheck]="selectoncheck" 
             [checkOnSelect]="checkonselect"
             [pagination]="true" 
+            [showHeader]="showHeader"
             [fit]="true" [fitColumns]="fitColumns"
             [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
             [pageList]="[100, 200, 300, 500, 1000, 2000, 5000]"

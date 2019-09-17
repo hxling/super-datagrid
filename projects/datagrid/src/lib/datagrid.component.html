@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-10 11:02:50
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-31 18:04:08
+ * @LastEditTime: 2019-09-17 18:57:03
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -10,7 +10,7 @@
 <div #datagridContainer class="f-datagrid" [class.f-datagrid-bordered]="showBorder" [class.f-datagrid-wrap]="!nowrap"
     [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
 
-    <datagrid-header #header [columns]="columns" [columnsGroup]="colGroup" [height]="realHeaderHeight"></datagrid-header>
+    <datagrid-header *ngIf="showHeader" #header [columns]="columns" [columnsGroup]="colGroup" [height]="realHeaderHeight"></datagrid-header>
     
     <datagrid-body [columnsGroup]="colGroup" [data]="ds.rows | paginate: pagerOpts" [startRowIndex]="ds.index"
         [topHideHeight]="ds.top" [bottomHideHeight]="ds.bottom" [footerHeight]="footerHeight"></datagrid-body>

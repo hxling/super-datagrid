@@ -1,8 +1,9 @@
+import { EventEmitter } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 20:07:37
+ * @LastEditTime: 2019-09-17 19:08:45
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -60,6 +61,8 @@ export class DatagridService {
     public cellEdit$ = this.editCellSubject.asObservable();
     public endCellEdit$ = this.endCellEdit.asObservable();
     public checkedRowsTotalChanged$ = this.changeCheckedRows.asObservable();
+
+    public showGridHeader = new EventEmitter();
 
     // public endRowEdit$ = this.endRowEdit.asObservable();
 

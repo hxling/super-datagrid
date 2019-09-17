@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-31 14:30:18
+ * @LastEditTime: 2019-09-17 19:01:14
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -18,6 +18,7 @@ export interface FarrisDatagridState {
     idField?: string;
     data?: any;
     originalData?: any;
+    showHeader?: boolean;
     headerHeight?: number;
     pageIndex?: number;
     pageSize?: number;

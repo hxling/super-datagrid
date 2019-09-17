@@ -1,0 +1,108 @@
+<layout-row>
+
+    <div region="north" class="d-flex flex-fill align-items-center" style="height: 80px;">
+        <div class="row flex-fill">
+            <div class="col-4">
+                <h3>花名册</h3>
+            </div>
+            <div class="col-8 text-right">
+                <button class="btn mr-2">新增</button>
+                <button class="btn  mr-2">编辑</button>
+                <button class="btn mr-2">删除</button>
+                <button class="btn mr-2">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <div region="center" style="height: 100%">
+
+        <layout-columns [westWidth]="600">
+            <div region="west" style="height: 100%">
+
+                <farris-datagrid [columns]="columns" [data]="items" #dg="datagrid" [fit]="true"  [footerData]="footerItems"
+                    [showLineNumber] ="true" [striped]="true" [showCheckbox]="false" [fitColumns]="false" [showFooter]="true"
+                    [virtualized]="false" [keepSelect]="false" [nowrap]="true" [showBorder]="showBorder"
+                    [pagination]="false" [pageSize]= "pageSize" [pageIndex]="pageIndex"  [total]="total"
+                ></farris-datagrid>
+            </div>
+
+
+            <div region="center" style="height: 100%; margin-left: 10px;">
+                <div class="container-fluid" style="height: 100%;border: 0px solid #e9e9e9;" >
+
+                    <div class="card shadow-sm p-3 mb-5 bg-white rounded">
+                            <div class="card-header">
+                                    详细信息
+                                  </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="txtname">姓名</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="txtname" aria-describedby="emailHelp">
+                                        <small id="emailHelp" class="form-text text-muted">真实姓名，务必真实，真的不能再真的名字。</small>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label">性别</label>
+                                    <div class="col-sm-10">
+                                        <div class="custom-control custom-radio ">
+                                            <input type="radio" id="man" name="customRadioInline1" class="custom-control-input">
+                                            <label class="custom-control-label" for="man">男</label>
+                                        </div>
+                                        <div class="custom-control custom-radio ">
+                                            <input type="radio" id="women" name="customRadioInline1" class="custom-control-input">
+                                            <label class="custom-control-label" for="women">女</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="txtname">出生日期</label>
+                                    <div class="col-sm-10">
+                                        <farris-datepicker></farris-datepicker>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label"></label>
+                                    <div class="col-sm-10">
+                                        <div class="custom-control custom-checkbox ">
+                                            <input type="checkbox" id="maray" name="" class="custom-control-input">
+                                            <label class="custom-control-label" for="maray">未婚</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="txtname">地址</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="txtname">公司</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-2"></div>
+                                    <div class="col-sm-10">
+                                        <button type="button" class="btn btn-primary btn-lg">保 存</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            
+            </div>
+
+
+        </layout-columns>
+
+       
+    </div>
+
+
+</layout-row>

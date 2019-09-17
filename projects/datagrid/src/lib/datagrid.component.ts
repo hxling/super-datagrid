@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-05 07:42:11
+ * @LastEditTime: 2019-09-17 19:09:37
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -181,8 +181,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 验证不通过时可以结束编辑 */
     @Input() endEditByInvalid = true;
 
-    /** 数据为空时显示的信息 */
-    @Input() emptyMsg = '';
     /** 列集合 */
     @Input() columns: any;
     @Input() fields: any;
@@ -380,7 +378,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
 
         this.flatColumns = this.columns['flat']().filter(col => !col.colspan);
-        this.realHeaderHeight = this.columns.length * this.headerHeight;
+        if (this.showHeader) {
+            this.realHeaderHeight = this.columns.length * this.headerHeight;
+        }
     }
 
     ngAfterViewInit(): void {
@@ -472,6 +472,19 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (changes.editable !== undefined && !changes.editable.isFirstChange()) {
             this.dfs.updateProperty('editable', changes.editable.currentValue);
             this.isSingleClick = null;
+            this.cd.detectChanges();
+        }
+
+        if (changes.showHeader !== undefined && !changes.showHeader.isFirstChange()) {
+            this.dfs.updateProperty('showHeader', changes.showHeader.currentValue);
+            if (!this.showHeader) {
+                this.realHeaderHeight = 0;
+            } else {
+                this.realHeaderHeight = this.columns.length * this.headerHeight;
+            }
+
+            this.dgs.showGridHeader.emit(this.realHeaderHeight);
+
             this.cd.detectChanges();
         }
 
@@ -1314,6 +1327,23 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         //     }
         // });
     }
+    //#endregion
+
+    //#region CRUD
+
+    appendRow(row: any) {
+    }
+
+    updateRow() {}
+
+    refreshRow() {}
+
+    deleteRow() {}
+
+    validateRow() {}
+
+    insertRow() {}
+
     //#endregion
 
 }

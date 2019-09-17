@@ -3,7 +3,7 @@ import { HeaderGroupDemoComponent } from './demos/group-header/header-group.comp
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-14 09:45:14
+ * @LastEditTime: 2019-09-16 10:53:29
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -20,6 +20,7 @@ import { VirtualLoadDemoComponent } from './demos/virtual-load/virtual-load-demo
 import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-demo.component';
 import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-template.component';
 import { DatagridSelectionDemoComponent } from './demos/selections/datagrid-selection-demo.component';
+import { ListCardDemoComponent } from './demos/list-card/list-card-demo.component';
 
 
 const routes: Routes = [
@@ -35,6 +36,7 @@ const routes: Routes = [
     { path: 'selection', component: DatagridSelectionDemoComponent},
     { path: 'header-group', component: HeaderGroupDemoComponent},
     { path: 'lazy-load', loadChildren: './demos2/demos2.module#Demos2Module' },
+    { path: 'list-card', component: ListCardDemoComponent},
     { path: '', component: PageScrollComponent}
 ];
 

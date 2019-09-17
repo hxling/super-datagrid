@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-06 16:04:06
+ * @LastEditTime: 2019-09-17 18:58:24
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -35,6 +35,8 @@ export class DatagridSelectionDemoComponent implements OnInit {
     wrap = false;
     fitColumns = true;
     disabledSelect = false;
+
+    showHeader = true;
 
     remoteSort = true;
     multiSort = false;
