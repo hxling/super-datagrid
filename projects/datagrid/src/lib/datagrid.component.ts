@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-30 14:54:01
+ * @LastEditTime: 2019-09-17 19:09:37
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -19,13 +19,13 @@ import { of, Subscription, Observable } from 'rxjs';
 import { DataColumn, CustomStyle, MoveDirection, ColumnGroup } from './types/data-column';
 import { DatagridFacadeService } from './services/datagrid-facade.service';
 import { DatagridColumnDirective } from './components/columns/datagrid-column.directive';
-import { DataResult, CellInfo, SelectedRow } from './services/state';
+import { CellInfo, SelectedRow } from './services/state';
 import { RestService, DATAGRID_REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
 import { GRID_EDITORS, CELL_SELECTED_CLS, GRID_VALIDATORS } from './types/constant';
 import { DomHandler } from './services/domhandler';
 import { Utils } from './utils/utils';
-import { DatagridValidator } from './types/datagrid-validator';
+import { ColumnFormatService } from '@farris/ui-common/column';
 
 // styleUrls: [
 //     './scss/index.scss'
@@ -38,7 +38,7 @@ import { DatagridValidator } from './types/datagrid-validator';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         DatagridFacadeService,
-        DatagridService,
+        DatagridService
     ],
     exportAs: 'datagrid'
 })
@@ -64,7 +64,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() headerHeight = 40;
     /** 显示页脚 */
     @Input() showFooter = false;
-    @Input() footerHeight = 36;
+    @Input() footerRowHeight = 36;
     /** 行高 */
     @Input() rowHeight = 36;
     /** 填充容器 */
@@ -169,12 +169,18 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     /** 数据源 */
     @Input() data: any[];
     /** 页脚数据 */
-    @Input() footerData: any[] = [];
+    private _footerData = [];
+    @Input() get footerData() {
+        return this._footerData;
+    }
+    set footerData(rows) {
+        this._footerData = rows;
+        this.footerHeight = this.showFooter ? this.footerRowHeight * rows.length : 0;
+    }
+
     /** 验证不通过时可以结束编辑 */
     @Input() endEditByInvalid = true;
 
-    /** 数据为空时显示的信息 */
-    @Input() emptyMsg = '';
     /** 列集合 */
     @Input() columns: any;
     @Input() fields: any;
@@ -278,6 +284,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     currentCell: CellInfo;
     flatColumns: DataColumn[];
     footerWidth  = 0;
+    footerHeight = 0;
 
     clickDelay = 150;
     private resizeColumnInfo = {
@@ -304,6 +311,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     documentClickEndRowEditHandler: any;
 
     pending = false;
+    public colFormatSer: ColumnFormatService;
 
     constructor(public cd: ChangeDetectorRef,
                 public el: ElementRef,
@@ -314,7 +322,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
 
         this.restService = this.inject.get<RestService>(DATAGRID_REST_SERVICEE, null);
-
+        this.colFormatSer = this.inject.get(ColumnFormatService);
         const dataSubscription = this.dfs.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
             this.cd.detectChanges();
@@ -370,7 +378,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
 
         this.flatColumns = this.columns['flat']().filter(col => !col.colspan);
-        this.realHeaderHeight = this.columns.length * this.headerHeight;
+        if (this.showHeader) {
+            this.realHeaderHeight = this.columns.length * this.headerHeight;
+        }
     }
 
     ngAfterViewInit(): void {
@@ -383,6 +393,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                     return;
                 }
                 this.total = res.total;
+
+                if (res.footer) {
+                    this.footerData = res.footer;
+                }
+
                 this.loadData(res.items);
             });
         }
@@ -457,6 +472,19 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (changes.editable !== undefined && !changes.editable.isFirstChange()) {
             this.dfs.updateProperty('editable', changes.editable.currentValue);
             this.isSingleClick = null;
+            this.cd.detectChanges();
+        }
+
+        if (changes.showHeader !== undefined && !changes.showHeader.isFirstChange()) {
+            this.dfs.updateProperty('showHeader', changes.showHeader.currentValue);
+            if (!this.showHeader) {
+                this.realHeaderHeight = 0;
+            } else {
+                this.realHeaderHeight = this.columns.length * this.headerHeight;
+            }
+
+            this.dgs.showGridHeader.emit(this.realHeaderHeight);
+
             this.cd.detectChanges();
         }
 
@@ -1115,6 +1143,16 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             left: this.replacePX2Empty(style.borderLeftWidth)
         };
     }
+
+    formatData(field: any, data: any, formatter: any) {
+        const value = this.getFieldValue(field, data);
+        return this.colFormatSer.format(value, data, formatter);
+    }
+
+    getFieldValue(field, rowData) {
+        return Utils.getValue(field, rowData);
+    }
+
     //#endregion
 
     //#region Select
@@ -1289,6 +1327,23 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         //     }
         // });
     }
+    //#endregion
+
+    //#region CRUD
+
+    appendRow(row: any) {
+    }
+
+    updateRow() {}
+
+    refreshRow() {}
+
+    deleteRow() {}
+
+    validateRow() {}
+
+    insertRow() {}
+
     //#endregion
 
 }

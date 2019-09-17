@@ -10,7 +10,7 @@
  * Public API Surface of datagrid-editors
  */
 export { DatagridBaseEditorDirective } from './lib/datagrid-base-editor.directive';
-export { DatagridTextboxComponent } from './lib/editors/datagrid-tetbox.component';
+export { DatagridTextboxComponent } from './lib/editors/datagrid-textbox.component';
 export { DatagridTextareaComponent } from './lib/editors/datagrid-textarea.component';
 
 export { EditorProviders, EditorTypes } from './lib/editors';

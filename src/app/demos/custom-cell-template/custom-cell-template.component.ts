@@ -13,11 +13,12 @@ export class CustomCellComponent implements OnInit {
     columns = [];
     items = [];
     total = 0;
-    pageSize = 200;
+    pageSize = 20;
     pageIndex = 1;
 
     @ViewChild('cell1') cell1: TemplateRef<any>;
     @ViewChild('cell2') cell2: TemplateRef<any>;
+    @ViewChild('cell3') cell3: TemplateRef<any>;
 
     constructor(private dds: DemoDataService) {}
 
@@ -29,11 +30,11 @@ export class CustomCellComponent implements OnInit {
             { field: 'sex', width: 70, title: '性别' },
             { field: 'nianxin', width: 70, title: '年薪'},
             { field: 'birthday', width: 120, title: '出生日期'},
-            { field: 'maray', width: 70, title: '婚否'},
+            { field: 'maray', width: 70, title: '婚否', template: this.cell3},
             { field: 'addr', width: 170, title: '地址' },
             { field: 'company', width: 100, title: '公司' },
             { field: 'zhiwei', width: 100, title: '职位' },
-            { title: '管理', width: 200, template: this.cell1, align: 'center', halign: 'center', fixed: 'right' }
+            { title: '管理', width: 200, template: this.cell1, align: 'center', halign: 'center'}
         ];
 
         this.total = 1000;

@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-30 16:05:29
+ * @LastEditTime: 2019-09-06 16:07:05
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -118,7 +118,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     }
 
     private onClickCell(event: any) {
-        if (!this.dg.editable || (this.dg.editable && this.dg.editMode === 'row')) {
+        if (this.dg.disabled || !this.dg.editable || (this.dg.editable && this.dg.editMode === 'row')) {
             return;
         }
         event.stopPropagation();
@@ -146,6 +146,10 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     }
 
     private onDblClickCell(event: MouseEvent) {
+        if (this.dg.disabled) {
+            return;
+        }
+
         if (event.target['nodeName'] === 'INPUT' || event.target['nodeName'] === 'TEXTAREA') {
             return;
         }

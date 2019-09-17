@@ -3,7 +3,7 @@ import { DatagridComponent } from './../../datagrid.component';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 15:01:21
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-30 18:07:27
+ * @LastEditTime: 2019-08-31 09:57:01
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -28,6 +28,7 @@ export class DatagridFooterComponent implements OnInit, OnDestroy {
 
     @Input() width: number;
     @Input() columns: any[];
+    @Input() columnsGroup: any;
     @ViewChild('footerContainer') footerContainer: ElementRef;
 
 

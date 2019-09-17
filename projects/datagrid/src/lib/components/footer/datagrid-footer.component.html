@@ -2,23 +2,77 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 15:02:10
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 08:33:42
+ * @LastEditTime: 2019-08-31 17:17:11
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
-<div #footerContainer class="f-datagrid-footer" [style.height.px]="height" [style.width.px]="width">
+<div #footerContainer class="f-datagrid-footer" [style.height.px]="height" [style.bottom.px]="dg.pagination ? dg.pagerHeight: 0">
     <!-- 你瞅啥？ 瞅你咋地！！！ -->
-    <table #tableEl style="border:0; width: 100%" class="f-datagrid-rows" cellpadding=0 cellspacing="0">
-        <colgroup>
-            <col *ngIf="dg.showLineNumber" width="36px">
-            <col [width]="col.width + 'px'" *ngFor="let col of columns; let isFirst = first">
-        </colgroup>
+    <div #fixedLeft class="f-datagrid-body-fixed-left" [style.width.px]="columnsGroup?.leftFixedWidth" [style.height.px]="height" *ngIf="columnsGroup?.leftFixed && columnsGroup?.leftFixed.length  || dg?.showLineNumber || dg?.showCheckbox "> 
+        <table cellpadding="0" cellspacing="0" border="0">
+            <colgroup>
+                <col [width]="dg.lineNumberWidth + 'px'" *ngIf="dg.showLineNumber"/>
+                <col width="36px" *ngIf="dg.showCheckbox"/>
+                <col *ngFor="let col of columnsGroup?.leftFixed" [width]="col.width + 'px'"/>
+            </colgroup>
+            <tbody>
+                <tr class="f-datagrid-body-row fixed-left-row" [style.height.px]="36" *ngFor="let row of data;trackBy: dg.trackByRows">
+                    <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" ></td>
+                    <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox" style="text-align: center"></td>
+                    
+                    <td [attr.field]="col.field" class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columnsGroup?.leftFixed; let ci = index;">
+                        <div class="f-datagrid-cell-content" [style.width.px]="col.width">
+                            <span *ngIf="col.footer && col.footer.formatter" [innerHtml]="dg.formatData(col.field, row, col.footer.formatter) | safe: 'html'"></span>
+                            <span *ngIf="!col.footer || !col.footer.formatter">{{ dg.getFieldValue(col.field, row) }}</span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div #fixedRight *ngIf="columnsGroup?.rightFixed && columnsGroup?.rightFixed.length" [style.width.px]="columnsGroup?.rightFixedWidth"
+        class="f-datagrid-body-fixed-right" [style.height.px]="height">
+        <table cellpadding="0" cellspacing="0">
+           
+            <colgroup>
+                <ng-container *ngFor="let col of columnsGroup?.rightFixed">
+                    <col [width]="col.width + 'px'">
+                </ng-container>
+            </colgroup>
+            <tbody>
+                <tr class="f-datagrid-body-row" *ngFor="let row of data">
+                    <td class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columnsGroup?.rightFixed; let isFirst = first">
+                        <div class="f-datagrid-cell-content" [style.width.px]="col.width">
+                            <span *ngIf="col.footer && col.footer.formatter" [innerHtml]="dg.formatData(col.field, row, col.footer?.formatter) | safe: 'html'"></span>
+                            <span *ngIf="!col.footer || !col.footer.formatter">{{ dg.getFieldValue(col.field, row) }}</span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
         
-        <tr class="f-datagrid-body-row" *ngFor="let row of data">
-            <td *ngIf="dg.showLineNumber"> </td>
-            <td class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columns; let isFirst = first">
-                <div [style.width.px]="col.width">{{ row[col.field] || ' ' }}</div>
-            </td>
-        </tr>
-    </table>
+        </table>
+    </div>
+
+    <div #footerBody [style.left.px]="columnsGroup?.leftFixedWidth" [style.width.px]="columnsGroup?.normalWidth" style="position: absolute;">
+        <table #tableEl style="border:0; width: 100%" class="f-datagrid-rows" cellpadding=0 cellspacing="0">
+            
+            <colgroup>
+                <ng-container *ngFor="let col of columnsGroup?.normalColumns">
+                    <col [width]="col.width + 'px'">
+                </ng-container>
+            </colgroup>
+            <tbody>
+                <tr class="f-datagrid-body-row" *ngFor="let row of data">
+                    <td class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columnsGroup?.normalColumns; let isFirst = first">
+                        <div class="f-datagrid-cell-content" [style.width.px]="col.width">
+                            <span *ngIf="col.footer && col.footer.formatter" [innerHtml]="dg.formatData(col.field, row, col.footer.formatter) | safe: 'html'"></span>
+                            <span *ngIf="!col.footer || !col.footer.formatter">{{ dg.getFieldValue(col.field, row) }}</span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+            
+        </table>
+    </div>
 </div>

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-26 15:35:32
+ * @LastEditTime: 2019-09-17 18:30:38
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -106,6 +106,9 @@ export class DatagridFacadeService {
     }
 
     updateVirthualRows(scrolltop: number) {
+        if (scrolltop === undefined) {
+            scrolltop = 0;
+        }
         let virtual = {rowIndex: 0, virtualRows: this._state.data, topHideHeight: 0, bottomHideHeight: 0 };
         if (this._state.virtual && this._state.virtualized) {
             this.virtualizedService.state = this._state;
@@ -274,6 +277,11 @@ export class DatagridFacadeService {
     }
 
     checkRow(rowIndex: number, rowData: any) {
+        if (!this._state.multiSelect) {
+            this._clearCheckeds();
+        }
+
+
         const id = this.primaryId(rowData);
         const checkeds = this._state.checkedRows || [];
         if (id && !this.isRowChecked(id)) {
@@ -402,6 +410,12 @@ export class DatagridFacadeService {
             if (!isMultiSelect) {
                 this.updateState({ currentRow: srow }, false);
                 this.selectRowSubject.next(this._state.currentRow);
+
+                if (this._state.showCheckbox && this._state.checkOnSelect) {
+                    this._state.checkedRows = [ srow ];
+                    this.checkRowSubject.next(srow);
+                }
+
             } else {
                 if (this._state.onlySelectSelf) {
                     this._clearSelections();
@@ -568,7 +582,7 @@ export class DatagridFacadeService {
 
         this.resetColumnsSize();
 
-        this.updateVirthualRows(this._state.virtual.scrollTop);
+        // this.updateVirthualRows(this._state.virtual.scrollTop);
     }
 
     fitColumns(fit) {

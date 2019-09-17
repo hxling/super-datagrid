@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 18:17:19
+ * @LastEditTime: 2019-09-17 18:58:14
  * @Company: Inspur
  * @Version: v0.0.1
  -->
@@ -10,9 +10,18 @@
     <div region="north" class="north" style="height: 160px;background: #edfff5; border: 1px solid green; border-bottom: none;">
         <div class="fluid-container" style="margin: 15px;">
             <div class="row">
+                    <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                            <input id="chk_showHeader" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showHeader">
+                            <label for="chk_showHeader" class="custom-control-label">显示表头 </label>
+                        </div>
                 <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
                     <input id="chk_rowHover" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useRowHover">
                     <label for="chk_rowHover" class="custom-control-label">启用 rowHover </label>
+                </div>
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_disabledSelect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="disabledSelect">
+                    <label for="chk_disabledSelect" class="custom-control-label">禁止选中行 </label>
                 </div>
 
                 <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
@@ -36,6 +45,24 @@
                 </div>
 
                 <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_showCheckbox" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showCheckbox">
+                    <label for="chk_showCheckbox" class="custom-control-label"> 显示复选框 </label>
+                </div>
+
+                
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_checkonselect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="checkonselect">
+                    <label for="chk_checkonselect" class="custom-control-label"> 选中并钩选 </label>
+                </div>
+
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+                    <input id="chk_selectoncheck" type="checkbox" #chk class="custom-control-input" [(ngModel)]="selectoncheck">
+                    <label for="chk_selectoncheck" class="custom-control-label"> 钩选并选中 </label>
+                </div>
+
+
+                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
                     <input id="chk_MultiSelect" type="checkbox" #chk class="custom-control-input" [(ngModel)]="useMultiSelect">
                     <label for="chk_MultiSelect" class="custom-control-label"> 启用多选 </label>
                 </div>
@@ -47,27 +74,13 @@
                 </div>
                 
 
-                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                    <input id="chk_showCheckbox" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="showCheckbox">
-                    <label for="chk_showCheckbox" class="custom-control-label"> 显示复选框 </label>
-                </div>
+                
 
                 <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
                     <input id="chk_showAllCheckbox" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="showAllCheckbox">
                     <label for="chk_showAllCheckbox" class="custom-control-label"> 显示全选 </label>
                 </div>
 
-
-                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                    <input id="chk_checkonselect" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="checkonselect">
-                    <label for="chk_checkonselect" class="custom-control-label"> 选中并钩选 </label>
-                </div>
-
-
-                <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
-                    <input id="chk_selectoncheck" type="checkbox" #chk class="custom-control-input" [disabled]="!useMultiSelect" [(ngModel)]="selectoncheck">
-                    <label for="chk_selectoncheck" class="custom-control-label"> 钩选并选中 </label>
-                </div>
 
                 <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
                     <input id="chk_remoteSort" type="checkbox" #chk class="custom-control-input" [(ngModel)]="remoteSort">
@@ -131,6 +144,7 @@
             [selectOnCheck]="selectoncheck" 
             [checkOnSelect]="checkonselect"
             [pagination]="true" 
+            [showHeader]="showHeader"
             [fit]="true" [fitColumns]="fitColumns"
             [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
             [pageList]="[100, 200, 300, 500, 1000, 2000, 5000]"
@@ -141,6 +155,7 @@
             [sortOrder]="'asc'"
 
             [nowrap]="true"
+            [disabled]="disabledSelect"
 
             [beforeSelect]="onBeforeSelect"
             [beforeUnselect]="onBeforeUnselect"

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 18:23:46
+ * @LastEditTime: 2019-08-31 17:26:28
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -17,7 +17,7 @@
 
     <div region="center" style="height: 100%">
         <farris-datagrid [columns]="columns" [data]="items" #dg="datagrid" [fit]="true"  [footerData]="footerItems"
-            [showLineNumber] ="true" [striped]="true" [showCheckbox]="false" [fitColumns]="true" [showFooter]="true"
+            [showLineNumber] ="true" [striped]="true" [showCheckbox]="false" [fitColumns]="false" [showFooter]="true"
             [virtualized]="false" [keepSelect]="false" [nowrap]="true" [showBorder]="showBorder"
             [pagination]="false" [pageSize]= "pageSize" [pageIndex]="pageIndex"  [total]="total"
         ></farris-datagrid>

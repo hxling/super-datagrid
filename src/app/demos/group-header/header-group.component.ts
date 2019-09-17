@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-12 19:07:41
+ * @LastEditTime: 2019-08-31 13:49:49
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -54,7 +54,11 @@ export class HeaderGroupDemoComponent implements OnInit {
                 { title: '工作信息', colspan: 3, halign: 'center'}
             ],
             [
-                { field: 'id', width: 100, title: 'ID', rowspan: 2, index: 0 },
+                { field: 'id', width: 100, title: 'ID', rowspan: 2, index: 0, footer: {
+                    formatter: (v,d, i) => {
+                        return `<b>${v}</b>`;
+                    }
+                } },
                 { field: 'name', width: 130, title: '姓名', rowspan: 2, index: 1},
                 { title: '自身问题', colspan: 3, halign: 'center'},
                 { field: 'company', width: 100, title: '公司', rowspan: 2, index: 6},

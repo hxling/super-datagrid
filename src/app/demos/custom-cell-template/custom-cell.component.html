@@ -2,29 +2,33 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-07-29 08:14:22
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-15 14:18:24
+ * @LastEditTime: 2019-09-17 15:01:09
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
         
-<div class="row" style="padding: 20px 0; margin-top: 120px">        
+<div class="row" style="padding: 20px 0; margin-top: 120px; width: 100%; height: 500px;">        
 
     <farris-datagrid [columns]="columns" [data]="items" #dg="datagrid"
         [showLineNumber] ="true" [striped]="false" [showCheckbox]="false"
-        [virtualized]="true"
+        [virtualized]="true" [fit]="true" [fitColumns]="true" [multiSelect]="false"
         [pagination]="false" [pageSize]= "pageSize" [pageIndex]="pageIndex"  [total]="total"
     >
-
-        <ng-template #cell1 let-ctx>
-            <button class="btn btn-primary" (click)="onDeleteClick($event, ctx)">删除</button> &nbsp;
-            <button class="btn btn-success">审核</button>
-        </ng-template>
-        
-        <ng-template #cell2 let-ctx>
-            <a href="http://www.baidu.com" target="blank">{{ ctx.rowData["name"] }}</a>
-        </ng-template>
-        
-
-    </farris-datagrid>
     
+    </farris-datagrid>
+    <ng-template #cell1 let-ctx>
+        <button class="btn btn-primary" (click)="onDeleteClick($event, ctx)">删除</button> &nbsp;
+        <button class="btn btn-success">审核</button>
+    </ng-template>
+    
+    <ng-template #cell2 let-ctx>
+        <a href="http://www.baidu.com" target="blank">{{ ctx.rowData["name"] }}</a>
+    </ng-template>
+    <ng-template #cell3 let-ctx>
+        <div class="custom-control custom-checkbox f-checkradio-single">
+            <input type="checkbox" [attr.id]="'chk_'+ ctx.rowData['id']" class="custom-control-input">
+            <label class="custom-control-label" [attr.for]="'chk_'+ ctx.rowData['id']"></label>
+        </div>
+    </ng-template>
+
 </div>
