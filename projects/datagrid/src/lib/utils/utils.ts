@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-19 18:43:55
+ * @LastEditTime: 2019-09-19 16:14:07
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -18,7 +18,7 @@ export class Utils {
         if (field.indexOf('.') === -1) {
             resultVal = data[field];
         } else {
-            resultVal = field.split('.').reduce(function(obj, key) {
+            resultVal = field.split('.').reduce((obj, key) => {
                 if (obj) {
                     return obj[key];
                 } else {
@@ -81,6 +81,18 @@ export class Utils {
 
     static hasDialogOpen() {
         return document.body.classList.value.indexOf('modal-open') > -1;
+    }
+
+    static on(el, evt, fn, opts: any = {}) {
+        const delegatorFn = e => e.target.matches(opts.target) && fn.call(e.target, e);
+        el.addEventListener(evt, opts.target ? delegatorFn : fn, opts.options || false);
+        if (opts.target) {
+            return delegatorFn;
+        }
+    }
+
+    static off(el, evt, fn= () => {}, opts = false) {
+        el.removeEventListener(evt, fn, opts);
     }
 }
 

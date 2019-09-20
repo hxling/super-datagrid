@@ -3,7 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-16 10:56:18
+ * @LastEditTime: 2019-09-18 10:35:44
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -37,6 +37,8 @@ import { LayoutRowComponent } from './demos/layout/layout-row.component';
 import { HeaderGroupDemoComponent } from './demos/group-header/header-group.component';
 import { ListCardDemoComponent } from './demos/list-card/list-card-demo.component';
 import { LayoutColumnComponent } from './demos/layout/layout-column.component';
+import { LookupModule } from '@farris/ui-lookup';
+import { CustomCellButtonComponent } from './demos/custom-cell-template/custom-cell-button.component';
 
 
 @NgModule({
@@ -57,7 +59,8 @@ import { LayoutColumnComponent } from './demos/layout/layout-column.component';
         LayoutRowComponent,
         HeaderGroupDemoComponent,
         ListCardDemoComponent,
-        LayoutColumnComponent
+        LayoutColumnComponent,
+        CustomCellButtonComponent
     ],
     imports: [
         BrowserModule,
@@ -71,6 +74,7 @@ import { LayoutColumnComponent } from './demos/layout/layout-column.component';
             ...EditorProviders
         ]),
         FarrisDatePickerModule,
+        LookupModule,
         InputGroupModule,
         AppRoutingModule
     ],

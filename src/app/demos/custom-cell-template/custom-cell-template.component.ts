@@ -19,6 +19,7 @@ export class CustomCellComponent implements OnInit {
     @ViewChild('cell1') cell1: TemplateRef<any>;
     @ViewChild('cell2') cell2: TemplateRef<any>;
     @ViewChild('cell3') cell3: TemplateRef<any>;
+    @ViewChild('cell4') cell4: TemplateRef<any>;
 
     constructor(private dds: DemoDataService) {}
 
@@ -34,7 +35,7 @@ export class CustomCellComponent implements OnInit {
             { field: 'addr', width: 170, title: '地址' },
             { field: 'company', width: 100, title: '公司' },
             { field: 'zhiwei', width: 100, title: '职位' },
-            { title: '管理', width: 200, template: this.cell1, align: 'center', halign: 'center'}
+            { title: '管理', width: 200, template: this.cell4, align: 'center', halign: 'center', fixed: 'right'}
         ];
 
         this.total = 1000;

@@ -2,12 +2,12 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-30 18:12:48
+ * @LastEditTime: 2019-09-18 11:23:41
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
 <!--表头-->
-<div class="f-datagrid-header" [style.min-width.px]="dg?.width" [style.min-height.px]="height" #header>
+<div class="f-datagrid-header" style="width: 100%;"  [style.min-height.px]="height" #header>
 
     <!--左侧固定列-->
     <ng-container *ngIf="columnsGroup?.leftFixed && columnsGroup?.leftFixed.length  || dg?.showLineNumber || dg?.showCheckbox ">

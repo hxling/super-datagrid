@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Renderer2, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
 
 @Component({
@@ -29,7 +29,7 @@ export class ScrollbarLoadDemoComponent implements OnInit {
     private scrollTimer: any;
     @ViewChild('scrollbar') scrollbar: ElementRef;
 
-    constructor(private dds: DemoDataService, private cd: ChangeDetectorRef, private render: Renderer2) {
+    constructor(private dds: DemoDataService, private cd: ChangeDetectorRef, private render: Renderer2, private ngZone: NgZone) {
         this.data = this.dds.createData(1000);
     }
 
@@ -37,12 +37,14 @@ export class ScrollbarLoadDemoComponent implements OnInit {
         this.rows = this.getRows(0);
 
         this.render.listen(this.scrollbar.nativeElement, 'scroll', (e) => {
-            if (this.scrollTimer) {
-                clearTimeout(this.scrollTimer);
-            }
-            this.scrollTimer = setTimeout(() => {
-                this.onScrollToY(e);
-            }, 50);
+            this.ngZone.runOutsideAngular(() => {
+                if (this.scrollTimer) {
+                    clearTimeout(this.scrollTimer);
+                }
+                this.scrollTimer = setTimeout(() => {
+                    this.onScrollToY(e);
+                }, 50);
+            });
         });
     }
 

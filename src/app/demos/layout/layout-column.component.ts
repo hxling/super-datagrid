@@ -4,9 +4,8 @@ import { Component, OnInit, Input, ViewChild, ElementRef, HostListener } from '@
     selector: 'layout-columns',
     template: `
     <div #box class="d-flex flex-row" style="width: 100%; height: 100%;border:0px solid #ae00e6">
-        <div class="west" [style.minWidth.px]="westWidth">
-            <ng-content select="[region=west]"></ng-content>
-        </div>
+        <ng-content select="[region=west]"></ng-content>
+
         <div region="center" class="center flex-fill">
             <ng-content></ng-content>
         </div>

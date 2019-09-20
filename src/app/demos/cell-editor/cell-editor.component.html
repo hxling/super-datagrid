@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-24 11:38:50
+ * @LastEditTime: 2019-09-20 17:43:19
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -44,7 +44,7 @@
     <div region="center" class="center flex-fill">
         <farris-datagrid [data]="items" [columns]="columns" #dg="datagrid" [fit]="true"
             [editable]="true" [editMode]="editMode" [showCheckbox]="false" [fitColumns]="true"
-            [showLineNumber] ="true" [striped]="true"  [total]="total"
+            [showLineNumber] ="true" [striped]="true"  [total]="total" [pageSize]="100"
             [virtualized]="true" [pagination]="false"
             [beforeEdit] = "beforeEdit"
             (beginEdit) = "beginEdit($event)"

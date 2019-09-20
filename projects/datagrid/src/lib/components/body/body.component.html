@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-27 12:49:19
+ * @LastEditTime: 2019-09-20 17:33:02
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -25,14 +25,13 @@
                         <col width="36px" *ngIf="dg.showCheckbox"/>
                         <col *ngFor="let col of columnsGroup?.leftFixed" [width]="col.width + 'px'"/>
                     </colgroup>
-                    <tr class="f-datagrid-body-row fixed-left-row" [style.height.px]="rowHeight"
+                    <tr class="f-datagrid-body-row fixed-left-row" [style.height.px]="rowHeight" [attr.index]="startRowIndex + i"
                         *ngFor="let row of data;trackBy: dg.trackByRows; let i=index; odd as odd"
                         [class.f-datagrid-row-odd]="odd && dg.striped"
                         [class.f-datagrid-row-even]="!odd && dg.striped"
-                        [class.f-datagrid-row-selected]="currentRowId === row[dg.idField] "
-                        [class.f-datagrid-row-hover]="dg.rowHover && hoverRowIndex === hoverRow.rowIndex"
-                        [grid-row]="row" [row-hover]="row" [rowIndex]="startRowIndex + i"  #hoverRow="rowHover" 
-                        >
+                        [class.f-datagrid-row-selected]="currentRowId === row[dg.idField]"
+                        [grid-row]="row" [row-hover]="row" [rowIndex]="startRowIndex + i"
+                    >
                         <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" >
                             {{ dg.pageSize * (dg.pageIndex-1) + startRowIndex + i + 1 }}
                         </td>

@@ -16,11 +16,11 @@
 
     <div region="center" style="height: 100%">
 
-        <layout-columns [westWidth]="600">
-            <div region="west" style="height: 100%">
+        <layout-columns>
+            <div region="west" style="height: 100%; width:700px">
 
                 <farris-datagrid [columns]="columns" [data]="items" #dg="datagrid" [fit]="true"  [footerData]="footerItems"
-                    [showLineNumber] ="true" [striped]="true" [showCheckbox]="false" [fitColumns]="false" [showFooter]="true"
+                    [showLineNumber] ="true" [striped]="true" [showCheckbox]="false" [fitColumns]="false" [showFooter]="false"
                     [virtualized]="false" [keepSelect]="false" [nowrap]="true" [showBorder]="showBorder"
                     [pagination]="false" [pageSize]= "pageSize" [pageIndex]="pageIndex"  [total]="total"
                 ></farris-datagrid>
@@ -80,7 +80,17 @@
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label" for="txtname">公司</label>
                                     <div class="col-sm-10">
-                                        <input type="text" class="form-control">
+                                        <farris-lookup-grid id="lookup_company"
+                                            [uri]="'/assets/data/products.json'"
+                                            [idField]="'Code'"
+                                            [singleSelect]="true"
+                                            [textField]="'Name'"
+                                            [valueField]="'Code'"
+                                            [title]="'人员选择'"
+                                            [pagination]="true"
+                                            [displayType]="'LIST'"
+                                        >
+                                        </farris-lookup-grid>
                                     </div>
                                 </div>
                                 <div class="form-group row">

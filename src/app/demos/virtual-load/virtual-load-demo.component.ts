@@ -55,25 +55,13 @@ export class VirtualLoadDemoComponent implements OnInit {
     }
 
     onScrollToY($event: any) {
-
         const y = $event.target.scrollTop;
-        // this.rendRows(y);
-        // this.cd.detectChanges();
-
-        // const {virtualRows: rows, topHideHeight, bottomHideHeight } = this.getRows(y);
-        // this.topAreaHeight = topHideHeight;
-        // this.bottomAreaHeight = bottomHideHeight;
-        // this.cd.detectChanges();
         if (this.scrollTimer) {
             clearTimeout(this.scrollTimer);
         }
         this.scrollTimer = setTimeout(() => {
-            // this.rows = rows;
-            // this.cd.markForCheck();
             this.rendRows(y);
             this.cd.detectChanges();
-            // this.ps.update();
-            console.log('scroll Y');
         }, 0);
     }
 

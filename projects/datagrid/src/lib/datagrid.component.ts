@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-17 19:09:37
+ * @LastEditTime: 2019-09-20 17:55:30
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -26,6 +26,7 @@ import { GRID_EDITORS, CELL_SELECTED_CLS, GRID_VALIDATORS } from './types/consta
 import { DomHandler } from './services/domhandler';
 import { Utils } from './utils/utils';
 import { ColumnFormatService } from '@farris/ui-common/column';
+import { flatten } from 'lodash-es';
 
 // styleUrls: [
 //     './scss/index.scss'
@@ -74,12 +75,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
     set fit(val: boolean) {
         this._fit = val;
-        if (this._fit) {
-            this.hostCls = true;
-            this.calculateGridSize(val);
-        } else {
-            this.hostCls = false;
-        }
+        this.hostCls = val;
+        // this.calculateGridSize(val);
     }
     /** 如果为真，则自动展开/收缩列的大小以适合网格宽度并防止水平滚动。 */
     private _fitColumns = false;
@@ -206,6 +203,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() sortOrder: string;
     /** 允许多列排序 */
     @Input() multiSort: boolean;
+
+    @Input() hoverRowCls = 'f-datagrid-row-hover';
 
 
     @Input() beforeEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
@@ -359,6 +358,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     //#region Ng Event
 
     ngOnInit() {
+
+        if (!this.idField) {
+            throw new Error('The Datagrid\'s idField can\'t be Null. ');
+        }
+
         this.pagerOpts = {
             id:  this.id ? this.id + '-pager' :  'farris-datagrid-pager_' + new Date().getTime(),
             itemsPerPage: this.pagination ? this.pageSize : this.total,
@@ -377,7 +381,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             }
         }
 
-        this.flatColumns = this.columns['flat']().filter(col => !col.colspan);
+        this.flatColumns =  flatten<DataColumn>(this.columns).filter((col: DataColumn) => !col.colspan);
         if (this.showHeader) {
             this.realHeaderHeight = this.columns.length * this.headerHeight;
         }
@@ -416,6 +420,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             if (this.el.nativeElement.parentElement) {
                 this.el.nativeElement.parentElement.style.position = 'relative';
             }
+            this.calculateGridSize(true);
         }
     }
 
@@ -568,6 +573,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
             this.width = cmpRect.width - border.left - border.right - padding.left - padding.right;
             this.height = cmpRect.height - border.top - border.bottom - padding.top - padding.bottom;
+            this.cd.detectChanges();
             this.dfs.resize({width: this.width, height: this.height});
             // this.refresh();
         }
@@ -1239,6 +1245,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     checkAllRows() {
         if (this.canOperateCheckbox()) {
             this.dfs.checkAll();
+            this.dgs.checkAll.emit();
+            this.checkAll.emit();
         }
     }
 
@@ -1250,6 +1258,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     clearCheckeds() {
         this.dfs.clearCheckeds();
+        this.dgs.uncheckAll.emit();
+        this.unCheckAll.emit();
     }
 
     //#endregion
@@ -1320,12 +1330,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     rejectChanges() {
         this.dfs.rejectChanges();
-        // setTimeout(() => {
-        //     this.app.tick();
-        //     if (this.selectRow) {
-        //         this.selectRow(this.selectedRow.id);
-        //     }
-        // });
     }
     //#endregion
 
