@@ -50,7 +50,6 @@ export class VirtualizedLoaderService {
         const data: any[] = this.state.data;
         const total = this.state.total;
 
-        // console.time('循环所有节点');
         for (const n of data) {
             top += rowHeight;
             if (top + rowHeight < minTop) {
