@@ -1,9 +1,9 @@
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, NgZone } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-20 18:58:05
+ * @LastEditTime: 2019-09-19 09:44:13
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -28,18 +28,20 @@ export class DatagridRowsComponent implements OnInit, AfterViewInit {
         private cd: ChangeDetectorRef,
         @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
         @Inject(forwardRef(() => DatagridBodyComponent)) public dgb: DatagridBodyComponent,
-        public el: ElementRef, private injector: Injector) {
+        public el: ElementRef, private injector: Injector, private ngZone: NgZone) {
     }
 
     ngOnInit(): void {
     }
 
     ngAfterViewInit() {
-        setTimeout(() => {
-            if (!this.dg.nowrap) {
-                const trheights = this.getTrDomHeight();
-                this.dgb.updateRowHeight(trheights);
-            }
+        this.ngZone.runOutsideAngular( () => {
+            setTimeout(() => {
+                if (!this.dg.nowrap) {
+                    const trheights = this.getTrDomHeight();
+                    this.dgb.updateRowHeight(trheights);
+                }
+            });
         });
     }
 

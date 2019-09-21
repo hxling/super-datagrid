@@ -3,7 +3,7 @@ import { EventEmitter } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-17 19:08:45
+ * @LastEditTime: 2019-09-20 09:07:44
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -63,6 +63,10 @@ export class DatagridService {
     public checkedRowsTotalChanged$ = this.changeCheckedRows.asObservable();
 
     public showGridHeader = new EventEmitter();
+    // 取消全选
+    public uncheckAll = new EventEmitter();
+    // 全部选中
+    public checkAll = new EventEmitter();
 
     // public endRowEdit$ = this.endRowEdit.asObservable();
 

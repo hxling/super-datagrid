@@ -3,7 +3,7 @@ import { AfterViewInit, ApplicationRef, Inject, forwardRef, Injector } from '@an
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-30 15:14:29
+ * @LastEditTime: 2019-09-18 08:56:58
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -70,7 +70,7 @@ export class DatagridLookupComponent extends DatagridBaseEditorDirective impleme
         this.options = Object.assign(LookupDefaultOptions, this.options);
 
         if (this.options.loader) {
-            this.lookup['http'] =  this.lookup['http'] || { getData: this.options.loader };
+            this.lookup['http'] =  { getData: this.options.loader };
         }
     }
 

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-07-29 08:14:22
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-17 15:01:09
+ * @LastEditTime: 2019-09-18 10:41:00
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -19,6 +19,10 @@
     <ng-template #cell1 let-ctx>
         <button class="btn btn-primary" (click)="onDeleteClick($event, ctx)">删除</button> &nbsp;
         <button class="btn btn-success">审核</button>
+    </ng-template>
+
+    <ng-template #cell4 let-ctx>
+        <cell-button [rowData]="ctx.rowData" (clickHandler)="onDeleteClick($event, ctx)" ></cell-button>
     </ng-template>
     
     <ng-template #cell2 let-ctx>

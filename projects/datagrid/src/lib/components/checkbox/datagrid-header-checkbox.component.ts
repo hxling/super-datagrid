@@ -1,8 +1,9 @@
+import { DatagridComponent } from './../../datagrid.component';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 17:57:28
+ * @LastEditTime: 2019-09-18 10:30:21
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -36,8 +37,10 @@ export class DatagridHeaderCheckboxComponent implements OnInit {
 
     @ViewChild('chk') chk: ElementRef;
     private dfs: DatagridFacadeService;
+    private dg: DatagridComponent;
     constructor(private injector: Injector) {
         this.dfs = this.injector.get(DatagridFacadeService);
+        this.dg = this.injector.get(DatagridComponent);
     }
 
     ngOnInit(): void {
@@ -54,8 +57,10 @@ export class DatagridHeaderCheckboxComponent implements OnInit {
             this.chk.nativeElement.indeterminate = false;
             if (this.checked) {
                 this.dfs.checkAll();
+                this.dg.checkAll.emit();
             } else {
                 this.dfs.clearCheckeds();
+                this.dg.unCheckAll.emit();
             }
 
         }

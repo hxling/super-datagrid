@@ -2,13 +2,13 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-14 08:46:34
+ * @LastEditTime: 2019-09-20 09:08:01
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 
 import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef,
-    AfterViewInit, ViewEncapsulation, Injector, Inject, forwardRef, Optional } from '@angular/core';
+    AfterViewInit, ViewEncapsulation, Injector, Inject, forwardRef, Optional, NgZone } from '@angular/core';
 import { DataColumn } from './../../types/data-column';
 import { ColumnGroup } from '../../types/data-column';
 import { DatagridService } from '../../services/datagrid.service';
@@ -16,6 +16,7 @@ import { SCROLL_X_ACTION, FIXED_LEFT_SHADOW_CLS, SCROLL_X_REACH_START_ACTION, FI
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridHeaderCheckboxComponent } from '../checkbox/datagrid-header-checkbox.component';
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
+import ResizeObserver from 'resize-observer-polyfill';
 
 @Component({
     selector: 'datagrid-header',
@@ -38,22 +39,32 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
 
     private fixedRight: ElementRef;
     @ViewChild('fixedRight') set fr(val) {
-        this.fixedRight = val;
-        if (val && this.columnsGroup) {
-            const left = this.dg.width - this.columnsGroup.rightFixedWidth;
-            this.render2.setStyle(this.fixedRight.nativeElement,  'transform', `translate3d(${ left }px, 0px, 0px)` );
-            if (left !== this.columnsGroup.normalWidth + this.columnsGroup.leftFixedWidth) {
-                this.render2.addClass(this.fixedRight.nativeElement, FIXED_RIGHT_SHADOW_CLS);
-            }
+        if (val) {
+            this.fixedRight = val;
+            this.ngZone.runOutsideAngular(() => {
+                this.ro = new ResizeObserver(() => {
+                    if (this.fixedRight && this.columnsGroup) {
+                        const left = this.dg.width - this.columnsGroup.rightFixedWidth;
+                        this.render2.setStyle(this.fixedRight.nativeElement,  'transform', `translate3d(${ left }px, 0px, 0px)` );
+                        if (left !== this.columnsGroup.normalWidth + this.columnsGroup.leftFixedWidth) {
+                            this.render2.addClass(this.fixedRight.nativeElement, FIXED_RIGHT_SHADOW_CLS);
+                        }
+                    }
+                });
+
+                this.ro.observe(this.fixedRight.nativeElement);
+                this.ro.observe(this.header.nativeElement);
+            });
         }
     }
 
     private dgs: DatagridService;
     private dfs: DatagridFacadeService;
+    private ro: ResizeObserver | null = null;
 
     constructor(
         private render2: Renderer2, private injector: Injector,
-        @Optional() public dg: DatagridComponent ) {
+        @Optional() public dg: DatagridComponent, private ngZone: NgZone ) {
         this.dfs = this.injector.get(DatagridFacadeService);
         this.dgs = this.injector.get(DatagridService);
 
@@ -92,6 +103,14 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
                 }
             }
         });
+
+        this.dgs.uncheckAll.subscribe(() => {
+            this._chkall.chk.nativeElement.checked = false;
+        });
+
+        this.dgs.checkAll.subscribe(() => {
+            this._chkall.chk.nativeElement.checked = true;
+        });
     }
 
     // setHeight() {
@@ -103,7 +122,6 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
     // }
 
     ngAfterViewInit() {
-        // this.setHeight();
     }
 
     onSortColumnClick(e: MouseEvent, col: DataColumn) {

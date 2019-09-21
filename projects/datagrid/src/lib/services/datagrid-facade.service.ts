@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-17 18:30:38
+ * @LastEditTime: 2019-09-20 17:56:32
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -150,6 +150,7 @@ export class DatagridFacadeService {
 
     initState(state: Partial<FarrisDatagridState>) {
         this.updateState(state, false);
+
         this._state.originalData = cloneDeep(this._state.data);
         this.initColumns();
 
@@ -581,8 +582,7 @@ export class DatagridFacadeService {
         }
 
         this.resetColumnsSize();
-
-        // this.updateVirthualRows(this._state.virtual.scrollTop);
+        this.updateVirthualRows(this._state.virtual.scrollTop);
     }
 
     fitColumns(fit) {
