@@ -150,7 +150,13 @@
 
         .f-datagrid-body-fixed-left tr:hover {
             cursor: pointer;
-            background-color: #ededed !important;
+            background: $row-hover-bgcolor!important;
+            color: $row-hover-color!important;
+            transition: background-color 0.1s ease-in;
+            
+            .f-datagrid-cell-rownumber {
+                background-color: #ededed !important;
+            }
         }
 
         .f-datagrid-table tr:hover, .f-datagrid-body-fixed-right tr:hover{
