@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-31 11:13:06
+ * @LastEditTime: 2019-09-22 20:58:29
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -26,7 +26,7 @@ import { ColumnFormatService } from '@farris/ui-common/column';
     <div class="f-datagrid-cell-content" #cellContainer [style.width.px]="column.width">
         <ng-container *ngIf="!isEditing && !column.template">
             <span *ngIf="column.formatter" [innerHtml]="dg.formatData(column.field, rowData, column.formatter) | safe: 'html'"></span>
-            <span *ngIf="!column.formatter">{{ value }}</span>
+            <span *ngIf="!column.formatter" [innerHTML]="value"></span>
         </ng-container>
         <ng-container *ngIf="!isEditing && column.template" [ngTemplateOutlet]="column.template"
                         [ngTemplateOutletContext]="{$implicit: cellContext}"></ng-container>

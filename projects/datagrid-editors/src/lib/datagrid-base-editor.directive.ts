@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 11:07:01
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-30 16:11:48
+ * @LastEditTime: 2019-09-26 15:17:14
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -28,6 +28,10 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
     pending = false;
 
     errorMessage: string;
+
+    /** 禁止事件冒泡 */
+    stopPropagation = false;
+
 
     private clickEvent: any;
     private keyDownEvent: any;

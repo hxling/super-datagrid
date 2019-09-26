@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-20 17:56:32
+ * @LastEditTime: 2019-09-25 08:49:22
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -576,7 +576,7 @@ export class DatagridFacadeService {
         }
     }
 
-    resize(newSize?: {width: number, height: number}) {
+    resize(newSize?: {width: number, height: number, [key: string]: any}) {
         if (newSize) {
             this.updateState(newSize, false);
         }

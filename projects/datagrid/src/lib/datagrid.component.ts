@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-20 17:55:30
+ * @LastEditTime: 2019-09-26 11:10:57
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -98,8 +98,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() lineNumberWidth = 36;
     /** 鼠标滑过效果开关，默认开启 */
     @Input() rowHover = true;
-    /** 允许编辑时，单击进入编辑状态 */
-    @Input() clickToEdit = false;
+    /** 允许编辑时，单击进入编辑状态; false为双击进入编辑 */
+    @Input() clickToEdit = true;
 
     private _lockPagination = false;
     /** 锁定分页条，锁定后页码点击无效 */
@@ -574,6 +574,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.width = cmpRect.width - border.left - border.right - padding.left - padding.right;
             this.height = cmpRect.height - border.top - border.bottom - padding.top - padding.bottom;
             this.cd.detectChanges();
+            // this.rowHeight = this.el.nativeElement.querySelector('.f-datagrid-body tr').offsetHeight;
+
             this.dfs.resize({width: this.width, height: this.height});
             // this.refresh();
         }
@@ -690,22 +692,22 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                     }
                     break;
                 case 40: // ↓
-                    this.selectNextCell('down');
+                    this.selectNextCell('down', e);
                     break;
                 case 38: // ↑
-                    this.selectNextCell('up');
+                    this.selectNextCell('up', e);
                     break;
                 case 39: // →
-                    this.selectNextCell('right');
+                    this.selectNextCell('right', e);
                     break;
                 case 37: // ←
-                    this.selectNextCell('left');
+                    this.selectNextCell('left', e);
                     break;
                 case 9: // Tab
                     if (e.shiftKey) {
-                        this.selectNextCell('left');
+                        this.selectNextCell('left', e);
                     } else {
-                        this.selectNextCell('right');
+                        this.selectNextCell('right', e);
                     }
                     e.preventDefault();
                     break;
@@ -1189,10 +1191,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         return td;
     }
 
-    selectNextCell( dir: MoveDirection) {
+    selectNextCell( dir: MoveDirection, event: Event) {
         const nextTd = this.findNextCell(this.currentCell.field, dir);
         if (nextTd) {
-            nextTd['click'].apply(nextTd);
+            if (this.clickToEdit) {
+                nextTd['selectCell']();
+            } else {
+                nextTd['click'].apply(nextTd, [event]);
+            }
             return nextTd;
         }
     }

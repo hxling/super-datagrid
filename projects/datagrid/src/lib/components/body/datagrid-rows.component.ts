@@ -3,7 +3,7 @@ import { ChangeDetectorRef, NgZone } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-19 09:44:13
+ * @LastEditTime: 2019-09-25 08:42:20
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -11,6 +11,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, Injecto
 import { DataColumn } from '../../types';
 import { DatagridComponent } from '../../datagrid.component';
 import { DatagridBodyComponent } from './datagrid-body.component';
+import ResizeObserver from 'resize-observer-polyfill';
 
 
 @Component({
@@ -23,6 +24,9 @@ export class DatagridRowsComponent implements OnInit, AfterViewInit {
     @Input() data: any;
     @Input() columns: DataColumn[];
     @ViewChild('tableEl') tableEl: ElementRef;
+
+
+    private ro: ResizeObserver = null;
 
     constructor(
         private cd: ChangeDetectorRef,
