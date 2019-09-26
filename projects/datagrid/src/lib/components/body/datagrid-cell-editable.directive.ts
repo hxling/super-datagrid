@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-26 15:18:58
+ * @LastEditTime: 2019-09-26 17:58:02
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -291,10 +291,10 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     }
 
     onKeyDownForInput(e: KeyboardEvent) {
-        if (this.editor.stopPropagation) {
+        const keyCode = e.keyCode;
+        if (this.editor.stopPropagation || keyCode === 13) {
             e.stopPropagation();
         }
-        const keyCode = e.keyCode;
 
         switch (keyCode) {
             case 13:  // Enter
@@ -319,7 +319,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         tdElement = tdElement || this.el.nativeElement;
         this.clearCellSelectedClass();
         this.render.addClass(tdElement, CELL_SELECTED_CLS);
-
+        this.dr.drHover.setRowHoverCls(false);
         this.dfs.setCurrentCell(this.dr, field, tdElement);
         this.moveScrollbar(tdElement);
     }

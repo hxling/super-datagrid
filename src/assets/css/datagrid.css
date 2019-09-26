@@ -132,16 +132,16 @@ farris-datagrid {
 .f-datagrid-table tr td:last-child {
   border-right-width: 0;
 }
-.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:hover {
+.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):hover {
   cursor: pointer;
   background: #f3fbff !important;
   color: black !important;
   transition: background-color 0.1s ease-in;
 }
-.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:hover .f-datagrid-cell-rownumber {
+.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):hover .f-datagrid-cell-rownumber {
   background-color: #ededed !important;
 }
-.f-datagrid-rowhover .f-datagrid-table tr:hover, .f-datagrid-rowhover .f-datagrid-body-fixed-right tr:hover {
+.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):hover, .f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover {
   cursor: pointer;
   background: #f3fbff !important;
   color: black !important;
@@ -167,7 +167,7 @@ farris-datagrid {
   transition: background-color 0.1s ease-in;
 }
 .f-datagrid-row-selected {
-  background-color: #E6F7FF;
+  background-color:rgb(167, 214, 245);
   color: #222;
   border-color: #e9e9e9;
 }
