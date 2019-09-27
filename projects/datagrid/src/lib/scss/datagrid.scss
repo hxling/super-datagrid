@@ -164,6 +164,8 @@
             background: $row-hover-bgcolor!important;
             color: $row-hover-color!important;
             transition: background-color 0.1s ease-in;
+
+            // box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
         }
 
        
@@ -319,8 +321,7 @@
                 background-color: $selected-row-bgcolor!important;
                 color: $selected-row-color;
             }
-
-            .f-datagrid-row-odd {
+            tr:nth-child(odd) {
                 background-color: $row-odd-bgcolor;
                 color: $grid-text-color;
                 .f-datagrid-cell {
@@ -328,7 +329,8 @@
                     border-color: $grid-border-color
                 }
             }
-            .f-datagrid-row-even {
+
+            tr:nth-child(even) {
                 background-color: $row-even-bgcolor;
                 .f-datagrid-cell {
                     background-color: transparent;

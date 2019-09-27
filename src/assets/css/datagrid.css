@@ -167,7 +167,7 @@ farris-datagrid {
   transition: background-color 0.1s ease-in;
 }
 .f-datagrid-row-selected {
-  background-color:rgb(167, 214, 245);
+  background-color: rgba(74, 143, 255, 0.18);
   color: #222;
   border-color: #e9e9e9;
 }
@@ -209,7 +209,7 @@ farris-datagrid {
 }
 .f-datagrid-cell-selected {
   border: 0px solid #388fff !important;
-  background-color: #dce7ff !important;
+  background-color: #c7d8ff !important;
 }
 .f-datagrid-cell-edit .f-datagrid-cell-content {
   padding: 0;
@@ -265,21 +265,21 @@ farris-datagrid {
 }
 .f-datagrid-strip .f-datagrid-body .f-datagrid-row-selected {
   color: rgba(0, 0, 0, 0.75);
-  background-color: #E6F7FF !important;
+  background-color: rgba(74, 143, 255, 0.18) !important;
   color: #222;
 }
-.f-datagrid-strip .f-datagrid-body .f-datagrid-row-odd {
+.f-datagrid-strip .f-datagrid-body tr:nth-child(odd) {
   background-color: #FCFDFE;
   color: rgba(0, 0, 0, 0.75);
 }
-.f-datagrid-strip .f-datagrid-body .f-datagrid-row-odd .f-datagrid-cell {
+.f-datagrid-strip .f-datagrid-body tr:nth-child(odd) .f-datagrid-cell {
   background-color: transparent;
   border-color: #e9e9e9;
 }
-.f-datagrid-strip .f-datagrid-body .f-datagrid-row-even {
+.f-datagrid-strip .f-datagrid-body tr:nth-child(even) {
   background-color: #fff;
 }
-.f-datagrid-strip .f-datagrid-body .f-datagrid-row-even .f-datagrid-cell {
+.f-datagrid-strip .f-datagrid-body tr:nth-child(even) .f-datagrid-cell {
   background-color: transparent;
 }
 .f-datagrid-bordered {

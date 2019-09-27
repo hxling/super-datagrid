@@ -2,11 +2,11 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 11:07:01
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-26 15:17:14
+ * @LastEditTime: 2019-09-27 16:55:34
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
-import { Directive, OnInit, OnDestroy, AfterViewInit, Renderer2, ElementRef, Input, Injector} from '@angular/core';
+import { Directive, OnInit, OnDestroy, AfterViewInit, Renderer2, ElementRef, Input, Injector, NgZone} from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { DataColumn, DatagridComponent, ValidatorMessagerService, DatagridFacadeService, DatagridRowDirective } from '@farris/ui-datagrid';
 
@@ -30,7 +30,7 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
     errorMessage: string;
 
     /** 禁止事件冒泡 */
-    stopPropagation = false;
+    stopPropagation = true;
 
 
     private clickEvent: any;
@@ -40,6 +40,9 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
     dg: DatagridComponent;
     dfs: DatagridFacadeService;
     validators = [];
+
+    ngZone: NgZone;
+
     get dr(): DatagridRowDirective {
         return this.dg.selectedRow.dr;
     }
@@ -47,6 +50,7 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
         this.vms = this.injector.get(ValidatorMessagerService);
         this.dg = this.injector.get(DatagridComponent);
         this.dfs = this.injector.get(DatagridFacadeService);
+        this.ngZone = this.injector.get(NgZone);
     }
 
     ngOnInit(): void {
@@ -105,9 +109,13 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
 
     private focus() {
         if (this.inputElement) {
-            setTimeout(() => {
-                this.inputElement.focus();
-            });
+            if (this.ngZone) {
+                this.ngZone.runOutsideAngular(() => {
+                    setTimeout(() => {
+                        this.inputElement.focus();
+                    });
+                });
+            }
         }
     }
 }
