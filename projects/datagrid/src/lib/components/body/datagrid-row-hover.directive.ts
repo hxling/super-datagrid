@@ -3,7 +3,7 @@ import { Utils } from './../../utils/utils';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-20 17:37:59
+ * @LastEditTime: 2019-09-26 17:17:32
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -49,15 +49,14 @@ export class DatagridRowHoverDirective implements OnInit, OnDestroy {
         this.setRowHoverCls(false);
     }
 
-    private setRowHoverCls(hover = true) {
+    setRowHoverCls(hover = true) {
         const leftTableCls = 'f-datagrid-body-fixed-left';
         const rightTableCls = 'f-datagrid-body-fixed-right';
         const centerTableCls = 'f-datagrid-table';
 
-        const leftTableDom = document.querySelector(`.${leftTableCls}`);
-        const rightTableDom = document.querySelector(`.${rightTableCls}`);
-        const centerTableDom = document.querySelector(`.${centerTableCls}`);
-
+        const leftTableDom = this.dg.el.nativeElement.querySelector(`.${leftTableCls}`);
+        const rightTableDom = this.dg.el.nativeElement.querySelector(`.${rightTableCls}`);
+        const centerTableDom = this.dg.el.nativeElement.querySelector(`.${centerTableCls}`);
 
         const method = hover ? 'addClass' : 'removeClass';
         const trSelector = `tr[index="${this.rowIndex}"]`;

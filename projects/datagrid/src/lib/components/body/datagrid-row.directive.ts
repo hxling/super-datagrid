@@ -1,10 +1,10 @@
 
-import { QueryList, Renderer2 } from '@angular/core';
+import { QueryList, Renderer2, Self } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-06 16:05:36
+ * @LastEditTime: 2019-09-26 17:34:20
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -16,6 +16,7 @@ import { DatagridComponent } from '../../datagrid.component';
 import { DatagridCellComponent } from './datagrid-cell.component';
 import { DatagridRow } from '../../types/datagrid-row';
 import { DatagridValidator } from '../../types/datagrid-validator';
+import { DatagridRowHoverDirective } from './datagrid-row-hover.directive';
 
 @Directive({
     selector: '[grid-row]',
@@ -42,7 +43,7 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
     constructor(
         @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
         private injector: Injector, private fb: FormBuilder, public el: ElementRef,
-        private render: Renderer2) {
+        private render: Renderer2, @Self() public drHover: DatagridRowHoverDirective) {
         this.dfs = this.injector.get(DatagridFacadeService);
     }
 
@@ -82,6 +83,7 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
                     if (canSelect) {
                         this.dfs.selectRow(this.rowIndex, this.rowData);
                         this.dg.selectedRow.dr = this;
+                        this.drHover.setRowHoverCls(false);
                         this.clickHandler.emit();
                     }
                 });

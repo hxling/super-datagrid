@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-17 19:13:58
+ * @LastEditTime: 2019-09-21 16:32:40
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -166,7 +166,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.onDataSourceChangeSubscribe = this.dgs.onDataSourceChange.subscribe(() => {
             this.ps.scrollToTop();
             this.bodyStyle = this.getBodyStyle();
-            // this.app.tick();
             this.cd.detectChanges();
         });
         this.subscriptions.push(this.onDataSourceChangeSubscribe);
@@ -174,10 +173,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.selectRowSubscribe = this.dfs.selectRow$.subscribe((row: SelectedRow) => {
             if (row) {
                 this.currentRowId = row.id;
-                // this.dg.selectedRow = row;
             }
             this.dg.selectChanged.emit(row);
-            // console.log(this.dg);
             this.cd.detectChanges();
             this.app.tick();
         });
@@ -185,7 +182,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
         this.unselectRowSubscribe = this.dfs.unSelectRow$.subscribe((prevRow: SelectedRow) => {
             this.currentRowId = undefined;
-            // this.dg.selectedRow = null;
             this.dg.unSelect.emit(prevRow);
             this.cd.detectChanges();
         });
@@ -206,8 +202,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
         this.clearSelectionsSubscribe =  this.dfs.clearSelections$.subscribe(() => {
             this.currentRowId = undefined;
-            // this.dg.selectedRow = null;
-
             if (this.dg.checkOnSelect) {
                 this.dgs.onCheckedRowsCountChange();
             }
@@ -232,7 +226,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.clearCheckedsSubscribe =  this.dfs.clearCheckeds$.subscribe((rows: SelectedRow[]) => {
             if (this.dg.selectOnCheck) {
                 this.currentRowId = undefined;
-                // this.dg.selectedRow = null;
             }
             this.dg.unCheckAll.emit(rows);
             this.dgs.onCheckedRowsCountChange();
@@ -306,7 +299,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     onScrollToY($event: any) {
-
         if (this.dg.isRowEditing()) {
             this.dg.endRowEdit();
         }
@@ -395,7 +387,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     private scrolling(isUp: boolean) {
-
         const virtualRowPos = this.getVirtualRowPosition();
         if (!virtualRowPos) { return; }
 

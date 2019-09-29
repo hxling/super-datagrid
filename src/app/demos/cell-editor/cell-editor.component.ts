@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-13 10:32:10
+ * @LastEditTime: 2019-09-26 10:13:12
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -41,6 +41,7 @@ export class CellEditorComponent implements OnInit {
     editMode = 'cell';
     pageSize = 200;
     pageIndex = 1;
+    clickToEdit = true;
     @ViewChild('box') box: ElementRef;
     @ViewChild('dg') dg: DatagridComponent;
     constructor(private dds: DemoDataService, private http: HttpClient) {}

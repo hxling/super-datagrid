@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-17 18:58:24
+ * @LastEditTime: 2019-09-27 17:17:01
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -63,7 +63,7 @@ export class DatagridSelectionDemoComponent implements OnInit {
 
 
     columns = [
-        { field: 'id', width: 100, title: 'ID' },
+        { field: 'id', width: 100, title: 'ID', sortable: true },
         { field: 'name', width: 130, title: '姓名' , sortable: true},
         { field: 'sex', width: 70, title: '性别'},
         { field: 'birthday', width: 120, title: '出生日期'},

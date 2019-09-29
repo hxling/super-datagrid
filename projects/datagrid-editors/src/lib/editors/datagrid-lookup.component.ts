@@ -3,7 +3,7 @@ import { AfterViewInit, ApplicationRef, Inject, forwardRef, Injector } from '@an
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-18 08:56:58
+ * @LastEditTime: 2019-09-27 16:41:01
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -52,6 +52,7 @@ import { RuntimeStateService } from '@farris/ui-common';
 export class DatagridLookupComponent extends DatagridBaseEditorDirective implements OnInit, AfterViewInit {
 
     @ViewChild('lookup') lookup: LookupGridComponent;
+    stopPropagation = false;
 
     constructor(render: Renderer2, el: ElementRef, private rts: RuntimeStateService,
                 injector: Injector) {
