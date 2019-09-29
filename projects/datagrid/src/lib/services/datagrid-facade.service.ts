@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-25 08:49:22
+ * @LastEditTime: 2019-09-29 14:21:39
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -10,7 +10,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
-import { map, distinctUntilChanged, filter, switchMap, auditTime } from 'rxjs/operators';
+import { map, distinctUntilChanged, filter, switchMap, auditTime, debounceTime } from 'rxjs/operators';
 import { DataColumn, ColumnGroup } from '../types';
 import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow, RowDataChanges } from './state';
 import { VirtualizedLoaderService } from './virtualized-loader.service';
@@ -76,13 +76,13 @@ export class DatagridFacadeService {
 
     readonly data$ = this.virtualRowSubject.asObservable().pipe(
         filter(vs => vs),
-        map((vs: VirtualizedState) => {
-            return {
+        switchMap((vs: VirtualizedState) => {
+            return of({
                 index: vs.startIndex || 0,
                 rows: vs.virtualRows,
                 top: vs.topHideHeight,
                 bottom: vs.bottomHideHeight
-            };
+            });
         })
     );
 
@@ -106,6 +106,7 @@ export class DatagridFacadeService {
     }
 
     updateVirthualRows(scrolltop: number) {
+        // console.time('计算虚拟加载');
         if (scrolltop === undefined) {
             scrolltop = 0;
         }
@@ -114,7 +115,7 @@ export class DatagridFacadeService {
             this.virtualizedService.state = this._state;
             virtual = { ...this._state.virtual, ...this.virtualizedService.getRows(scrolltop) };
         }
-
+        // console.timeEnd('计算虚拟加载');
         this.updateState({virtual});
         this.virtualRowSubject.next(virtual);
     }
