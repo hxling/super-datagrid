@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-26 11:10:57
+ * @LastEditTime: 2019-09-29 10:56:38
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -289,7 +289,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     private resizeColumnInfo = {
         proxyLineEdge: 0,
         startWidth: 0,
-        startX: 0
+        startX: 0,
+        left: 0
     };
 
     private ro: ResizeObserver | null = null;
@@ -1276,10 +1277,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         const target = e.target as any;
         const dgRect = this.getBoundingClientRect(this.dgContainer);
         const td = target.parentElement;
-        const deltaEdge = td.offsetWidth - (e.pageX - td.getBoundingClientRect().left);
+        const tdLeft = td.getBoundingClientRect().left;
+        const deltaEdge = td.offsetWidth - (e.pageX - tdLeft);
         this.resizeColumnInfo.proxyLineEdge = deltaEdge;
         this.resizeColumnInfo.startWidth = td.offsetWidth;
         this.resizeColumnInfo.startX = e.pageX;
+        this.resizeColumnInfo.left = tdLeft - dgRect.left - 1 + deltaEdge;
         return e.pageX - dgRect.left - 1 + deltaEdge;
     }
 
@@ -1304,7 +1307,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         const proxy = this.resizeProxy.nativeElement;
         const dgRect = this.getBoundingClientRect(this.dgContainer);
         const proxyPosLeft = e.pageX - dgRect.left - 1 + this.resizeColumnInfo.proxyLineEdge;
-        this.render2.setStyle(proxy, 'left', proxyPosLeft + 'px');
+        if (proxyPosLeft - this.resizeColumnInfo.left > 20 ) {
+            this.render2.setStyle(proxy, 'left', proxyPosLeft + 'px');
+        } else {
+            this.render2.setStyle(proxy, 'left', ( this.resizeColumnInfo.left + 20) + 'px');
+        }
         e.stopPropagation();
         e.preventDefault();
     }
@@ -1313,8 +1320,11 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.toggleResizeProxy(false);
         this.resizeColumnInfo.proxyLineEdge = 0;
 
-        const newColWidth = this.resizeColumnInfo.startWidth + e.pageX - this.resizeColumnInfo.startX;
+        let newColWidth = this.resizeColumnInfo.startWidth + e.pageX - this.resizeColumnInfo.startX;
 
+        if (newColWidth < 20) {
+            newColWidth = 20;
+        }
         col.width = newColWidth;
         this.dfs.resizeColumns();
     }
