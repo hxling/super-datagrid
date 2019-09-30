@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-29 18:42:40
+ * @LastEditTime: 2019-09-30 09:23:00
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -86,19 +86,19 @@ export class DatagridFacadeService {
         })
     );
 
-    readonly currentRow$ = this.store.asObservable().pipe(
-        filter( (state: any) => state),
-        map((state: FarrisDatagridState) => state.currentRow),
-        switchMap( (row) => {
-            if (row) {
-                return of(row);
-            } else {
-                this.unSelectRowSubject.next(row);
-                return this.unSelectRowSubject.asObservable();
-            }
-        }),
-        distinctUntilChanged()
-    );
+    // readonly currentRow$ = this.store.asObservable().pipe(
+    //     filter( (state: any) => state),
+    //     map((state: FarrisDatagridState) => state.currentRow),
+    //     switchMap( (row) => {
+    //         if (row) {
+    //             return of(row);
+    //         } else {
+    //             this.unSelectRowSubject.next(row);
+    //             return this.unSelectRowSubject.asObservable();
+    //         }
+    //     }),
+    //     distinctUntilChanged()
+    // );
 
     constructor(private http: HttpClient) {
         this._state = initDataGridState;
@@ -106,17 +106,17 @@ export class DatagridFacadeService {
     }
 
     updateVirthualRows(scrolltop: number) {
-        // console.time('计算虚拟加载');
         if (scrolltop === undefined) {
             scrolltop = 0;
         }
         let virtual = {rowIndex: 0, virtualRows: this._state.data, topHideHeight: 0, bottomHideHeight: 0 };
         if (this._state.virtual && this._state.virtualized) {
             this.virtualizedService.state = this._state;
+            // console.time('计算虚拟加载');
             virtual = { ...this._state.virtual, ...this.virtualizedService.getRows(scrolltop) };
+            // console.timeEnd('计算虚拟加载');
         }
-        // console.timeEnd('计算虚拟加载');
-        this.updateState({virtual});
+        this.updateState({virtual}, false);
         this.virtualRowSubject.next(virtual);
     }
 

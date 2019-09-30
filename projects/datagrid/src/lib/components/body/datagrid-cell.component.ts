@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-29 13:54:53
+ * @LastEditTime: 2019-09-30 08:56:16
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -25,7 +25,7 @@ import { ColumnFormatService } from '@farris/ui-common/column';
     template: `
     <div class="f-datagrid-cell-content" #cellContainer [style.width.px]="column.width">
         <ng-container *ngIf="!isEditing && !column.template">
-            <span *ngIf="column.formatter" [innerHtml]="dg.formatData(column.field, rowData, column.formatter) | safe: 'html'"></span>
+            <span *ngIf="column.formatter" [innerHtml]=" column | formatCellData: rowData | safe: 'html'"></span>
             <span *ngIf="!column.formatter"> {{ column | formatCellData: rowData }} </span>
         </ng-container>
         <ng-container *ngIf="!isEditing && column.template" [ngTemplateOutlet]="column.template"
@@ -90,7 +90,7 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
             rowData: this.rowData
         };
 
-        this.updateValue();
+        // this.updateValue();
 
         this.buildCustomCellStyle();
 
