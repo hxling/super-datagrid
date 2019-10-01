@@ -36,6 +36,27 @@ export class VirtualizedLoaderService {
         return res;
     }
 
+    private binarySearch<T>(nodes: T[], condition: (item: T) => boolean, firstIndex = 0) {
+        let left = firstIndex;
+        let right = nodes.length - 1;
+
+        while (left !== right) {
+            const mid = Math.floor((left + right) / 2);
+
+            if (condition(nodes[mid])) {
+                right = mid;
+            } else {
+                if (left === mid) {
+                    left = right;
+                } else {
+                    left = mid;
+                }
+            }
+        }
+
+        return left;
+    }
+
     getRows(scrollTop: number) {
         const minTop =  Math.abs(scrollTop);
         const rowHeight = this.getRowHeight();
@@ -57,7 +78,7 @@ export class VirtualizedLoaderService {
                 continue;
             } else {
                 if (top > maxTop) {
-                    bottomHideHeight += rowHeight;
+                    // bottomHideHeight += rowHeight;
                     continue;
                 }
             }
@@ -67,7 +88,7 @@ export class VirtualizedLoaderService {
 
         if (this.state.virtualizedAsyncLoad) {
             topHideHeight = this.state.virtual.rowIndex * rowHeight  + topHideHeight;
-            bottomHideHeight = total * rowHeight - rows.length * rowHeight - topHideHeight;
+            // bottomHideHeight = total * rowHeight - rows.length * rowHeight - topHideHeight;
         }
 
         let startIndex = this.state.virtual.rowIndex;
@@ -76,7 +97,7 @@ export class VirtualizedLoaderService {
         }
         return {
             startIndex,
-            virtualRows: [...rows],
+            virtualRows: rows,
             topHideHeight,
             bottomHideHeight
         };

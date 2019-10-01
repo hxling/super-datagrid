@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-25 08:49:22
+ * @LastEditTime: 2019-09-30 15:10:20
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -10,7 +10,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
-import { map, distinctUntilChanged, filter, switchMap, auditTime } from 'rxjs/operators';
+import { map, distinctUntilChanged, filter, switchMap, auditTime, debounceTime } from 'rxjs/operators';
 import { DataColumn, ColumnGroup } from '../types';
 import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow, RowDataChanges } from './state';
 import { VirtualizedLoaderService } from './virtualized-loader.service';
@@ -24,7 +24,7 @@ export class DatagridFacadeService {
 
     store = new BehaviorSubject<FarrisDatagridState>(this._state);
 
-    virtualRowSubject = new Subject<any>();
+    virtualRowSubject = new BehaviorSubject<any>(null);
     gridSizeSubject = new Subject<any>();
     errorSubject = new Subject();
     private selectRowSubject = new Subject<any>();
@@ -76,29 +76,29 @@ export class DatagridFacadeService {
 
     readonly data$ = this.virtualRowSubject.asObservable().pipe(
         filter(vs => vs),
-        map((vs: VirtualizedState) => {
-            return {
+        switchMap((vs: VirtualizedState) => {
+            return of({
                 index: vs.startIndex || 0,
                 rows: vs.virtualRows,
                 top: vs.topHideHeight,
                 bottom: vs.bottomHideHeight
-            };
+            });
         })
     );
 
-    readonly currentRow$ = this.store.asObservable().pipe(
-        filter( (state: any) => state),
-        map((state: FarrisDatagridState) => state.currentRow),
-        switchMap( (row) => {
-            if (row) {
-                return of(row);
-            } else {
-                this.unSelectRowSubject.next(row);
-                return this.unSelectRowSubject.asObservable();
-            }
-        }),
-        distinctUntilChanged()
-    );
+    // readonly currentRow$ = this.store.asObservable().pipe(
+    //     filter( (state: any) => state),
+    //     map((state: FarrisDatagridState) => state.currentRow),
+    //     switchMap( (row) => {
+    //         if (row) {
+    //             return of(row);
+    //         } else {
+    //             this.unSelectRowSubject.next(row);
+    //             return this.unSelectRowSubject.asObservable();
+    //         }
+    //     }),
+    //     distinctUntilChanged()
+    // );
 
     constructor(private http: HttpClient) {
         this._state = initDataGridState;
@@ -106,17 +106,25 @@ export class DatagridFacadeService {
     }
 
     updateVirthualRows(scrolltop: number) {
+        console.time('计算虚拟加载');
+        const virtual = this.getVirthualRows(scrolltop);
+        this.updateState({virtual}, false);
+        this.virtualRowSubject.next(virtual);
+        console.timeEnd('计算虚拟加载');
+    }
+
+    getVirthualRows(scrolltop): VirtualizedState {
         if (scrolltop === undefined) {
             scrolltop = 0;
         }
         let virtual = {rowIndex: 0, virtualRows: this._state.data, topHideHeight: 0, bottomHideHeight: 0 };
         if (this._state.virtual && this._state.virtualized) {
             this.virtualizedService.state = this._state;
-            virtual = { ...this._state.virtual, ...this.virtualizedService.getRows(scrolltop) };
+            const rows = this.virtualizedService.getRows(scrolltop);
+            virtual = { ...this._state.virtual, ...rows };
         }
 
-        this.updateState({virtual});
-        this.virtualRowSubject.next(virtual);
+        return virtual;
     }
 
     getDeltaTopHeight(scrolTop, firstIndex) {

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-07-29 08:14:22
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-15 09:28:20
+ * @LastEditTime: 2019-10-01 14:52:17
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -13,8 +13,8 @@ import PerfectScrollbar from 'perfect-scrollbar';
 
 import ResizeObserver from 'resize-observer-polyfill';
 
-import { Subject, fromEvent } from 'rxjs';
-import { auditTime, takeUntil } from 'rxjs/operators';
+import { Subject, fromEvent, Observable, interval } from 'rxjs';
+import { auditTime, takeUntil, debounceTime, throttle } from 'rxjs/operators';
 
 import {
     NgZone, Inject, Optional, ElementRef, Directive,
@@ -98,14 +98,21 @@ export class ScrollbarDirective implements OnInit, OnDestroy, DoCheck, OnChanges
                 ScrollbarEvents.forEach((eventName: ScrollbarEvent) => {
                     const eventType = eventName.replace(/([A-Z])/g, (c) => `-${c.toLowerCase()}`);
 
-                    fromEvent<Event>(this.elementRef.nativeElement, eventType)
-                        .pipe(
+                    if (eventName.indexOf('X') > -1 || eventName.indexOf('Left') > -1 || eventName.indexOf('Right') > -1) {
+                        fromEvent<Event>(this.elementRef.nativeElement, eventType).subscribe((event: Event) => {
+                            this[eventName].emit(event);
+                        });
+                    } else {
+                        fromEvent<Event>(this.elementRef.nativeElement, eventType).pipe(
+                            debounceTime(20),
+                            throttle(ev => interval(10)),
                             // auditTime(20),  // auditTime 静默指定的时间，在此时间内忽略所有发出的值，时间过后，发出最新的值
-                            takeUntil(this.ngDestroy)
+                            // takeUntil(this.ngDestroy)
                         )
                         .subscribe((event: Event) => {
                             this[eventName].emit(event);
                         });
+                    }
                 });
             });
         }

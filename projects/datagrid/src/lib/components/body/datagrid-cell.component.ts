@@ -3,13 +3,13 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-22 20:58:29
+ * @LastEditTime: 2019-10-01 10:24:29
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import { Component, OnInit, Input, Output, EventEmitter,
     ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef,
-    OnDestroy, Injector, Inject, forwardRef} from '@angular/core';
+    OnDestroy, Injector, Inject, forwardRef, AfterViewInit} from '@angular/core';
 import { Utils } from '../../utils/utils';
 import { filter } from 'rxjs/operators';
 import { DataColumn } from '../../types/data-column';
@@ -25,8 +25,8 @@ import { ColumnFormatService } from '@farris/ui-common/column';
     template: `
     <div class="f-datagrid-cell-content" #cellContainer [style.width.px]="column.width">
         <ng-container *ngIf="!isEditing && !column.template">
-            <span *ngIf="column.formatter" [innerHtml]="dg.formatData(column.field, rowData, column.formatter) | safe: 'html'"></span>
-            <span *ngIf="!column.formatter" [innerHTML]="value"></span>
+            <span *ngIf="column.formatter" [innerHtml]=" column | formatCellData: rowData | safe: 'html'"></span>
+            <span *ngIf="!column.formatter"> {{ column | formatCellData: rowData }} </span>
         </ng-container>
         <ng-container *ngIf="!isEditing && column.template" [ngTemplateOutlet]="column.template"
                         [ngTemplateOutletContext]="{$implicit: cellContext}"></ng-container>
@@ -35,7 +35,7 @@ import { ColumnFormatService } from '@farris/ui-common/column';
     `,
     changeDetection: ChangeDetectionStrategy.Default
 })
-export class DatagridCellComponent implements OnInit, OnDestroy {
+export class DatagridCellComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() width: number;
     @Input() height: number;
     @Input() cls = '';
@@ -90,9 +90,7 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
             rowData: this.rowData
         };
 
-        this.updateValue();
-
-        this.buildCustomCellStyle();
+        // this.updateValue();
 
         this.cellSubscription = this.dfs.currentCell$.pipe(
             filter((cell: CellInfo) => {
@@ -109,6 +107,10 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
             }
         });
 
+    }
+
+    ngAfterViewInit(): void {
+        this.buildCustomCellStyle();
     }
 
     ngOnDestroy() {

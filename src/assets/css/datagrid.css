@@ -355,10 +355,12 @@ farris-datagrid {
   left: 0;
   width: 100%;
   min-height: 36px;
-  border-top: 1px solid #ccc;
 }
 .f-datagrid-footer table {
   table-layout: fixed;
+}
+.f-datagrid-footer > div {
+  border-top: 1px solid #ccc;
 }
 .f-tooltip {
   position: absolute;
@@ -556,5 +558,3 @@ farris-datagrid {
     overflow: auto !important;
   }
 }
-
-/*# sourceMappingURL=datagrid.css.map */

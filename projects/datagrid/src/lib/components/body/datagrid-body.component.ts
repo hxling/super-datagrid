@@ -3,13 +3,13 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-21 16:32:40
+ * @LastEditTime: 2019-10-01 11:11:36
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import {
     Component, OnInit, Input, ViewChild, Renderer2,
-    ElementRef, OnDestroy, ChangeDetectorRef,
+    ElementRef, OnDestroy, ChangeDetectorRef, AfterViewInit,
     OnChanges, SimpleChanges, ChangeDetectionStrategy, NgZone, Injector, forwardRef, Inject, Optional, ApplicationRef
 } from '@angular/core';
 
@@ -28,8 +28,8 @@ import { DatagridComponent } from '../../datagrid.component';
 })
 export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
-    psConfig = { swipeEasing: true, minScrollbarLength: 15, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
-    psConfigLeft = { suppressScrollX: true, suppressScrollY: false };
+    psConfig = { swipeEasing: false, minScrollbarLength: 15, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
+    // psConfigLeft = { suppressScrollX: true, suppressScrollY: false };
 
     top: number;
     height: number;
@@ -89,8 +89,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     private subscriptions = [];
 
-    private dfs: DatagridFacadeService;
-    private dgs: DatagridService;
+    public dfs: DatagridFacadeService;
+    public dgs: DatagridService;
+    public ngZone: NgZone;
     constructor(
         private injector: Injector,
         private app: ApplicationRef,
@@ -99,6 +100,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     ) {
         this.dfs = this.injector.get(DatagridFacadeService);
         this.dgs = this.injector.get(DatagridService);
+        this.ngZone = this.injector.get(NgZone);
     }
 
     ngOnInit(): void {
@@ -232,6 +234,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.cd.detectChanges();
         });
         this.subscriptions.push(this.clearCheckedsSubscribe);
+
     }
 
 
@@ -239,9 +242,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         if (changes.data && !changes.data.isFirstChange()) {
             this.setWheelHeight();
             this.ps.update();
-            if (!this.cd['destroyed']) {
-                this.cd.detectChanges();
-            }
+            // if (!this.cd['destroyed']) {
+            //     this.cd.detectChanges();
+            // }
         }
 
         if (changes.footerHeight !== undefined && !changes.footerHeight.isFirstChange()) {
@@ -253,11 +256,19 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.destroySubscriptions();
     }
 
-    updateRowHeight(list: number[]) {
+    /** 允许数据折行时，计算行号的行高 */
+    updateRowHeight(list: any) {
         this.wheelHeight = list.reduce((r, c) => r + c , 0);
         if (this.fixedLeftEl) {
             const trdoms = this.fixedLeftEl.nativeElement.querySelectorAll('.fixed-left-row');
-            trdoms.forEach( (tr, i) => tr.style.height = list[i] + 'px' );
+            const trdoms2 = this.fixedLeftEl.nativeElement.querySelectorAll('.fixed-right-row');
+            trdoms.forEach( (tr, i) => {
+                const _h = list[i] + 'px';
+                tr.style.height = _h;
+                if (trdoms2 && trdoms2.length) {
+                    trdoms2[i].style.height = _h;
+                }
+            });
         }
         this.cd.detectChanges();
     }
@@ -342,6 +353,14 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         this.dfs.updateVirthualRows(this.scrollTop);
+
+        // const virthualState = this.dfs.getVirthualRows(this.scrollTop);
+        // this.startRowIndex = virthualState.startIndex;
+        // this.data = virthualState.virtualRows;
+        // this.topHideHeight = virthualState.topHideHeight;
+        // // this.bottomHideHeight = virthualState.bottomHideHeight;
+        // this.cd.detectChanges();
+
         if (this.dg.virtualized && this.dg.virtualizedAsyncLoad) {
 
             if (this.needFetchData()) {

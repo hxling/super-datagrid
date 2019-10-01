@@ -1,10 +1,10 @@
 
-import { QueryList, Renderer2, Self } from '@angular/core';
+import { QueryList, Renderer2, Self, NgZone } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-26 17:34:20
+ * @LastEditTime: 2019-09-29 14:50:36
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -39,12 +39,14 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
     form = new FormGroup({});
     private dfs: DatagridFacadeService;
     private documentRowDblclickEvent: any = null;
+    private ngZone: NgZone;
 
     constructor(
         @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent,
         private injector: Injector, private fb: FormBuilder, public el: ElementRef,
         private render: Renderer2, @Self() public drHover: DatagridRowHoverDirective) {
         this.dfs = this.injector.get(DatagridFacadeService);
+        this.ngZone = this.injector.get(NgZone);
     }
 
     ngOnInit() {
@@ -52,6 +54,14 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
             this.form = this.createControl();
         }
         this.renderCustomStyle();
+
+        if (this.ngZone) {
+            this.ngZone.runOutsideAngular( () => {
+                this.render.listen(this.el.nativeElement, 'click', this.onRowClick.bind(this));
+                this.render.listen(this.el.nativeElement, 'mouseenter', this.onMouseEnter.bind(this));
+                this.render.listen(this.el.nativeElement, 'mouseleave', this.onMouseLeave.bind(this));
+            });
+        }
     }
 
     ngAfterViewInit() {
@@ -66,7 +76,6 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
         }
     }
 
-    @HostListener('click', ['$event'])
     onRowClick(event: MouseEvent) {
 
         if (this.dg.disabled) {
@@ -99,14 +108,12 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
         }
     }
 
-    @HostListener('mouseenter', ['$event'])
     onMouseEnter($event: MouseEvent) {
         if (this.dg.editMode === 'row') {
             this.bindRowDblClickEvent();
         }
     }
 
-    @HostListener('mouseleave', ['$event'])
     onMouseLeave($event: MouseEvent) {
         if (this.dg.editMode === 'row') {
             this.unbindRowDblclickEvent();

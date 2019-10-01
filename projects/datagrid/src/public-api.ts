@@ -2,7 +2,7 @@
 /*
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-06 08:57:45
+ * @LastEditTime: 2019-09-29 13:41:55
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -34,5 +34,6 @@ export { DatagridFooterComponent } from './lib/components/footer/datagrid-footer
 export { DatagridPagerComponent } from './lib/components/pager/pager.component';
 export { DataGridLoadingComponent } from './lib/components/loading.component';
 
+export { FormatCellDataPipe } from './lib/utils/format-cell-data.pipe';
 
 export { DatagridModule } from './lib/datagrid.module';

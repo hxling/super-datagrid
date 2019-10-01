@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-26 10:13:12
+ * @LastEditTime: 2019-09-30 08:06:16
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -20,7 +20,7 @@ import { ValidatorFn, AbstractControl } from '@angular/forms';
 export function forbiddenNameValidator(rowData): ValidatorFn {
     return (control: AbstractControl): {[key: string]: any} | null => {
         // const forbidden = nameRe.test(control.value);
-        console.log(rowData);
+        // console.log(rowData);
         return true ? { 'validator_NianXin' : {value: control.value}} : null;
     };
 }
