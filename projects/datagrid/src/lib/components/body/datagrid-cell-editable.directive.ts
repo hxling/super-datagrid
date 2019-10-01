@@ -3,11 +3,11 @@ import { FormControl } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-26 17:58:02
+ * @LastEditTime: 2019-10-01 10:18:32
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
-import { Directive, Input, ElementRef, Renderer2, OnInit, ContentChild, OnDestroy, Injector, forwardRef, Inject } from '@angular/core';
+import { Directive, Input, ElementRef, Renderer2, OnInit, ContentChild, OnDestroy, Injector, forwardRef, Inject, AfterViewInit, NgZone } from '@angular/core';
 import { filter, switchMap } from 'rxjs/operators';
 import { DatagridService } from './../../services/datagrid.service';
 import { DatagridCellComponent } from './datagrid-cell.component';
@@ -26,7 +26,7 @@ import { Utils } from '../../utils/utils';
     selector: '[cell-editable]',
     exportAs: 'cellEditable'
 })
-export class DatagridCellEditableDirective implements OnInit, OnDestroy {
+export class DatagridCellEditableDirective implements OnInit, OnDestroy, AfterViewInit {
     @Input('cell-editable') rowData: any;
     @Input() column: DataColumn;
     private clickTimer: any;
@@ -59,17 +59,10 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     private dr: DatagridRowDirective;
     private dfs: DatagridFacadeService;
     private dgs: DatagridService;
-    private isDifferentCell = () => {
-        if (!this.dg.currentCell) {
-            return true;
-        } else {
-            return  this.dg.currentCell.rowIndex !== this.dr.rowIndex || this.dg.currentCell.field !== this.column.field;
-        }
-    }
 
     constructor(
         private injector: Injector, public el: ElementRef, private render: Renderer2,
-        @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent) {
+        @Inject(forwardRef(() => DatagridComponent)) public dg: DatagridComponent, public ngZone: NgZone) {
         this.dgb = this.injector.get(DatagridBodyComponent);
         this.dr = this.injector.get(DatagridRowDirective);
         this.dfs = this.injector.get(DatagridFacadeService);
@@ -77,6 +70,10 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+
+    }
+
+    ngAfterViewInit() {
         if (this.dg.editable) {
             this.cellclick = this.render.listen(this.el.nativeElement, 'click', (e) => this.onClickCell(e));
             if (this.column.editor) {
@@ -117,6 +114,14 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy {
         if (this.bindCellEventSubscription) {
             this.bindCellEventSubscription.unsubscribe();
             this.bindCellEventSubscription = null;
+        }
+    }
+
+    private isDifferentCell() {
+        if (!this.dg.currentCell) {
+            return true;
+        } else {
+            return  this.dg.currentCell.rowIndex !== this.dr.rowIndex || this.dg.currentCell.field !== this.column.field;
         }
     }
 

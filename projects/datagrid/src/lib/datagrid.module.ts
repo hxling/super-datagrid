@@ -3,7 +3,7 @@ import { ValidatorMessagerService } from './services/validator-messager.service'
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-29 13:42:04
+ * @LastEditTime: 2019-09-30 16:07:46
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -39,6 +39,7 @@ import { DatagridFooterComponent } from './components/footer/datagrid-footer.com
 /** 兼容下老版本 */
 import { TextboxEditorComponent } from './components/editors/text-editor.component';
 import { FormatCellDataPipe } from './utils/format-cell-data.pipe';
+import { RowDataIdPipe } from './utils/rowid.pipe';
 
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
@@ -60,6 +61,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
     declarations: [
         SafePipe,
         FormatCellDataPipe,
+        RowDataIdPipe,
         DatagridComponent,
         DatagridHeaderComponent,
         DatagridFooterComponent,
@@ -95,7 +97,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DatagridRowHoverDirective,
         DatagridResizeColumnDirective,
         TextboxEditorComponent,
-        FormatCellDataPipe
+        FormatCellDataPipe,
+        RowDataIdPipe
     ],
     entryComponents: [
 

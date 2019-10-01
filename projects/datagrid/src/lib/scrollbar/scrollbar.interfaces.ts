@@ -103,8 +103,7 @@ export class ScrollbarConfig implements ScrollbarConfigInterface {
 
     public assign(config: ScrollbarConfigInterface = {}) {
         for (const key in config) {
-            this[key as keyof ScrollbarConfig] =
-                config[key as keyof ScrollbarConfigInterface];
+            this[key as keyof ScrollbarConfig] = config[key as keyof ScrollbarConfigInterface];
         }
     }
 }

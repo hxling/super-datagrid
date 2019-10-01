@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-30 09:23:00
+ * @LastEditTime: 2019-09-30 15:10:20
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -24,7 +24,7 @@ export class DatagridFacadeService {
 
     store = new BehaviorSubject<FarrisDatagridState>(this._state);
 
-    virtualRowSubject = new Subject<any>();
+    virtualRowSubject = new BehaviorSubject<any>(null);
     gridSizeSubject = new Subject<any>();
     errorSubject = new Subject();
     private selectRowSubject = new Subject<any>();
@@ -106,18 +106,25 @@ export class DatagridFacadeService {
     }
 
     updateVirthualRows(scrolltop: number) {
+        console.time('计算虚拟加载');
+        const virtual = this.getVirthualRows(scrolltop);
+        this.updateState({virtual}, false);
+        this.virtualRowSubject.next(virtual);
+        console.timeEnd('计算虚拟加载');
+    }
+
+    getVirthualRows(scrolltop): VirtualizedState {
         if (scrolltop === undefined) {
             scrolltop = 0;
         }
         let virtual = {rowIndex: 0, virtualRows: this._state.data, topHideHeight: 0, bottomHideHeight: 0 };
         if (this._state.virtual && this._state.virtualized) {
             this.virtualizedService.state = this._state;
-            // console.time('计算虚拟加载');
-            virtual = { ...this._state.virtual, ...this.virtualizedService.getRows(scrolltop) };
-            // console.timeEnd('计算虚拟加载');
+            const rows = this.virtualizedService.getRows(scrolltop);
+            virtual = { ...this._state.virtual, ...rows };
         }
-        this.updateState({virtual}, false);
-        this.virtualRowSubject.next(virtual);
+
+        return virtual;
     }
 
     getDeltaTopHeight(scrolTop, firstIndex) {

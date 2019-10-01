@@ -3,13 +3,13 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-30 08:56:16
+ * @LastEditTime: 2019-10-01 10:24:29
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import { Component, OnInit, Input, Output, EventEmitter,
     ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef,
-    OnDestroy, Injector, Inject, forwardRef} from '@angular/core';
+    OnDestroy, Injector, Inject, forwardRef, AfterViewInit} from '@angular/core';
 import { Utils } from '../../utils/utils';
 import { filter } from 'rxjs/operators';
 import { DataColumn } from '../../types/data-column';
@@ -35,7 +35,7 @@ import { ColumnFormatService } from '@farris/ui-common/column';
     `,
     changeDetection: ChangeDetectionStrategy.Default
 })
-export class DatagridCellComponent implements OnInit, OnDestroy {
+export class DatagridCellComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() width: number;
     @Input() height: number;
     @Input() cls = '';
@@ -92,8 +92,6 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
 
         // this.updateValue();
 
-        this.buildCustomCellStyle();
-
         this.cellSubscription = this.dfs.currentCell$.pipe(
             filter((cell: CellInfo) => {
                 return cell && this.column.editor && cell.rowIndex === this.rowIndex && cell.field === this.column.field;
@@ -109,6 +107,10 @@ export class DatagridCellComponent implements OnInit, OnDestroy {
             }
         });
 
+    }
+
+    ngAfterViewInit(): void {
+        this.buildCustomCellStyle();
     }
 
     ngOnDestroy() {

@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-29 16:36:27
+ * @LastEditTime: 2019-10-01 11:11:36
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -28,8 +28,8 @@ import { DatagridComponent } from '../../datagrid.component';
 })
 export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
-    psConfig = { swipeEasing: true, minScrollbarLength: 15, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
-    psConfigLeft = { suppressScrollX: true, suppressScrollY: false };
+    psConfig = { swipeEasing: false, minScrollbarLength: 15, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
+    // psConfigLeft = { suppressScrollX: true, suppressScrollY: false };
 
     top: number;
     height: number;
@@ -353,6 +353,14 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         this.dfs.updateVirthualRows(this.scrollTop);
+
+        // const virthualState = this.dfs.getVirthualRows(this.scrollTop);
+        // this.startRowIndex = virthualState.startIndex;
+        // this.data = virthualState.virtualRows;
+        // this.topHideHeight = virthualState.topHideHeight;
+        // // this.bottomHideHeight = virthualState.bottomHideHeight;
+        // this.cd.detectChanges();
+
         if (this.dg.virtualized && this.dg.virtualizedAsyncLoad) {
 
             if (this.needFetchData()) {
