@@ -7,6 +7,12 @@
             设置加载数据量：
             <input type="number" [(ngModel)]="dataLength">
             <button type="button" (click)="setDataLength(dataLength)">加载</button>
+
+            <div style="margin-left: 30px;">
+                <button (click)="dg.scrollToBottom()">滚动底部</button>
+                <button (click)="dg.scrollToTop()">滚动顶部</button>
+            </div>
+
         </div>
     </div>
     <div class="row">

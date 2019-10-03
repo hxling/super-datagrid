@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-22 19:07:32
+ * @LastEditTime: 2019-10-02 17:07:03
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -15,7 +15,7 @@ import { DatagridBaseEditorDirective } from '../datagrid-base-editor.directive';
     <div [formGroup]="group" class="f-datagrid-cell-formgroup">
         <select #sel class="custom-select" [formControlName]="column.field" (click)="onClick($event)">
             <!-- <option value="*">{{allColumnsTitle}}</option> -->
-            <option *ngFor="let col of enumData" value="{{col.value}}">{{ col.label }}</option>
+            <option *ngFor="let col of enumData" value="{{col[options.valueField]}}">{{ col[options.textField] }}</option>
         </select>
     </div>
     `,

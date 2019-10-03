@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-29 16:11:10
+ * @LastEditTime: 2019-10-03 14:07:37
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -27,6 +27,7 @@ import { DomHandler } from './services/domhandler';
 import { Utils } from './utils/utils';
 import { ColumnFormatService } from '@farris/ui-common/column';
 import { flatten } from 'lodash-es';
+import { ScrollbarDirective } from './scrollbar/scrollbar.directive';
 
 // styleUrls: [
 //     './scss/index.scss'
@@ -209,7 +210,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     @Input() beforeEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
     @Output() beginEdit = new EventEmitter<{ editor?: any, rowIndex?: number, rowData: any, column?: DataColumn }>();
-    @Input() afterEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
+    @Input() afterEdit: (rowIndex: number, rowData: any, column?: DataColumn, editor?: any) => Observable<boolean>;
     @Output() endEdit = new EventEmitter<{rowIndex: number, rowData: any, column?: DataColumn}>();
     @Output() cancelEdited = new EventEmitter();
 
@@ -312,7 +313,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     pending = false;
     public colFormatSer: ColumnFormatService;
-
+    scrollInstance: ScrollbarDirective = null;
     constructor(public cd: ChangeDetectorRef,
                 public el: ElementRef,
                 private inject: Injector, private zone: NgZone,
@@ -477,6 +478,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         if (changes.editable !== undefined && !changes.editable.isFirstChange()) {
             this.dfs.updateProperty('editable', changes.editable.currentValue);
+            if (!changes.editable.currentValue) {
+                this.endCellEdit();
+            }
             this.isSingleClick = null;
             this.cd.detectChanges();
         }
@@ -519,6 +523,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         if (this.documentRowKeydownHandler) {
             this.documentRowKeydownHandler();
         }
+
+        this.currentCell = null;
     }
 
     //#endregion
@@ -604,6 +610,10 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         if (!this.beforeEdit) {
             this.beforeEdit = () => of(true);
+        }
+
+        if (!this.afterEdit) {
+            this.afterEdit = () => of(true);
         }
     }
 
@@ -1013,6 +1023,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 totalItems: this.total
             });
         }
+        this.data = data;
         this.dfs.loadData(data);
         this.dgs.dataSourceChanged();
     }
@@ -1371,4 +1382,31 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     //#endregion
 
+    //#region Scrolling
+
+    scrollToLeft() {
+        if (this.scrollInstance) {
+            this.scrollInstance.scrollToLeft();
+        }
+    }
+
+    scrollToRight() {
+        if (this.scrollInstance) {
+            this.scrollInstance.scrollToRight();
+        }
+    }
+
+    scrollToTop() {
+        if (this.scrollInstance) {
+            this.scrollInstance.scrollToTop();
+        }
+    }
+
+    scrollToBottom() {
+        if (this.scrollInstance) {
+            this.scrollInstance.scrollToBottom();
+        }
+    }
+
+    //#endregion
 }

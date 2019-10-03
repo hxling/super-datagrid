@@ -3,7 +3,7 @@ import { AfterViewInit, ApplicationRef, Inject, forwardRef, Injector } from '@an
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-27 16:41:01
+ * @LastEditTime: 2019-10-03 10:40:41
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -16,7 +16,7 @@ import { RuntimeStateService } from '@farris/ui-common';
     selector: 'grid-editor-lookup',
     template: `
     <div [formGroup]="group" class="f-datagrid-cell-formgroup farris-group-auto">
-        <datagrid-tooltip [control]="group.get(column.field)" [tooltipPosition]="'top-left'" [message]="errorMessage">
+        <datagrid-tooltip [control]="formControl" [tooltipPosition]="'top-left'" [message]="errorMessage">
             <farris-lookup-grid #lookup style="width: 100%"
                 [formControlName]="column.field"
                 [uri]="options.uri"

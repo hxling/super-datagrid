@@ -19,6 +19,10 @@
         user-select: none;
     }
 
+    &-bg {
+        background: -webkit-linear-gradient(top, transparent 35px, blue 40px); background-size: 36px 36px;
+    }
+
     &-full{
         position: relative;
         bottom: 0;

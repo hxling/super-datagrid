@@ -1,10 +1,10 @@
 
-import { QueryList, Renderer2, Self, NgZone } from '@angular/core';
+import { QueryList, Renderer2, Self, NgZone, SimpleChanges, OnChanges } from '@angular/core';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-29 14:50:36
+ * @LastEditTime: 2019-10-03 10:32:28
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -17,12 +17,13 @@ import { DatagridCellComponent } from './datagrid-cell.component';
 import { DatagridRow } from '../../types/datagrid-row';
 import { DatagridValidator } from '../../types/datagrid-validator';
 import { DatagridRowHoverDirective } from './datagrid-row-hover.directive';
+import { Utils } from '../../utils/utils';
 
 @Directive({
     selector: '[grid-row]',
     exportAs: 'gridRow'
 })
-export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow {
+export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow, OnChanges {
     @Input() editable = false;
     @Input('grid-row') rowData: any;
     @Input() rowIndex: number;
@@ -50,9 +51,10 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
     }
 
     ngOnInit() {
-        if (this.editable) {
-            this.form = this.createControl();
-        }
+        this.form = this.createControl();
+        this.form['bindingData'] = this.rowData;
+        // if (this.editable) {
+        // }
         this.renderCustomStyle();
 
         if (this.ngZone) {
@@ -62,6 +64,14 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
                 this.render.listen(this.el.nativeElement, 'mouseleave', this.onMouseLeave.bind(this));
             });
         }
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        // if (changes.editable !== undefined && !changes.editable.isFirstChange()) {
+        //     if (this.editable) {
+        //         this.form = this.createControl();
+        //     }
+        // }
     }
 
     ngAfterViewInit() {
@@ -125,7 +135,7 @@ export class DatagridRowDirective implements OnInit, AfterViewInit, DatagridRow 
         this.dg.flatColumns.forEach(col => {
             if (!col.editor) {return; }
             const control = this.fb.control(
-                this.rowData[col.field],
+                Utils.getValue(col.field, this.rowData),
                 {
                     validators: this.bindValidations(col.editor.validators)
                 }
