@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-01 11:11:36
+ * @LastEditTime: 2019-10-02 11:44:08
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -105,7 +105,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     ngOnInit(): void {
         this.listenSubjects();
-
+        this.dg.scrollInstance = this.ps;
         this.dgs.showGridHeader.subscribe(headerHeight => {
             this.top = headerHeight;
             this.height = this.dg.height - this.top - this.dg.pagerHeight;
@@ -168,6 +168,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         this.onDataSourceChangeSubscribe = this.dgs.onDataSourceChange.subscribe(() => {
             this.ps.scrollToTop();
             this.bodyStyle = this.getBodyStyle();
+            this.setWheelHeight();
             this.cd.detectChanges();
         });
         this.subscriptions.push(this.onDataSourceChangeSubscribe);
@@ -282,7 +283,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     private setWheelHeight() {
         if (this.dg.nowrap) {
-            this.wheelHeight = this.dg.pagination ? this.dg.pageSize * this.rowHeight : this.dg.total * this.rowHeight;
+            this.wheelHeight = this.dg.pagination ?
+                                    this.dg.pageSize * this.rowHeight :
+                                    (this.dg.total || this.dg.data.length) * this.rowHeight;
             this.wheelHeight = this.wheelHeight - this.footerHeight;
         }
     }

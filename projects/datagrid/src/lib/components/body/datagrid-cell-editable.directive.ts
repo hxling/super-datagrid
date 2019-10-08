@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-01 10:18:32
+ * @LastEditTime: 2019-10-03 17:44:32
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -74,20 +74,18 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy, AfterVi
     }
 
     ngAfterViewInit() {
-        if (this.dg.editable) {
-            this.cellclick = this.render.listen(this.el.nativeElement, 'click', (e) => this.onClickCell(e));
-            if (this.column.editor) {
-                if (!this.dg.clickToEdit) {
-                    this.celldblclick = this.render.listen(this.el.nativeElement, 'dblclick', (e) => {
-                        this.onDblClickCell(e);
-                    });
-                }
-                this.el.nativeElement.selectCell = () => this.selectCell(this.column.field);
-                this.el.nativeElement.editCell = () => this.openCellEditor();
-                this.el.nativeElement.closeEdit = () => this.closeEditingCell();
-            } else {
-                this.clickTimer = 0;
+        this.cellclick = this.render.listen(this.el.nativeElement, 'click', (e) => this.onClickCell(e));
+        if (this.column.editor) {
+            if (!this.dg.clickToEdit) {
+                this.celldblclick = this.render.listen(this.el.nativeElement, 'dblclick', (e) => {
+                    this.onDblClickCell(e);
+                });
             }
+            this.el.nativeElement.selectCell = () => this.selectCell(this.column.field);
+            this.el.nativeElement.editCell = () => this.openCellEditor();
+            this.el.nativeElement.closeEdit = () => this.closeEditingCell();
+        } else {
+            this.clickTimer = 0;
         }
 
         this.bindCellEventSubscription = this.dgs.cellEdit$.pipe(
@@ -210,7 +208,7 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy, AfterVi
                 this.bindEditorInputEvent();
                 this.render.removeClass(this.dg.el.nativeElement, 'f-datagrid-unselect');
                 this.dg.selectedRow.editors = [this.editor];
-                this.formControl.setValue(this.dc.value);
+                // this.formControl.setValue(this.dc.value);
                 this.dg.beginEdit.emit({ editor: this.dc.cellEditor, column: this.column, rowData: this.rowData });
             }
         });
@@ -222,29 +220,38 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy, AfterVi
         }
 
         let currentCell = null;
+        let editor: any = null;
         if (this.dg.currentCell) {
             currentCell = this.dg.currentCell.cellRef as DatagridCellComponent;
             if (currentCell && currentCell.cellEditor) {
-                const editor = currentCell.cellEditor.componentRef.instance;
-                editor.inputElement.blur();
+                editor = currentCell.cellEditor.componentRef.instance;
 
-                if (editor.pending) {
-                    return false;
-                }
+                if (editor) {
+                    editor.inputElement.blur();
 
-                if (editor.formControl.pending) {
-                    return false;
-                }
+                    if (editor.pending) {
+                        return false;
+                    }
 
-                if (editor.formControl && editor.formControl.invalid && !this.dg.endEditByInvalid) {
-                    return false;
+                    if (editor.formControl) {
+                        if (editor.formControl.pending) {
+                            return false;
+                        }
+
+                        if (editor.formControl && editor.formControl.invalid && !this.dg.endEditByInvalid) {
+                            return false;
+                        }
+                    } else {
+                        return true;
+                    }
+                } else {
+                    return true;
                 }
             }
         }
 
         this.dg.isSingleClick = false;
-
-        const afterEditEvent = this.dg.afterEdit(this.dr.rowIndex, this.rowData, this.column );
+        const afterEditEvent = this.dg.afterEdit(currentCell.rowIndex, currentCell.rowData, editor.column, editor );
         if (!afterEditEvent || !afterEditEvent.subscribe) {
             console.warn('please return an Observable Type.');
             return;

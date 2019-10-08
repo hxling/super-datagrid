@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-01 09:00:18
+ * @LastEditTime: 2019-10-02 13:52:43
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -13,7 +13,7 @@
         (psScrollY)="onScrollToY($event)"
         (psScrollX)="onScrollToX($event)" (psXReachStart)="onPsXReachStart($event)">
        
-        <div [style.height.px]="wheelHeight" [style.width.px]="columnsGroup?.totalWidth">
+        <div [style.height.px]="wheelHeight" [style.width.px]="columnsGroup?.totalWidth" class="f-datagrid-bg">
 
             <div #fixedLeft class="f-datagrid-body-fixed-left"  [class.f-datagrid-fixed-left-shadow]="!!scrollLeft"
                 *ngIf="dg.showLineNumber || dg.showCheckbox " [style.transform]="'translate3d('+ scrollLeft +'px, '+ topHideHeight +'px, 0px)'"

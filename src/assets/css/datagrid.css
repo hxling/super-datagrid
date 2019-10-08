@@ -30,6 +30,10 @@ farris-datagrid {
 .f-datagrid-unselect {
   user-select: none;
 }
+.f-datagrid-bg {
+  background: -webkit-linear-gradient(top, transparent 35px, blue 40px);
+  background-size: 36px 36px;
+}
 .f-datagrid-full {
   position: relative;
   bottom: 0;
@@ -558,3 +562,5 @@ farris-datagrid {
     overflow: auto !important;
   }
 }
+
+/*# sourceMappingURL=datagrid.css.map */

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:44:30
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-24 10:07:02
+ * @LastEditTime: 2019-10-02 16:14:33
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -13,7 +13,7 @@ import { DatagridBaseEditorDirective } from '../datagrid-base-editor.directive';
     selector: 'grid-editor-textarea',
     template: `
     <div [formGroup]="group" class="f-datagrid-cell-formgroup farris-group-auto">
-        <datagrid-tooltip [control]="group.get(column.field)" [tooltipPosition]="'top-left'" [message]="errorMessage">
+        <datagrid-tooltip [control]="formControl" [tooltipPosition]="'top-left'" [message]="errorMessage">
             <textarea #input class="form-control" style="height: 100%" [formControlName]="column.field"></textarea>
         </datagrid-tooltip>
     </div>

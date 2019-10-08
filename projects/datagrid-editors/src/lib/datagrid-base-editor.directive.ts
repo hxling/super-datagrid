@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 11:07:01
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-27 16:55:34
+ * @LastEditTime: 2019-10-02 15:23:45
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -55,7 +55,6 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
 
     ngOnInit(): void {
 
-        this.formControl = this.group.get(this.column.field) as FormControl;
         if (this.column && this.column.editor) {
             this.options = this.column.editor.options;
         }
@@ -71,17 +70,21 @@ export class DatagridBaseEditorDirective implements OnInit, OnDestroy, AfterView
         //     e.stopPropagation();
         //     e.preventDefault();
         // });
-        this.formControl.valueChanges.subscribe( (val: any) => {
-            // console.log(val, this.formControl, this.group);
-            // 记录变更集
-            if (!this.formControl.pristine) {
-                const rowId = this.dr.rowId;
-                const keyField = this.dg.idField;
-                const changeData = { [keyField]: rowId, [this.column.field]: val };
-                this.dfs.appendChanges(changeData);
-            }
-            this.setErrorMessage();
-        });
+
+        this.formControl = this.group.controls[this.column.field] as FormControl;
+        if (this.formControl) {
+            this.formControl.valueChanges.subscribe( (val: any) => {
+                // console.log(val, this.formControl, this.group);
+                // 记录变更集
+                if (!this.formControl.pristine) {
+                    const rowId = this.dr.rowId;
+                    const keyField = this.dg.idField;
+                    const changeData = { [keyField]: rowId, [this.column.field]: val };
+                    this.dfs.appendChanges(changeData);
+                }
+                this.setErrorMessage();
+            });
+        }
     }
 
     ngAfterViewInit() {

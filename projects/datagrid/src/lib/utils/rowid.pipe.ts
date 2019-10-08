@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { DatagridFacadeService } from '../services';
+import { DatagridFacadeService } from '../services/datagrid-facade.service';
 
 @Pipe({name: 'rowDataId'})
 export class RowDataIdPipe implements PipeTransform {
