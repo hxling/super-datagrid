@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-30 15:10:20
+ * @LastEditTime: 2019-10-08 09:33:34
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -106,11 +106,11 @@ export class DatagridFacadeService {
     }
 
     updateVirthualRows(scrolltop: number) {
-        console.time('计算虚拟加载');
+        // console.time('计算虚拟加载');
         const virtual = this.getVirthualRows(scrolltop);
         this.updateState({virtual}, false);
         this.virtualRowSubject.next(virtual);
-        console.timeEnd('计算虚拟加载');
+        // console.timeEnd('计算虚拟加载');
     }
 
     getVirthualRows(scrolltop): VirtualizedState {
@@ -572,9 +572,6 @@ export class DatagridFacadeService {
             return cc.rowIndex === cellInfo.rowIndex && cc.field === cellInfo.field;
         }
     }
-
-
-
 
     protected updateState(state: Partial<FarrisDatagridState>, emit = true) {
         const newState = { ...this._state, ...state };
