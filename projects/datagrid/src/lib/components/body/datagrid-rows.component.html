@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-08 18:56:39
+ * @LastEditTime: 2019-10-08 20:04:51
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -20,9 +20,9 @@
         <ng-container *ngIf="dg.groupRows">
             <tr *ngIf="row['group']" class="f-datagrid-body-row f-datagrid-group-row" >
                 <td class="f-datagrid-cell" [attr.colspan]="row['colspan']">
-                    <ng-container *ngIf="!dg.showLineNumber">
-                        <span class="f-icon f-icon-plus" *ngIf="!row.expanded" (click)="row.expanded = true">+</span>
-                        <span class="f-icon f-icon-plus" *ngIf="row.expanded" (click)="row.expanded = false">-</span>
+                    <ng-container *ngIf="!dg.showLineNumber && !dg.showCheckbox">
+                        <span class="f-icon f-icon-plus f-datagrid-group-expanded" *ngIf="!row.expanded" (click)="row.expanded = true"></span>
+                        <span class="f-icon f-icon-minus f-datagrid-group-collapsed" *ngIf="row.expanded" (click)="row.expanded = false"></span>
                     </ng-container>
                     
                     {{ row['value'] }}

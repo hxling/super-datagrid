@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-08 18:22:49
+ * @LastEditTime: 2019-10-08 19:30:31
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -930,7 +930,8 @@ export class DatagridFacadeService {
             let result = [];
             let rowIndex = 0;
             keys.forEach((k, i) => {
-                const groupItem = { group: true, value: k, colspan: this._state.columnsGroup.normalColumns.length, expanded: true };
+                const groupItem = { group: true, value: k, colspan: this._state.columnsGroup.normalColumns.length,
+                    expanded: true, total: groupData[k].length };
                 if (i > 0) {
                     rowIndex = result[result.length - 1][ROW_INDEX_FIELD] + 1;
                 }

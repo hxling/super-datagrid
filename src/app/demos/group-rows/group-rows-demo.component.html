@@ -1,8 +1,7 @@
 <div #gridContainer class="col-12" style="height: 500px">
                         
         <farris-datagrid [columns]="columns" [data]="items" #dg
-            [showLineNumber] ="false" [striped]="false" [showCheckbox]="false"
-            [virtualized]="true"
+            [showLineNumber] ="true" [striped]="false" [showCheckbox]="true"
             [pagination]="true" [fit]="true" [fitColumns]="true"
             [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
             [pageList]="[10, 100, 200, 300, 500, 1000, 2000, 5000]" [showPageList]="true"

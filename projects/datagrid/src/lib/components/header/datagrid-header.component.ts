@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-21 11:07:14
+ * @LastEditTime: 2019-10-08 19:27:48
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -111,6 +111,10 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
         this.dgs.checkAll.subscribe(() => {
             this._chkall.chk.nativeElement.checked = true;
         });
+
+        // this.dgs.onDataSourceChange.subscribe(() => {
+        //     this._chkall.chk.nativeElement.checked = false;
+        // });
     }
 
     // setHeight() {

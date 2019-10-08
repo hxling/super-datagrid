@@ -44,6 +44,17 @@ farris-datagrid {
   flex: 1;
   height: 100%;
 }
+.f-datagrid-group-row span.f-icon {
+  background-size: 16px;
+  background-position: 3px 50%;
+  background-repeat: no-repeat;
+}
+.f-datagrid-group-row .f-datagrid-group-expanded {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M10.072 8l-4.357 4.357.618.619L11 8.309v-.618L6.333 3.024l-.618.619L10.072 8z' fill='%23252526'/%3E%3C/svg%3E");
+}
+.f-datagrid-group-row .f-datagrid-group-collapsed {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M7.976 10.072l4.357-4.357.62.618L8.284 11h-.618L3 6.333l.619-.618 4.357 4.357z' fill='%23252526'/%3E%3C/svg%3E");
+}
 .f-datagrid-header {
   z-index: 2;
   position: relative;
@@ -140,16 +151,16 @@ farris-datagrid {
 .f-datagrid-table tr td:last-child {
   border-right-width: 0;
 }
-.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):hover {
+.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):hover {
   cursor: pointer;
   background: #f3fbff !important;
   color: black !important;
   transition: background-color 0.1s ease-in;
 }
-.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):hover .f-datagrid-cell-rownumber {
+.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):hover .f-datagrid-cell-rownumber {
   background-color: #ededed !important;
 }
-.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):hover, .f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover {
+.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):hover, .f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover {
   cursor: pointer;
   background: #f3fbff !important;
   color: black !important;
