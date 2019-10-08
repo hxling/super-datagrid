@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-30 16:07:21
+ * @LastEditTime: 2019-10-08 18:56:39
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -14,14 +14,46 @@
     <colgroup>
         <col *ngFor="let col of columns" [width]="col.width + 'px'"/>
     </colgroup>
-    <tr class="f-datagrid-body-row" [row-hover]="row" [attr.id]="row | rowDataId" [attr.index]="startRowIndex + i"
-        [grid-row]="row" [editable]="dg.editable" [rowIndex]="startRowIndex + i" #dr="gridRow" [formGroup]="dr.form"
-        *ngFor="let row of data; trackBy: dg.trackByRows; let i = index"
-        [class.f-datagrid-row-selected]="dgb.currentRowId === row[dg.idField] || dgb.isSelected(row)"
-    >
-        <td [cell-editable]="row" [column]="col" [attr.field]="col.field"
-            class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columns; trackBy: trackByField; let ci = index;">
-            <grid-body-cell [width]="col.width" [height]="dg.rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
-        </td>
-    </tr>
+
+    <ng-container *ngFor="let row of data; trackBy: dg.trackByRows; let i = index">
+
+        <ng-container *ngIf="dg.groupRows">
+            <tr *ngIf="row['group']" class="f-datagrid-body-row f-datagrid-group-row" >
+                <td class="f-datagrid-cell" [attr.colspan]="row['colspan']">
+                    <ng-container *ngIf="!dg.showLineNumber">
+                        <span class="f-icon f-icon-plus" *ngIf="!row.expanded" (click)="row.expanded = true">+</span>
+                        <span class="f-icon f-icon-plus" *ngIf="row.expanded" (click)="row.expanded = false">-</span>
+                    </ng-container>
+                    
+                    {{ row['value'] }}
+                </td>
+            </tr>
+
+            <tr *ngIf="!row['group']" class="f-datagrid-body-row" [row-hover]="row" [attr.id]="row | rowDataId" [attr.index]="startRowIndex + i"
+                [grid-row]="row" [editable]="dg.editable" [rowIndex]="startRowIndex + i" #dr="gridRow" [formGroup]="dr.form"
+                [class.f-datagrid-row-selected]="dgb.currentRowId === row[dg.idField] || dgb.isSelected(row)"
+                [style.display]="row['groupRow'].expanded ? '': 'none'"
+            >
+                <td [cell-editable]="row" [column]="col" [attr.field]="col.field"
+                    class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columns; trackBy: trackByField; let ci = index;">
+                    <grid-body-cell [width]="col.width" [height]="dg.rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
+                </td>
+            </tr>
+        </ng-container>
+
+        <ng-container *ngIf="!dg.groupRows">
+            <tr class="f-datagrid-body-row" [row-hover]="row" [attr.id]="row | rowDataId" [attr.index]="startRowIndex + i"
+                [grid-row]="row" [editable]="dg.editable" [rowIndex]="startRowIndex + i" #dr="gridRow" [formGroup]="dr.form"
+                [class.f-datagrid-row-selected]="dgb.currentRowId === row[dg.idField] || dgb.isSelected(row)"
+            >
+                <td [cell-editable]="row" [column]="col" [attr.field]="col.field"
+                    class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columns; trackBy: trackByField; let ci = index;">
+                    <grid-body-cell [width]="col.width" [height]="dg.rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
+                </td>
+            </tr>
+        </ng-container>
+
+    </ng-container>
+    
+    
 </table>

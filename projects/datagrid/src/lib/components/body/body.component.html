@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-02 13:52:43
+ * @LastEditTime: 2019-10-08 18:44:17
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -25,26 +25,71 @@
                         <col width="36px" *ngIf="dg.showCheckbox"/>
                         <col *ngFor="let col of columnsGroup?.leftFixed" [style.width.px]="col.width"/>
                     </colgroup>
-                    <tr class="f-datagrid-body-row fixed-left-row" [style.height.px]="rowHeight" [attr.index]="startRowIndex + i"
-                        *ngFor="let row of data;trackBy: dg.trackByRows; let i=index;"
-                        [class.f-datagrid-row-selected]="currentRowId === row[dg.idField]"
-                        [grid-row]="row" [row-hover]="row" [rowIndex]="startRowIndex + i"
-                    >
-                        <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" >
-                            {{ dg.pageSize * (dg.pageIndex-1) + startRowIndex + i + 1 }}
-                        </td>
 
-                        <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox" style="text-align: center"><!-- style="width: 36px; text-align: center;"-->
-                            <datagrid-checkbox [rowData]="row" [rowIndex]="startRowIndex + i" [checked]="isChecked(row)"></datagrid-checkbox>
-                        </td>
-                        
-                        <ng-container *ngIf="columnsGroup && columnsGroup.leftFixed">
-                            <td [cell-editable]="row" [column]="col" [attr.field]="col.field"
-                                class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columnsGroup?.leftFixed; let ci = index;">
-                                <grid-body-cell [width]="col.width" [height]="dg.rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
-                            </td>
+                    <ng-container *ngFor="let row of data; trackBy: dg.trackByRows; let i = index">
+
+
+                        <ng-container *ngIf="dg.groupRows">
+                            
+                            <tr *ngIf="row['group']" class="f-datagrid-body-row fixed-left-row" [style.height.px]="rowHeight" [attr.index]="startRowIndex + i">
+                                <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" >
+                                    <span class="f-icon f-icon-plus" *ngIf="!row.expanded" (click)="row.expanded = true">+</span>
+                                    <span class="f-icon f-icon-plus" *ngIf="row.expanded" (click)="row.expanded = false">-</span>
+                                </td>
+                                <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox" style="text-align: center">
+                                    <datagrid-checkbox [rowData]="row" [rowIndex]="startRowIndex + i" [checked]="isChecked(row)"></datagrid-checkbox>
+                                </td>
+                            </tr>
+        
+                            <tr *ngIf="!row['group']" class="f-datagrid-body-row fixed-left-row" [style.height.px]="rowHeight" [attr.index]="startRowIndex + i"
+                                [class.f-datagrid-row-selected]="currentRowId === row[dg.idField]"
+                                [grid-row]="row" [row-hover]="row" [rowIndex]="startRowIndex + i"
+                                [style.display]="row['groupRow'].expanded ? '': 'none'"
+                            >
+                                <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" >
+                                    {{ dg.pageSize * (dg.pageIndex-1) + startRowIndex + row[rowIndexFieldWithGroupRows] + 1 }}
+                                </td>
+        
+                                <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox" style="text-align: center"><!-- style="width: 36px; text-align: center;"-->
+                                    <datagrid-checkbox [rowData]="row" [rowIndex]="startRowIndex + i" [checked]="isChecked(row)"></datagrid-checkbox>
+                                </td>
+                                
+                                <ng-container *ngIf="columnsGroup && columnsGroup.leftFixed">
+                                    <td [cell-editable]="row" [column]="col" [attr.field]="col.field"
+                                        class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columnsGroup?.leftFixed; let ci = index;">
+                                        <grid-body-cell [width]="col.width" [height]="dg.rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
+                                    </td>
+                                </ng-container>
+                            </tr>
                         </ng-container>
-                    </tr>
+
+                        <ng-container *ngIf="!dg.groupRows">
+                            <tr class="f-datagrid-body-row fixed-left-row" [style.height.px]="rowHeight" [attr.index]="startRowIndex + i"
+                                [class.f-datagrid-row-selected]="currentRowId === row[dg.idField]"
+                                [grid-row]="row" [row-hover]="row" [rowIndex]="startRowIndex + i"
+                            >
+                                <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" >
+                                    {{ dg.pageSize * (dg.pageIndex-1) + startRowIndex + i + 1 }}
+                                </td>
+        
+                                <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox" style="text-align: center"><!-- style="width: 36px; text-align: center;"-->
+                                    <datagrid-checkbox [rowData]="row" [rowIndex]="startRowIndex + i" [checked]="isChecked(row)"></datagrid-checkbox>
+                                </td>
+                                
+                                <ng-container *ngIf="columnsGroup && columnsGroup.leftFixed">
+                                    <td [cell-editable]="row" [column]="col" [attr.field]="col.field"
+                                        class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columnsGroup?.leftFixed; let ci = index;">
+                                        <grid-body-cell [width]="col.width" [height]="dg.rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
+                                    </td>
+                                </ng-container>
+                            </tr>
+                        </ng-container>
+
+
+                    </ng-container>
+                    
+
+                    
                 </table>
             </div>
 

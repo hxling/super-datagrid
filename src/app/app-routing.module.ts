@@ -1,9 +1,10 @@
+import { GroupRowsDemoComponent } from './demos/group-rows/group-rows-demo.component';
 import { HeaderGroupDemoComponent } from './demos/group-header/header-group.component';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-16 10:53:29
+ * @LastEditTime: 2019-10-08 12:01:21
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -37,6 +38,7 @@ const routes: Routes = [
     { path: 'header-group', component: HeaderGroupDemoComponent},
     { path: 'lazy-load', loadChildren: './demos2/demos2.module#Demos2Module' },
     { path: 'list-card', component: ListCardDemoComponent},
+    { path: 'group-rows', component: GroupRowsDemoComponent},
     { path: '', component: PageScrollComponent}
 ];
 

@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-02 11:44:08
+ * @LastEditTime: 2019-10-08 18:48:22
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -16,7 +16,7 @@ import {
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { ScrollbarDirective } from '../../scrollbar/scrollbar.directive';
 import { ColumnGroup } from '../../types';
-import { SelectedRow, DataResult } from '../../services/state';
+import { SelectedRow, DataResult, ROW_INDEX_FIELD } from '../../services/state';
 import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
@@ -62,6 +62,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @ViewChild('fixedRight') fixedRightEl: ElementRef;
 
     private scrollTimer: any = null;
+
+    /** 启用分组时，数据源中自动设置行索引字段 */
+    rowIndexFieldWithGroupRows = ROW_INDEX_FIELD;
 
     currentRowId = undefined;
 
@@ -355,7 +358,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             return;
         }
 
-        this.dfs.updateVirthualRows(this.scrollTop);
+        if (!this.dg.groupRows) {
+            this.dfs.updateVirthualRows(this.scrollTop);
+        }
 
         // const virthualState = this.dfs.getVirthualRows(this.scrollTop);
         // this.startRowIndex = virthualState.startIndex;

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-17 19:01:14
+ * @LastEditTime: 2019-10-08 14:36:03
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -49,6 +49,10 @@ export interface FarrisDatagridState {
     multiSort?: boolean;
     remoteSort?: boolean;
     changes: RowDataChanges;
+    // 启用行分组
+    groupRows?: boolean;
+    // 分组字段
+    groupField?: string;
 }
 
 export interface VirtualizedState {
@@ -118,3 +122,4 @@ export interface DataResult {
     pageSize?: number;
 }
 
+export const ROW_INDEX_FIELD = '__row_index__';

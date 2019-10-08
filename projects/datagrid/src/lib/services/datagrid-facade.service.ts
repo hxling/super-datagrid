@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-08 09:33:34
+ * @LastEditTime: 2019-10-08 18:22:49
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -12,10 +12,10 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
 import { map, distinctUntilChanged, filter, switchMap, auditTime, debounceTime } from 'rxjs/operators';
 import { DataColumn, ColumnGroup } from '../types';
-import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow, RowDataChanges } from './state';
+import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow, RowDataChanges, ROW_INDEX_FIELD } from './state';
 import { VirtualizedLoaderService } from './virtualized-loader.service';
 import { DatagridRow } from '../types/datagrid-row';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, groupBy } from 'lodash-es';
 
 @Injectable()
 export class DatagridFacadeService {
@@ -118,10 +118,16 @@ export class DatagridFacadeService {
             scrolltop = 0;
         }
         let virtual = {rowIndex: 0, virtualRows: this._state.data, topHideHeight: 0, bottomHideHeight: 0 };
-        if (this._state.virtual && this._state.virtualized) {
-            this.virtualizedService.state = this._state;
-            const rows = this.virtualizedService.getRows(scrolltop);
-            virtual = { ...this._state.virtual, ...rows };
+        if (!this._state.groupRows) {
+            if (this._state.virtual && this._state.virtualized) {
+                this.virtualizedService.state = this._state;
+                const rows = this.virtualizedService.getRows(scrolltop);
+                virtual = { ...this._state.virtual, ...rows };
+            }
+        } else {
+            // 行分组数据处理
+            const groupRows = this.groupRows(virtual.virtualRows);
+            virtual.virtualRows = groupRows;
         }
 
         return virtual;
@@ -905,4 +911,42 @@ export class DatagridFacadeService {
     }
 
     //#endregion
+
+    /**
+     * 将普通数组转换为带有分组信息的数据
+     * @param data 原始数据
+     */
+    private groupRows(data: any[]) {
+        if (data && data.length) {
+            const groupField = this._state.groupField;
+
+            data = data.map( (d, i) => {
+                d[ROW_INDEX_FIELD] = i;
+                return d;
+            });
+
+            const groupData = groupBy(data, groupField);
+            const keys = Object.keys(groupData);
+            let result = [];
+            let rowIndex = 0;
+            keys.forEach((k, i) => {
+                const groupItem = { group: true, value: k, colspan: this._state.columnsGroup.normalColumns.length, expanded: true };
+                if (i > 0) {
+                    rowIndex = result[result.length - 1][ROW_INDEX_FIELD] + 1;
+                }
+                result.push(groupItem);
+
+                result = result.concat(groupData[k].map((n, j) => {
+                    n[ROW_INDEX_FIELD] = rowIndex + j;
+                    n['groupRow'] = groupItem;
+                    return n;
+                }));
+            });
+
+            return result;
+        }
+
+        return [];
+    }
+
 }
