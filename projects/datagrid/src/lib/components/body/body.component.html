@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-08 19:59:47
+ * @LastEditTime: 2019-10-09 09:24:35
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -32,10 +32,23 @@
                         <ng-container *ngIf="dg.groupRows">
                             
                             <tr *ngIf="row['group']" class="f-datagrid-body-row fixed-left-row f-datagrid-group-row" [style.height.px]="rowHeight" [attr.index]="startRowIndex + i">
-                                <td *ngIf="dg.showLineNumber || dg.showCheckbox" class="f-datagrid-cell" [attr.colspan]="(dg.showLineNumber && dg.showCheckbox) ? 2 : 1" >
-                                    <span class="f-icon f-icon-plus f-datagrid-group-expanded" *ngIf="!row.expanded" (click)="row.expanded = true"></span>
-                                    <span class="f-icon f-icon-minus f-datagrid-group-collapsed" *ngIf="row.expanded" (click)="row.expanded = false"></span>
-                                </td>
+                                
+                                <ng-container *ngIf="dg.showLineNumber && dg.showCheckbox; else groupActionCell">
+                                    <td class="f-datagrid-cell f-datagrid-cell-rownumber"></td>
+                                    <td class="f-datagrid-cell f-datagrid-cell-checkbox">
+                                        <span class="f-icon f-icon-plus f-datagrid-group-expanded" *ngIf="!row.expanded" (click)="toggleGroupRow(row, true)"></span>
+                                        <span class="f-icon f-icon-minus f-datagrid-group-collapsed" *ngIf="row.expanded" (click)="toggleGroupRow(row, false)"></span>
+                                    </td>
+                                </ng-container>
+                                
+                                <ng-template #groupActionCell>
+                                    <td *ngIf="dg.showLineNumber || dg.showCheckbox" class="f-datagrid-cell f-datagrid-group-action" >
+                                        <span class="f-icon f-icon-plus f-datagrid-group-expanded" *ngIf="!row.expanded" (click)="toggleGroupRow(row, true)"></span>
+                                        <span class="f-icon f-icon-minus f-datagrid-group-collapsed" *ngIf="row.expanded" (click)="toggleGroupRow(row, false)"></span>
+                                    </td>
+                                </ng-template>
+                                
+                               
                             </tr>
         
                             <tr *ngIf="!row['group']" class="f-datagrid-body-row fixed-left-row" [style.height.px]="rowHeight" [attr.index]="startRowIndex + i"
@@ -91,7 +104,7 @@
                 <datagrid-rows #mainTable [startRowIndex]="startRowIndex" [columns]="columnsGroup?.rightFixed" [data]="data"></datagrid-rows>
             </div>
 
-            <div [style.width.px]="colsWidth" style="position: relative;" [style.left.px]="leftFixedWidth" class="f-datagrid-table"
+            <div #main [style.width.px]="colsWidth" style="position: relative;" [style.left.px]="leftFixedWidth" class="f-datagrid-table"
                 [style.transform]="'translate3d(0px, '+ topHideHeight +'px, 0px)'" [style.height.px]="wheelHeight - topHideHeight">
 
                 <datagrid-rows #tableRows [startRowIndex]="startRowIndex" [columns]="columnsGroup?.normalColumns" [data]="data"></datagrid-rows>

@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-08 18:48:22
+ * @LastEditTime: 2019-10-09 08:39:27
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -26,10 +26,9 @@ import { DatagridComponent } from '../../datagrid.component';
     templateUrl: './body.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
+export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit {
 
     psConfig = { swipeEasing: false, minScrollbarLength: 15, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
-    // psConfigLeft = { suppressScrollX: true, suppressScrollY: false };
 
     top: number;
     height: number;
@@ -60,6 +59,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @ViewChild('tableRows') tableRowsCmp: any;
     @ViewChild('fixedLeft') fixedLeftEl: ElementRef;
     @ViewChild('fixedRight') fixedRightEl: ElementRef;
+    @ViewChild('main') mainArea: ElementRef;
 
     private scrollTimer: any = null;
 
@@ -114,6 +114,46 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.height = this.dg.height - this.top - this.dg.pagerHeight;
             this.bodyStyle = this.getBodyStyle();
             this.cd.detectChanges();
+        });
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.data && !changes.data.isFirstChange()) {
+            this.setWheelHeight();
+            this.ps.update();
+            // if (!this.cd['destroyed']) {
+            //     this.cd.detectChanges();
+            // }
+        }
+
+        if (changes.footerHeight !== undefined && !changes.footerHeight.isFirstChange()) {
+            this.setWheelHeight();
+        }
+    }
+
+    ngOnDestroy() {
+        this.destroySubscriptions();
+    }
+
+    ngAfterViewInit() {
+        this.setGroupRowViewHeight();
+    }
+
+    /** 启用分组行时，将高度重置为 100% */
+    private setGroupRowViewHeight() {
+        this.ngZone.runOutsideAngular(() => {
+            setTimeout(() => {
+                if (this.dg.groupRows) {
+                    this.mainArea.nativeElement.style.height = '100%';
+                    if (this.fixedLeftEl) {
+                        this.fixedLeftEl.nativeElement.style.height = '100%';
+                    }
+                    if (this.fixedRightEl) {
+                        this.fixedRightEl.nativeElement.style.height = '100%';
+                    }
+                    this.mainArea.nativeElement.parentElement.style.height = '100%';
+                }
+            }, 100);
         });
     }
 
@@ -239,25 +279,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
         });
         this.subscriptions.push(this.clearCheckedsSubscribe);
 
-    }
-
-
-    ngOnChanges(changes: SimpleChanges) {
-        if (changes.data && !changes.data.isFirstChange()) {
-            this.setWheelHeight();
-            this.ps.update();
-            // if (!this.cd['destroyed']) {
-            //     this.cd.detectChanges();
-            // }
-        }
-
-        if (changes.footerHeight !== undefined && !changes.footerHeight.isFirstChange()) {
-            this.setWheelHeight();
-        }
-    }
-
-    ngOnDestroy() {
-        this.destroySubscriptions();
     }
 
     /** 允许数据折行时，计算行号的行高 */
@@ -503,6 +524,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.scrollTop = this.scrollTop + this.deltaTopHeight;
             this.ps.scrollToTop(this.scrollTop);
         }
+    }
+
+    toggleGroupRow(row, open = true) {
+        row.expanded = open;
+        this.ps.update();
     }
 
 }
