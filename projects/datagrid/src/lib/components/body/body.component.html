@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-09 09:24:35
+ * @LastEditTime: 2019-10-09 18:19:52
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -31,7 +31,7 @@
 
                         <ng-container *ngIf="dg.groupRows">
                             
-                            <tr *ngIf="row['group']" class="f-datagrid-body-row fixed-left-row f-datagrid-group-row" [style.height.px]="rowHeight" [attr.index]="startRowIndex + i">
+                            <tr *ngIf="row[isGroupRow]" class="f-datagrid-body-row fixed-left-row f-datagrid-group-row" [style.height.px]="rowHeight" [attr.index]="startRowIndex + i">
                                 
                                 <ng-container *ngIf="dg.showLineNumber && dg.showCheckbox; else groupActionCell">
                                     <td class="f-datagrid-cell f-datagrid-cell-rownumber"></td>
@@ -48,22 +48,37 @@
                                     </td>
                                 </ng-template>
                                 
-                               
                             </tr>
-        
-                            <tr *ngIf="!row['group']" class="f-datagrid-body-row fixed-left-row" [style.height.px]="rowHeight" [attr.index]="startRowIndex + i"
-                                [class.f-datagrid-row-selected]="currentRowId === row[dg.idField]"
-                                [grid-row]="row" [row-hover]="row" [rowIndex]="startRowIndex + i"
-                                [style.display]="row['groupRow'].expanded ? '': 'none'"
-                            >
-                                <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" >
-                                    {{ dg.pageSize * (dg.pageIndex-1) + startRowIndex + row[rowIndexFieldWithGroupRows] + 1 }}
-                                </td>
-        
-                                <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox" style="text-align: center"><!-- style="width: 36px; text-align: center;"-->
-                                    <datagrid-checkbox [rowData]="row" [rowIndex]="startRowIndex + i" [checked]="isChecked(row)"></datagrid-checkbox>
-                                </td>
-                            </tr>
+
+                            <ng-container *ngIf="!row[isGroupRow]">
+
+                                <ng-container *ngIf="row[isGroupFooter]">
+                                    <tr class="f-datagrid-body-row fixed-left-row f-datagrid-group-footer" [style.height.px]="rowHeight" [attr.index]="startRowIndex + i"
+                                        [style.display]="row[groupRow].expanded ? '': 'none'"
+                                    >
+                                        <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber"></td>
+                                        <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox"></td>
+                                    </tr>
+                                </ng-container>
+                                <ng-container *ngIf="!row[isGroupFooter]">
+                                    <tr class="f-datagrid-body-row fixed-left-row" [style.height.px]="rowHeight" [attr.index]="startRowIndex + i"
+                                        [class.f-datagrid-row-selected]="currentRowId === row[dg.idField]"
+                                        [grid-row]="row" [row-hover]="row" [rowIndex]="startRowIndex + i"
+                                        [style.display]="row[groupRow].expanded ? '': 'none'"
+                                    >
+                                        <td *ngIf="dg.showLineNumber" class="f-datagrid-cell f-datagrid-cell-rownumber" >
+                                            {{ dg.pageSize * (dg.pageIndex-1) + startRowIndex + row[rowIndexFieldWithGroupRows] + 1 }}
+                                        </td>
+                
+                                        <td *ngIf="dg.showCheckbox" class="f-datagrid-cell f-datagrid-cell-checkbox" style="text-align: center">
+                                            <datagrid-checkbox [rowData]="row" [rowIndex]="startRowIndex + i" [checked]="isChecked(row)"></datagrid-checkbox>
+                                        </td>
+                                    </tr>
+                                    
+                                </ng-container>
+
+                            </ng-container>
+                            
                         </ng-container>
 
                         <ng-container *ngIf="!dg.groupRows">

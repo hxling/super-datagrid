@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-31 13:59:42
+ * @LastEditTime: 2019-10-09 16:49:53
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -42,7 +42,7 @@ export interface DataColumn {
     /** 单元格自定义模板 */
     template?: TemplateRef<any>;
     /** 鼠标移动至单元格后，显示悬浮消息 */
-    showtips?: boolean;
+    showTips?: boolean;
     /** True to allow the column can be sorted. */
     sortable?: boolean;
     order?: 'asc' | 'desc';
@@ -52,11 +52,8 @@ export interface DataColumn {
     rowspan?: number;
     colspan?: number;
     index?: number;
-    footer?: {
-        formatter?: (value, rowData, rowIndex) => any | ColumnFormatter;
-        /** 文本对齐方式 */
-        align?: 'left' | 'center' | 'right';
-    };
+    footer?: GridFooterRow;
+    groupFooter?: GridFooterRow;
 }
 
 export interface GridEditor {
@@ -88,6 +85,18 @@ export interface PaginationInfo {
     pageSize?: number;
     pageIndex?: number;
     total?: number;
+}
+
+export interface GridFooterRow {
+    formatter?: (value, rowData, rowIndex) => any | ColumnFormatter;
+    /** 文本对齐方式 */
+    align?: 'left' | 'center' | 'right';
+    styler?: (value, rowData, rowIndex) => CustomStyle;
+    options?: {
+        /** 计算类型 */
+        calculationType?: 'max' | 'min' | 'sum' | 'average' | 'count',
+        text?: string;
+    };
 }
 
 

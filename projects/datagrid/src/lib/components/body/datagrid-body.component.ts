@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-09 08:39:27
+ * @LastEditTime: 2019-10-09 17:50:55
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -16,7 +16,7 @@ import {
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { ScrollbarDirective } from '../../scrollbar/scrollbar.directive';
 import { ColumnGroup } from '../../types';
-import { SelectedRow, DataResult, ROW_INDEX_FIELD } from '../../services/state';
+import { SelectedRow, DataResult, ROW_INDEX_FIELD, IS_GROUP_ROW_FIELD, GROUP_ROW_FIELD, IS_GROUP_FOOTER_ROW_FIELD } from '../../services/state';
 import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
@@ -65,6 +65,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges, Afte
 
     /** 启用分组时，数据源中自动设置行索引字段 */
     rowIndexFieldWithGroupRows = ROW_INDEX_FIELD;
+    isGroupRow = IS_GROUP_ROW_FIELD;
+    groupRow = GROUP_ROW_FIELD;
+    isGroupFooter = IS_GROUP_FOOTER_ROW_FIELD;
 
     currentRowId = undefined;
 
