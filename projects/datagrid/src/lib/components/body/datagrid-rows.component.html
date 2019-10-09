@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-09 19:25:08
+ * @LastEditTime: 2019-10-09 19:47:45
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -24,8 +24,8 @@
                         <span class="f-icon f-icon-plus f-datagrid-group-expanded" *ngIf="!row.expanded" (click)="row.expanded = true"></span>
                         <span class="f-icon f-icon-minus f-datagrid-group-collapsed" *ngIf="row.expanded" (click)="row.expanded = false"></span>
                     </ng-container>
+                    <span [innerHTML]="row | formatGroupRow: dg.groupFormatter | safe: 'html'"></span>
                     
-                    {{ row['value'] }}
                 </td>
             </tr>
 
@@ -35,8 +35,9 @@
                     <tr *ngIf="!row[isGroupRow]" class="f-datagrid-body-row f-datagrid-group-footer" [attr.index]="startRowIndex + i"
                         [style.display]="row[groupRow].expanded ? '': 'none'"
                     >
-                        <td [attr.field]="col.field" class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columns; trackBy: trackByField; let ci = index;">
-                           <span [innerHTML]="col | formatCellData: row : true: false | safe: 'html'"></span>
+                        <td [attr.field]="col.field" class="f-datagrid-cell" [attr.align]="col.align" 
+                            *ngFor="let col of columns; trackBy: trackByField; let ci = index;"
+                            [innerHTML]="col | formatCellData: row : true: false | safe: 'html'">
                         </td>
                     </tr>
                 </ng-container>

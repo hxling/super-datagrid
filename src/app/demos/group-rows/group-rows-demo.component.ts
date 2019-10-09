@@ -48,4 +48,8 @@ export class GroupRowsDemoComponent implements OnInit {
     formatterGroupFooterRow = (v, d, i) => {
         return `<b>${v}</b>`;
     }
+
+    groupRowFormatter = (row) => {
+        return `<span style="color:red; padding-left:3px; "><b>${row['value']}</b></span>`;
+    }
 }
