@@ -26,13 +26,13 @@ export class GroupRowsDemoComponent implements OnInit {
 
     ngOnInit() {
         this.columns = [
-            { field: 'id', width: 100, title: 'ID', groupFooter: { options: { text: '合计' } } },
+            { field: 'id', width: 100, title: 'ID', groupFooter: {formatter: this.formatterGroupFooterRow, options: { text: '合计' } } },
             { field: 'name', width: 130, title: '姓名', groupFooter: { options: { calculationType: 'count' } }},
             { field: 'sex', width: 70, title: '性别' },
             { field: 'birthday', width: 120, title: '出生日期'},
             { field: 'maray', width: 70, title: '婚否'},
             { field: 'addr', width: 170, title: '地址' },
-            { field: 'company', width: 100, title: '公司', groupFooter: {options: { text: '最大值' }}},
+            { field: 'company', width: 100, title: '公司', groupFooter: { formatter: this.formatterGroupFooterRow, options: { text: '最大值' }}},
             { field: 'nianxin', width: 70, title: '年薪', groupFooter: { options: { calculationType: 'max' }}},
             { field: 'zhiwei', width: 100, title: '职位' }
         ];
@@ -43,5 +43,9 @@ export class GroupRowsDemoComponent implements OnInit {
     @HostListener('window:resize')
     onresize() {
         this.gc.nativeElement.style.height = (window.innerHeight - 140) + 'px';
+    }
+
+    formatterGroupFooterRow = (v, d, i) => {
+        return `<b>${v}</b>`;
     }
 }

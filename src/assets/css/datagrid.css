@@ -265,6 +265,7 @@ farris-datagrid {
 }
 .f-datagrid-cell-checkbox {
   text-align: center;
+  background: white;
 }
 .f-datagrid-pager {
   position: absolute;

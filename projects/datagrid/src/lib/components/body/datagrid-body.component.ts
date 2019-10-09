@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-09 17:50:55
+ * @LastEditTime: 2019-10-09 18:50:56
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -139,7 +139,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges, Afte
     }
 
     ngAfterViewInit() {
-        this.setGroupRowViewHeight();
+        // this.setGroupRowViewHeight();
     }
 
     /** 启用分组行时，将高度重置为 100% */

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-09 18:17:26
+ * @LastEditTime: 2019-10-09 19:25:08
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -36,7 +36,7 @@
                         [style.display]="row[groupRow].expanded ? '': 'none'"
                     >
                         <td [attr.field]="col.field" class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columns; trackBy: trackByField; let ci = index;">
-                            {{ row[col.field] }}
+                           <span [innerHTML]="col | formatCellData: row : true: false | safe: 'html'"></span>
                         </td>
                     </tr>
                 </ng-container>
