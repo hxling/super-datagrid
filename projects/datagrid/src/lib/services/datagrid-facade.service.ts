@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-30 15:10:20
+ * @LastEditTime: 2019-10-09 17:27:06
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -12,10 +12,12 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
 import { map, distinctUntilChanged, filter, switchMap, auditTime, debounceTime } from 'rxjs/operators';
 import { DataColumn, ColumnGroup } from '../types';
-import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow, RowDataChanges } from './state';
+import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow,
+        RowDataChanges, ROW_INDEX_FIELD, IS_GROUP_ROW_FIELD, GROUP_ROW_FIELD, IS_GROUP_FOOTER_ROW_FIELD } from './state';
 import { VirtualizedLoaderService } from './virtualized-loader.service';
 import { DatagridRow } from '../types/datagrid-row';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, groupBy, sumBy, maxBy, minBy, meanBy } from 'lodash-es';
+import { Utils } from '../utils/utils';
 
 @Injectable()
 export class DatagridFacadeService {
@@ -106,11 +108,11 @@ export class DatagridFacadeService {
     }
 
     updateVirthualRows(scrolltop: number) {
-        console.time('计算虚拟加载');
+        // console.time('计算虚拟加载');
         const virtual = this.getVirthualRows(scrolltop);
         this.updateState({virtual}, false);
         this.virtualRowSubject.next(virtual);
-        console.timeEnd('计算虚拟加载');
+        // console.timeEnd('计算虚拟加载');
     }
 
     getVirthualRows(scrolltop): VirtualizedState {
@@ -118,10 +120,16 @@ export class DatagridFacadeService {
             scrolltop = 0;
         }
         let virtual = {rowIndex: 0, virtualRows: this._state.data, topHideHeight: 0, bottomHideHeight: 0 };
-        if (this._state.virtual && this._state.virtualized) {
-            this.virtualizedService.state = this._state;
-            const rows = this.virtualizedService.getRows(scrolltop);
-            virtual = { ...this._state.virtual, ...rows };
+        if (!this._state.groupRows) {
+            if (this._state.virtual && this._state.virtualized) {
+                this.virtualizedService.state = this._state;
+                const rows = this.virtualizedService.getRows(scrolltop);
+                virtual = { ...this._state.virtual, ...rows };
+            }
+        } else {
+            // 行分组数据处理
+            const groupRows = this.groupRows(virtual.virtualRows);
+            virtual.virtualRows = groupRows;
         }
 
         return virtual;
@@ -573,9 +581,6 @@ export class DatagridFacadeService {
         }
     }
 
-
-
-
     protected updateState(state: Partial<FarrisDatagridState>, emit = true) {
         const newState = { ...this._state, ...state };
         this._state = newState;
@@ -908,4 +913,92 @@ export class DatagridFacadeService {
     }
 
     //#endregion
+
+    /**
+     * 将普通数组转换为带有分组信息的数据
+     * @param data 原始数据
+     */
+    private groupRows(data: any[]) {
+        if (data && data.length) {
+            const groupField = this._state.groupField;
+
+            const groupData = groupBy(data, groupField);
+            const keys = Object.keys(groupData);
+            let result = [];
+            let rowIndex = 0;
+            const columns = this._state.columnsGroup.normalColumns;
+            keys.forEach((k, i) => {
+                const groupItem = {
+                    [IS_GROUP_ROW_FIELD]: true, value: k, colspan: columns.length,
+                    expanded: true, total: groupData[k].length
+                };
+
+                if (i > 0) {
+                    if (!this._state.groupFooter) {
+                        rowIndex = result[result.length - 1][ROW_INDEX_FIELD] + 1;
+                    } else {
+                        rowIndex = result[result.length - 2][ROW_INDEX_FIELD] + 1;
+                    }
+                }
+                result.push(groupItem);
+
+                result = result.concat(groupData[k].map((n, j) => {
+                    n[ROW_INDEX_FIELD] = rowIndex + j;
+                    n[GROUP_ROW_FIELD] = groupItem;
+                    return n;
+                }));
+
+                if (this._state.groupFooter) {
+                    const groupFooterRow = {
+                        [IS_GROUP_FOOTER_ROW_FIELD]: true,
+                        [GROUP_ROW_FIELD]: groupItem
+                    };
+
+                    columns.forEach(col => {
+                        if (col.groupFooter && col.groupFooter.options) {
+                            const options = col.groupFooter.options;
+                            const text = options.text;
+                            const calculationType = options.calculationType;
+
+                            if (calculationType) {
+                                let val: any = '';
+                                switch (calculationType) {
+                                    case 'sum':
+                                        val = sumBy(groupData[k], (o) => Utils.getValue(col.field, o));
+                                        break;
+                                    case 'max':
+                                        const maxObj = maxBy(groupData[k], (o) => Utils.getValue(col.field, o));
+                                        val = Utils.getValue(col.field, maxObj);
+                                        break;
+                                    case 'min':
+                                        const minObj = minBy(groupData[k], (o) => Utils.getValue(col.field, o));
+                                        val = Utils.getValue(col.field, minObj);
+                                        break;
+                                    case 'average':
+                                        val = meanBy(groupData[k], (o) => Utils.getValue(col.field, o));
+                                        break;
+                                    case 'count':
+                                        val = groupData[k].length;
+                                        break;
+                                }
+
+                                groupFooterRow[col.field] = val;
+                            } else {
+                                groupFooterRow[col.field] = text || '';
+                            }
+                        } else {
+                            groupFooterRow[col.field] = '';
+                        }
+                    });
+
+                    result.push(groupFooterRow);
+                }
+            });
+
+            return result;
+        }
+
+        return [];
+    }
+
 }

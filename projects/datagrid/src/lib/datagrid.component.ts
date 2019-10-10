@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-03 14:07:37
+ * @LastEditTime: 2019-10-09 19:40:24
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -206,6 +206,17 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() multiSort: boolean;
 
     @Input() hoverRowCls = 'f-datagrid-row-hover';
+
+    /** 启用分组行 */
+    @Input() groupRows = false;
+    /** 启用行分组合计行 */
+    @Input() groupFooter = false;
+    /** 分组字段名称 */
+    @Input() groupField = '';
+    /** 分组格式化 */
+    @Input() groupFormatter: (groupRow: any) => any;
+    /** 分组行样式 */
+    @Input() groupStyler: () => any;
 
 
     @Input() beforeEdit: (rowIndex: number, rowData: any, column?: DataColumn) => Observable<boolean>;
@@ -618,7 +629,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     trackByRows = (index: number, row: any) => {
-        return row[this.idField];
+        return row[this.idField] || index;
     }
 
     //#endregion

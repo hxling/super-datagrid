@@ -1,0 +1,23 @@
+
+<div class="col-12" style="height: 50px">
+    <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+        <input id="chk_showRowNumber" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showRowNumber">
+        <label for="chk_showRowNumber" class="custom-control-label"> 显示行号 </label>
+    </div>
+    <div class="custom-control custom-checkbox  custom-control-inline tt-checkbox">
+        <input id="chk_showCheckbox" type="checkbox" #chk class="custom-control-input" [(ngModel)]="showCheckbox">
+        <label for="chk_showCheckbox" class="custom-control-label"> 显示复选框 </label>
+    </div>
+</div>
+
+<div #gridContainer class="col-12" style="height: 500px">
+                        
+        <farris-datagrid [columns]="columns" [data]="items" #dg
+            [showLineNumber] ="showRowNumber" [striped]="false" [showCheckbox]="showCheckbox"
+            [pagination]="true" [fit]="true" [fitColumns]="true"
+            [pageSize]= "pageSize" [pageIndex]="1"  [total]="total"
+            [pageList]="[10, 100, 200, 300, 500, 1000, 2000, 5000]" [showPageList]="true"
+
+            [groupRows]="true" [groupField]="'name'" [groupFooter]="true" [groupFormatter]="groupRowFormatter"
+        ></farris-datagrid>
+</div>

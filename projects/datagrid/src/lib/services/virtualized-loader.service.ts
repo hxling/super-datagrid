@@ -78,7 +78,7 @@ export class VirtualizedLoaderService {
                 continue;
             } else {
                 if (top > maxTop) {
-                    // bottomHideHeight += rowHeight;
+                    bottomHideHeight += rowHeight;
                     continue;
                 }
             }
@@ -88,7 +88,7 @@ export class VirtualizedLoaderService {
 
         if (this.state.virtualizedAsyncLoad) {
             topHideHeight = this.state.virtual.rowIndex * rowHeight  + topHideHeight;
-            // bottomHideHeight = total * rowHeight - rows.length * rowHeight - topHideHeight;
+            bottomHideHeight = total * rowHeight - rows.length * rowHeight - topHideHeight;
         }
 
         let startIndex = this.state.virtual.rowIndex;

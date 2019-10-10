@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-21 11:07:14
+ * @LastEditTime: 2019-10-10 08:11:01
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -71,16 +71,18 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
         this.dgs.scorll$.subscribe((d: any) => {
             if (d.type === SCROLL_X_ACTION) {
                 this.render2.setStyle(this.headerColumnsTable.nativeElement,  'transform', `translate3d(-${d.x}px, 0px, 0px)` );
-                if (this.fixedLeft) {
-                    this.render2.addClass(this.fixedLeft.nativeElement, FIXED_LEFT_SHADOW_CLS);
-                }
+                if ( !this.dg.groupRows) {
+                    if (this.fixedLeft) {
+                        this.render2.addClass(this.fixedLeft.nativeElement, FIXED_LEFT_SHADOW_CLS);
+                    }
 
-                if (this.fixedRight) {
-                    if (d.x + this.dg.width - this.columnsGroup.rightFixedWidth ===
-                            this.columnsGroup.normalWidth + this.columnsGroup.leftFixedWidth) {
-                        this.render2.removeClass(this.fixedRight.nativeElement, FIXED_RIGHT_SHADOW_CLS);
-                    } else {
-                        this.render2.addClass(this.fixedRight.nativeElement, FIXED_RIGHT_SHADOW_CLS);
+                    if (this.fixedRight) {
+                        if (d.x + this.dg.width - this.columnsGroup.rightFixedWidth ===
+                                this.columnsGroup.normalWidth + this.columnsGroup.leftFixedWidth) {
+                            this.render2.removeClass(this.fixedRight.nativeElement, FIXED_RIGHT_SHADOW_CLS);
+                        } else {
+                            this.render2.addClass(this.fixedRight.nativeElement, FIXED_RIGHT_SHADOW_CLS);
+                        }
                     }
                 }
             }
@@ -111,6 +113,10 @@ export class DatagridHeaderComponent implements OnInit, AfterViewInit {
         this.dgs.checkAll.subscribe(() => {
             this._chkall.chk.nativeElement.checked = true;
         });
+
+        // this.dgs.onDataSourceChange.subscribe(() => {
+        //     this._chkall.chk.nativeElement.checked = false;
+        // });
     }
 
     // setHeight() {

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-17 19:01:14
+ * @LastEditTime: 2019-10-09 17:38:41
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -49,6 +49,12 @@ export interface FarrisDatagridState {
     multiSort?: boolean;
     remoteSort?: boolean;
     changes: RowDataChanges;
+    // 启用行分组
+    groupRows?: boolean;
+    // 分组字段
+    groupField?: string;
+    // 分组合计行
+    groupFooter?: boolean;
 }
 
 export interface VirtualizedState {
@@ -117,4 +123,11 @@ export interface DataResult {
     pageIndex?: number;
     pageSize?: number;
 }
-
+/** 行索引 */
+export const ROW_INDEX_FIELD = '__row_index__';
+/** 是否为分组行 */
+export const IS_GROUP_ROW_FIELD = '__group__';
+/** 引用的分组行属性 */
+export const GROUP_ROW_FIELD = '__group_row__';
+/** 是否为分组合计行 */
+export const IS_GROUP_FOOTER_ROW_FIELD = '__group_footer__';

@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-02 11:44:08
+ * @LastEditTime: 2019-10-09 18:50:56
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -16,7 +16,7 @@ import {
 import { DatagridFacadeService } from '../../services/datagrid-facade.service';
 import { ScrollbarDirective } from '../../scrollbar/scrollbar.directive';
 import { ColumnGroup } from '../../types';
-import { SelectedRow, DataResult } from '../../services/state';
+import { SelectedRow, DataResult, ROW_INDEX_FIELD, IS_GROUP_ROW_FIELD, GROUP_ROW_FIELD, IS_GROUP_FOOTER_ROW_FIELD } from '../../services/state';
 import { SCROLL_X_ACTION, SCROLL_Y_ACTION, SCROLL_X_REACH_START_ACTION } from '../../types/constant';
 import { DatagridService } from '../../services/datagrid.service';
 import { DatagridComponent } from '../../datagrid.component';
@@ -26,10 +26,9 @@ import { DatagridComponent } from '../../datagrid.component';
     templateUrl: './body.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
+export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit {
 
     psConfig = { swipeEasing: false, minScrollbarLength: 15, handlers: ['click-rail', 'drag-thumb', 'wheel', 'touch'] };
-    // psConfigLeft = { suppressScrollX: true, suppressScrollY: false };
 
     top: number;
     height: number;
@@ -60,8 +59,15 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
     @ViewChild('tableRows') tableRowsCmp: any;
     @ViewChild('fixedLeft') fixedLeftEl: ElementRef;
     @ViewChild('fixedRight') fixedRightEl: ElementRef;
+    @ViewChild('main') mainArea: ElementRef;
 
     private scrollTimer: any = null;
+
+    /** 启用分组时，数据源中自动设置行索引字段 */
+    rowIndexFieldWithGroupRows = ROW_INDEX_FIELD;
+    isGroupRow = IS_GROUP_ROW_FIELD;
+    groupRow = GROUP_ROW_FIELD;
+    isGroupFooter = IS_GROUP_FOOTER_ROW_FIELD;
 
     currentRowId = undefined;
 
@@ -111,6 +117,46 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.height = this.dg.height - this.top - this.dg.pagerHeight;
             this.bodyStyle = this.getBodyStyle();
             this.cd.detectChanges();
+        });
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.data && !changes.data.isFirstChange()) {
+            this.setWheelHeight();
+            this.ps.update();
+            // if (!this.cd['destroyed']) {
+            //     this.cd.detectChanges();
+            // }
+        }
+
+        if (changes.footerHeight !== undefined && !changes.footerHeight.isFirstChange()) {
+            this.setWheelHeight();
+        }
+    }
+
+    ngOnDestroy() {
+        this.destroySubscriptions();
+    }
+
+    ngAfterViewInit() {
+        // this.setGroupRowViewHeight();
+    }
+
+    /** 启用分组行时，将高度重置为 100% */
+    private setGroupRowViewHeight() {
+        this.ngZone.runOutsideAngular(() => {
+            setTimeout(() => {
+                if (this.dg.groupRows) {
+                    this.mainArea.nativeElement.style.height = '100%';
+                    if (this.fixedLeftEl) {
+                        this.fixedLeftEl.nativeElement.style.height = '100%';
+                    }
+                    if (this.fixedRightEl) {
+                        this.fixedRightEl.nativeElement.style.height = '100%';
+                    }
+                    this.mainArea.nativeElement.parentElement.style.height = '100%';
+                }
+            }, 100);
         });
     }
 
@@ -238,25 +284,6 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
 
     }
 
-
-    ngOnChanges(changes: SimpleChanges) {
-        if (changes.data && !changes.data.isFirstChange()) {
-            this.setWheelHeight();
-            this.ps.update();
-            // if (!this.cd['destroyed']) {
-            //     this.cd.detectChanges();
-            // }
-        }
-
-        if (changes.footerHeight !== undefined && !changes.footerHeight.isFirstChange()) {
-            this.setWheelHeight();
-        }
-    }
-
-    ngOnDestroy() {
-        this.destroySubscriptions();
-    }
-
     /** 允许数据折行时，计算行号的行高 */
     updateRowHeight(list: any) {
         this.wheelHeight = list.reduce((r, c) => r + c , 0);
@@ -355,7 +382,9 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             return;
         }
 
-        this.dfs.updateVirthualRows(this.scrollTop);
+        if (!this.dg.groupRows) {
+            this.dfs.updateVirthualRows(this.scrollTop);
+        }
 
         // const virthualState = this.dfs.getVirthualRows(this.scrollTop);
         // this.startRowIndex = virthualState.startIndex;
@@ -498,6 +527,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges {
             this.scrollTop = this.scrollTop + this.deltaTopHeight;
             this.ps.scrollToTop(this.scrollTop);
         }
+    }
+
+    toggleGroupRow(row, open = true) {
+        row.expanded = open;
+        this.ps.update();
     }
 
 }
