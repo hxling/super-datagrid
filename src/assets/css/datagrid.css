@@ -59,6 +59,12 @@ farris-datagrid {
 .f-datagrid-group-row .f-datagrid-group-action {
   text-align: center;
 }
+.f-datagrid-group-footer {
+  background-color: #fbfbfb;
+}
+.f-datagrid-group-footer .f-datagrid-cell-checkbox {
+  background-color: #fbfbfb;
+}
 .f-datagrid-header {
   z-index: 2;
   position: relative;
