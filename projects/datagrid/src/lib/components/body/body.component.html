@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-09 19:12:29
+ * @LastEditTime: 2019-10-10 08:23:19
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -15,7 +15,7 @@
        
         <div [style.height.px]="wheelHeight" [style.width.px]="columnsGroup?.totalWidth" class="f-datagrid-bg">
 
-            <div #fixedLeft class="f-datagrid-body-fixed-left"  [class.f-datagrid-fixed-left-shadow]="!!scrollLeft"
+            <div #fixedLeft class="f-datagrid-body-fixed-left"  [class.f-datagrid-fixed-left-shadow]="!!scrollLeft && !dg.groupRows"
                 *ngIf="dg.showLineNumber || dg.showCheckbox " [style.transform]="'translate3d('+ scrollLeft +'px, '+ topHideHeight +'px, 0px)'"
                 [style.width.px]="leftFixedWidth" [style.height.px]="wheelHeight - topHideHeight">
 

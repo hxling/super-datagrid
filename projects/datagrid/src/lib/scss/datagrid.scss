@@ -187,7 +187,7 @@
 
     &-rowhover {
 
-        .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):hover {
+        .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover {
             cursor: pointer;
             background: $row-hover-bgcolor!important;
             color: $row-hover-color!important;
@@ -198,7 +198,7 @@
             }
         }
 
-        .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):hover, .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover{
+        .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover, .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover{
             cursor: pointer;
             background: $row-hover-bgcolor!important;
             color: $row-hover-color!important;

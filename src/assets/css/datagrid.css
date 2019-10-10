@@ -161,16 +161,16 @@ farris-datagrid {
 .f-datagrid-table tr td:last-child {
   border-right-width: 0;
 }
-.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):hover {
+.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover {
   cursor: pointer;
   background: #f3fbff !important;
   color: black !important;
   transition: background-color 0.1s ease-in;
 }
-.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):hover .f-datagrid-cell-rownumber {
+.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover .f-datagrid-cell-rownumber {
   background-color: #ededed !important;
 }
-.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):hover, .f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover {
+.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover, .f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover {
   cursor: pointer;
   background: #f3fbff !important;
   color: black !important;
