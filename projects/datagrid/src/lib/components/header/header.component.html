@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-18 11:23:41
+ * @LastEditTime: 2019-10-11 18:12:46
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -18,7 +18,7 @@
                     <tr class="f-datagrid-header-row">
                         <td *ngIf="dg.showLineNumber" class="f-datagrid-header-cell" [style.height.px]="height" [style.width.px]="dg?.lineNumberWidth"> </td>
                         <td *ngIf="dg.showCheckbox" class="f-datagrid-header-cell f-datagrid-header-checkbox" [style.height.px]="height" style="width: 36px; text-align: center">
-                            <datagrid-header-checkbox #chkAll *ngIf="dg.showAllCheckbox"></datagrid-header-checkbox>
+                            <datagrid-header-checkbox #chkAll *ngIf="dg.showAllCheckbox && dg.multiSelect"></datagrid-header-checkbox>
                         </td>
                         <td class="f-datagrid-header-cell" *ngFor="let col of columnsGroup?.leftFixed" [attr.align]="col.halign"
                             [style.height.px]="height" [style.width.px]="col.width">
