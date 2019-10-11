@@ -20,7 +20,8 @@
     }
 
     &-bg {
-        background: -webkit-linear-gradient(top, transparent 35px, blue 40px); background-size: 36px 36px;
+        background: -webkit-linear-gradient(top, transparent 35px, blue 40px);
+        background-size: 36px 36px;
     }
 
     &-full{
@@ -476,6 +477,51 @@
 
         &>div {
             border-top:1px solid #ccc;
+        }
+    }
+
+    &-sm {
+        .f-datagrid-body-row,.f-datagrid-cell {
+            height: $grid-row-size-type-sm
+        }
+
+        .f-datagrid-cell-content {
+            height: calc(#{$grid-row-size-type-sm} - 3px);
+            line-height: calc(#{$grid-row-size-type-sm} - 3px);
+        }
+
+        .f-datagrid-bg{
+            background: -webkit-linear-gradient(top, transparent 27px, #c3c3c3 30px);
+            background-size: 28px 28px;
+        }
+    }
+    &-lg {
+        .f-datagrid-body-row,.f-datagrid-cell {
+            height: $grid-row-size-type-lg
+        }
+        .f-datagrid-cell-content {
+            height: calc(#{$grid-row-size-type-lg} - 3px);
+            line-height: calc(#{$grid-row-size-type-lg} - 3px);
+        }
+
+        .f-datagrid-bg{
+            background: -webkit-linear-gradient(top, transparent 47px, #c3c3c3  50px);
+            background-size: 48px 48px;
+        }
+    }
+    &-xl {
+        .f-datagrid-body-row,.f-datagrid-cell {
+            height: $grid-row-size-type-xl
+        }
+
+        .f-datagrid-cell-content {
+            height: calc(#{$grid-row-size-type-xl} - 3px);
+            line-height: calc(#{$grid-row-size-type-xl} - 3px);
+        }
+
+        .f-datagrid-bg{
+            background: -webkit-linear-gradient(top, transparent 59px, #c3c3c3 63px);
+            background-size: 60px 60px;
         }
     }
 }

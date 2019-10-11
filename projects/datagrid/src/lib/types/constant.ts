@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-21 10:54:21
+ * @LastEditTime: 2019-10-11 15:22:04
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -31,3 +31,11 @@ export const ROW_HOVER_CLS = 'f-datagrid-row-hover';
 export const ROW_SELECTED_CLS = 'f-datagrid-row-selected';
 
 export const CELL_SELECTED_CLS = 'f-datagrid-cell-selected';
+
+/** 行高尺寸定义 */
+export const SIZE_TYPE = {
+    sm: 28,
+    md: 36,
+    lg: 48,
+    xl: 60
+};

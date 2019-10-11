@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-07-29 08:14:22
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-01 14:52:17
+ * @LastEditTime: 2019-10-10 15:11:09
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -105,7 +105,7 @@ export class ScrollbarDirective implements OnInit, OnDestroy, DoCheck, OnChanges
                     } else {
                         fromEvent<Event>(this.elementRef.nativeElement, eventType).pipe(
                             debounceTime(20),
-                            throttle(ev => interval(10)),
+                            // throttle(ev => interval(10)),
                             // auditTime(20),  // auditTime 静默指定的时间，在此时间内忽略所有发出的值，时间过后，发出最新的值
                             // takeUntil(this.ngDestroy)
                         )

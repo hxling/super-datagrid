@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-19 16:14:07
+ * @LastEditTime: 2019-10-10 17:22:19
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -28,6 +28,25 @@ export class Utils {
         }
 
         return this.formatterValue(resultVal);
+    }
+
+    static setValue( field: string, val: any, obj: { [key: string]: any }) {
+        if (field) {
+            if (field.indexOf('.') > -1) {
+                let lastObj = null;
+                const _fields = field.split('.');
+                _fields.reduce( (c, p) => {
+                    lastObj = c;
+                    return c[p];
+                }, obj);
+
+                if (lastObj) {
+                    lastObj[_fields.pop()] = val;
+                }
+            } else {
+                obj[field] = val;
+            }
+        }
     }
 
     private static formatterValue(val: any) {

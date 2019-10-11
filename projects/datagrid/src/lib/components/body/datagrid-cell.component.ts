@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-01 10:24:29
+ * @LastEditTime: 2019-10-10 17:57:59
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -30,7 +30,7 @@ import { ColumnFormatService } from '@farris/ui-common/column';
         </ng-container>
         <ng-container *ngIf="!isEditing && column.template" [ngTemplateOutlet]="column.template"
                         [ngTemplateOutletContext]="{$implicit: cellContext}"></ng-container>
-        <ng-container #editorTemplate *ngIf="isEditing" cell-editor [column]="column" [group]="dr.form"></ng-container>
+        <ng-container #editorTemplate *ngIf="isEditing" cell-editor [rowData]="rowData" [value]="value" [column]="column" [group]="dr.form"></ng-container>
     </div>
     `,
     changeDetection: ChangeDetectionStrategy.Default
@@ -53,6 +53,7 @@ export class DatagridCellComponent implements OnInit, OnDestroy, AfterViewInit {
             this.cd.detectChanges();
         }
     }
+
     @Input() isSelected = false;
 
     @ViewChild('cellContainer') cellContainer: ElementRef;
@@ -67,6 +68,13 @@ export class DatagridCellComponent implements OnInit, OnDestroy, AfterViewInit {
             return Utils.getValue(this.column.field, this.rowData);
         }
         return '';
+    }
+
+    get formControl() {
+        if (this.cellEditor) {
+            return this.cellEditor.componentRef.instance.formControl;
+        }
+        return null;
     }
 
     cellStyler: any = {};
@@ -130,9 +138,10 @@ export class DatagridCellComponent implements OnInit, OnDestroy, AfterViewInit {
         }
     }
 
-    updateValue() {
+    updateValue(val?: any) {
         if (this.dr.form) {
-            this.rowData = Object.assign(this.rowData, this.dr.form.value);
+            // this.rowData = Object.assign(this.rowData, this.dr.form.value);
+            Utils.setValue(this.column.field, val, this.rowData);
             this.cd.detectChanges();
         }
     }
