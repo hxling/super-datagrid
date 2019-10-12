@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-11 17:50:55
+ * @LastEditTime: 2019-10-12 13:44:45
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -276,6 +276,7 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges, Afte
 
         this.checkAllSubscribe = this.dfs.checkAll$.subscribe((rows: SelectedRow[]) => {
             this.dg.checkAll.emit(rows);
+            this.checkedRowsChanged();
             this.cd.detectChanges();
         });
         this.subscriptions.push(this.checkAllSubscribe);
