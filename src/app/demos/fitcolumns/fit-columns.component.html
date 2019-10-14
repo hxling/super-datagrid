@@ -2,23 +2,36 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 13:55:30
+ * @LastEditTime: 2019-10-11 17:26:31
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
 
 <div class="row">
-    <!-- <input id="gridFitColumns" [(ngModel)]="gridFitCols" type="checkbox">
-    <label for="gridFitColumns">自动列宽</label>
-
-    <input id="gridFit" [(ngModel)]="gridFit" type="checkbox">
-    <label for="gridFit">最大化</label> -->
+    <div class="col-12" style="height: 50px; padding: 10px">
+        <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="customRadioInline1" name="sizeType" class="custom-control-input" value="sm" [(ngModel)]="st">
+            <label class="custom-control-label" for="customRadioInline1">小</label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="customRadioInline2" name="sizeType" class="custom-control-input" value="md" [(ngModel)]="st">
+            <label class="custom-control-label" for="customRadioInline2">中</label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="customRadioInline3" name="sizeType" class="custom-control-input" value="lg" [(ngModel)]="st">
+            <label class="custom-control-label" for="customRadioInline3">大</label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="customRadioInline4" name="sizeType" class="custom-control-input" value="xl" [(ngModel)]="st">
+            <label class="custom-control-label" for="customRadioInline4">超大</label>
+          </div>
+    </div>
 </div>
 
-<div class="row" style="padding: 20px 0; margin-top: 120px; height: 800px; border: 2px dashed darkorchid">        
+<div class="row" style="padding: 20px 0; margin-top: 60px; height: 800px; border: 2px dashed darkorchid">        
 
     <farris-datagrid [columns]="columns" [data]="items" #dg="datagrid"
-        [showLineNumber] ="true" [striped]="false" [showCheckbox]="false"
+        [showLineNumber] ="true" [striped]="false" [showCheckbox]="false" [sizeType]="st"
         [virtualized]="true" [fitColumns]="true" [fit]="true" [showBorder]="true"
         [pagination]="false" [pageSize]= "pageSize" [pageIndex]="pageIndex"  [total]="total"
     ></farris-datagrid>

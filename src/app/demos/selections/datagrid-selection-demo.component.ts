@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-27 17:17:01
+ * @LastEditTime: 2019-10-11 17:10:20
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -185,6 +185,10 @@ export class DatagridSelectionDemoComponent implements OnInit {
 
     selectAll($event) {
         console.log('全选', $event);
+    }
+
+    checkedChange($event) {
+        console.log('老夏同志要求：', $event);
     }
 
     unSelectAll($event) {

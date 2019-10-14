@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-09 18:50:56
+ * @LastEditTime: 2019-10-12 13:44:45
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -116,6 +116,11 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges, Afte
             this.top = headerHeight;
             this.height = this.dg.height - this.top - this.dg.pagerHeight;
             this.bodyStyle = this.getBodyStyle();
+            this.cd.detectChanges();
+        });
+
+        this.dgs.rowHeightChanged.subscribe(() => {
+            this.setWheelHeight();
             this.cd.detectChanges();
         });
     }
@@ -244,7 +249,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges, Afte
 
         this.checkRowSubscribe = this.dfs.checkRow$.subscribe((row: SelectedRow) => {
             this.dg.checked.emit(row);
-            this.dgs.onCheckedRowsCountChange();
+            // this.dgs.onCheckedRowsCountChange();
+            this.checkedRowsChanged();
             this.cd.detectChanges();
         });
         this.subscriptions.push(this.checkRowSubscribe);
@@ -252,7 +258,8 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges, Afte
         this.clearSelectionsSubscribe =  this.dfs.clearSelections$.subscribe(() => {
             this.currentRowId = undefined;
             if (this.dg.checkOnSelect) {
-                this.dgs.onCheckedRowsCountChange();
+                // this.dgs.onCheckedRowsCountChange();
+                this.checkedRowsChanged();
             }
             this.dg.unSelectAll.emit();
             this.cd.detectChanges();
@@ -261,13 +268,15 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges, Afte
 
         this.uncheckRowSubscribe = this.dfs.unCheckRow$.subscribe((prevRow: SelectedRow) => {
             this.dg.unChecked.emit(prevRow);
-            this.dgs.onCheckedRowsCountChange();
+            // this.dgs.onCheckedRowsCountChange();
+            this.checkedRowsChanged();
             this.cd.detectChanges();
         });
         this.subscriptions.push(this.uncheckRowSubscribe);
 
         this.checkAllSubscribe = this.dfs.checkAll$.subscribe((rows: SelectedRow[]) => {
             this.dg.checkAll.emit(rows);
+            this.checkedRowsChanged();
             this.cd.detectChanges();
         });
         this.subscriptions.push(this.checkAllSubscribe);
@@ -277,11 +286,18 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges, Afte
                 this.currentRowId = undefined;
             }
             this.dg.unCheckAll.emit(rows);
-            this.dgs.onCheckedRowsCountChange();
+            // this.dgs.onCheckedRowsCountChange();
+            this.checkedRowsChanged();
             this.cd.detectChanges();
         });
         this.subscriptions.push(this.clearCheckedsSubscribe);
 
+    }
+
+    private checkedRowsChanged() {
+        this.dgs.onCheckedRowsCountChange();
+        const checkedRows = this.dg.checkeds;
+        this.dg.checkedChange.emit(checkedRows);
     }
 
     /** 允许数据折行时，计算行号的行高 */
@@ -310,9 +326,10 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges, Afte
 
     private setWheelHeight() {
         if (this.dg.nowrap) {
+            const rh = this.dg.rowHeight;
             this.wheelHeight = this.dg.pagination ?
-                                    this.dg.pageSize * this.rowHeight :
-                                    (this.dg.total || this.dg.data.length) * this.rowHeight;
+                                    this.dg.pageSize * rh :
+                                    (this.dg.total || this.dg.data.length) * rh;
             this.wheelHeight = this.wheelHeight - this.footerHeight;
         }
     }

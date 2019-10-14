@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-07-29 08:14:22
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-10 09:47:44
+ * @LastEditTime: 2019-10-11 16:26:05
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -24,6 +24,7 @@ export class FitColumnsComponent implements OnInit {
     pageSize = 200;
     pageIndex = 1;
 
+    st = 'md';
 
     constructor(private dds: DemoDataService) {}
 

@@ -20,6 +20,10 @@ export class GroupRowsDemoComponent implements OnInit {
     title = 'farris-datagrid';
     columns = [];
 
+
+    showRowNumber = true;
+    showCheckbox = true;
+
     @ViewChild('gridContainer') gc: ElementRef;
 
     constructor(private dds: DemoDataService) {}

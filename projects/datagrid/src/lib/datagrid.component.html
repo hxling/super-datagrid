@@ -2,13 +2,18 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-10 11:02:50
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-18 15:01:56
+ * @LastEditTime: 2019-10-11 15:35:27
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
 
-<div #datagridContainer class="f-datagrid" [class.f-datagrid-rowhover]="rowHover" [class.f-datagrid-bordered]="showBorder" [class.f-datagrid-wrap]="!nowrap"
-    [class.f-datagrid-strip]="striped" [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
+<div #datagridContainer class="f-datagrid" 
+    [class.f-datagrid-rowhover]="rowHover"
+    [class.f-datagrid-bordered]="showBorder"
+    [class.f-datagrid-wrap]="!nowrap"
+    [class.f-datagrid-strip]="striped" 
+    [class.f-datagrid-sm]="sizeType === 'sm'" [class.f-datagrid-lg]="sizeType === 'lg'" [class.f-datagrid-xl]="sizeType === 'xl'"
+    [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
 
     <datagrid-header class="d-flex flex-fill" *ngIf="showHeader" #header [columns]="columns" [columnsGroup]="colGroup" [height]="realHeaderHeight"></datagrid-header>
     

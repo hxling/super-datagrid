@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-09 19:40:24
+ * @LastEditTime: 2019-10-11 17:55:26
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -22,7 +22,7 @@ import { DatagridColumnDirective } from './components/columns/datagrid-column.di
 import { CellInfo, SelectedRow } from './services/state';
 import { RestService, DATAGRID_REST_SERVICEE } from './services/rest.service';
 import { DatagridService } from './services/datagrid.service';
-import { GRID_EDITORS, CELL_SELECTED_CLS, GRID_VALIDATORS } from './types/constant';
+import { GRID_EDITORS, CELL_SELECTED_CLS, GRID_VALIDATORS, SIZE_TYPE } from './types/constant';
 import { DomHandler } from './services/domhandler';
 import { Utils } from './utils/utils';
 import { ColumnFormatService } from '@farris/ui-common/column';
@@ -69,6 +69,23 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() footerRowHeight = 36;
     /** 行高 */
     @Input() rowHeight = 36;
+
+    /**
+     * 设置grid 行高尺寸
+     * sm: 小，md: 正常， lg: 大，xl: 超大
+     */
+    private _sizeType: 'sm'|'md'|'lg'|'xl' = 'md';
+    get sizeType() {
+        return this._sizeType;
+    }
+    @Input() set sizeType(val) {
+        this._sizeType = val;
+        this.rowHeight = SIZE_TYPE[val];
+        this.dfs.updateProperty('rowHeight', this.rowHeight);
+        this.refresh();
+        this.dgs.onRowHeightChange(this.rowHeight);
+    }
+
     /** 填充容器 */
     private _fit = false;
     @Input() get fit() {
@@ -248,6 +265,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Output() unChecked = new EventEmitter();
     @Output() checkAll = new EventEmitter();
     @Output() unCheckAll = new EventEmitter();
+    @Output() checkedChange = new EventEmitter();
 
     @Output() columnSorted = new EventEmitter();
 

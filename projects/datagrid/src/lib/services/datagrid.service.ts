@@ -3,7 +3,7 @@ import { EventEmitter } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-29 16:10:10
+ * @LastEditTime: 2019-10-11 17:47:38
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -70,6 +70,8 @@ export class DatagridService {
 
     public columnResized = new EventEmitter();
 
+    public rowHeightChanged = new EventEmitter();
+
     // public endRowEdit$ = this.endRowEdit.asObservable();
 
     constructor() { }
@@ -104,5 +106,9 @@ export class DatagridService {
 
     onCheckedRowsCountChange() {
         this.changeCheckedRows.next();
+    }
+
+    onRowHeightChange(rowHeight: number) {
+        this.rowHeightChanged.emit(rowHeight);
     }
 }

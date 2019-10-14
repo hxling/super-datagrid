@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-03 17:44:32
+ * @LastEditTime: 2019-10-10 17:46:39
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -259,8 +259,8 @@ export class DatagridCellEditableDirective implements OnInit, OnDestroy, AfterVi
 
         afterEditEvent.subscribe( (flag: boolean) => {
             if (flag) {
-                if (currentCell) {
-                    currentCell.updateValue();
+                if (currentCell && currentCell.formControl) {
+                    currentCell.updateValue(currentCell.formControl.value);
                 }
                 this.dfs.endEditCell();
                 this.dgs.onEndCellEdit(this.dfs.getCurrentCell());
