@@ -26,8 +26,8 @@ export class CustomCellComponent implements OnInit {
     ngOnInit() {
 
         this.columns = [
-            { field: 'id', width: 100, title: 'ID' },
-            { field: 'name', width: 130, title: '姓名', template: this.cell2, align: 'center'},
+            { field: 'id', width: 100, title: 'ID', fixed: 'left' },
+            { field: 'name', width: 130, title: '姓名', template: this.cell2, align: 'left', fixed: 'left'},
             { field: 'sex', width: 70, title: '性别' },
             { field: 'nianxin', width: 70, title: '年薪'},
             { field: 'birthday', width: 120, title: '出生日期'},

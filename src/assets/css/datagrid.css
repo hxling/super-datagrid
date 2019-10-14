@@ -214,6 +214,7 @@ farris-datagrid {
   border-color: #e9e9e9;
   overflow: hidden;
   white-space: normal;
+  background-color: white;
 }
 .f-datagrid-cell-formgroup {
   height: 100%;
