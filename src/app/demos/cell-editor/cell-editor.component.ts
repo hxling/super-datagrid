@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-09-30 08:06:16
+ * @LastEditTime: 2019-10-14 13:46:51
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -73,7 +73,17 @@ export class CellEditorComponent implements OnInit {
                     valueField: 'id',
                     title: '城市区域',
                     pagination: false,
-                    displayType: 'TREELIST'
+                    displayType: 'TREELIST',
+                    dictPicking: ($event) => {
+                        console.log($event);
+                        alert('帮助前事件');
+                        return of(true);
+                    },
+                    dictPicked: (rowData) => {
+                        console.log(rowData);
+                        alert('帮助后事件');
+                        return of(true);
+                    }
                 }
             }},
             { field: 'addr', width: 170, title: '地址', editor: {
@@ -119,8 +129,10 @@ export class CellEditorComponent implements OnInit {
             },
             formatter: { type: 'number', options: { prefix: '￥', suffix: '元', precision: 2 } }
         },
-        { field: 'zhiwei', width: 140, title: '职位' , editor: { type: EditorTypes.SELECT, options: enumOpts},
-            formatter: {type: 'enum', options: enumOpts}
+        { field: 'zhiwei', width: 140, title: '职位' ,
+            formatter: {type: 'enum', options: enumOpts},
+            // editor: { type: EditorTypes.SELECT, options: enumOpts}
+            editor: { type: EditorTypes.COMBOLIST, options: {...enumOpts, idField: 'value'} }
         }];
 
         this.total = 50;

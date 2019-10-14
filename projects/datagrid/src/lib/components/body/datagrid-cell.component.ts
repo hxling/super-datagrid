@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-10 17:57:59
+ * @LastEditTime: 2019-10-14 16:27:45
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -23,7 +23,7 @@ import { ColumnFormatService } from '@farris/ui-common/column';
 @Component({
     selector: 'grid-body-cell',
     template: `
-    <div class="f-datagrid-cell-content" #cellContainer [style.width.px]="column.width">
+    <div class="f-datagrid-cell-content" #cellContainer [style.width.px]="column.width - (lastColumn ? 6 : 0)">
         <ng-container *ngIf="!isEditing && !column.template">
             <span *ngIf="column.formatter" [innerHtml]=" column | formatCellData: rowData | safe: 'html'"></span>
             <span *ngIf="!column.formatter"> {{ column | formatCellData: rowData }} </span>
@@ -42,6 +42,7 @@ export class DatagridCellComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() column: DataColumn;
     @Input() rowData: any;
     @Input() rowIndex: number;
+    @Input() lastColumn = false;
 
     private _isEditing = false;
     @Input() get isEditing() {

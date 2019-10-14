@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-09 19:47:45
+ * @LastEditTime: 2019-10-14 16:07:15
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -67,8 +67,8 @@
                 [class.f-datagrid-row-selected]="dgb.currentRowId === row[dg.idField] || dgb.isSelected(row)"
             >
                 <td [cell-editable]="row" [column]="col" [attr.field]="col.field"
-                    class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columns; trackBy: trackByField; let ci = index;">
-                    <grid-body-cell [width]="col.width" [height]="dg.rowHeight" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
+                    class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columns; trackBy: trackByField; index as ci; last as islast;">
+                    <grid-body-cell [width]="col.width" [height]="dg.rowHeight" [lastColumn]="islast" [column]="col" [rowData]="row" [rowIndex]="startRowIndex + i"></grid-body-cell>
                 </td>
             </tr>
         </ng-container>

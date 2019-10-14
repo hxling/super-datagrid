@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:44:30
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-02 16:14:33
+ * @LastEditTime: 2019-10-14 13:15:49
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -20,8 +20,7 @@ import { DatagridBaseEditorDirective } from '../datagrid-base-editor.directive';
     `
 })
 export class DatagridTextareaComponent extends DatagridBaseEditorDirective implements OnInit, OnDestroy {
-    @Input() rows = 3;
-    @ViewChild('input') input: ElementRef;
+    @ViewChild('input') instance: ElementRef;
 
     private inputClickHandler: any;
     constructor(
@@ -32,9 +31,9 @@ export class DatagridTextareaComponent extends DatagridBaseEditorDirective imple
 
     ngOnInit() {
         super.ngOnInit();
-        this.inputElement = this.input.nativeElement;
+        this.inputElement = this.instance.nativeElement;
         this.ngzone.runOutsideAngular( () => {
-            this.inputClickHandler = this.render.listen(this.input.nativeElement, 'click', (e: MouseEvent) => {
+            this.inputClickHandler = this.render.listen(this.instance.nativeElement, 'click', (e: MouseEvent) => {
                 e.stopPropagation();
                 return false;
             });
@@ -42,7 +41,7 @@ export class DatagridTextareaComponent extends DatagridBaseEditorDirective imple
     }
 
     ngOnDestroy() {
-        if (this.inputClickHandler) {
+        if (this.instance) {
             this.inputClickHandler();
         }
     }

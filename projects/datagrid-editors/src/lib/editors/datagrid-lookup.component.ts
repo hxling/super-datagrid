@@ -3,7 +3,7 @@ import { AfterViewInit, ApplicationRef, Inject, forwardRef, Injector } from '@an
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-11 08:56:28
+ * @LastEditTime: 2019-10-14 13:00:48
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -51,7 +51,7 @@ import { RuntimeStateService } from '@farris/ui-common';
 })
 export class DatagridLookupComponent extends DatagridBaseEditorDirective implements OnInit, AfterViewInit {
 
-    @ViewChild('lookup') lookup: LookupGridComponent;
+    @ViewChild('lookup') instance: LookupGridComponent;
     stopPropagation = false;
 
     constructor(render: Renderer2, el: ElementRef, private rts: RuntimeStateService,
@@ -67,16 +67,16 @@ export class DatagridLookupComponent extends DatagridBaseEditorDirective impleme
 
     ngOnInit(): void {
         super.ngOnInit();
-        this.inputElement = this.lookup.inputGroup.textbox.nativeElement;
-        this.options = Object.assign(LookupDefaultOptions, this.options);
+        this.inputElement = this.instance.inputGroup.textbox.nativeElement;
+        this.options = Object.assign( {} , LookupDefaultOptions, this.options);
 
         if (this.options.loader) {
-            this.lookup['http'] =  { getData: this.options.loader };
+            this.instance['http'] =  { getData: this.options.loader };
         }
     }
 
     ngAfterViewInit() {
-        this.lookup.changeDetector.detectChanges();
+        this.instance.changeDetector.detectChanges();
         super.ngAfterViewInit();
     }
 
@@ -85,14 +85,14 @@ export class DatagridLookupComponent extends DatagridBaseEditorDirective impleme
     }
 
     onDialogOpen() {
-        this.lookup.changeDetector.detectChanges();
+        this.instance.changeDetector.detectChanges();
     }
 
     onLoadSuccess() {
-        this.lookup.changeDetector.detectChanges();
+        this.instance.changeDetector.detectChanges();
     }
 
     onClear(event: MouseEvent) {
-        this.lookup.changeDetector.detectChanges();
+        this.instance.changeDetector.detectChanges();
     }
 }
