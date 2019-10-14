@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:44:10
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-22 19:06:09
+ * @LastEditTime: 2019-10-14 12:46:12
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -21,7 +21,7 @@ import { DatagridBaseEditorDirective } from '../datagrid-base-editor.directive';
 export class DatagridCheckboxComponent extends DatagridBaseEditorDirective implements OnInit {
 
     checked: boolean;
-    @ViewChild('chk') chk: ElementRef;
+    @ViewChild('chk') instance: ElementRef;
 
     constructor(
         render: Renderer2, el: ElementRef, private ngzone: NgZone, public injector: Injector
@@ -31,7 +31,7 @@ export class DatagridCheckboxComponent extends DatagridBaseEditorDirective imple
 
     ngOnInit(): void {
         super.ngOnInit();
-        this.inputElement = this.chk.nativeElement;
+        this.inputElement = this.instance.nativeElement;
         this.checked = this.formControl.value;
     }
 

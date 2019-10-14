@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:41:00
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-02 16:14:22
+ * @LastEditTime: 2019-10-14 12:46:44
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -22,7 +22,7 @@ import { DatagridBaseEditorDirective } from '../datagrid-base-editor.directive';
 })
 export class DatagridNumberSpinnerComponent extends DatagridBaseEditorDirective implements OnInit {
 
-    @ViewChild('num') num: NumberSpinnerComponent;
+    @ViewChild('num') instance: NumberSpinnerComponent;
 
     constructor(render: Renderer2, el: ElementRef, injector: Injector) {
         super(render, el, injector);
@@ -30,6 +30,6 @@ export class DatagridNumberSpinnerComponent extends DatagridBaseEditorDirective 
 
     ngOnInit(): void {
         super.ngOnInit();
-        this.inputElement = this.num.input.nativeElement;
+        this.inputElement = this.instance.input.nativeElement;
     }
 }

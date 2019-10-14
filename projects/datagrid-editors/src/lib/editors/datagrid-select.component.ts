@@ -22,14 +22,14 @@ import { DatagridBaseEditorDirective } from '../datagrid-base-editor.directive';
 })
 export class DatagridSelectComponent extends DatagridBaseEditorDirective implements OnInit {
     enumData = [];
-    @ViewChild('sel') sel: ElementRef;
+    @ViewChild('sel') instance: ElementRef;
     constructor(render: Renderer2, el: ElementRef, injector: Injector) {
         super(render, el, injector);
     }
 
     ngOnInit(): void {
         super.ngOnInit();
-        this.inputElement = this.sel.nativeElement;
+        this.inputElement = this.instance.nativeElement;
         if (this.options) {
             this.enumData = this.options.data;
         }

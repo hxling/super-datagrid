@@ -170,11 +170,17 @@ farris-datagrid {
 .f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover .f-datagrid-cell-rownumber {
   background-color: #ededed !important;
 }
+.f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover .f-datagrid-cell {
+  background-color: transparent;
+}
 .f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover, .f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover {
   cursor: pointer;
   background: #f3fbff !important;
   color: black !important;
   transition: background-color 0.1s ease-in;
+}
+.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover .f-datagrid-cell, .f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover .f-datagrid-cell {
+  background-color: transparent;
 }
 .f-datagrid-row {
   overflow: hidden;
@@ -199,6 +205,10 @@ farris-datagrid {
   background-color: #D1EBFF;
   color: #222;
   border-color: #e9e9e9;
+}
+.f-datagrid-row-selected .f-datagrid-cell {
+  background-color: #D1EBFF !important;
+  color: #222;
 }
 .f-datagrid-virtual-row {
   overflow: hidden;
@@ -299,6 +309,10 @@ farris-datagrid {
 }
 .f-datagrid-strip .f-datagrid-body .f-datagrid-row-selected {
   color: rgba(0, 0, 0, 0.75);
+  background-color: #D1EBFF !important;
+  color: #222;
+}
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-selected .f-datagrid-cell {
   background-color: #D1EBFF !important;
   color: #222;
 }

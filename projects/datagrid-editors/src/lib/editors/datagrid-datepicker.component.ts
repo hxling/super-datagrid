@@ -1,11 +1,12 @@
 import { Component, OnInit, Renderer2, ElementRef, NgZone, Input, ViewChild, Injector } from '@angular/core';
 import { DatagridBaseEditorDirective } from './../datagrid-base-editor.directive';
-import { ShowType, FarrisDatepickerComponent } from '@farris/ui-datepicker';
+import { FarrisDatepickerComponent } from '@farris/ui-datepicker';
+import { DatePickerDefaultOptions } from '../editor-default-options';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-14 11:40:36
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-22 19:06:20
+ * @LastEditTime: 2019-10-14 12:58:14
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -18,17 +19,17 @@ import { ShowType, FarrisDatepickerComponent } from '@farris/ui-datepicker';
             #datepicker
             style="width: 100%"
             [formControlName]="column.field"
-            [readonly]="readonly"
-            [editable]="editable"
-            [locale]="locale"
-            [dateRange]="dateRange"
-            [showTime]="showTime"
-            [showType]="showType"
-            [dateFormat]="dateFormat"
-            [placeholder]="placeholder"
-            [maxDate]="maxDate"
-            [minDate]="minDate"
-            [dateRangeDatesDelimiter]="dateRangeDatesDelimiter"
+            [readonly]="options.readonly"
+            [editable]="options.editable"
+            [locale]="options.locale"
+            [dateRange]="options.dateRange"
+            [showTime]="options.showTime"
+            [showType]="options.showType"
+            [dateFormat]="options.dateFormat"
+            [placeholder]="options.placeholder"
+            [maxDate]="options.maxDate"
+            [minDate]="options.minDate"
+            [dateRangeDatesDelimiter]="options.dateRangeDatesDelimiter"
             [shortcuts]="[]"
         ></farris-datepicker>
     </div>
@@ -38,28 +39,7 @@ import { ShowType, FarrisDatepickerComponent } from '@farris/ui-datepicker';
 })
 export class DatagridDatepickerComponent extends DatagridBaseEditorDirective implements OnInit {
 
-    @Input() disabled = false;
-    @Input() readonly = false;
-    @Input() editable = true;
-    @Input() locale = 'zh-cn';
-    @Input() dateRange = false;
-    @Input() dateRangeDatesDelimiter = '~';
-    @Input() showTime = false;
-    @Input() showType = ShowType.all;
-    @Input() dateFormat: string;
-    @Input() placeholder = '';
-    @Input() maxDate = {
-        year: 2030,
-        month: 12,
-        day: 31
-    };
-    @Input() minDate = {
-        year: 1840,
-        month: 1,
-        day: 1
-    };
-
-    @ViewChild('datepicker') datepicker: FarrisDatepickerComponent;
+    @ViewChild('datepicker') instance: FarrisDatepickerComponent;
 
     constructor(
         render: Renderer2, el: ElementRef, private ngzone: NgZone, public injector: Injector
@@ -69,6 +49,7 @@ export class DatagridDatepickerComponent extends DatagridBaseEditorDirective imp
 
     ngOnInit(): void {
         super.ngOnInit();
-        this.inputElement = this.datepicker.dateInput.nativeElement;
+        this.options = Object.assign( {} , DatePickerDefaultOptions, this.options);
+        this.inputElement = this.instance.dateInput.nativeElement;
     }
 }
