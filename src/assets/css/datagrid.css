@@ -65,6 +65,9 @@ farris-datagrid {
 .f-datagrid-group-footer .f-datagrid-cell-checkbox {
   background-color: #fbfbfb;
 }
+.f-datagrid-group-footer .f-datagrid-cell {
+  background-color: transparent;
+}
 .f-datagrid-header {
   z-index: 2;
   position: relative;
@@ -173,13 +176,15 @@ farris-datagrid {
 .f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover .f-datagrid-cell {
   background-color: transparent;
 }
-.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover, .f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover {
+.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover,
+.f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover {
   cursor: pointer;
   background: #f3fbff !important;
   color: black !important;
   transition: background-color 0.1s ease-in;
 }
-.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover .f-datagrid-cell, .f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover .f-datagrid-cell {
+.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover .f-datagrid-cell,
+.f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover .f-datagrid-cell {
   background-color: transparent;
 }
 .f-datagrid-row {
@@ -398,7 +403,6 @@ farris-datagrid {
   bottom: 0;
   left: 0;
   width: 100%;
-  min-height: 36px;
 }
 .f-datagrid-footer table {
   table-layout: fixed;

@@ -1,3 +1,5 @@
 {
-    "prettier.tabWidth": 4
+    "prettier.tabWidth": 4,
+    "editor.fontFamily": "'Fira Code Retina',menlo,'Cascadia Code',  'Source Code Variable',Consolas, 'Courier New', monospace",
+    "editor.fontSize": 18
 }

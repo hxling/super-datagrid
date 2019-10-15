@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-11 17:55:26
+ * @LastEditTime: 2019-10-15 18:55:06
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -66,21 +66,23 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() headerHeight = 40;
     /** 显示页脚 */
     @Input() showFooter = false;
-    @Input() footerRowHeight = 36;
+    @Input() footerRowHeight = 28;
+    @Input() footerDataFrom: 'server'|'client' = 'client';
     /** 行高 */
-    @Input() rowHeight = 36;
+    @Input() rowHeight = 28;
 
     /**
      * 设置grid 行高尺寸
      * sm: 小，md: 正常， lg: 大，xl: 超大
      */
-    private _sizeType: 'sm'|'md'|'lg'|'xl' = 'md';
+    private _sizeType: 'sm'|'md'|'lg'|'xl' = 'sm';
     get sizeType() {
         return this._sizeType;
     }
     @Input() set sizeType(val) {
         this._sizeType = val;
         this.rowHeight = SIZE_TYPE[val];
+        this.footerRowHeight = this.rowHeight;
         this.dfs.updateProperty('rowHeight', this.rowHeight);
         this.refresh();
         this.dgs.onRowHeightChange(this.rowHeight);
@@ -154,14 +156,12 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.dfs.setTotal(val);
     }
 
-    /** 启用单击行 */
-    @Input() enableClickRow = true;
     /** 启用多选 */
     @Input() multiSelect = false;
     /** 启用多选时，是否显示checkbox */
     @Input() showCheckbox = false;
     /** 显示全选checkbox */
-    @Input() showAllCheckbox = true;
+    @Input() showAllCheckbox = false;
     /** 当启用多选时，点击行选中，只允许且只有一行被选中。 */
     @Input() onlySelectSelf = true;
     /** 启用多选且显示checkbox, 选中行同时钩选 */
@@ -240,7 +240,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Output() beginEdit = new EventEmitter<{ editor?: any, rowIndex?: number, rowData: any, column?: DataColumn }>();
     @Input() afterEdit: (rowIndex: number, rowData: any, column?: DataColumn, editor?: any) => Observable<boolean>;
     @Output() endEdit = new EventEmitter<{rowIndex: number, rowData: any, column?: DataColumn}>();
-    @Output() cancelEdited = new EventEmitter();
+    @Output() cancelEdited = new EventEmitter<string>();
 
     @Output() scrollY = new EventEmitter();
 
@@ -256,18 +256,18 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @Input() beforeUncheck: (rowindex: number, rowdata: any) => Observable<boolean>;
     @Input() beforeSortColumn: (field: string, order: string) => Observable<boolean>;
 
-    @Output() selectChanged = new EventEmitter();
-    @Output() unSelect = new EventEmitter();
-    @Output() selectAll = new EventEmitter();
+    @Output() selectChanged = new EventEmitter<SelectedRow>();
+    @Output() unSelect = new EventEmitter<SelectedRow>();
+    @Output() selectAll = new EventEmitter<SelectedRow[]>();
     @Output() unSelectAll = new EventEmitter();
 
-    @Output() checked = new EventEmitter();
-    @Output() unChecked = new EventEmitter();
-    @Output() checkAll = new EventEmitter();
-    @Output() unCheckAll = new EventEmitter();
-    @Output() checkedChange = new EventEmitter();
+    @Output() checked = new EventEmitter<SelectedRow>();
+    @Output() unChecked = new EventEmitter<SelectedRow>();
+    @Output() checkAll = new EventEmitter<SelectedRow[]>();
+    @Output() unCheckAll = new EventEmitter<SelectedRow[]>();
+    @Output() checkedChange = new EventEmitter<SelectedRow[]>();
 
-    @Output() columnSorted = new EventEmitter();
+    @Output() columnSorted = new EventEmitter<DataColumn>();
 
     @ContentChildren(DatagridColumnDirective) dgColumns?: QueryList<DatagridColumnDirective>;
     @ViewChild('dgPager') dgPager: any;
@@ -355,6 +355,9 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         this.colFormatSer = this.inject.get(ColumnFormatService);
         const dataSubscription = this.dfs.data$.subscribe( (dataSource: any) => {
             this.ds = {...dataSource};
+            if (this.showFooter && this.footerDataFrom === 'client') {
+                this.footerData = this.dfs.getFooterData(this.data);
+            }
             this.cd.detectChanges();
             this.loadSuccess.emit(this.ds.rows);
         });
@@ -1415,25 +1418,25 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
     scrollToLeft() {
         if (this.scrollInstance) {
-            this.scrollInstance.scrollToLeft();
+            this.scrollInstance.scrollToLeft(0, 200);
         }
     }
 
     scrollToRight() {
         if (this.scrollInstance) {
-            this.scrollInstance.scrollToRight();
+            this.scrollInstance.scrollToRight(0, 200);
         }
     }
 
     scrollToTop() {
         if (this.scrollInstance) {
-            this.scrollInstance.scrollToTop();
+            this.scrollInstance.scrollToTop(0, 100);
         }
     }
 
     scrollToBottom() {
         if (this.scrollInstance) {
-            this.scrollInstance.scrollToBottom();
+            this.scrollInstance.scrollToBottom(0, 100);
         }
     }
 

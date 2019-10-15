@@ -4,7 +4,7 @@ import { HeaderGroupDemoComponent } from './demos/group-header/header-group.comp
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-08 12:01:21
+ * @LastEditTime: 2019-10-15 19:24:30
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -22,6 +22,7 @@ import { ScrollbarLoadDemoComponent } from './demos/virtual-load/scrollbar-load-
 import { CustomCellComponent } from './demos/custom-cell-template/custom-cell-template.component';
 import { DatagridSelectionDemoComponent } from './demos/selections/datagrid-selection-demo.component';
 import { ListCardDemoComponent } from './demos/list-card/list-card-demo.component';
+import { DynamicColumnsComponent } from './demos/dynamic-columns/dynamic-columns.component';
 
 
 const routes: Routes = [
@@ -39,6 +40,7 @@ const routes: Routes = [
     { path: 'lazy-load', loadChildren: './demos2/demos2.module#Demos2Module' },
     { path: 'list-card', component: ListCardDemoComponent},
     { path: 'group-rows', component: GroupRowsDemoComponent},
+    { path: 'dynamic-columns', component: DynamicColumnsComponent},
     { path: '', component: PageScrollComponent}
 ];
 

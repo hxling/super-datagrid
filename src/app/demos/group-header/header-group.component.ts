@@ -2,13 +2,13 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-31 13:49:49
+ * @LastEditTime: 2019-10-15 18:32:34
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import { Component, OnInit } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
-
+import { DATAGRID_REST_SERVICEE, CalculationType } from '@farris/ui-datagrid';
 @Component({
     selector: 'datagrid-header-group',
     templateUrl: './header-group.component.html',
@@ -55,14 +55,23 @@ export class HeaderGroupDemoComponent implements OnInit {
             ],
             [
                 { field: 'id', width: 100, title: 'ID', rowspan: 2, index: 0, footer: {
-                    formatter: (v,d, i) => {
+                    options: { text: '合计'},
+                    formatter: (v, d, i) => {
                         return `<b>${v}</b>`;
                     }
                 } },
-                { field: 'name', width: 130, title: '姓名', rowspan: 2, index: 1},
+                { field: 'name', width: 130, title: '姓名', rowspan: 2, index: 1, footer: {
+                    options: { calculationType: CalculationType.count},
+                    formatter: (v, d, i) => {
+                        return `<b>共 ${v} 条</b>`;
+                    }
+                }},
                 { title: '自身问题', colspan: 3, halign: 'center'},
                 { field: 'company', width: 100, title: '公司', rowspan: 2, index: 6},
-                { field: 'nianxin', width: 70, title: '年薪', rowspan: 2 , index: 7},
+                { field: 'nianxin', width: 70, title: '年薪', rowspan: 2 , index: 7, footer: {
+                    options: { calculationType: CalculationType.sum},
+                    formatter: { type: 'number', options: { prefix: '￥', suffix: '元', precision: 2 }}
+                }},
                 { field: 'zhiwei', width: 100, title: '职位', rowspan: 2, index: 8 }
             ],
             [

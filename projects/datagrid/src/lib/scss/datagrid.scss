@@ -63,6 +63,9 @@
             .f-datagrid-cell-checkbox {
                 background-color: #fbfbfb;
             }
+            .f-datagrid-cell {
+                background-color: transparent;
+            }
         }
     }
     
@@ -203,7 +206,8 @@
             }
         }
 
-        .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover, .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover{
+        .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover, 
+        .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover{
             cursor: pointer;
             background: $row-hover-bgcolor!important;
             color: $row-hover-color!important;
@@ -485,8 +489,6 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        min-height: 36px;
-
         table {
             table-layout: fixed;
         }

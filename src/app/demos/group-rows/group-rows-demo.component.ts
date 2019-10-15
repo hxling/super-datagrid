@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { DemoDataService } from '../demo-data.service';
-import { DATAGRID_REST_SERVICEE } from '@farris/ui-datagrid';
+import { DATAGRID_REST_SERVICEE, CalculationType } from '@farris/ui-datagrid';
 
 @Component({
     selector: 'group-rows-demo',
@@ -31,13 +31,13 @@ export class GroupRowsDemoComponent implements OnInit {
     ngOnInit() {
         this.columns = [
             { field: 'id', width: 100, title: 'ID', groupFooter: {formatter: this.formatterGroupFooterRow, options: { text: '合计' } } },
-            { field: 'name', width: 130, title: '姓名', groupFooter: { options: { calculationType: 'count' } }},
+            { field: 'name', width: 130, title: '姓名', groupFooter: { options: { calculationType: CalculationType.count } }},
             { field: 'sex', width: 70, title: '性别' },
             { field: 'birthday', width: 120, title: '出生日期'},
             { field: 'maray', width: 70, title: '婚否'},
             { field: 'addr', width: 170, title: '地址' },
             { field: 'company', width: 100, title: '公司', groupFooter: { formatter: this.formatterGroupFooterRow, options: { text: '最大值' }}},
-            { field: 'nianxin', width: 70, title: '年薪', groupFooter: { options: { calculationType: 'max' }}},
+            { field: 'nianxin', width: 70, title: '年薪', groupFooter: { options: { calculationType: CalculationType.max }}},
             { field: 'zhiwei', width: 100, title: '职位' }
         ];
 
