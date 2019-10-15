@@ -500,7 +500,8 @@
 
     &-sm {
         .f-datagrid-body-row,.f-datagrid-cell {
-            height: $grid-row-size-type-sm
+            height: $grid-row-size-type-sm;
+            min-height: $grid-row-size-type-sm;
         }
 
         .f-datagrid-cell-content {
@@ -515,7 +516,8 @@
     }
     &-lg {
         .f-datagrid-body-row,.f-datagrid-cell {
-            height: $grid-row-size-type-lg
+            height: $grid-row-size-type-lg;
+            min-height: $grid-row-size-type-lg;
         }
         .f-datagrid-cell-content {
             height: calc(#{$grid-row-size-type-lg} - 3px);
@@ -529,7 +531,8 @@
     }
     &-xl {
         .f-datagrid-body-row,.f-datagrid-cell {
-            height: $grid-row-size-type-xl
+            height: $grid-row-size-type-xl;
+            min-height: $grid-row-size-type-xl;
         }
 
         .f-datagrid-cell-content {
@@ -540,6 +543,37 @@
         .f-datagrid-bg{
             background: -webkit-linear-gradient(top, transparent 59px, #c3c3c3 63px);
             background-size: 60px 60px;
+        }
+    }
+
+    &-wrap {
+        &.f-datagrid-sm {
+            .f-datagrid-cell-content, .f-datagrid-body-row,.f-datagrid-cell {
+                height: auto;
+                line-height: 24px;
+                min-height: $grid-row-size-type-sm;
+            }
+        }
+        &.f-datagrid-md {
+            .f-datagrid-cell-content, .f-datagrid-body-row,.f-datagrid-cell {
+                height: auto;
+                line-height: 24px;
+                min-height: $grid-row-size-type-md;
+            }
+        }
+        &.f-datagrid-lg {
+            .f-datagrid-cell-content, .f-datagrid-body-row,.f-datagrid-cell {
+                height: auto;
+                line-height: 24px;
+                min-height: $grid-row-size-type-lg;
+            }
+        }
+        &.f-datagrid-xl{
+            .f-datagrid-cell-content, .f-datagrid-body-row,.f-datagrid-cell {
+                height: auto;
+                line-height: 24px;
+                min-height: $grid-row-size-type-xl;
+            }
         }
     }
 }

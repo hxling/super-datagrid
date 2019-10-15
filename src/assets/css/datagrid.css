@@ -412,6 +412,7 @@ farris-datagrid {
 }
 .f-datagrid-sm .f-datagrid-body-row, .f-datagrid-sm .f-datagrid-cell {
   height: 28px;
+  min-height: 28px;
 }
 .f-datagrid-sm .f-datagrid-cell-content {
   height: calc(28px - 3px);
@@ -423,6 +424,7 @@ farris-datagrid {
 }
 .f-datagrid-lg .f-datagrid-body-row, .f-datagrid-lg .f-datagrid-cell {
   height: 48px;
+  min-height: 48px;
 }
 .f-datagrid-lg .f-datagrid-cell-content {
   height: calc(48px - 3px);
@@ -434,6 +436,7 @@ farris-datagrid {
 }
 .f-datagrid-xl .f-datagrid-body-row, .f-datagrid-xl .f-datagrid-cell {
   height: 60px;
+  min-height: 60px;
 }
 .f-datagrid-xl .f-datagrid-cell-content {
   height: calc(60px - 3px);
@@ -442,6 +445,26 @@ farris-datagrid {
 .f-datagrid-xl .f-datagrid-bg {
   background: -webkit-linear-gradient(top, transparent 59px, #c3c3c3 63px);
   background-size: 60px 60px;
+}
+.f-datagrid-wrap.f-datagrid-sm .f-datagrid-cell-content, .f-datagrid-wrap.f-datagrid-sm .f-datagrid-body-row, .f-datagrid-wrap.f-datagrid-sm .f-datagrid-cell {
+  height: auto;
+  line-height: 24px;
+  min-height: 28px;
+}
+.f-datagrid-wrap.f-datagrid-md .f-datagrid-cell-content, .f-datagrid-wrap.f-datagrid-md .f-datagrid-body-row, .f-datagrid-wrap.f-datagrid-md .f-datagrid-cell {
+  height: auto;
+  line-height: 24px;
+  min-height: 36px;
+}
+.f-datagrid-wrap.f-datagrid-lg .f-datagrid-cell-content, .f-datagrid-wrap.f-datagrid-lg .f-datagrid-body-row, .f-datagrid-wrap.f-datagrid-lg .f-datagrid-cell {
+  height: auto;
+  line-height: 24px;
+  min-height: 48px;
+}
+.f-datagrid-wrap.f-datagrid-xl .f-datagrid-cell-content, .f-datagrid-wrap.f-datagrid-xl .f-datagrid-body-row, .f-datagrid-wrap.f-datagrid-xl .f-datagrid-cell {
+  height: auto;
+  line-height: 24px;
+  min-height: 60px;
 }
 .f-tooltip {
   position: absolute;
