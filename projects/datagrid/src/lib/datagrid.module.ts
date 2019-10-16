@@ -1,9 +1,10 @@
+import { AutoHeightComponent } from './components/auto-height/auto-height.component';
 import { ValidatorMessagerService } from './services/validator-messager.service';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-10 14:49:40
+ * @LastEditTime: 2019-10-16 12:33:16
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -85,7 +86,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DatagridCheckboxComponent,
         DatagridHeaderCheckboxComponent,
         GridCellEditorDirective,
-        TextboxEditorComponent
+        TextboxEditorComponent,
+        AutoHeightComponent
     ],
     providers: [
         {

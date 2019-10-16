@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-12 13:44:45
+ * @LastEditTime: 2019-10-16 10:01:32
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -318,10 +318,12 @@ export class DatagridBodyComponent implements OnInit, OnDestroy, OnChanges, Afte
     }
 
     private updateColumnSize(cg: ColumnGroup) {
-        this.columnsGroup = cg;
-        this.leftFixedWidth = this.columnsGroup.leftFixedWidth;
-        this.rightFixedWidth = this.columnsGroup.rightFixedWidth;
-        this.colsWidth = this.columnsGroup.normalWidth;
+        if (cg) {
+            this.columnsGroup = cg;
+            this.leftFixedWidth = this.columnsGroup.leftFixedWidth;
+            this.rightFixedWidth = this.columnsGroup.rightFixedWidth;
+            this.colsWidth = this.columnsGroup.normalWidth;
+        }
     }
 
     private setWheelHeight() {

@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-09 16:49:53
+ * @LastEditTime: 2019-10-14 19:37:24
  * @Company: Inspur
  * @Version: v0.0.1
  */
@@ -87,6 +87,20 @@ export interface PaginationInfo {
     total?: number;
 }
 
+export enum CalculationType {
+
+    /** 最大值 */
+    max = 0,
+    /** 最小值 */
+    min,
+    /** 求和 */
+    sum,
+    /** 平均数 */
+    average,
+    /** 总记录数 */
+    count
+}
+
 export interface GridFooterRow {
     formatter?: (value, rowData, rowIndex) => any | ColumnFormatter;
     /** 文本对齐方式 */
@@ -94,7 +108,7 @@ export interface GridFooterRow {
     styler?: (value, rowData, rowIndex) => CustomStyle;
     options?: {
         /** 计算类型 */
-        calculationType?: 'max' | 'min' | 'sum' | 'average' | 'count',
+        calculationType?: CalculationType,
         text?: string;
     };
 }

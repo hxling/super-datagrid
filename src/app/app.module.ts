@@ -3,7 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-08 12:00:32
+ * @LastEditTime: 2019-10-16 12:01:02
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -40,6 +40,8 @@ import { LayoutColumnComponent } from './demos/layout/layout-column.component';
 import { LookupModule } from '@farris/ui-lookup';
 import { CustomCellButtonComponent } from './demos/custom-cell-template/custom-cell-button.component';
 import { GroupRowsDemoComponent } from './demos/group-rows/group-rows-demo.component';
+import { DynamicColumnsComponent } from './demos/dynamic-columns/dynamic-columns.component';
+import { AutoHeightDemoComponent } from './demos/auto-height/auto-height-demo.component';
 
 
 @NgModule({
@@ -62,7 +64,9 @@ import { GroupRowsDemoComponent } from './demos/group-rows/group-rows-demo.compo
         ListCardDemoComponent,
         LayoutColumnComponent,
         CustomCellButtonComponent,
-        GroupRowsDemoComponent
+        GroupRowsDemoComponent,
+        DynamicColumnsComponent,
+        AutoHeightDemoComponent
     ],
     imports: [
         BrowserModule,

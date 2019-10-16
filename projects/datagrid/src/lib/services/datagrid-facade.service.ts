@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-09 17:27:06
+ * @LastEditTime: 2019-10-16 12:43:11
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -11,7 +11,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, merge, Subject } from 'rxjs';
 import { map, distinctUntilChanged, filter, switchMap, auditTime, debounceTime } from 'rxjs/operators';
-import { DataColumn, ColumnGroup } from '../types';
+import { DataColumn, ColumnGroup, CalculationType } from '../types';
 import { FarrisDatagridState, initDataGridState, DataResult, CellInfo, VirtualizedState, SelectedRow,
         RowDataChanges, ROW_INDEX_FIELD, IS_GROUP_ROW_FIELD, GROUP_ROW_FIELD, IS_GROUP_FOOTER_ROW_FIELD } from './state';
 import { VirtualizedLoaderService } from './virtualized-loader.service';
@@ -88,20 +88,6 @@ export class DatagridFacadeService {
         })
     );
 
-    // readonly currentRow$ = this.store.asObservable().pipe(
-    //     filter( (state: any) => state),
-    //     map((state: FarrisDatagridState) => state.currentRow),
-    //     switchMap( (row) => {
-    //         if (row) {
-    //             return of(row);
-    //         } else {
-    //             this.unSelectRowSubject.next(row);
-    //             return this.unSelectRowSubject.asObservable();
-    //         }
-    //     }),
-    //     distinctUntilChanged()
-    // );
-
     constructor(private http: HttpClient) {
         this._state = initDataGridState;
         this.virtualizedService = new VirtualizedLoaderService();
@@ -119,19 +105,32 @@ export class DatagridFacadeService {
         if (scrolltop === undefined) {
             scrolltop = 0;
         }
-        let virtual = {rowIndex: 0, virtualRows: this._state.data, topHideHeight: 0, bottomHideHeight: 0 };
-        if (!this._state.groupRows) {
-            if (this._state.virtual && this._state.virtualized) {
-                this.virtualizedService.state = this._state;
-                const rows = this.virtualizedService.getRows(scrolltop);
-                virtual = { ...this._state.virtual, ...rows };
-            }
-        } else {
-            // 行分组数据处理
-            const groupRows = this.groupRows(virtual.virtualRows);
-            virtual.virtualRows = groupRows;
+
+        let data = [];
+        let virtual = {rowIndex: 0, virtualRows: data, topHideHeight: 0, bottomHideHeight: 0 };
+
+        if (this._state.autoHeight) {
+            virtual.virtualRows = this._state.data;
+            return virtual;
         }
 
+        if (this._state.flatColumns && this._state.flatColumns.length) {
+            data = this._state.data;
+
+            if (!this._state.groupRows) {
+                if (this._state.virtual && this._state.virtualized) {
+                    this.virtualizedService.state = this._state;
+                    const rows = this.virtualizedService.getRows(scrolltop);
+                    virtual = { ...this._state.virtual, ...rows };
+                } else {
+                    virtual.virtualRows = data;
+                }
+            } else {
+                // 行分组数据处理
+                const groupRows = this.groupRows(virtual.virtualRows);
+                virtual.virtualRows = groupRows;
+            }
+        }
         return virtual;
     }
 
@@ -604,11 +603,17 @@ export class DatagridFacadeService {
         this.gridSizeSubject.next(this._state);
     }
 
-    resetColumnsSize() {
+    private resetColumnsSize() {
         if (this._state.fitColumns) {
             this.setFitColumnsWidth(this._state.columnsGroup);
         }
         this.gridSizeSubject.next(this._state);
+    }
+
+    updateColumns(columns) {
+        this._state.columns = columns;
+        this.initColumns();
+        this.resizeColumns(true);
     }
 
 
@@ -620,7 +625,9 @@ export class DatagridFacadeService {
             const normalCols = this.getFixedCols();
 
             columns.forEach(c => {
-                c.originalWidth = c.width;
+                if (!c.originalWidth) {
+                    c.originalWidth = c.width;
+                }
             });
 
             const colgroup = {
@@ -887,7 +894,6 @@ export class DatagridFacadeService {
             if (!rowid) {
                 this._state.data = cloneDeep(this._state.originalData);
                 this._state.changes = null;
-                // this.refresh();
             } else {
                 const rowChanges =  this._state.changes['' + rowid];
                 if (rowChanges) {
@@ -915,6 +921,38 @@ export class DatagridFacadeService {
     //#endregion
 
     /**
+     * 构造合计行
+     * @param data 数据集合
+     */
+    getFooterData(data) {
+        if (this._state.showFooter) {
+            const columns = this._state.flatColumns;
+            const footerRow = {};
+
+            columns.forEach(col => {
+                if (col.footer && col.footer.options) {
+                    const options = col.footer.options;
+                    const text = options.text;
+                    const typ = options.calculationType as CalculationType;
+
+                    if (typ !== undefined) {
+                        const val = this.calculation(data, typ, col.field);
+                        footerRow[col.field] = val;
+                    } else {
+                        footerRow[col.field] = text || '';
+                    }
+                } else {
+                    footerRow[col.field] = '';
+                }
+            });
+
+            return [footerRow];
+        }
+        return [];
+    }
+
+
+    /**
      * 将普通数组转换为带有分组信息的数据
      * @param data 原始数据
      */
@@ -926,7 +964,7 @@ export class DatagridFacadeService {
             const keys = Object.keys(groupData);
             let result = [];
             let rowIndex = 0;
-            const columns = this._state.columnsGroup.normalColumns;
+            const columns = this._state.flatColumns;
             keys.forEach((k, i) => {
                 const groupItem = {
                     [IS_GROUP_ROW_FIELD]: true, value: k, colspan: columns.length,
@@ -958,30 +996,10 @@ export class DatagridFacadeService {
                         if (col.groupFooter && col.groupFooter.options) {
                             const options = col.groupFooter.options;
                             const text = options.text;
-                            const calculationType = options.calculationType;
+                            const typ = options.calculationType as CalculationType;
 
-                            if (calculationType) {
-                                let val: any = '';
-                                switch (calculationType) {
-                                    case 'sum':
-                                        val = sumBy(groupData[k], (o) => Utils.getValue(col.field, o));
-                                        break;
-                                    case 'max':
-                                        const maxObj = maxBy(groupData[k], (o) => Utils.getValue(col.field, o));
-                                        val = Utils.getValue(col.field, maxObj);
-                                        break;
-                                    case 'min':
-                                        const minObj = minBy(groupData[k], (o) => Utils.getValue(col.field, o));
-                                        val = Utils.getValue(col.field, minObj);
-                                        break;
-                                    case 'average':
-                                        val = meanBy(groupData[k], (o) => Utils.getValue(col.field, o));
-                                        break;
-                                    case 'count':
-                                        val = groupData[k].length;
-                                        break;
-                                }
-
+                            if (typ !== undefined) {
+                                const val = this.calculation(groupData[k], typ, col.field);
                                 groupFooterRow[col.field] = val;
                             } else {
                                 groupFooterRow[col.field] = text || '';
@@ -999,6 +1017,30 @@ export class DatagridFacadeService {
         }
 
         return [];
+    }
+
+    private calculation(data: any, typ: CalculationType, field: string) {
+        let val: any = '';
+        switch (typ) {
+            case CalculationType.sum:
+                val = sumBy(data, (o) => Utils.getValue(field, o));
+                break;
+            case CalculationType.max:
+                const maxObj = maxBy(data, (o) => Utils.getValue(field, o));
+                val = Utils.getValue(field, maxObj);
+                break;
+            case CalculationType.min:
+                const minObj = minBy(data, (o) => Utils.getValue(field, o));
+                val = Utils.getValue(field, minObj);
+                break;
+            case CalculationType.average:
+                val = meanBy(data, (o) => Utils.getValue(field, o));
+                break;
+            case CalculationType.count:
+                val = data.length;
+                break;
+        }
+        return val;
     }
 
 }

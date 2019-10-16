@@ -32,5 +32,9 @@ export class DatagridComboListComponent  extends DatagridBaseEditorDirective imp
         super.ngOnInit();
         this.inputElement = this.instance.input.textbox.nativeElement;
         this.options = Object.assign( {} , ComboListDefaultOptions, this.options);
+
+        if (this.formControl && this.formControl.value) {
+            this.options.selectedValues = this.formControl.value;
+        }
     }
 }

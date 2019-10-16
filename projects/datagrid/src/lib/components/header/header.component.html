@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-11 18:12:46
+ * @LastEditTime: 2019-10-14 17:36:29
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -72,7 +72,9 @@
                                 <div class="f-datagrid-header-cell-content" [style.width.px]="col.width">
                                     {{ col.title }}
                                     <ng-container *ngIf="col.sortable">
-                                        <span class="f-datagrid-sort" [class.f-datagrid-sort-asc]="col.order === 'asc'" [class.f-datagrid-sort-desc]="col.order === 'desc'"
+                                        <span class="f-datagrid-sort" 
+                                        [class.f-datagrid-sort-asc]="col.order === 'asc'" 
+                                        [class.f-datagrid-sort-desc]="col.order === 'desc'"
                                             (click)="onSortColumnClick($event, col)" 
                                             *ngIf="col.order">{{ col.order === 'asc'? '↑' : '↓' }}  </span>
                                         <span class="f-datagrid-sort" (click)="onSortColumnClick($event, col)" *ngIf="!col.order"> ⇵ </span>

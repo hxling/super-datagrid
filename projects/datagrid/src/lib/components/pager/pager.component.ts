@@ -3,14 +3,13 @@ import { ChangeDetectorRef } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-08-13 09:41:26
+ * @LastEditTime: 2019-10-16 08:49:09
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
 import { Component, OnInit, Input, Output, EventEmitter, ElementRef, AfterViewInit, ViewChild, HostBinding } from '@angular/core';
 import { PaginationControlsDirective } from './../../pagination/pagination-controls.directive';
 import { PaginationControlsComponent } from '../../pagination/pagination-controls.component';
-import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'datagrid-pager',

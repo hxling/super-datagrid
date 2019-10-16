@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-10 11:02:50
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-11 15:35:27
+ * @LastEditTime: 2019-10-16 16:08:26
  * @QQ: 1055818239
  * @Version: v0.0.1
  -->
@@ -13,7 +13,8 @@
     [class.f-datagrid-wrap]="!nowrap"
     [class.f-datagrid-strip]="striped" 
     [class.f-datagrid-sm]="sizeType === 'sm'" [class.f-datagrid-lg]="sizeType === 'lg'" [class.f-datagrid-xl]="sizeType === 'xl'"
-    [ngStyle]="{'width': width + 'px', 'height': height + 'px' }">
+    [ngStyle]="{'width': width + 'px', 'height': height + 'px' }"
+    *ngIf="!autoHeight">
 
     <datagrid-header class="d-flex flex-fill" *ngIf="showHeader" #header [columns]="columns" [columnsGroup]="colGroup" [height]="realHeaderHeight"></datagrid-header>
     
@@ -27,6 +28,18 @@
 
     <div class="f-datagrid-resize-bg" #resizeProxyBg></div>
     <div #resizeProxy class="f-datagrid-resize-proxy" *ngIf="resizeColumn"></div>
+</div>
+
+
+<div #datagridContainer class="f-datagrid" 
+[class.f-datagrid-rowhover]="rowHover"
+[class.f-datagrid-bordered]="showBorder"
+[class.f-datagrid-wrap]="!nowrap"
+[class.f-datagrid-strip]="striped" 
+[class.f-datagrid-sm]="sizeType === 'sm'" [class.f-datagrid-lg]="sizeType === 'lg'" [class.f-datagrid-xl]="sizeType === 'xl'"
+*ngIf="autoHeight" style="border-right: 0px; border-bottom: 0px;">
+
+    <auto-height [columnsGroup]="colGroup" [columns]="columns" [data]="ds.rows"></auto-height>
 </div>
 
 <datagrid-loading *ngIf="loading"></datagrid-loading>

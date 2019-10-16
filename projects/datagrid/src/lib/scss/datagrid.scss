@@ -35,6 +35,10 @@
         height: 100%;
     }
 
+    .f-datagrid-ah td{
+        padding: 0px 5px;
+    }
+
     &-group {
         &-row {
             span.f-icon {
@@ -62,6 +66,9 @@
 
             .f-datagrid-cell-checkbox {
                 background-color: #fbfbfb;
+            }
+            .f-datagrid-cell {
+                background-color: transparent;
             }
         }
     }
@@ -203,7 +210,9 @@
             }
         }
 
-        .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover, .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover{
+        .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover, 
+        .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover,
+        .f-datagrid-ah tbody tr:hover {
             cursor: pointer;
             background: $row-hover-bgcolor!important;
             color: $row-hover-color!important;
@@ -371,7 +380,7 @@
     }
 
     &-strip {
-        .f-datagrid-body {
+        .f-datagrid-body, .f-datagrid-ah {
             .f-datagrid-row-selected {
                 color: $grid-text-color;
                 background-color: $selected-row-bgcolor!important;
@@ -407,7 +416,6 @@
             border-width: 0 1px 1px 0;
         }
 
-
         .f-datagrid-body-fixed-right {
             border-left: 1px solid $border-color;
         }
@@ -429,6 +437,12 @@
                 tr td:last-child {
                     border-right: 1px solid $border-color;
                 }
+            }
+        }
+
+        .f-datagrid-ah {
+            .f-datagrid-header-cell {
+                border-width: 0 1px 1px 0;
             }
         }
     }
@@ -485,8 +499,6 @@
         bottom: 0;
         left: 0;
         width: 100%;
-        min-height: 36px;
-
         table {
             table-layout: fixed;
         }
@@ -494,11 +506,17 @@
         &>div {
             border-top:1px solid #ccc;
         }
+        /** 合计行单元格不折行 */
+        .f-datagrid-cell-content {
+            word-break: normal;
+            word-wrap: normal;
+        }
     }
 
     &-sm {
         .f-datagrid-body-row,.f-datagrid-cell {
-            height: $grid-row-size-type-sm
+            height: $grid-row-size-type-sm;
+            min-height: $grid-row-size-type-sm;
         }
 
         .f-datagrid-cell-content {
@@ -513,7 +531,8 @@
     }
     &-lg {
         .f-datagrid-body-row,.f-datagrid-cell {
-            height: $grid-row-size-type-lg
+            height: $grid-row-size-type-lg;
+            min-height: $grid-row-size-type-lg;
         }
         .f-datagrid-cell-content {
             height: calc(#{$grid-row-size-type-lg} - 3px);
@@ -527,7 +546,8 @@
     }
     &-xl {
         .f-datagrid-body-row,.f-datagrid-cell {
-            height: $grid-row-size-type-xl
+            height: $grid-row-size-type-xl;
+            min-height: $grid-row-size-type-xl;
         }
 
         .f-datagrid-cell-content {
@@ -538,6 +558,37 @@
         .f-datagrid-bg{
             background: -webkit-linear-gradient(top, transparent 59px, #c3c3c3 63px);
             background-size: 60px 60px;
+        }
+    }
+
+    &-wrap {
+        &.f-datagrid-sm {
+            .f-datagrid-cell-content, .f-datagrid-body-row,.f-datagrid-cell {
+                height: auto;
+                line-height: 24px;
+                min-height: $grid-row-size-type-sm;
+            }
+        }
+        &.f-datagrid-md {
+            .f-datagrid-cell-content, .f-datagrid-body-row,.f-datagrid-cell {
+                height: auto;
+                line-height: 24px;
+                min-height: $grid-row-size-type-md;
+            }
+        }
+        &.f-datagrid-lg {
+            .f-datagrid-cell-content, .f-datagrid-body-row,.f-datagrid-cell {
+                height: auto;
+                line-height: 24px;
+                min-height: $grid-row-size-type-lg;
+            }
+        }
+        &.f-datagrid-xl{
+            .f-datagrid-cell-content, .f-datagrid-body-row,.f-datagrid-cell {
+                height: auto;
+                line-height: 24px;
+                min-height: $grid-row-size-type-xl;
+            }
         }
     }
 }

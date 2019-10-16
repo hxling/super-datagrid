@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-12 07:47:12
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-09 17:38:41
+ * @LastEditTime: 2019-10-15 16:40:11
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -41,6 +41,7 @@ export interface FarrisDatagridState {
     currentCell?: CellInfo;
     columnsGroup: ColumnGroup;
     virtualized?: boolean;
+    showFooter?: boolean;
     /** 是否启用异步虚拟加载数据: false - 客户端内存中取数；true - 远端服务器加载数据, 默认值为 false */
     virtualizedAsyncLoad?: boolean;
     virtual?: VirtualizedState;
@@ -66,6 +67,8 @@ export interface VirtualizedState {
     virtualRows?: any;
     topHideHeight?: number;
     bottomHideHeight?: number;
+    /** 页脚数据 */
+    footer?: any[];
 }
 
 export interface SelectedRow {

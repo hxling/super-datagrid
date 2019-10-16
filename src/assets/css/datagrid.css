@@ -44,6 +44,9 @@ farris-datagrid {
   flex: 1;
   height: 100%;
 }
+.f-datagrid .f-datagrid-ah td {
+  padding: 0px 5px;
+}
 .f-datagrid-group-row span.f-icon {
   background-size: 16px;
   background-position: 3px 4px;
@@ -64,6 +67,9 @@ farris-datagrid {
 }
 .f-datagrid-group-footer .f-datagrid-cell-checkbox {
   background-color: #fbfbfb;
+}
+.f-datagrid-group-footer .f-datagrid-cell {
+  background-color: transparent;
 }
 .f-datagrid-header {
   z-index: 2;
@@ -173,13 +179,17 @@ farris-datagrid {
 .f-datagrid-rowhover .f-datagrid-body-fixed-left tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover .f-datagrid-cell {
   background-color: transparent;
 }
-.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover, .f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover {
+.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover,
+.f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover,
+.f-datagrid-rowhover .f-datagrid-ah tbody tr:hover {
   cursor: pointer;
   background: #f3fbff !important;
   color: black !important;
   transition: background-color 0.1s ease-in;
 }
-.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover .f-datagrid-cell, .f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover .f-datagrid-cell {
+.f-datagrid-rowhover .f-datagrid-table tr:not(.f-datagrid-row-selected):not(.f-datagrid-group-row):not(.f-datagrid-group-footer):hover .f-datagrid-cell,
+.f-datagrid-rowhover .f-datagrid-body-fixed-right tr:not(.f-datagrid-row-selected):hover .f-datagrid-cell,
+.f-datagrid-rowhover .f-datagrid-ah tbody tr:hover .f-datagrid-cell {
   background-color: transparent;
 }
 .f-datagrid-row {
@@ -307,27 +317,27 @@ farris-datagrid {
 .f-datagrid-body-fixed-left > .ps__rail-y {
   display: none !important;
 }
-.f-datagrid-strip .f-datagrid-body .f-datagrid-row-selected {
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-selected, .f-datagrid-strip .f-datagrid-ah .f-datagrid-row-selected {
   color: rgba(0, 0, 0, 0.75);
   background-color: #D1EBFF !important;
   color: #222;
 }
-.f-datagrid-strip .f-datagrid-body .f-datagrid-row-selected .f-datagrid-cell {
+.f-datagrid-strip .f-datagrid-body .f-datagrid-row-selected .f-datagrid-cell, .f-datagrid-strip .f-datagrid-ah .f-datagrid-row-selected .f-datagrid-cell {
   background-color: #D1EBFF !important;
   color: #222;
 }
-.f-datagrid-strip .f-datagrid-body tr:nth-child(odd) {
+.f-datagrid-strip .f-datagrid-body tr:nth-child(odd), .f-datagrid-strip .f-datagrid-ah tr:nth-child(odd) {
   background-color: #FCFDFE;
   color: rgba(0, 0, 0, 0.75);
 }
-.f-datagrid-strip .f-datagrid-body tr:nth-child(odd) .f-datagrid-cell {
+.f-datagrid-strip .f-datagrid-body tr:nth-child(odd) .f-datagrid-cell, .f-datagrid-strip .f-datagrid-ah tr:nth-child(odd) .f-datagrid-cell {
   background-color: transparent;
   border-color: #e9e9e9;
 }
-.f-datagrid-strip .f-datagrid-body tr:nth-child(even) {
+.f-datagrid-strip .f-datagrid-body tr:nth-child(even), .f-datagrid-strip .f-datagrid-ah tr:nth-child(even) {
   background-color: #fff;
 }
-.f-datagrid-strip .f-datagrid-body tr:nth-child(even) .f-datagrid-cell {
+.f-datagrid-strip .f-datagrid-body tr:nth-child(even) .f-datagrid-cell, .f-datagrid-strip .f-datagrid-ah tr:nth-child(even) .f-datagrid-cell {
   background-color: transparent;
 }
 .f-datagrid-bordered {
@@ -351,6 +361,9 @@ farris-datagrid {
 }
 .f-datagrid-bordered .f-datagrid-header-fixed-left tr td:last-child {
   border-right: 1px solid #e9e9e9;
+}
+.f-datagrid-bordered .f-datagrid-ah .f-datagrid-header-cell {
+  border-width: 0 1px 1px 0;
 }
 .f-datagrid-resize-proxy {
   width: 1px;
@@ -398,7 +411,7 @@ farris-datagrid {
   bottom: 0;
   left: 0;
   width: 100%;
-  min-height: 36px;
+  /** 合计行单元格不折行 */
 }
 .f-datagrid-footer table {
   table-layout: fixed;
@@ -406,8 +419,13 @@ farris-datagrid {
 .f-datagrid-footer > div {
   border-top: 1px solid #ccc;
 }
+.f-datagrid-footer .f-datagrid-cell-content {
+  word-break: normal;
+  word-wrap: normal;
+}
 .f-datagrid-sm .f-datagrid-body-row, .f-datagrid-sm .f-datagrid-cell {
   height: 28px;
+  min-height: 28px;
 }
 .f-datagrid-sm .f-datagrid-cell-content {
   height: calc(28px - 3px);
@@ -419,6 +437,7 @@ farris-datagrid {
 }
 .f-datagrid-lg .f-datagrid-body-row, .f-datagrid-lg .f-datagrid-cell {
   height: 48px;
+  min-height: 48px;
 }
 .f-datagrid-lg .f-datagrid-cell-content {
   height: calc(48px - 3px);
@@ -430,6 +449,7 @@ farris-datagrid {
 }
 .f-datagrid-xl .f-datagrid-body-row, .f-datagrid-xl .f-datagrid-cell {
   height: 60px;
+  min-height: 60px;
 }
 .f-datagrid-xl .f-datagrid-cell-content {
   height: calc(60px - 3px);
@@ -438,6 +458,26 @@ farris-datagrid {
 .f-datagrid-xl .f-datagrid-bg {
   background: -webkit-linear-gradient(top, transparent 59px, #c3c3c3 63px);
   background-size: 60px 60px;
+}
+.f-datagrid-wrap.f-datagrid-sm .f-datagrid-cell-content, .f-datagrid-wrap.f-datagrid-sm .f-datagrid-body-row, .f-datagrid-wrap.f-datagrid-sm .f-datagrid-cell {
+  height: auto;
+  line-height: 24px;
+  min-height: 28px;
+}
+.f-datagrid-wrap.f-datagrid-md .f-datagrid-cell-content, .f-datagrid-wrap.f-datagrid-md .f-datagrid-body-row, .f-datagrid-wrap.f-datagrid-md .f-datagrid-cell {
+  height: auto;
+  line-height: 24px;
+  min-height: 36px;
+}
+.f-datagrid-wrap.f-datagrid-lg .f-datagrid-cell-content, .f-datagrid-wrap.f-datagrid-lg .f-datagrid-body-row, .f-datagrid-wrap.f-datagrid-lg .f-datagrid-cell {
+  height: auto;
+  line-height: 24px;
+  min-height: 48px;
+}
+.f-datagrid-wrap.f-datagrid-xl .f-datagrid-cell-content, .f-datagrid-wrap.f-datagrid-xl .f-datagrid-body-row, .f-datagrid-wrap.f-datagrid-xl .f-datagrid-cell {
+  height: auto;
+  line-height: 24px;
+  min-height: 60px;
 }
 .f-tooltip {
   position: absolute;
