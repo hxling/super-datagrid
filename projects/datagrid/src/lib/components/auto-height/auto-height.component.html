@@ -1,0 +1,42 @@
+<table style="width:100%" class="f-datagrid-ah" cellpadding="0" cellspacing="0" border="0">
+    <colgroup>
+        <col *ngIf="dg.showLineNumber" [width]="dg.lineNumberWidth + 'px'">
+        <ng-container *ngFor="let col of columnsGroup?.normalColumns">
+            <col [width]="col.width + 'px'">
+        </ng-container>
+    </colgroup>
+    <thead>
+        <tr class="f-datagrid-header-row" *ngFor="let cols of columns">
+            <td class="f-datagrid-header-cell" *ngIf="dg.showLineNumber"></td>
+            <ng-container *ngFor="let col of cols">
+                <ng-container *ngIf="col.colspan && !col.fixed">
+                    <td class="f-datagrid-header-cell f-datagrid-header-cell-group" 
+                        [attr.align]="col.halign"
+                        [attr.colspan]="col.colspan">
+                        <div class="f-datagrid-header-cell-content" >
+                            {{ col.title }}
+                        </div>
+                    </td>
+                </ng-container>
+                <ng-container *ngIf="!col.colspan && !col.fixed">
+                    <td class="f-datagrid-header-cell" 
+                        [attr.align]="col.halign" 
+                        [attr.field]="col.field"
+                        [attr.rowspan]="col.rowspan">
+                        <div class="f-datagrid-header-cell-content" [style.width.px]="col.width">
+                            {{ col.title }}
+                        </div>
+                    </td>
+                </ng-container>
+            </ng-container>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="f-datagrid-body-row" [attr.id]="row | rowDataId" *ngFor="let row of data; trackBy: dg.trackByRows; let i = index">
+            <td class="f-datagrid-cell f-datagrid-cell-rownumber" *ngIf="dg.showLineNumber">{{ i+1 }}</td>
+            <td class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columnsGroup?.normalColumns; let ci = index;">
+                <span [innerHtml]=" col | formatCellData: row | safe: 'html'"></span>
+            </td>
+        </tr>
+    </tbody>
+</table>

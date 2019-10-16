@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { DatagridComponent } from './../../datagrid.component';
+import { Component, OnInit, Injector, Input } from '@angular/core';
 
 
 /**
@@ -12,7 +13,12 @@ import { Component, OnInit } from '@angular/core';
     templateUrl: './auto-height.component.html'
 })
 export class AutoHeightComponent implements OnInit {
-    constructor() { }
+
+    @Input() columns: any[];
+    @Input() columnsGroup: any;
+    @Input() data: any;
+
+    constructor(private dg: DatagridComponent, private inject: Injector) { }
 
     ngOnInit(): void { }
 }

@@ -1,10 +1,11 @@
+import { AutoHeightDemoComponent } from './demos/auto-height/auto-height-demo.component';
 import { GroupRowsDemoComponent } from './demos/group-rows/group-rows-demo.component';
 import { HeaderGroupDemoComponent } from './demos/group-header/header-group.component';
 /*
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-15 19:24:30
+ * @LastEditTime: 2019-10-16 12:01:19
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -41,6 +42,7 @@ const routes: Routes = [
     { path: 'list-card', component: ListCardDemoComponent},
     { path: 'group-rows', component: GroupRowsDemoComponent},
     { path: 'dynamic-columns', component: DynamicColumnsComponent},
+    { path: 'auto-height', component: AutoHeightDemoComponent},
     { path: '', component: PageScrollComponent}
 ];
 

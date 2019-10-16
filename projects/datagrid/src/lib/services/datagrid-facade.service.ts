@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-16 11:20:48
+ * @LastEditTime: 2019-10-16 12:43:11
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -108,6 +108,12 @@ export class DatagridFacadeService {
 
         let data = [];
         let virtual = {rowIndex: 0, virtualRows: data, topHideHeight: 0, bottomHideHeight: 0 };
+
+        if (this._state.autoHeight) {
+            virtual.virtualRows = this._state.data;
+            return virtual;
+        }
+
         if (this._state.flatColumns && this._state.flatColumns.length) {
             data = this._state.data;
 

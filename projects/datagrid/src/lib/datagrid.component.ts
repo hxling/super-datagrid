@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-16 11:16:19
+ * @LastEditTime: 2019-10-16 12:35:29
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -52,6 +52,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     @HostBinding('class.f-datagrid-full') hostCls = false;
 
     @Input() id = '';
+    /** 自动高度 - 启用此属性后，就是一个普普通通的 table , 不能编辑，不能排序，不能分页，不能... 就是一凡胎 */
+    @Input() autoHeight = false;
     /** 显示边框 */
     @Input() showBorder = false;
     /** 启用斑马线  */
@@ -614,11 +616,13 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
 
     private setPagerHeight() {
-        if (!this.pagination) {
-            this.pagerHeight = 0;
-        } else {
-            if (this.pagerHeight < this.dgPager.outerHeight) {
-                this.pagerHeight = this.dgPager.outerHeight;
+        if (!this.autoHeight) {
+            if (!this.pagination) {
+                this.pagerHeight = 0;
+            } else {
+                if (this.pagerHeight < this.dgPager.outerHeight) {
+                    this.pagerHeight = this.dgPager.outerHeight;
+                }
             }
         }
     }
