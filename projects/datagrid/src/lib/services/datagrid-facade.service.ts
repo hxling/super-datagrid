@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-15 17:25:39
+ * @LastEditTime: 2019-10-16 11:20:48
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -88,20 +88,6 @@ export class DatagridFacadeService {
         })
     );
 
-    // readonly currentRow$ = this.store.asObservable().pipe(
-    //     filter( (state: any) => state),
-    //     map((state: FarrisDatagridState) => state.currentRow),
-    //     switchMap( (row) => {
-    //         if (row) {
-    //             return of(row);
-    //         } else {
-    //             this.unSelectRowSubject.next(row);
-    //             return this.unSelectRowSubject.asObservable();
-    //         }
-    //     }),
-    //     distinctUntilChanged()
-    // );
-
     constructor(private http: HttpClient) {
         this._state = initDataGridState;
         this.virtualizedService = new VirtualizedLoaderService();
@@ -119,19 +105,26 @@ export class DatagridFacadeService {
         if (scrolltop === undefined) {
             scrolltop = 0;
         }
-        let virtual = {rowIndex: 0, virtualRows: this._state.data, topHideHeight: 0, bottomHideHeight: 0 };
-        if (!this._state.groupRows) {
-            if (this._state.virtual && this._state.virtualized) {
-                this.virtualizedService.state = this._state;
-                const rows = this.virtualizedService.getRows(scrolltop);
-                virtual = { ...this._state.virtual, ...rows };
-            }
-        } else {
-            // 行分组数据处理
-            const groupRows = this.groupRows(virtual.virtualRows);
-            virtual.virtualRows = groupRows;
-        }
 
+        let data = [];
+        let virtual = {rowIndex: 0, virtualRows: data, topHideHeight: 0, bottomHideHeight: 0 };
+        if (this._state.flatColumns && this._state.flatColumns.length) {
+            data = this._state.data;
+
+            if (!this._state.groupRows) {
+                if (this._state.virtual && this._state.virtualized) {
+                    this.virtualizedService.state = this._state;
+                    const rows = this.virtualizedService.getRows(scrolltop);
+                    virtual = { ...this._state.virtual, ...rows };
+                } else {
+                    virtual.virtualRows = data;
+                }
+            } else {
+                // 行分组数据处理
+                const groupRows = this.groupRows(virtual.virtualRows);
+                virtual.virtualRows = groupRows;
+            }
+        }
         return virtual;
     }
 
@@ -604,11 +597,17 @@ export class DatagridFacadeService {
         this.gridSizeSubject.next(this._state);
     }
 
-    resetColumnsSize() {
+    private resetColumnsSize() {
         if (this._state.fitColumns) {
             this.setFitColumnsWidth(this._state.columnsGroup);
         }
         this.gridSizeSubject.next(this._state);
+    }
+
+    updateColumns(columns) {
+        this._state.columns = columns;
+        this.initColumns();
+        this.resizeColumns(true);
     }
 
 
@@ -620,7 +619,9 @@ export class DatagridFacadeService {
             const normalCols = this.getFixedCols();
 
             columns.forEach(c => {
-                c.originalWidth = c.width;
+                if (!c.originalWidth) {
+                    c.originalWidth = c.width;
+                }
             });
 
             const colgroup = {
@@ -887,7 +888,6 @@ export class DatagridFacadeService {
             if (!rowid) {
                 this._state.data = cloneDeep(this._state.originalData);
                 this._state.changes = null;
-                // this.refresh();
             } else {
                 const rowChanges =  this._state.changes['' + rowid];
                 if (rowChanges) {

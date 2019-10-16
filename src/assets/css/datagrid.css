@@ -410,6 +410,10 @@ farris-datagrid {
 .f-datagrid-footer > div {
   border-top: 1px solid #ccc;
 }
+.f-datagrid-footer .f-datagrid-cell-content {
+  word-break: normal;
+  word-wrap: normal;
+}
 .f-datagrid-sm .f-datagrid-body-row, .f-datagrid-sm .f-datagrid-cell {
   height: 28px;
   min-height: 28px;

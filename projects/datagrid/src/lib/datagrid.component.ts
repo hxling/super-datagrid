@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-15 18:55:06
+ * @LastEditTime: 2019-10-16 11:16:19
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -81,11 +81,6 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     }
     @Input() set sizeType(val) {
         this._sizeType = val;
-        this.rowHeight = SIZE_TYPE[val];
-        this.footerRowHeight = this.rowHeight;
-        this.dfs.updateProperty('rowHeight', this.rowHeight);
-        this.refresh();
-        this.dgs.onRowHeightChange(this.rowHeight);
     }
 
     /** 填充容器 */
@@ -387,6 +382,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         });
 
         this.subscriptions.push(currentCellSubscription);
+
+        this.pagerOpts = {
+            id:  this.id ? this.id + '-pager' :  'farris-datagrid-pager_' + new Date().getTime(),
+            itemsPerPage: this.pagination ? this.pageSize : this.total,
+            currentPage: this.pageIndex,
+            totalItems: this.total,
+            pageList: this.pageList
+        };
     }
 
     //#region Ng Event
@@ -397,25 +400,14 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             throw new Error('The Datagrid\'s idField can\'t be Null. ');
         }
 
-        this.pagerOpts = {
-            id:  this.id ? this.id + '-pager' :  'farris-datagrid-pager_' + new Date().getTime(),
-            itemsPerPage: this.pagination ? this.pageSize : this.total,
-            currentPage: this.pageIndex,
-            totalItems: this.total,
-            pageList: this.pageList
-        };
 
         if (!this.columns) {
             this.columns = this.fields;
         }
 
-        if (this.columns && this.columns.length) {
-            if (!Array.isArray(this.columns[0])) {
-                this.columns = [ this.columns ];
-            }
-        }
+        this.checkColumnsType();
 
-        this.flatColumns =  flatten<DataColumn>(this.columns).filter((col: DataColumn) => !col.colspan);
+        this._flatColumns();
         if (this.showHeader) {
             this.realHeaderHeight = this.columns.length * this.headerHeight;
         }
@@ -519,14 +511,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
 
         if (changes.showHeader !== undefined && !changes.showHeader.isFirstChange()) {
             this.dfs.updateProperty('showHeader', changes.showHeader.currentValue);
-            if (!this.showHeader) {
-                this.realHeaderHeight = 0;
-            } else {
-                this.realHeaderHeight = this.columns.length * this.headerHeight;
-            }
-
-            this.dgs.showGridHeader.emit(this.realHeaderHeight);
-
+            this.headerHeightChange();
             this.cd.detectChanges();
         }
 
@@ -543,6 +528,19 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 itemsPerPage: this.pageSize
             });
         }
+
+        if (changes.columns !== undefined && !changes.columns.isFirstChange()) {
+           this.columnsChanged();
+        }
+
+        if (changes.sizeType !== undefined && !changes.sizeType.isFirstChange()) {
+            this._sizeType = changes.sizeType.currentValue;
+            this.rowHeight = SIZE_TYPE[this._sizeType];
+            this.footerRowHeight = this.rowHeight;
+            this.dfs.updateProperty('rowHeight', this.rowHeight);
+            this.refresh();
+            this.dgs.onRowHeightChange(this.rowHeight);
+        }
     }
 
     ngOnDestroy() {
@@ -557,6 +555,40 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
         }
 
         this.currentCell = null;
+    }
+
+    private _flatColumns() {
+        this.flatColumns =  flatten<DataColumn>(this.columns).filter((col: DataColumn) => !col.colspan);
+    }
+
+    // 检查列集合: [] -> [[]]
+    private checkColumnsType() {
+        if (this.columns && this.columns.length) {
+            if (!Array.isArray(this.columns[0])) {
+                this.columns = [ this.columns ];
+            }
+        }
+    }
+
+    // 列集合变化
+    private columnsChanged() {
+        this._flatColumns();
+        this.checkColumnsType();
+        this.dfs.updateProperty('flatColumns', this.flatColumns);
+        this.dfs.updateColumns(this.columns);
+        this.headerHeightChange();
+        this.refresh();
+    }
+
+    // 列头变化
+    private headerHeightChange() {
+        if (!this.showHeader) {
+            this.realHeaderHeight = 0;
+        } else {
+            this.realHeaderHeight = this.columns.length * this.headerHeight;
+        }
+
+        this.dgs.showGridHeader.emit(this.realHeaderHeight);
     }
 
     //#endregion
@@ -1054,6 +1086,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 currentPage: this.pageIndex,
                 totalItems: this.total
             });
+            this.cd.detectChanges();
         }
         this.data = data;
         this.dfs.loadData(data);

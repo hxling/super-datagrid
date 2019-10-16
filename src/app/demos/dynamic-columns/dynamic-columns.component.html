@@ -1,0 +1,18 @@
+
+<div class="col-12" style="height: 50px">
+    <div class="custom-control custom-checkbox custom-control-inline tt-checkbox" 
+    *ngFor="let col of columns; index as i">
+        <input [attr.id]="'chk_col_' + i" type="checkbox" class="custom-control-input" [(ngModel)]="col.checked">
+        <label [attr.for]="'chk_col_' + i" class="custom-control-label" (click)="changeFields(col)"> {{col.title}} </label>
+    </div>
+</div>
+
+<div #gridContainer class="col-12" style="height: 500px">
+                        
+        <farris-datagrid [columns]="fields" [data]="items" #dg
+            [showLineNumber] ="true" [striped]="false" [showCheckbox]="false"
+            [pagination]="true" [fit]="true" [fitColumns]="true"
+            [total]="total"
+            [pageList]="[10, 20, 30, 50, 100, 200, 1000]" [showPageList]="true"
+        ></farris-datagrid>
+</div>

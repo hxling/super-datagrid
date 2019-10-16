@@ -496,6 +496,11 @@
         &>div {
             border-top:1px solid #ccc;
         }
+        /** 合计行单元格不折行 */
+        .f-datagrid-cell-content {
+            word-break: normal;
+            word-wrap: normal;
+        }
     }
 
     &-sm {
