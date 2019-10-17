@@ -23,7 +23,7 @@
                         [attr.align]="col.halign" 
                         [attr.field]="col.field"
                         [attr.rowspan]="col.rowspan">
-                        <div class="f-datagrid-header-cell-content" [style.width.px]="col.width">
+                        <div class="f-datagrid-header-cell-content">
                             {{ col.title }}
                         </div>
                     </td>
@@ -33,10 +33,21 @@
     </thead>
     <tbody>
         <tr class="f-datagrid-body-row" [attr.id]="row | rowDataId" *ngFor="let row of data; trackBy: dg.trackByRows; let i = index">
-            <td class="f-datagrid-cell f-datagrid-cell-rownumber" *ngIf="dg.showLineNumber">{{ i+1 }}</td>
+            <td class="f-datagrid-cell f-datagrid-cell-rownumber" [style.width.px]="dg.lineNumberWidth" *ngIf="dg.showLineNumber">{{ i+1 }}</td>
             <td class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columnsGroup?.normalColumns; let ci = index;">
                 <span [innerHtml]=" col | formatCellData: row | safe: 'html'"></span>
             </td>
         </tr>
+        <ng-container *ngIf="dg.showFooter">
+            <tr class="f-datagrid-body-row" *ngFor="let row of dg.footerData">
+                <td class="f-datagrid-cell f-datagrid-cell-rownumber" [style.width.px]="dg.lineNumberWidth" *ngIf="dg.showLineNumber"></td>
+                <td class="f-datagrid-cell" [attr.align]="col.align" *ngFor="let col of columnsGroup?.normalColumns" [attr.title]="col | formatCellData: row ">
+                    <div class="f-datagrid-cell-content">
+                        <span *ngIf="col.footer && col.footer.formatter" [innerHtml]=" col | formatCellData: row : false: true | safe: 'html'"></span>
+                        <span *ngIf="!col.footer || !col.footer.formatter">{{ col | formatCellData: row: false: true }}</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-container>
     </tbody>
 </table>

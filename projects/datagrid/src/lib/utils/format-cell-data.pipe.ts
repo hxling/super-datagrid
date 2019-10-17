@@ -11,10 +11,10 @@ export class FormatCellDataPipe implements PipeTransform {
         if (rowData && col && col.field) {
             const value = Utils.getValue(col.field, rowData);
             let formatterFn = col.formatter;
-            if (groupFooter && col.groupFooter) {
-                formatterFn = col.groupFooter.formatter;
-            } else if (footer && col.footer) {
-                formatterFn = col.footer.formatter ;
+            if (groupFooter) {
+                formatterFn = col.groupFooter ? col.groupFooter.formatter : undefined;
+            } else if (footer) {
+                formatterFn = col.footer ? col.footer.formatter : undefined;
             }
 
             if (!formatterFn) {

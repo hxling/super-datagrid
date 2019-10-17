@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-16 12:43:11
+ * @LastEditTime: 2019-10-17 07:52:56
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -127,7 +127,7 @@ export class DatagridFacadeService {
                 }
             } else {
                 // 行分组数据处理
-                const groupRows = this.groupRows(virtual.virtualRows);
+                const groupRows = this.groupRows(data);
                 virtual.virtualRows = groupRows;
             }
         }
