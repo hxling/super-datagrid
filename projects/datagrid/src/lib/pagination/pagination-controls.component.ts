@@ -51,6 +51,7 @@ export class PaginationControlsComponent {
     @Input() screenReaderPageLabel = 'page';
     @Input() screenReaderCurrentLabel = `You're on page`;
     @Input() showPageList = false;
+    @Input() message = '每页 {0} 条记录，共 {1} 条记录';
     @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
     @Output() pageSizeChange = new EventEmitter<number>();
     @ViewChild('p') paginationDirective: PaginationControlsDirective;

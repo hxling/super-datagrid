@@ -3,7 +3,7 @@ import { ChangeDetectorRef } from '@angular/core';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-16 08:49:09
+ * @LastEditTime: 2019-10-17 10:22:39
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -17,6 +17,7 @@ import { PaginationControlsComponent } from '../../pagination/pagination-control
     <div class="f-datagrid-pager" #pagerContainer [ngStyle]="styles">
         <pagination-controls #pager [id]="id" [maxSize]="maxSize" [directionLinks]="directionLinks" [showPageList]="showPageList"
             [autoHide]="autoHide" [responsive]="responsive" [previousLabel]="previousLabel" [nextLabel]="nextLabel"
+            [message]="'datagrid.pagination.message' | locale | replaceX: pageSize: total "
             (pageChange)="onPageChange($event)"
             (pageSizeChange)="onPageSizeChange($event)">
         </pagination-controls>
@@ -49,6 +50,15 @@ export class DatagridPagerComponent implements OnInit, AfterViewInit {
 
     get pagination(): PaginationControlsDirective {
         return this.pager.paginationDirective;
+    }
+
+
+    get pageSize() {
+        return this.pagination.getPageSize();
+    }
+
+    get total() {
+        return this.pagination.getTotalItems();
     }
 
     outerHeight: number;

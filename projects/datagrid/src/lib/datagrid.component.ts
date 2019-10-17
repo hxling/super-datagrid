@@ -3,7 +3,7 @@ import { FormGroup, ValidatorFn } from '@angular/forms';
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:07
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-16 12:35:29
+ * @LastEditTime: 2019-10-17 09:06:29
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -28,6 +28,7 @@ import { Utils } from './utils/utils';
 import { ColumnFormatService } from '@farris/ui-common/column';
 import { flatten } from 'lodash-es';
 import { ScrollbarDirective } from './scrollbar/scrollbar.directive';
+import { LocaleService } from '@farris/ui-locale';
 
 // styleUrls: [
 //     './scss/index.scss'
@@ -46,7 +47,7 @@ import { ScrollbarDirective } from './scrollbar/scrollbar.directive';
 })
 export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterContentInit, AfterViewInit {
     @Input() auther = `Lucas Huang - QQ:1055818239`;
-    @Input() version = '0.0.1';
+    @Input() version = '0.1.10';
 
     @HostBinding('style.position') pos = 'relative';
     @HostBinding('class.f-datagrid-full') hostCls = false;
@@ -340,6 +341,8 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
     pending = false;
     public colFormatSer: ColumnFormatService;
     scrollInstance: ScrollbarDirective = null;
+    // 本地化服务
+    localeService: LocaleService;
     constructor(public cd: ChangeDetectorRef,
                 public el: ElementRef,
                 private inject: Injector, private zone: NgZone,
@@ -348,6 +351,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
                 private app: ApplicationRef,
                 protected domSanitizer: DomSanitizer, private render2: Renderer2) {
 
+        this.localeService = this.inject.get(LocaleService);
         this.restService = this.inject.get<RestService>(DATAGRID_REST_SERVICEE, null);
         this.colFormatSer = this.inject.get(ColumnFormatService);
         const dataSubscription = this.dfs.data$.subscribe( (dataSource: any) => {
@@ -612,7 +616,7 @@ export class DatagridComponent implements OnInit, OnDestroy, OnChanges, AfterCon
             this.validators = _validators;
         }
 
-        console.log('validators', this.validators);
+        // console.log('validators', this.validators);
     }
 
     private setPagerHeight() {

@@ -4,7 +4,7 @@ import { ValidatorMessagerService } from './services/validator-messager.service'
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-16 12:33:16
+ * @LastEditTime: 2019-10-17 10:24:28
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -44,6 +44,8 @@ import { FixedLeftRowsComponent } from './components/body/fixed-left-rows.compon
 
 /** 兼容下老版本 */
 import { TextboxEditorComponent } from './components/editors/text-editor.component';
+import { ReplaceXPipe } from './utils/rexplaceX.pipe';
+import { LocaleModule } from '@farris/ui-locale';
 
 
 
@@ -61,6 +63,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         HttpClientModule,
         NgxPaginationModule,
         ScrollbarModule,
+        LocaleModule,
         DataColumnModule.forRoot()
     ],
     declarations: [
@@ -68,6 +71,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         FormatCellDataPipe,
         RowDataIdPipe,
         FormatGroupRowPipe,
+        ReplaceXPipe,
         DatagridComponent,
         DatagridHeaderComponent,
         DatagridFooterComponent,
@@ -106,7 +110,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: ScrollbarConfigInterface = {
         DatagridResizeColumnDirective,
         TextboxEditorComponent,
         FormatCellDataPipe,
-        RowDataIdPipe
+        RowDataIdPipe,
+        ReplaceXPipe
     ],
     entryComponents: [
 
