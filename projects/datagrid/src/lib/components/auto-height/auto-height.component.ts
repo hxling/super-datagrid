@@ -18,7 +18,7 @@ export class AutoHeightComponent implements OnInit {
     @Input() columnsGroup: any;
     @Input() data: any;
 
-    constructor(private dg: DatagridComponent, private inject: Injector) { }
+    constructor(public dg: DatagridComponent, private inject: Injector) { }
 
     ngOnInit(): void { }
 }

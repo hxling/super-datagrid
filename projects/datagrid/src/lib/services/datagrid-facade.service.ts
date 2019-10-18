@@ -2,7 +2,7 @@
  * @Author: 疯狂秀才(Lucas Huang)
  * @Date: 2019-08-06 07:43:53
  * @LastEditors: 疯狂秀才(Lucas Huang)
- * @LastEditTime: 2019-10-17 07:52:56
+ * @LastEditTime: 2019-10-18 17:14:50
  * @QQ: 1055818239
  * @Version: v0.0.1
  */
@@ -267,10 +267,32 @@ export class DatagridFacadeService {
     }
 
     getSelections() {
+        // 如果数据源变了，需要重新计算
+        const data = this._state.data;
+        if (this._state.selections && this._state.selections.length) {
+            if (!data || !data.length) {
+                this._state.selections = [];
+            } else {
+                this._state.selections = this._state.selections.filter(n => {
+                    return data.findIndex(d => this.primaryId(d) === n.id) > -1;
+                });
+            }
+        }
         return this._state.selections || [];
     }
 
     getCheckeds() {
+        // 如果数据源变了，需要重新计算
+        const data = this._state.data;
+        if (this._state.checkedRows && this._state.checkedRows.length) {
+            if (!data || !data.length) {
+                this._state.checkedRows = [];
+            } else {
+                this._state.checkedRows = this._state.checkedRows.filter(n => {
+                    return data.findIndex(d => this.primaryId(d) === n.id) > -1;
+                });
+            }
+        }
         return this._state.checkedRows || [];
     }
 
